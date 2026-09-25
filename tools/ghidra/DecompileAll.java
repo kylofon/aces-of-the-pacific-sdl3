@@ -1,6 +1,7 @@
 // Headless post-script: pins DS to DGROUP, creates functions at the indexed image offsets,
 // and writes every decompiled function to one C file.
 // args: <starts.txt (hex image offsets) or -> <out.c> <dgroup segment hex, e.g. 1BE4> [timeout_s] [only_starts]
+//       [first overlay code segment hex: AP_flat.exe, DS = DGROUP there too]
 // With "-" as starts, only the functions Ghidra found itself are decompiled.
 // With only_starts = "only", just the functions whose entry is listed in starts.txt are decompiled
 // (other functions, e.g. names applied inside hand-written asm, stay named but are skipped).
@@ -40,6 +41,11 @@ public class DecompileAll extends GhidraScript {
         Register ds = currentProgram.getRegister("ds");
         Address codeEnd = base.add(((long) dgroup << 4) - 1);
         currentProgram.getProgramContext().setValue(ds, base, codeEnd, BigInteger.valueOf(loadSeg + dgroup));
+        if (args.length > 5) {
+            Address ovl = base.add((long) Integer.parseInt(args[5], 16) << 4);
+            currentProgram.getProgramContext().setValue(ds, ovl, lastCodeAddress(),
+                    BigInteger.valueOf(loadSeg + dgroup));
+        }
 
         int created = 0;
         for (String s : starts) {
@@ -79,5 +85,15 @@ public class DecompileAll extends GhidraScript {
             println("decompiled " + n + " functions, " + failed + " failed");
         }
         decomp.dispose();
+    }
+
+    // highest address of an initialized block in the image's address space (getMaxAddress() may be
+    // in another space)
+    private Address lastCodeAddress() {
+        Address base = currentProgram.getMinAddress(), end = base;
+        for (ghidra.program.model.mem.MemoryBlock b : currentProgram.getMemory().getBlocks())
+            if (b.isInitialized() && b.getStart().getAddressSpace() == base.getAddressSpace()
+                    && b.getEnd().compareTo(end) > 0) end = b.getEnd();
+        return end;
     }
 }

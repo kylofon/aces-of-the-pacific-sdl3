@@ -6,7 +6,8 @@
 // Ghidra's flow differs it adds a call/jump override reference (which the decompiler honours),
 // disassembles the real target and makes a function for calls. Functions Ghidra created in DGROUP
 // are removed (there is no code there).
-// args: <dgroup segment hex, e.g. 1BE4>
+// args: <dgroup segment hex, e.g. 1BE4> [first overlay code segment hex (AP_flat.exe): code above it is
+//       processed too, and only DGROUP..overlays counts as data]
 import ghidra.app.cmd.disassemble.DisassembleCommand;
 import ghidra.app.script.GhidraScript;
 import ghidra.program.model.address.*;
@@ -23,6 +24,8 @@ public class FixNearFlows extends GhidraScript {
         int dgroup = Integer.parseInt(getScriptArgs()[0], 16);
         Address base = currentProgram.getMinAddress();
         long dgLinear = base.getOffset() + ((long) dgroup << 4);
+        String[] args = getScriptArgs();
+        long ovlLinear = args.length > 1 ? base.getOffset() + ((long) Integer.parseInt(args[1], 16) << 4) : Long.MAX_VALUE;
         SegmentedAddressSpace space = (SegmentedAddressSpace) base.getAddressSpace();
         Listing listing = currentProgram.getListing();
         ReferenceManager refs = currentProgram.getReferenceManager();
@@ -32,7 +35,7 @@ public class FixNearFlows extends GhidraScript {
         for (MemoryBlock block : currentProgram.getMemory().getBlocks()) {
             if (!block.isExecute() && !block.getName().startsWith("CODE")) continue;
             if (!(block.getStart() instanceof SegmentedAddress)) continue;
-            if (block.getStart().getOffset() >= dgLinear) continue;
+            if (block.getStart().getOffset() >= dgLinear && block.getStart().getOffset() < ovlLinear) continue;
             int seg = ((SegmentedAddress) block.getStart()).getSegment();
             long segLinear = (long) seg << 4;
             for (Instruction ins : listing.getInstructions(new AddressSet(block.getStart(), block.getEnd()), true)) {
@@ -68,7 +71,7 @@ public class FixNearFlows extends GhidraScript {
         int removed = 0;
         FunctionManager fm = currentProgram.getFunctionManager();
         for (Function f : fm.getFunctions(true)) {
-            if (f.getEntryPoint().getOffset() >= dgLinear) {
+            if (f.getEntryPoint().getOffset() >= dgLinear && f.getEntryPoint().getOffset() < ovlLinear) {
                 fm.removeFunction(f.getEntryPoint());
                 removed++;
             }

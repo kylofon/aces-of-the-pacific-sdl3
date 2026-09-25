@@ -42,7 +42,11 @@ the resource code paths (`PAL:EGA:`) but no EGA driver is shipped.
 - Tools carried over from TD3: `x86dis.py`, `merge_symbols.py`, `gen_symbols.py`, `assign_modules.py`,
   `snapsheet.py`, the Ghidra scripts, and `td3index.py` as the base for the new indexer.
 
-### 1. Executable map
+### 1. Executable map — first pass done (2026-09-25, see `port/RE_GUIDE.md`)
+Found: Borland C++ 3.0 medium model, no x87/emulator (AP is 386 integer code); DGROUPs 17E0/4D08/3EA4;
+GCD exit codes 0 DOS / 1 INTRO / 2 PS / 3 AP with the `0000:0510` marker; timer 236.7 Hz (PIT 65535/13);
+video and sound drivers are loaded from the volumes (`VMCODE.OVL`: unchained 320×200, 3 pages;
+`SXCODE.OVL`/`SX.OVL`: SCI0-style drivers).
 - **De-overlay AP.EXE** (`tools/unovl.py`): load every VROOMM overlay segment after the resident
   image, apply its relocations and turn the `INT 3Fh` stubs into direct far jumps, so Ghidra and the
   indexer see one flat program.

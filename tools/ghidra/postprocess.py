@@ -8,7 +8,8 @@ several blocks). Anything that lands inside DGROUP is renamed:
   DAT_278f_0004    -> DS_0004
 Function names get their file segment back: FUN_16c9_1234 -> FUN_06c9_1234.
 
-usage: postprocess.py port/decomp/tdiii.c 1BE4
+usage: postprocess.py port/decomp/tdiii.c 1BE4 [first overlay code segment, e.g. 45CC for AP_flat.exe]
+       (with an overlay segment, addresses from there on are code, not DGROUP)
        (writes tdiii_ds.c and tdiii_globals_xref.txt next to it)
 """
 import os, re, sys
@@ -17,12 +18,13 @@ from collections import defaultdict
 LOAD_SEG = 0x1000
 src, dgroup = sys.argv[1], int(sys.argv[2], 16)
 DG_LINEAR = (LOAD_SEG + dgroup) * 16
+DG_LIMIT = (LOAD_SEG + int(sys.argv[3], 16)) * 16 - DG_LINEAR if len(sys.argv) > 3 else 0x10000
 text = open(src, encoding='utf-8').read()
 
 
 def ds_off(linear):
     off = linear - DG_LINEAR
-    return off if 0 <= off < 0x10000 else None
+    return off if 0 <= off < DG_LIMIT else None
 
 
 def ram(m):
