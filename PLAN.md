@@ -87,7 +87,16 @@ widescreen / 60 fps from the same geometry, with longer view distance and higher
 
 ## Decisions
 
-(to be settled with the user as the phases reach them: graphics, sound device, EMS model, pacing,
-copy protection)
+1. **Sound** (2026-09-25): AdLib through a bundled OPL emulator (Nuked-OPL3, as TD3), behaving like the
+   SCI `ADL.DRV`. MT-32, PC speaker and PS/1 audio → TODO.
+2. **Packaging** (2026-09-25): one executable. INTRO, PS and AP run in one process; the `GCD.COM` chain
+   becomes a loop in `main`; `SIM.IN` / `SIM.OUT` are still written to the game folder as the original does.
+3. **Milestone** (2026-09-25): the full chain (intro + shell + sim) is ported before the v0.1.0 release.
+
+Still open (settled when the phases reach them): EMS model, frame pacing, copy protection, graphics
+(VGA only, expected).
 
 ## TODO (parked)
+
+- [ ] MT-32 / LAPC-1 music (Munt; user supplies ROMs)
+- [ ] PC speaker and PS/1 audio drivers
