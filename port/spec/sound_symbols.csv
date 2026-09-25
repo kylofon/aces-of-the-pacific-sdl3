@@ -1,0 +1,440 @@
+exe,kind,address,name,type,owner,other_names,notes
+intro,func,1373:0003,snd_get_cue,far,sound,,stub -> 09f1: node cue counter (+152)
+ps,func,430a:0004,snd_get_cue,far,sound,,stub -> 09f1: node cue counter (+152)
+ap,func,3060:0007,snd_get_cue,far,sound,,stub -> 09f1: node cue counter (+152)
+intro,func,1373:0016,snd_node_set_priority,far,sound,,stub -> 091e
+ps,func,430a:0017,snd_node_set_priority,far,sound,,stub -> 091e
+ap,func,3060:001a,snd_node_set_priority,far,sound,,stub -> 091e
+intro,func,1373:002a,snd_get_position,far,sound,,stub -> 09fb: tick -> min/sec/halfticks
+ps,func,430a:002b,snd_get_position,far,sound,,stub -> 09fb: tick -> min/sec/halfticks
+ap,func,3060:002e,snd_get_position,far,sound,,stub -> 09fb: tick -> min/sec/halfticks
+intro,func,1373:003f,snd_node_restore,far,sound,,stub -> 0433: replay silently to the saved tick; no callers
+ps,func,430a:0040,snd_node_restore,far,sound,,stub -> 0433: replay silently to the saved tick; no callers
+ap,func,3060:0043,snd_node_restore,far,sound,,stub -> 0433: replay silently to the saved tick; no callers
+intro,func,1373:0050,snd_player_master_volume,far,sound,,stub -> 04c3: driver fn 12
+ps,func,430a:0051,snd_player_master_volume,far,sound,,stub -> 04c3: driver fn 12
+ap,func,3060:0054,snd_player_master_volume,far,sound,,stub -> 04c3: driver fn 12
+intro,func,1373:0061,snd_node_pause,far,sound,,"stub -> 0816 (node or 0 = all, on/off)"
+ps,func,430a:0062,snd_node_pause,far,sound,,"stub -> 0816 (node or 0 = all, on/off)"
+ap,func,3060:0065,snd_node_pause,far,sound,,"stub -> 0816 (node or 0 = all, on/off)"
+intro,func,1373:0075,player_attach,far,sound,,"stub -> 0398: driver fn 0, returns patch number"
+ps,func,430a:0076,player_attach,far,sound,,"stub -> 0398: driver fn 0, returns patch number"
+ap,func,3060:0079,player_attach,far,sound,,"stub -> 0398: driver fn 0, returns patch number"
+intro,func,1373:0086,player_init,far,sound,,"stub -> 03c8: driver fn 1 (patch), fn 11 reverb 0"
+ps,func,430a:0087,player_init,far,sound,,"stub -> 03c8: driver fn 1 (patch), fn 11 reverb 0"
+ap,func,3060:008a,player_init,far,sound,,"stub -> 03c8: driver fn 1 (patch), fn 11 reverb 0"
+intro,func,1373:009b,snd_node_play,far,sound,,"stub -> 0528 (node, locked)"
+ps,func,430a:009c,snd_node_play,far,sound,,"stub -> 0528 (node, locked)"
+ap,func,3060:009f,snd_node_play,far,sound,,"stub -> 0528 (node, locked)"
+intro,func,1373:00af,snd_node_fade,far,sound,,"stub -> 087e (node, target|80h stop, ticks, step)"
+ps,func,430a:00b0,snd_node_fade,far,sound,,"stub -> 087e (node, target|80h stop, ticks, step)"
+ap,func,3060:00b3,snd_node_fade,far,sound,,"stub -> 087e (node, target|80h stop, ticks, step)"
+intro,func,1373:00c9,snd_sound_on,far,sound,,stub -> 0428: driver fn 13
+ps,func,430a:00ca,snd_sound_on,far,sound,,stub -> 0428: driver fn 13
+ap,func,3060:00cd,snd_sound_on,far,sound,,stub -> 0428: driver fn 13
+intro,func,1373:00da,snd_node_volume,far,sound,,stub -> 090e
+ps,func,430a:00db,snd_node_volume,far,sound,,stub -> 090e
+ap,func,3060:00de,snd_node_volume,far,sound,,stub -> 090e
+intro,func,1373:00ee,snd_node_pitch_bend,far,sound,,"stub -> 0b04 (node, value14, chan)"
+ps,func,430a:00ef,snd_node_pitch_bend,far,sound,,"stub -> 0b04 (node, value14, chan)"
+ap,func,3060:00f2,snd_node_pitch_bend,far,sound,,"stub -> 0b04 (node, value14, chan)"
+intro,func,1373:0105,snd_node_stop,far,sound,,stub -> 080c
+ps,func,430a:0106,snd_node_stop,far,sound,,stub -> 080c
+ap,func,3060:0109,snd_node_stop,far,sound,,stub -> 080c
+intro,func,1373:0116,snd_node_hold,far,sound,,stub -> 08a2
+ps,func,430a:0117,snd_node_hold,far,sound,,stub -> 08a2
+ap,func,3060:011a,snd_node_hold,far,sound,,stub -> 08a2
+intro,func,1373:012a,snd_node_signal,far,sound,,stub -> 09e7: node +158 (FF stopped)
+ps,func,430a:012b,snd_node_signal,far,sound,,stub -> 09e7: node +158 (FF stopped)
+ap,func,3060:012e,snd_node_signal,far,sound,,stub -> 09e7: node +158 (FF stopped)
+intro,func,1373:013f,snd_default_reverb,far,sound,,stub -> 04da
+ps,func,430a:0140,snd_default_reverb,far,sound,,stub -> 04da
+ap,func,3060:0143,snd_default_reverb,far,sound,,stub -> 04da
+intro,func,1373:0150,snd_node_controller,far,sound,,"stub -> 0a1c (node, ctl, val, chan); ctl 7Fh = program"
+ps,func,430a:0151,snd_node_controller,far,sound,,"stub -> 0a1c (node, ctl, val, chan); ctl 7Fh = program"
+ap,func,3060:0154,snd_node_controller,far,sound,,"stub -> 0a1c (node, ctl, val, chan); ctl 7Fh = program"
+intro,func,1373:016a,player_terminate,far,sound,,"stub -> 03ed: fn 12(15), fn 2"
+ps,func,430a:016b,player_terminate,far,sound,,"stub -> 03ed: fn 12(15), fn 2"
+ap,func,3060:016e,player_terminate,far,sound,,"stub -> 03ed: fn 12(15), fn 2"
+intro,func,1373:017b,snd_node_mute_all,far,sound,,stub -> 08ac
+ps,func,430a:017c,snd_node_mute_all,far,sound,,stub -> 08ac
+ap,func,3060:017f,snd_node_mute_all,far,sound,,stub -> 08ac
+intro,func,1373:0398,p_attach,near,sound,,
+ps,func,430a:0399,p_attach,near,sound,,
+ap,func,3060:039c,p_attach,near,sound,,
+intro,func,1373:03c8,p_init,near,sound,,
+ps,func,430a:03c9,p_init,near,sound,,
+ap,func,3060:03cc,p_init,near,sound,,
+intro,func,1373:03ed,p_terminate,near,sound,,
+ps,func,430a:03ee,p_terminate,near,sound,,
+ap,func,3060:03f1,p_terminate,near,sound,,
+intro,func,1373:040c,p_lock,near,sound,,busy counter +/-; no caller
+ps,func,430a:040d,p_lock,near,sound,,busy counter +/-; no caller
+ap,func,3060:0410,p_lock,near,sound,,busy counter +/-; no caller
+intro,func,1373:0428,p_sound_on,near,sound,,
+ps,func,430a:0429,p_sound_on,near,sound,,
+ap,func,3060:042c,p_sound_on,near,sound,,
+intro,func,1373:0433,p_restore,near,sound,,
+ps,func,430a:0434,p_restore,near,sound,,
+ap,func,3060:0437,p_restore,near,sound,,
+intro,func,1373:04c3,p_master_volume,near,sound,,
+ps,func,430a:04c4,p_master_volume,near,sound,,
+ap,func,3060:04c7,p_master_volume,near,sound,,
+intro,func,1373:04da,p_default_reverb,near,sound,,
+ps,func,430a:04db,p_default_reverb,near,sound,,
+ap,func,3060:04de,p_default_reverb,near,sound,,
+intro,func,1373:0528,p_play,near,sound,,"reset node, prepare, init channels from preamble, insert by priority, remap"
+ps,func,430a:0529,p_play,near,sound,,"reset node, prepare, init channels from preamble, insert by priority, remap"
+ap,func,3060:052c,p_play,near,sound,,"reset node, prepare, init channels from preamble, insert by priority, remap"
+intro,func,1373:080c,p_stop_remap,near,sound,,
+ps,func,430a:080d,p_stop_remap,near,sound,,
+ap,func,3060:0810,p_stop_remap,near,sound,,
+intro,func,1373:0816,p_pause,near,sound,,
+ps,func,430a:0817,p_pause,near,sound,,
+ap,func,3060:081a,p_pause,near,sound,,
+intro,func,1373:087e,p_fade,near,sound,,
+ps,func,430a:087f,p_fade,near,sound,,
+ap,func,3060:0882,p_fade,near,sound,,
+intro,func,1373:08a2,p_hold,near,sound,,
+ps,func,430a:08a3,p_hold,near,sound,,
+ap,func,3060:08a6,p_hold,near,sound,,
+intro,func,1373:08ac,p_mute_all,near,sound,,
+ps,func,430a:08ad,p_mute_all,near,sound,,
+ap,func,3060:08b0,p_mute_all,near,sound,,
+intro,func,1373:090e,p_volume,near,sound,,
+ps,func,430a:090f,p_volume,near,sound,,
+ap,func,3060:0912,p_volume,near,sound,,
+intro,func,1373:091e,p_set_priority,near,sound,,
+ps,func,430a:091f,p_set_priority,near,sound,,
+ap,func,3060:0922,p_set_priority,near,sound,,
+intro,func,1373:09e7,p_signal,near,sound,,
+ps,func,430a:09e8,p_signal,near,sound,,
+ap,func,3060:09eb,p_signal,near,sound,,
+intro,func,1373:09f1,p_cue,near,sound,,
+ps,func,430a:09f2,p_cue,near,sound,,
+ap,func,3060:09f5,p_cue,near,sound,,
+intro,func,1373:09fb,p_position,near,sound,,
+ps,func,430a:09fc,p_position,near,sound,,
+ap,func,3060:09ff,p_position,near,sound,,
+intro,func,1373:0a1c,p_controller,near,sound,,
+ps,func,430a:0a1d,p_controller,near,sound,,
+ap,func,3060:0a20,p_controller,near,sound,,
+intro,func,1373:0b04,p_pitch_bend,near,sound,,
+ps,func,430a:0b05,p_pitch_bend,near,sound,,
+ap,func,3060:0b08,p_pitch_bend,near,sound,,
+intro,func,1373:0b6a,p_unlink,near,sound,,remove node from the priority list; signal FF
+ps,func,430a:0b6b,p_unlink,near,sound,,remove node from the priority list; signal FF
+ap,func,3060:0b6e,p_unlink,near,sound,,remove node from the priority list; signal FF
+intro,func,1373:0c1e,p_remap,near,sound,,assign device channels and driver voices by priority
+ps,func,430a:0c1f,p_remap,near,sound,,assign device channels and driver voices by priority
+ap,func,3060:0c22,p_remap,near,sound,,assign device channels and driver voices by priority
+intro,func,1373:15fc,p_fade_step,near,sound,,
+ps,func,430a:15fd,p_fade_step,near,sound,,
+ap,func,3060:1600,p_fade_step,near,sound,,
+intro,func,1373:16b8,p_set_node_volume,near,sound,,
+ps,func,430a:16b9,p_set_node_volume,near,sound,,
+ap,func,3060:16bc,p_set_node_volume,near,sound,,
+intro,func,1373:1796,p_send_pending_volumes,near,sound,,<=2 queued ctrl-7 per tick
+ps,func,430a:1797,p_send_pending_volumes,near,sound,,<=2 queued ctrl-7 per tick
+ap,func,3060:179a,p_send_pending_volumes,near,sound,,<=2 queued ctrl-7 per tick
+intro,func,1373:17de,player_service,far,sound,,"timer client, 59.17 Hz: remap, fades, sequence, volumes, driver fn 3"
+ps,func,430a:17df,player_service,far,sound,,"timer client, 59.17 Hz: remap, fades, sequence, volumes, driver fn 3"
+ap,func,3060:17e2,player_service,far,sound,,"timer client, 59.17 Hz: remap, fades, sequence, volumes, driver fn 3"
+intro,func,1373:1865,p_dig_check,near,sound,,digital samples; unused on AdLib
+ps,func,430a:1866,p_dig_check,near,sound,,digital samples; unused on AdLib
+ap,func,3060:1869,p_dig_check,near,sound,,digital samples; unused on AdLib
+intro,func,1373:1893,p_dig_service,near,sound,,digital samples; unused on AdLib
+ps,func,430a:1894,p_dig_service,near,sound,,digital samples; unused on AdLib
+ap,func,3060:1897,p_dig_service,near,sound,,digital samples; unused on AdLib
+intro,func,1373:1932,p_sequence,near,sound,,one tick of one node
+ps,func,430a:1933,p_sequence,near,sound,,one tick of one node
+ap,func,3060:1936,p_sequence,near,sound,,one tick of one node
+intro,func,1373:1b76,ev_note_off,near,sound,,
+ps,func,430a:1b77,ev_note_off,near,sound,,
+ap,func,3060:1b7a,ev_note_off,near,sound,,
+intro,func,1373:1bc8,ev_note_on,near,sound,,
+ps,func,430a:1bc9,ev_note_on,near,sound,,
+ap,func,3060:1bcc,ev_note_on,near,sound,,
+intro,func,1373:1c42,ev_poly_at,near,sound,,
+ps,func,430a:1c43,ev_poly_at,near,sound,,
+ap,func,3060:1c46,ev_poly_at,near,sound,,
+intro,func,1373:1c73,ev_controller,near,sound,,
+ps,func,430a:1c74,ev_controller,near,sound,,
+ap,func,3060:1c77,ev_controller,near,sound,,
+intro,func,1373:1d72,ev_program,near,sound,,
+ps,func,430a:1d73,ev_program,near,sound,,
+ap,func,3060:1d76,ev_program,near,sound,,
+intro,func,1373:1dc4,ev_chan_at,near,sound,,
+ps,func,430a:1dc5,ev_chan_at,near,sound,,
+ap,func,3060:1dc8,ev_chan_at,near,sound,,
+intro,func,1373:1de8,ev_pitch_bend,near,sound,,
+ps,func,430a:1de9,ev_pitch_bend,near,sound,,
+ap,func,3060:1dec,ev_pitch_bend,near,sound,,
+intro,func,1373:1e62,ev_sysex,near,sound,,
+ps,func,430a:1e63,ev_sysex,near,sound,,
+ap,func,3060:1e66,ev_sysex,near,sound,,
+intro,func,1373:1e66,ev_control,near,sound,,"channel-15 control: loop point, signal, reverb, cue, hold"
+ps,func,430a:1e67,ev_control,near,sound,,"channel-15 control: loop point, signal, reverb, cue, hold"
+ap,func,3060:1e6a,ev_control,near,sound,,"channel-15 control: loop point, signal, reverb, cue, hold"
+intro,func,1373:1f78,ev_skip_control,near,sound,,
+ps,func,430a:1f79,ev_skip_control,near,sound,,
+ap,func,3060:1f7c,ev_skip_control,near,sound,,
+intro,func,1373:1fb5,scale_volume,near,sound,,((v+1)(nv+1)>>8)*2-1
+ps,func,430a:1fb6,scale_volume,near,sound,,((v+1)(nv+1)>>8)*2-1
+ap,func,3060:1fb9,scale_volume,near,sound,,((v+1)(nv+1)>>8)*2-1
+intro,func,1373:1fcd,p_find,near,sound,,
+ps,func,430a:1fce,p_find,near,sound,,
+ap,func,3060:1fd1,p_find,near,sound,,
+intro,func,1373:1fef,p_prepare,near,sound,,rewrite resource header: channel table of the play-id track
+ps,func,430a:1ff0,p_prepare,near,sound,,rewrite resource header: channel table of the play-id track
+ap,func,3060:1ff3,p_prepare,near,sound,,rewrite resource header: channel table of the play-id track
+intro,func,157f:0009,snd_rec_load,far int(FILE*),sound,,read one DAT: record
+ps,func,4516:000a,snd_rec_load,far int(FILE*),sound,,read one DAT: record
+intro,func,1593:0004,snd_init,"far int(int drv, char *ovl)",sound,,"driver+patch, timer, service client, effect pool"
+ps,func,452a:0005,snd_init,"far int(int drv, char *ovl)",sound,,"driver+patch, timer, service client, effect pool"
+intro,func,159b:0006,snd_rec_iter,far Rec far*(int sel),sound,,sel id/0 all/-1 music/-2 effects/-3 next
+ps,func,4532:0007,snd_rec_iter,far Rec far*(int sel),sound,,sel id/0 all/-1 music/-2 effects/-3 next
+intro,func,15a9:0005,snd_pool_free,far int(void),sound,,
+ps,func,4540:0006,snd_pool_free,far int(void),sound,,
+intro,func,15ac:000c,snd_node_new,far Node far*(void far *res),sound,,0x17A node for music
+ps,func,4543:000d,snd_node_new,far Node far*(void far *res),sound,,0x17A node for music
+intro,func,15b5:0001,snd_res_read,"far void far*(FILE*,u32,u32*,int cls)",sound,,device-track-only copy of a sound resource
+ps,func,454c:0002,snd_res_read,"far void far*(FILE*,u32,u32*,int cls)",sound,,device-track-only copy of a sound resource
+intro,func,15b5:01fa,chlist_free,far,sound,,
+ps,func,454c:01fb,chlist_free,far,sound,,
+intro,func,15b5:023d,res_find_track,far,sound,,
+ps,func,454c:023e,res_find_track,far,sound,,
+intro,func,15b5:033e,chlist_read,far,sound,,
+ps,func,454c:033f,chlist_read,far,sound,,
+intro,func,15b5:0422,chlist_insert,far,sound,,
+ps,func,454c:0423,chlist_insert,far,sound,,
+intro,func,15b5:04ce,res_build,far,sound,,
+ps,func,454c:04cf,res_build,far,sound,,
+intro,func,1610:0005,snd_pool_alloc,far int(void),sound,,7 effect nodes
+ps,func,45a7:0006,snd_pool_alloc,far int(void),sound,,7 effect nodes
+intro,func,1617:000b,snd_pool_find,far Node far*(void far *res),sound,,
+ps,func,45ae:000c,snd_pool_find,far Node far*(void far *res),sound,,
+intro,func,161d:0005,snd_hold,"far int(int sel,int v)",sound,,
+ps,func,45b4:0006,snd_hold,"far int(int sel,int v)",sound,,
+intro,func,1620:000e,ovl_load_chunk,"far void far*(char*,char *tag,int cls)",sound,,
+ps,func,45b7:000f,ovl_load_chunk,"far void far*(char*,char *tag,int cls)",sound,,
+intro,func,1629:0009,snd_id_node,far Node far*(int sel),sound,,
+ps,func,45c0:000a,snd_id_node,far Node far*(int sel),sound,,
+intro,func,1629:007d,snd_rec_node,far Node far*(Rec far*),sound,,
+ps,func,45c0:007e,snd_rec_node,far Node far*(Rec far*),sound,,
+intro,func,1633:000a,snd_master_volume,far int(int),sound,,
+ps,func,45ca:000b,snd_master_volume,far int(int),sound,,
+intro,func,1634:000d,snd_free,"far void(void far*,int cls)",sound,,
+ps,func,45cb:000e,snd_free,"far void(void far*,int cls)",sound,,
+intro,func,1637:000a,snd_priority,"far int(int sel,int p)",sound,,
+ps,func,45ce:000b,snd_priority,"far int(int sel,int p)",sound,,
+intro,func,163b:0003,snd_reverb,far int(int),sound,,
+ps,func,45d2:0004,snd_reverb,far int(int),sound,,
+intro,func,163c:0006,snd_load_patch,"far int(char *ovl,int *patch,int noload)",sound,,SSM:%03d:
+ps,func,45d3:0007,snd_load_patch,"far int(char *ovl,int *patch,int noload)",sound,,SSM:%03d:
+intro,func,164d:0006,snd_disable,far int(int cls),sound,,0 all/-1 music/-2 effects
+ps,func,45e4:0007,snd_disable,far int(int cls),sound,,0 all/-1 music/-2 effects
+intro,func,1659:000b,snd_load_resource,"far int(char *file,int id)",sound,,SND:INF:/DAT:
+ps,func,45f0:000c,snd_load_resource,"far int(char *file,int id)",sound,,SND:INF:/DAT:
+intro,func,1672:000b,snd_unload,far int(int sel),sound,,
+ps,func,4609:000c,snd_unload,far int(int sel),sound,,
+intro,func,1686:0004,snd_shutdown,far void(void),sound,,
+ps,func,461d:0005,snd_shutdown,far void(void),sound,,
+intro,func,168b:0002,snd_pool_stop_all,far void(void),sound,,
+ps,func,4622:0003,snd_pool_stop_all,far void(void),sound,,
+intro,func,168d:000f,snd_pause,far int(int sel),sound,,
+ps,func,4625:0000,snd_pause,far int(int sel),sound,,
+intro,func,1693:0005,snd_resume,far int(int sel),sound,,
+ps,func,462a:0006,snd_resume,far int(int sel),sound,,
+intro,func,1698:000a,snd_volume,"far int(int sel,int v)",sound,,v 0..63 via curve
+ps,func,462f:000b,snd_volume,"far int(int sel,int v)",sound,,v 0..63 via curve
+intro,func,16a0:0003,snd_controller,"far int(int sel,int ctl,int val,int chan)",sound,,
+ps,func,4637:0004,snd_controller,"far int(int sel,int ctl,int val,int chan)",sound,,
+intro,func,16a4:0002,snd_fade,"far int(int sel,int target,int ticks)",sound,,
+ps,func,463b:0003,snd_fade,"far int(int sel,int target,int ticks)",sound,,
+intro,func,16ac:000b,snd_load_driver,"far int(int n,char *ovl)",sound,,"SSM:xxx: chunk, attach, patch"
+ps,func,4643:000c,snd_load_driver,"far int(int n,char *ovl)",sound,,"SSM:xxx: chunk, attach, patch"
+intro,func,16b6:0001,snd_play,far int(int id),sound,,"music exclusive play(node,1); effects via pool play(node,0)"
+ps,func,464d:0002,snd_play,far int(int id),sound,,"music exclusive play(node,1); effects via pool play(node,0)"
+intro,func,16d5:0001,snd_driver_close,far void(void),sound,,
+ps,func,466c:0002,snd_driver_close,far void(void),sound,,
+intro,func,16d5:0054,snd_wait_5,far void(void),sound,,
+ps,func,466c:0055,snd_wait_5,far void(void),sound,,
+intro,func,16d5:008d,snd_wait_tick,far void(void),sound,,timer client
+ps,func,466c:008e,snd_wait_tick,far void(void),sound,,timer client
+intro,func,16de:0002,snd_enable,far int(int cls),sound,,
+ps,func,4675:0003,snd_enable,far int(int cls),sound,,
+intro,func,16e6:000f,snd_stop,far int(int sel),sound,,
+ps,func,467e:0000,snd_stop,far int(int sel),sound,,
+intro,func,1700:000f,res_skip_header,far void far*(void far*),sound,,p+2+p[1]
+ps,func,4698:0000,res_skip_header,far void far*(void far*),sound,,p+2+p[1]
+intro,func,1702:000a,node_stop_nth,far,sound,,
+ps,func,4699:000b,node_stop_nth,far,sound,,
+intro,func,1705:0008,node_nth,far,sound,,
+ps,func,469c:0009,node_nth,far,sound,,
+intro,func,1708:0008,node_play_nth,far,sound,,"vol, play(node,1)"
+ps,func,469f:0009,node_play_nth,far,sound,,"vol, play(node,1)"
+intro,func,170c:000f,snd_pool_stop_data,far,sound,,
+ps,func,46a4:0000,snd_pool_stop_data,far,sound,,
+intro,func,1712:0002,snd_pitch_bend,"far int(int sel,int value,int chan)",sound,,
+ps,func,46a9:0003,snd_pitch_bend,"far int(int sel,int value,int chan)",sound,,
+intro,func,1715:000e,snd_pool_play,"far Node far*(void far *res,int vol,u8 loop)",sound,,"play(node,0), prio 1"
+ps,func,46ac:000f,snd_pool_play,"far Node far*(void far *res,int vol,u8 loop)",sound,,"play(node,0), prio 1"
+intro,func,1724:0000,snd_alloc,"far void far*(u32,int cls)",sound,,
+ps,func,46bb:0001,snd_alloc,"far void far*(u32,int cls)",sound,,
+intro,func,172c:000e,snd_read_all,far,sound,,
+ps,func,46c3:000f,snd_read_all,far,sound,,
+intro,func,11d2:000c,ttm_sound_op,far int(...),sound,,TTM C0xx/CFx1 opcodes
+ps,func,3baf:000d,ttm_sound_op,far int(...),sound,,TTM C0xx/CFx1 opcodes
+intro,data,DS:1F40,snd_active,,sound,,
+intro,data,DS:1F41,snd_patch_no,,sound,,
+intro,data,DS:1F43,snd_patch_block,,sound,,
+intro,data,DS:1F47,snd_rec_head,,sound,,
+intro,data,DS:1F4B,snd_drv_no,,sound,,
+intro,data,DS:1F4D,snd_timer_owned,,sound,,
+intro,data,DS:1F4F,snd_timer_handle,,sound,,
+intro,data,DS:1F51,snd_sng_inf,,sound,,
+intro,data,DS:1F53,snd_drv_block,,sound,,
+intro,data,DS:1F57,snd_error,,sound,,
+intro,data,DS:1F5B,snd_disabled,,sound,,"-4 none,-1 music,-2 effects,0 all"
+intro,data,DS:1EAE,snd_vol_curve,,sound,,64 bytes
+intro,data,DS:1EFA,snd_drv_code,,sound,,10 ptrs
+intro,data,DS:33D6,snd_pool,,sound,,7 far node ptrs
+intro,data,DS:33CE,snd_iter_rec,,sound,,
+intro,data,DS:33D2,snd_iter_sel,,sound,,
+intro,data,DS:33D4,snd_wait_count,,sound,,
+intro,data,DS:24B3,cfg_sound_drv,,sound,,CONTROL.PRF +2; -s<num>
+intro,data,DS:24B9,cfg_sfx_on,,sound,,CONTROL.PRF +8
+intro,data,DS:24BA,cfg_music_on,,sound,,CONTROL.PRF +9
+intro,data,DS:33C0,ttm_sound_opcode,,sound,,
+intro,data,DS:3398,ttm_sound_bank,,sound,,
+ps,data,DS:3964,snd_active,,sound,,
+ps,data,DS:3965,snd_patch_no,,sound,,
+ps,data,DS:3967,snd_patch_block,,sound,,
+ps,data,DS:396B,snd_rec_head,,sound,,
+ps,data,DS:396F,snd_drv_no,,sound,,
+ps,data,DS:3971,snd_timer_owned,,sound,,
+ps,data,DS:3973,snd_timer_handle,,sound,,
+ps,data,DS:3975,snd_sng_inf,,sound,,
+ps,data,DS:3977,snd_drv_block,,sound,,
+ps,data,DS:397B,snd_error,,sound,,
+ps,data,DS:397F,snd_disabled,,sound,,
+ps,data,DS:38D2,snd_vol_curve,,sound,,
+ps,data,DS:391E,snd_drv_code,,sound,,
+ps,data,DS:76B2,snd_pool,,sound,,
+ps,data,DS:76AA,snd_iter_rec,,sound,,
+ps,data,DS:76B0,snd_wait_count,,sound,,
+ps,data,DS:43B2,cfg_sound_drv,,sound,,CONTROL.PRF +2; -s<num>
+ps,data,DS:43B8,cfg_sfx_on,,sound,,
+ps,data,DS:43B9,cfg_music_on,,sound,,
+ps,data,DS:7674,ttm_sound_bank,,sound,,
+ap,func,326c:000d,snd_free,far,sound,,= INTRO 1634:000d
+ap,func,3326:000d,snd_alloc,far,sound,,= INTRO 1724:0000
+ap,func,304e:0000,ovl_load_chunk,far,sound,,= INTRO 1620:000e
+ap,func,2fe4:0005,snd_res_read,far,sound,,= INTRO 15b5:0001 (whole resource in AP use)
+ap,func,332f:000d,snd_read_all,far,sound,,= INTRO 172c:000e
+ap,func,326f:000a,snd_load_patch,far,sound,,= INTRO 163c:0006
+ap,func,3290:0000,snd_load_driver,far,sound,,= INTRO 16ac:000b
+ap,func,3040:000c,snd_pool_alloc,far,sound,,7 nodes at DS:65EE
+ap,func,2fd8:0003,snd_pool_free,far,sound,,
+ap,func,328c:000e,snd_pool_stop_all,far,sound,,unused path
+ap,func,3301:0005,res_skip_header,far,sound,,
+ap,func,303f:0000,snd_node_stop_far,far,sound,,player stop stub wrapper
+ap,func,32b8:0003,sng_load,far,sound,,SSM:{SNG:* INF:} -> near table of far resource ptrs
+ap,func,3312:000a,sng_free,far,sound,,
+ap,func,32d5:0007,snd_driver_close,far,sound,,
+ap,func,32d5:005a,snd_wait_5,far,sound,,
+ap,func,3280:0009,snd_disable,far,sound,,no callers in AP
+ap,func,32de:0008,snd_enable,far,sound,,no callers in AP
+ap,func,3299:0003,snd_play,far,sound,,reached only from 32de
+ap,func,32e7:0005,snd_stop,far,sound,,reached only from unused API
+ap,func,3318:0005,snd_pool_play,far,sound,,uses SNG INF; unused
+ap,func,2fca:0004,snd_rec_iter,far,sound,,
+ap,func,3056:000b,snd_unload,far,sound,,no callers
+ap,func,5a75:0000,tok_hold,near-far,sound,,"sx_sim.c take n tokens, start their cool-down timers"
+ap,func,5a75:0034,sx_release,far,sound,,sx_sim.c release channel/voice tokens of a type
+ap,func,5a75:008a,tok_busy,far,sound,,sx_sim.c count cooling tokens
+ap,func,5a75:00fb,sx_age_oneshots,near,sound,,sx_sim.c 
+ap,func,5a75:01de,sx_volume,near,sound,,sx_sim.c 7F - dist*128/maxdist
+ap,func,5a75:0244,sx_collect,near,sound,,sx_sim.c 
+ap,func,5a75:02df,sx_collect_all,near,sound,,sx_sim.c 
+ap,func,5a75:030b,sx_substitute,near,sound,,sx_sim.c type table +3
+ap,func,5a75:034d,sx_node_stop,near,sound,,sx_sim.c 
+ap,func,5a75:0384,sx_match_nodes,near,sound,,sx_sim.c 
+ap,func,5a75:042a,sx_cmp,far,sound,,"sx_sim.c qsort compare prio, vol"
+ap,func,5a75:0478,sx_sort,near,sound,,sx_sim.c 
+ap,func,5a75:0497,sx_reserve,far,sound,,sx_sim.c 
+ap,func,5a75:04c5,sx_budget_start,far,sound,,sx_sim.c 
+ap,func,5a75:051c,sx_fits,far,sound,,sx_sim.c 
+ap,func,5a75:05a3,sx_can_start,far,sound,,sx_sim.c 
+ap,func,5a75:05d8,sx_trim,near,sound,,sx_sim.c 
+ap,func,5a75:066f,sx_free_node,near,sound,,sx_sim.c 
+ap,func,5a75:0698,node_clear,near,sound,,sx_sim.c 
+ap,func,5a75:06b3,sx_doppler,near,sound,,"sx_sim.c pitch bend from distance change, channel DS:087E"
+ap,func,5a75:0778,sx_eff_vol,near,sound,,sx_sim.c 
+ap,func,5a75:0798,sx_apply,near,sound,,"sx_sim.c start/update up to 7 nodes, play(node,0)"
+ap,func,5a75:095e,sx_update,far,sound,,"sx_sim.c per frame (listener pos, substitute flag)"
+ap,func,5a75:09a7,sx_stop_nodes,near,sound,,sx_sim.c 
+ap,func,5a75:09d5,sx_off,far,sound,,sx_sim.c 
+ap,func,5a75:09f0,sx_on,far,sound,,sx_sim.c 
+ap,func,5a75:0a01,sx_is_on,far,sound,,sx_sim.c 
+ap,func,5a75:0a0a,sx_clear_continuous,far,sound,,sx_sim.c 
+ap,func,5a75:0a1c,sx_type_valid,far,sound,,sx_sim.c type < 38
+ap,func,5a75:0a2e,sx_type_continuous,far,sound,,sx_sim.c no callers
+ap,func,5a75:0a42,sx_setup_std,near,sound,,sx_sim.c 
+ap,func,5a75:0ab3,sx_setup_m32,near,sound,,sx_sim.c 
+ap,func,5a75:0ac6,sx_setup_adl,near,sound,,sx_sim.c 
+ap,func,5a75:0ad3,sx_setup_tan,near,sound,,sx_sim.c 
+ap,func,5a75:0ae6,sx_is_mt32,far,sound,,sx_sim.c 
+ap,func,5a75:0afa,sx_init,far,sound,,"sx_sim.c (ovl, datname, sngname, drv, off)"
+ap,func,5a75:0d39,sx_shutdown,far,sound,,sx_sim.c 
+ap,func,5a75:0d66,sx_enable,far,sound,,sx_sim.c (on)
+ap,func,5a75:0db6,sx_add,near,sound,,"sx_sim.c (type, pos, flags, player)"
+ap,func,5a75:0e96,sx_stop_all,far,sound,,sx_sim.c 
+ap,func,5a75:0ea9,sx_play_vol,far,sound,,"sx_sim.c (type, vol, bend, player)"
+ap,func,5a75:0eea,sx_play,far,sound,,"sx_sim.c (type, pos, vel, player)"
+ap,func,5a75:0f2c,sx_play_rsv,far,sound,,"sx_sim.c (type, pos, vel, player) full budget"
+ap,func,5a75:0f72,sx_play_ex,far,sound,,"sx_sim.c (type, pos, bend, vel, flags, player)"
+ap,data,DS:2692,snd_active,,sound,,
+ap,data,DS:2693,snd_patch_no,,sound,,
+ap,data,DS:269D,snd_drv_no,,sound,,
+ap,data,DS:26A3,snd_sng_inf,,sound,,
+ap,data,DS:26A5,snd_drv_block,,sound,,
+ap,data,DS:2634,snd_drv_code,,sound,,
+ap,data,DS:65EE,snd_pool,,sound,,7 far node ptrs
+ap,data,DS:65EC,snd_wait_count,,sound,,
+ap,data,DS:43B3,cfg_sound_drv,,sound,,CONTROL.PRF +2
+ap,data,DS:43B9,cfg_sfx_on,,sound,,CONTROL.PRF +8
+ap,data,DS:052E,opt_sound_drv,,sound,,-s<n>
+ap,data,DS:0532,opt_no_sound,,sound,,-s
+ap,data,DS:086C,sx_oneshot_wait,,sound,,
+ap,data,DS:086E,sx_max_channels,,sound,,
+ap,data,DS:0870,sx_max_voices,,sound,,
+ap,data,DS:0872,sx_pool_n,,sound,,
+ap,data,DS:0874,sx_start_timer,,sound,,
+ap,data,DS:087A,sx_stop_delay,,sound,,
+ap,data,DS:087C,sx_end_delay,,sound,,
+ap,data,DS:087E,sx_bend_chan,,sound,,
+ap,data,DS:0880,sx_mt32,,sound,,
+ap,data,DS:4894,sx_may_start,,sound,,
+ap,data,DS:4895,sx_voices_used,,sound,,
+ap,data,DS:4897,sx_channels_used,,sound,,
+ap,data,DS:4899,sx_type_table,,sound,,SND1.DAT 38x8
+ap,data,DS:489B,sx_maxdist,,sound,,SND1.DAT 38 words
+ap,data,DS:489D,sx_chan_tokens,,sound,,
+ap,data,DS:489F,sx_voice_tokens,,sound,,
+ap,data,DS:48A1,sx_active,,sound,,
+ap,data,DS:48A2,sx_on,,sound,,
+ap,data,DS:48A3,sx_sng_table,,sound,,
+ap,data,DS:48A5,sx_listener_prev,,sound,,
+ap,data,DS:48B1,sx_listener,,sound,,
+ap,data,DS:48BF,sx_n_audible,,sound,,
+ap,data,DS:48C1,sx_n_continuous,,sound,,
+ap,data,DS:48C3,sx_n_oneshot,,sound,,
+ap,data,DS:48C5,sx_n_stop,,sound,,
+ap,data,DS:48C7,sx_stop_list,,sound,,
+ap,data,DS:48E3,sx_audible,,sound,,
+ap,data,DS:4983,sx_continuous,,sound,,50 x 14
+ap,data,DS:4C3F,sx_oneshots,,sound,,30 x 14
+ap,data,DS:02D4,sx_player_engine_type,,sound,,6 bytes
+ap,data,DS:02DA,sx_ai_engine_type,,sound,,6 bytes
