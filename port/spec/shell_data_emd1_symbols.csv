@@ -1,0 +1,198 @@
+exe,kind,address,name,type,owner,other_names,notes
+ps,func,2322:000b,wd_set_point,"void far(int i, long far *xyz)",shell_data,,list 0 only: copy 12 bytes to cur_entry.points[i]; asserts 0<=i<P
+ps,func,2322:00a6,wd_set_pair,void far(u16 *v2),shell_data,,list 1 only: entry+6=v[0] entry+8=v[1]
+ps,func,2322:00fc,wd_set_value,void far(u16 v),shell_data,,lists 2..4: entry+6=v
+ps,func,2322:0147,wd_new_entry,void far(u16 date),shell_data,,alloc 10-byte entry (+P*12 point array for list 0); sorted insert into current list
+ps,func,2322:0212,wd_delete_entry,void far(void),shell_data,,unlink+free current entry (and its point array)
+ps,func,2322:02bd,wd_select_list,int far(int list),shell_data,,DS:5416=list; cur_entry=NULL; asserts 0..5
+ps,func,2322:030b,wd_new_record,void far(u16 id),shell_data,,alloc 0x1A-byte record; append at tail of DS:5418
+ps,func,2322:0399,wd_delete_record,void far(void),shell_data,,unlink current record; free all entries; remove its TAG name
+ps,func,2322:0467,wd_close,void far(void),shell_data,,free whole world database + tag list; P=0
+ps,func,2322:04b1,wd_load_database,void far(char *name),shell_data,,loads TARGET.n / CARRIER.n / SHIPPATH.n chunks INF: DAT: TAG:
+ps,func,2322:0678,wd_count,int far(void),shell_data,,number of records
+ps,func,2322:06aa,wd_name_array,void far* far(void),shell_data,,unused; DS:5414 = near array of far name ptrs (NULL-terminated)
+ps,func,2322:0760,wd_list_length,int far(void),shell_data,,entries in current record's current list
+ps,func,2322:07a2,wd_date_strings,int* far(void),shell_data,,unused; DS:5412 array of formatted dates of current list
+ps,func,2322:0874,wd_points_per_pos,int far(void),shell_data,,returns DS:1CD8
+ps,func,2322:087e,wd_current_list,int far(void),shell_data,,returns DS:5416
+ps,func,2322:0888,wd_position,"long far* far(int rec, u16 date, long *out (near), char by_id)",shell_data,,list 0 entry valid at date -> out (else -1s)
+ps,func,2322:09d8,wd_position_mid,"long far* far(int rec, u16 date, long *out (near), char by_id)",shell_data,,like 0888 but midpoint of valid and next track point
+ps,func,2322:0bd5,wd_side_matches,"char far(int rec, u16 date, char side, char by_id)",shell_data,,list 3 value at date == side or 99
+ps,func,2322:0cfc,wd_kind,"int far(int rec, u16 date, char zero_if_99, char by_id)",shell_data,,list 2 value at date; 99 -> 0/-1; none -> -1
+ps,func,2322:0e2f,wd_id_by_name,int far(char far *name),shell_data,,tag list lookup (stricmp)
+ps,func,2322:0e52,wd_record_id,int far(int index),shell_data,,id of index-th record
+ps,func,2322:0ebf,wd_service_allowed,"char far(int code, char service)",shell_data,,99 any; <20 exact; >=20 table DS:1CCE[service*16+code]
+ps,func,2322:0efd,wd_find_for_service,"int far(u16 date, char service, int skip)",shell_data,,id of the (skip)-th record whose list-4 entry at date admits service; -1
+ps,func,2322:0fe0,wd_name_by_id,char far* far(int id),shell_data,,tag list lookup
+ps,func,2322:0ffa,wd_find_near,"int far(near pos*, u16 date)",shell_data,,unused; buggy (near ptr to far data)
+ps,func,242f:0004,flist_insert_sorted,"node far* far(node far *head, node far *n)",shell_data,,sort key u16 at +4; equal keys inserted after
+ps,func,242f:00ad,flist_append,"node far* far(node far *head, node far *n)",shell_data,,
+ps,func,242f:0122,flist_unlink,"node far* far(node far *head, node far *n)",shell_data,,fatal if head NULL or n not found
+ps,func,242f:0224,flist_count,int far(node far *head),shell_data,,unused
+ps,func,242f:025b,wdutil_fragment,,shell_data,,"3-byte fragment at segment end (push bp; mov bp,sp) - not a function"
+ps,func,2455:000a,tag_add,"int far(int id, char far *name, tagnode far *list)",shell_data,,"add or update (id,name); id 0 = auto (max+1)"
+ps,func,2455:0117,tag_remove,"int far(int id, tagnode far *list)",shell_data,,
+ps,func,2455:01a0,tag_free_all,void far(tagnode far *list),shell_data,,
+ps,func,2455:020e,tag_name,"char far* far(int id, tagnode far *list)",shell_data,,
+ps,func,2455:024a,tag_id,"int far(char far *name, tagnode far *list)",shell_data,,case-insensitive
+ps,func,2455:0292,tag_find,"tagnode far* far(int id, char far *name, tagnode far *list)",shell_data,,
+ps,func,2455:02f7,tag_load_chunk,"int far(FILE/name, char *tag, tagnode far *list)",shell_data,,"reads chunk: u16 n; n x (u16 id, cstring)"
+ps,func,2455:03c3,tag_write,"int far(tagnode far *first, FILE*)",shell_data,,unused
+ps,func,249b:0007,rd_u16,int far(FILE*),shell_data,,little endian via getc; no EOF check
+ps,func,249b:002d,rd_s32,long far(FILE*),shell_data,,
+ps,func,249b:008a,rd_cstring,char* far(FILE*),shell_data,,into DS:541C (no bound); NULL if EOF or empty
+ps,func,249b:00cf,wr_u16,"int far(u16, FILE*)",shell_data,,
+ps,func,249b:010e,wr_u32,"int far(long, FILE*)",shell_data,,unused
+ps,func,249b:0185,wr_cstring,"int far(char *s, FILE*)",shell_data,,writes s and NUL
+ps,func,24d5:0005,strpool_copy,char* far(char far *s),shell_data,,ring pool DS:5592..5785; cursor DS:1DB2
+ps,func,24d5:0053,fstrcpy_near_src,"char far* far(char far *dst, char *src)",shell_data,,
+ps,func,24d5:0091,strcpy_far_src,"char* far(char *dst, char far *src)",shell_data,,
+ps,func,24d5:00bd,strcat_far_src,"void far(char *dst, char far *src)",shell_data,,unused
+ps,func,24e3:0002,scd_read,void far(FILE*),shell_data,,u16 n; u16 off[n]; u16 size; text -> buffer DS:5792
+ps,func,24e3:0087,scd_load,"void far(char *name, int bufsize)",shell_data,,.SCD label table (reuses buffer if big enough)
+ps,func,24e3:0164,scd_push,void far(void),shell_data,,save DS:5792 -> DS:578E
+ps,func,24e3:0177,scd_load_new,"void far(char *name, int bufsize)",shell_data,,unused; always allocates
+ps,func,24e3:01fd,scd_pop,void far(void),shell_data,,"free current, restore saved"
+ps,func,24e3:021f,scd_string,char* far(int idx),shell_data,,copy into string pool
+ps,func,24e3:0268,strings_load,void far(char *name),shell_data,,multi-table string file (STRINGS_ SFTBTNS BRIEF ...)
+ps,func,24e3:0436,strings_free,void far(void),shell_data,,
+ps,func,24e3:04b4,strings_get,"char far* far(int table, int idx)",shell_data,,
+ps,func,24e3:050c,strings_dup_near,"void far(char **dst, int n, int table)",shell_data,,unused
+ps,func,24e3:0591,strings_free_near,"void far(char **a, int n)",shell_data,,unused
+ps,func,24e3:05b9,strings_dup_far,"void far(char far **dst, int n, int table)",shell_data,,
+ps,func,24e3:064a,strings_free_far,"void far(char far **a, int n)",shell_data,,
+ps,func,24e3:0678,strings_dup_ranks,void far(void),shell_data,,table 3 idx 0..41 -> DS:57A2 far ptrs
+ps,func,2550:000e,ace_count,int far(void),shell_data,,extens id range (44 with ACE0+ACE1; ids 41..43 empty)
+ps,func,2550:0023,ace_valid,char far(int ace),shell_data,,
+ps,func,2550:0043,ace_name,char far* far(int ace),shell_data,,
+ps,func,2550:00a3,ace_short_name,char far* far(int ace),shell_data,,string after the full name
+ps,func,2550:00d0,ace_link,int far(int ace),shell_data,,+02 earlier-ace id (FFFF none)
+ps,func,2550:011e,ace_has_successor,char far(int ace),shell_data,,any ace whose +02 == ace
+ps,func,2550:0164,ace_kills,int far(int ace),shell_data,,+04
+ps,func,2550:01b2,ace_service,char far(int ace),shell_data,,+06
+ps,func,2550:0200,ace_duel_date,u16 far(int ace),shell_data,,+09 mission date of Dogfight-an-Ace
+ps,func,2550:024e,ace_duel_player_type,int far(int ace),shell_data,,+07 aircraft type the player flies vs this ace
+ps,func,2550:029c,ace_first_posting_date,"u16 far(int ace, u16 d0, u16 d1)",shell_data,,unused; unbounded walk
+ps,func,2550:0338,ace_status,"u8 far(int ace, u16 date)",shell_data,,career entry type at date (FF none)
+ps,func,2550:03aa,ace_squadron,"int far(int ace, u16 date)",shell_data,,value if type 0 else FFFF
+ps,func,2550:0426,ace_posting_station,"int far(int ace, u16 date)",shell_data,,type 1 -> ACETAB posting +0
+ps,func,2550:04d9,ace_posting_aircraft,"int far(int ace, u16 date)",shell_data,,type 1 -> ACETAB posting +3
+ps,func,2550:058d,ace_read_record,void far(acerec far *r),shell_data,,extens record reader callback
+ps,func,2550:064b,ace_free_record,void far(acerec far *r),shell_data,,
+ps,func,2550:0679,ace_open,int far(void),shell_data,,ACETAB.DAT + ACE<n>.DAT
+ps,func,2550:073f,ace_close,void far(void),shell_data,,
+ps,func,2550:0780,acetxt_open,int far(void),shell_data,,ACETXT<n>.DAT
+ps,func,2550:0802,acetxt_close,void far(void),shell_data,,
+ps,func,2550:0817,acetxt_bio,char far* far(int ace),shell_data,,
+ps,func,2550:0855,acetxt_duel_text,char far* far(int ace),shell_data,,second string
+ps,func,2550:08b1,ace_cmp_kills,"int far(int *a, int *b)",shell_data,,qsort comparator: descending kills
+ps,func,2550:08f8,acelist_build,"void far(char service, char slot, char pilot_rows, char same_service)",shell_data,,
+ps,func,2550:0b00,acelist_disable,"void far(int code, char slot)",shell_data,,
+ps,func,2550:0b53,acelist_enabled_count,int far(void),shell_data,,
+ps,func,2550:0b9d,acelist_select,void far(char slot),shell_data,,
+ps,func,2550:0ba8,acelist_id,int far(int i),shell_data,,
+ps,func,2550:0bc5,acelist_code,int far(int row),shell_data,,
+ps,func,2550:0c3b,acelist_name,char* far(int i),shell_data,,unused
+ps,func,2550:0c99,acelist_row_name,char* far(int row),shell_data,,unused
+ps,func,2624:000d,squad_valid,char far(int sq),shell_data,,
+ps,func,2624:002d,squad_count,int far(void),shell_data,,
+ps,func,2624:0042,squad_name,char far* far(int sq),shell_data,,
+ps,func,2624:007b,squad_name2,char far* far(int sq),shell_data,,second string (empty in data)
+ps,func,2624:00a8,squad_service,u8 far(int sq),shell_data,,+02
+ps,func,2624:00cf,squad_role,u8 far(int sq),shell_data,,+03 (0 fighter 1 torpedo 2 dive - Likely)
+ps,func,2624:00f6,squad_quality,u8 far(int sq),shell_data,,+04 pilot quality class 0..4
+ps,func,2624:011d,squad_status,"u8 far(int sq, u16 date)",shell_data,,+05 list; FF none; 0 active
+ps,func,2624:0163,squad_next_mission_date,"u16 far(int sq, u16 d0, u16 d1)",shell_data,,
+ps,func,2624:0219,squad_aircraft,"int far(int sq, u16 date)",shell_data,,+0F list
+ps,func,2624:0256,squad_station,"int far(int sq, u16 date)",shell_data,,+19 list
+ps,func,2624:0293,squad_find_mission,"mis far* far(list far *l, u16 date, int after_time)",shell_data,,
+ps,func,2624:035d,squad_pick_mission_type,"u8 far(int sq, u16 date, int after_time)",shell_data,,"RNG: rng_pick_weighted(row,7)"
+ps,func,2624:03fb,squad_mission_param,"int far(int sq, u16 date, int after_time)",shell_data,,+3 of mission entry (weights row / MISS number)
+ps,func,2624:043a,squad_sched_init,"void far(int sq, sched *s, u16 date)",shell_data,,
+ps,func,2624:05a6,squad_sched_next,"char far(int sq, sched *s)",shell_data,,
+ps,func,2624:07a5,squad_read_record,void far(sqrec far *r),shell_data,,
+ps,func,2624:088c,squad_free_record,void far(sqrec far *r),shell_data,,
+ps,func,2624:0902,squad_open,int far(void),shell_data,,SQUADTAB.DAT + SQUAD<n>.DAT
+ps,func,2624:09c4,squad_close,void far(void),shell_data,,
+ps,func,26c4:0005,text_read_whole,"void far* far(?, char *name)",shell_data,,unused
+ps,func,26c4:001a,text_free,void far(void far *t),shell_data,,
+ps,func,26c4:002c,text_count,int far(u16 far *t),shell_data,,
+ps,func,26c4:0039,text_get,"char far* far(u16 far *t, int i)",shell_data,,
+ps,func,26c4:00a5,extdb_text,"char far* far(int db, int id)",shell_data,,record +0 u32 offset -> string
+ps,func,26c4:00de,text_read_count,"void far(FILE*, int i)",shell_data,,callback
+ps,func,26c4:0112,text_measure,"void far(FILE*, int i)",shell_data,,callback
+ps,func,26c4:014b,text_scan_files,int far(files*),shell_data,,
+ps,func,26c4:0190,text_rebase,"void far(u16 far *o, int i)",shell_data,,
+ps,func,26c4:01c5,text_read_file,"void far(FILE*, int i)",shell_data,,callback
+ps,func,26c4:0258,text_fill,"void far(void far *buf, files*)",shell_data,,
+ps,func,26c4:02b3,sum_words,"int far(int *a, int n)",shell_data,,
+ps,func,26c4:02d9,text_load,"void far* far(char *name, char *ext, int stride)",shell_data,,STATTXT (100) MEDABBR (15)
+ps,func,26fc:000c,emd_set_stream,void far(FILE*),shell_data,,
+ps,func,26fc:004f,emd_open,u16 far(char *name),shell_data,,
+ps,func,26fc:0098,emd_read,"u16 far(void *dst, int size, int n)",shell_data,,
+ps,func,26fc:0119,emd_write,"void far(void *src, int size, int n)",shell_data,,
+ps,func,26fc:013c,emd_read_u8,u8 far(void),shell_data,,unused
+ps,func,26fc:015b,emd_read_string,char* far(void),shell_data,,unused
+ps,func,26fc:0197,emd_read_date,void far(u16 far *out),shell_data,,3 bytes month0 day year-1900 -> day number
+ps,func,26fc:01eb,emd_read_far,"u16 far(void far *dst, int size, int n)",shell_data,,128-byte bounce buffer
+ps,func,26fc:0257,emd_write_far,"void far(void far *src, int size, int n)",shell_data,,unused
+ps,func,26fc:02c0,emd_close,void* far(char keep_rest),shell_data,,asserts EOF
+ps,func,26fc:0338,emd_close_rest_far,void far* far(void),shell_data,,
+ps,func,273b:000e,list_count,int far(list far *l),shell_data,,unused
+ps,func,273b:001c,list_first,void far* far(list far *l),shell_data,,cursor=0
+ps,func,273b:0034,list_next,void far* far(list far *l),shell_data,,
+ps,func,273b:0080,list_last,void far* far(list far *l),shell_data,,
+ps,func,273b:00b6,list_at,"void far* far(list far *l, int i)",shell_data,,asserts
+ps,func,273b:0121,list_find_dated,"void far* far(list far *l, u16 date)",shell_data,,
+ps,func,273b:01f3,list_first_date,u16 far(list far *l),shell_data,,unused
+ps,func,273b:0249,list_dated_marker,void far(void),shell_data,,empty; its address selects dated element reading
+ps,func,273b:024e,list_read,"void far(list far *l, int elsize, void (far *rd)(void far*))",shell_data,,
+ps,func,273b:0348,list_free,"void far(list far *l, void (far *fr)(void far*))",shell_data,,
+ps,data,DS:1CD8,wd_points,u16,shell_data,,INF: P (points per position)
+ps,data,DS:1CDA,wd_cur_record,far ptr,shell_data,,
+ps,data,DS:1CDE,wd_cur_entry,far ptr,shell_data,,
+ps,data,DS:1CCE,wd_service_class_tab,u8[11][16] (+20),shell_data,,index service*16+code (code 20..35) = DS:1CE2+s*16+(code-20)
+ps,data,DS:5412,wd_date_strs,near ptr,shell_data,,
+ps,data,DS:5414,wd_names,near ptr,shell_data,,
+ps,data,DS:5416,wd_cur_list,u16,shell_data,,
+ps,data,DS:5418,wd_records,far ptr,shell_data,,head of record list
+ps,data,DS:541C,rd_strbuf,char[256],shell_data,,
+ps,data,DS:551C,rd_strbuf_ptr,near ptr,shell_data,,
+ps,data,DS:1DB2,strpool_cur,near ptr,shell_data,,init 5592h
+ps,data,DS:5592,strpool,char[499],shell_data,,5592h..5785h ring
+ps,data,DS:1DBF,scd_bufsize,u16,shell_data,,
+ps,data,DS:1DC1,strings_loaded,u8,shell_data,,
+ps,data,DS:5786,strings_ntab,u16,shell_data,,
+ps,data,DS:5788,strings_offs,near ptr,shell_data,,near u16*[ntab]
+ps,data,DS:578A,strings_text,far ptr,shell_data,,
+ps,data,DS:578E,scd_saved,far ptr,shell_data,,
+ps,data,DS:5792,scd_buf,far ptr,shell_data,,
+ps,data,DS:57A2,rank_abbr,far ptr[42],shell_data,,
+ps,data,DS:1DCC,ace_loaded,u8,shell_data,,
+ps,data,DS:584A,acelist_n,u16[2],shell_data,,
+ps,data,DS:584E,acelist_enabled,u16[2][70],shell_data,,
+ps,data,DS:5966,acelist_ids,u16[2][70],shell_data,,
+ps,data,DS:5A7E,acelist_slot,u8,shell_data,,
+ps,data,DS:5A7F,acelist_pilot_rows,u8,shell_data,,
+ps,data,DS:5A80,acelist_total,u8,shell_data,,
+ps,data,DS:5A81,acetxt_db,u16,shell_data,,extens handle
+ps,data,DS:5A83,acetab_postings,list(10),shell_data,,6-byte elements
+ps,data,DS:5A8D,acetab_t1,list(10),shell_data,,4-byte elements; never read
+ps,data,DS:5A97,ace_records,list(10),shell_data,,current extens file records (0x15 bytes)
+ps,data,DS:5AA1,ace_db,u16,shell_data,,extens handle
+ps,data,DS:1DEC,squad_loaded,u8,shell_data,,
+ps,data,DS:5AA4,squadtab_weights,list(10),shell_data,,7-byte mission-type weight rows
+ps,data,DS:5AAE,squadtab_t1,list(10),shell_data,,4-byte elements; never read
+ps,data,DS:5AB8,squad_records,list(10),shell_data,,0x2D-byte records
+ps,data,DS:5AC2,squad_db,u16,shell_data,,extens handle
+ps,data,DS:5AC4,text_textcur,far ptr,shell_data,,
+ps,data,DS:5AC8,text_offcur,far ptr,shell_data,,
+ps,data,DS:5ACC,text_base,u16,shell_data,,
+ps,data,DS:5ACE,text_stride,u16,shell_data,,
+ps,data,DS:5AD0,text_total_size,u16,shell_data,,
+ps,data,DS:5AD2,text_total_count,u16,shell_data,,
+ps,data,DS:5AD4,text_sizes,u16[9],shell_data,,
+ps,data,DS:5AE6,text_counts,u16[9],shell_data,,
+ps,data,DS:5AF8,emd_remaining,u16,shell_data,,
+ps,data,DS:5AFA,emd_file,FILE* (near),shell_data,,
+ps,data,DS:419A,emd_bounce,u8[128],shell_data,,

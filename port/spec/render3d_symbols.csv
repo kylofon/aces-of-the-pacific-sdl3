@@ -1,0 +1,514 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,277a:0012,set_near,far void(int n),render3d,,"near = 1<<n, CS:0010 = S-n"
+ap,func,277a:002d,get_near_n,far int(void),render3d,,
+ap,func,277a:0037,reset_near,far void(void),render3d,,near = focal
+ap,func,277a:004b,cam_begin_frame,far void(view*),render3d,,"camera record -> CS state, window DS:26C4.."
+ap,func,277a:0152,set_light,"far vec*(u16 pitch,u16 heading)",render3d,,light CS:0008 + DS:6492
+ap,func,277a:0346,poly_facing,near asm AL=normal AH=vertex,render3d,,DX:AX = n.(v>>-shift + eye_in_obj)
+ap,func,277a:09b6,m_cam_block,data,render3d,,"CS data (camera matrix), not code"
+ap,func,277a:09c9,m_obj_eye_block,data,render3d,,CS data
+ap,func,277a:0a07,eye_in_obj_block,data,render3d,,CS data
+ap,func,277a:0a0d,e_pos16_block,data,render3d,,CS data
+ap,func,277a:0a13,cs_state_block,data,render3d,,"CS data 0A13..22F7: camera pos, vertex arrays, tables"
+ap,func,277a:22f8,obj_set_position,far void(instance*),render3d,,
+ap,func,277a:237d,obj_set_orientation,far void(void),render3d,,"matrices, precision shift k"
+ap,func,277a:24ef,obj_near_depth,far void(void),render3d,,CS:0A35 nearest box depth
+ap,func,277a:2fee,pt_add_centre,far i32*(i32 p[2]),render3d,,
+ap,func,277a:3010,pt_project,"far i32*(i32 in[3], i32 out[2])",render3d,,386
+ap,func,277a:304c,apparent_size,far i32(i32 v[2]),render3d,,focal*R/d
+ap,func,277a:3968,mul_shr8,"far int(int,int)",render3d,,
+ap,func,277a:3978,mul_shr10,"far int(int,int)",render3d,,
+ap,func,277a:3990,bit_index8,near asm,render3d,,sqrt helper
+ap,func,277a:39a2,isqrt16,far u16(u16),render3d,,
+ap,func,277a:3a58,isqrt32,far u16(u32),render3d,,
+ap,func,277a:3b3c,ldist3,"far u32(lvec*,lvec*)",render3d,,approx 3D distance
+ap,func,277a:3b8b,ldist3v,"far u32(u32,u32,u32)",render3d,,
+ap,func,277a:3bfc,ldist2,"far u32(lvec*,lvec*)",render3d,,approx 2D distance
+ap,func,277a:3c36,ldist2v,"far u32(u32,u32)",render3d,,
+ap,func,277a:3c6a,dist2_16,"far u16(int,int)",render3d,,
+ap,func,277a:3c90,log_key,far u16(u32),render3d,,log2 exponent:8-bit mantissa sort key
+ap,func,277a:3cfc,mul32,"far i32(int,int)",render3d,,
+ap,func,277a:3d14,lmul,"far i32(i32,int)",render3d,,
+ap,func,277a:3d52,lsar,"far i32(i32,int)",render3d,,
+ap,func,277a:3dac,ldiv_sat_test,near asm,render3d,,
+ap,func,277a:3dc1,ldiv_sat,"far int(i32,int)",render3d,,saturating 32/16 divide
+ap,func,277a:3e1c,lnorm,"far int(i32,int*)",render3d,,
+ap,func,277a:3e84,lbitlen,far int(u32),render3d,,
+ap,func,277a:3ec8,bitlen16,far int(u16),render3d,,
+ap,func,277a:3ed4,sum_i8,"far int(i8*,int)",render3d,,
+ap,func,277a:3eed,sum_i16,"far i32(int*,int)",render3d,,
+ap,func,277a:3f0e,in_open_range,"far int(int,int)",render3d,,
+ap,func,277a:3f27,clamp_sym,"far int(int,int)",render3d,,
+ap,func,277a:3f3c,imin,"far int(int,int)",render3d,,
+ap,func,277a:3f55,imax,"far int(int,int)",render3d,,
+ap,func,277a:3f6e,proj32,near asm stack,render3d,,"32-bit projection, no divide when |y|<=f"
+ap,func,277a:410d,normalize_to_sum,"far int*(int*,int,int)",render3d,,
+ap,func,277a:4123,normalize_to_sum_impl,far,render3d,,
+ap,func,277a:41c4,lerp_map,"far int(int x,int x0,int x1,int y0,int y1)",render3d,,
+ap,func,277a:41e0,mat_mul,"far mat*(mat*a,mat*b,mat*c)",render3d,,c=a*b
+ap,func,277a:4556,mat_transpose,far mat*(mat*),render3d,,
+ap,func,277a:457a,mat_from_angles,"far mat*(u16 ang[3],mat*)",render3d,,"pitch,roll,heading"
+ap,func,277a:49a4,mat_to_angles,"far u16*(mat*,u16*)",render3d,,
+ap,func,277a:4a0c,vec_rotate_n,near asm AX=v BX=m CX=out,render3d,,
+ap,func,277a:4ae5,vec_rotate,"far vec*(vec*,mat*,vec*)",render3d,,v*M >>14
+ap,func,277a:4afa,dot48,near asm,render3d,,48-bit i32 vec . i16 column
+ap,func,277a:4c27,lvec_rotate_n,near asm,render3d,,
+ap,func,277a:4cb3,lvec_rotate,"far lvec*(lvec*,mat*,lvec*)",render3d,,
+ap,func,277a:4cc8,vtx_rotate_shift,near asm,render3d,,returns CF used by 361d
+ap,func,277a:4e76,mul_cos,"far i32(int r,u16 a)",render3d,,
+ap,func,277a:4eb6,mul_sin,"far i32(int r,u16 a)",render3d,,
+ap,func,277a:4ef8,vdot_n,near asm,render3d,,
+ap,func,277a:4f18,vdot,"far i32(vec*,vec*)",render3d,,
+ap,func,277a:4f26,vneg,far vec*(vec*),render3d,,
+ap,func,277a:4f38,vadd,"far vec*(vec*,vec*)",render3d,,
+ap,func,277a:4f58,vadd_far,"far vec*(vec*,vec far*)",render3d,,
+ap,func,277a:4f7c,vsub,"far vec*(vec*,vec*)",render3d,,
+ap,func,277a:4f9c,vshl,"far vec*(vec*,int)",render3d,,
+ap,func,277a:4fb2,vsar,"far vec*(vec*,int)",render3d,,
+ap,func,277a:4fd3,vlen,far u16(vec*),render3d,,
+ap,func,277a:5004,ladd,"far lvec*(lvec*,lvec*)",render3d,,
+ap,func,277a:5038,ladd_far,far,render3d,,
+ap,func,277a:5074,ladd3,"far lvec*(lvec*,lvec*,lvec*)",render3d,,
+ap,func,277a:50c0,lsub,"far lvec*(lvec*,lvec*)",render3d,,
+ap,func,277a:50f4,lsub_far,far,render3d,,
+ap,func,277a:512e,lsub3,far,render3d,,
+ap,func,277a:517a,lmin,far,render3d,,
+ap,func,277a:51ce,lmax,far,render3d,,
+ap,func,277a:5224,lvshl,far,render3d,,
+ap,func,277a:526a,lvsar,far,render3d,,
+ap,func,277a:52c6,ladd_scalar16,far,render3d,,
+ap,func,277a:530c,ladd_v,"far lvec*(lvec*,vec*)",render3d,,
+ap,func,277a:533a,lsub_v,far,render3d,,
+ap,func,277a:5368,ladd3_v,far,render3d,,
+ap,func,277a:53ae,ldiff16,far,render3d,,
+ap,func,277a:53e2,lmid,"far lvec*(lvec*,lvec*)",render3d,,static DS:25F5
+ap,func,277a:5434,lnear,"far int(lvec*,lvec*,u32)",render3d,,
+ap,func,277a:5510,lbox,"far int(lvec*,lvec*,u32)",render3d,,
+ap,func,277a:5588,linbox,"far int(lvec*,u32)",render3d,,
+ap,func,277a:55f0,l2v,"far vec*(vec*,lvec*)",render3d,,
+ap,func,277a:5612,v2l,"far lvec*(lvec*,vec*)",render3d,,
+ap,func,277a:563a,lmove,"far lvec*(lvec*,int r,u16 h)",render3d,,
+ap,func,277a:5e66,sin16,far int(u16),render3d,,
+ap,func,277a:5e71,cos16,far int(u16),render3d,,
+ap,func,277a:5ea4,dir_from_angles,"far vec*(vec*,u16 ang[3])",render3d,,
+ap,func,277a:5fae,dir_from_heading,"far vec*(vec*,u16)",render3d,,
+ap,func,277a:6228,atan2_16,"far u16(int x,int y)",render3d,,
+ap,func,277a:62c8,atan2_32,"far u16(i32 x,i32 y)",render3d,,
+ap,func,277a:6b28,asin16,far u16(int),render3d,,
+ap,func,277a:6b5d,acos16,far u16(int),render3d,,
+ap,func,277a:384e,lswap_order,far,render3d,,
+ap,func,277a:3892,lbox_order,far,render3d,,
+ap,func,277a:38d0,lbox_overlap,far,render3d,,
+ap,func,35ff:0009,clamp,"far int(int,int,int)",render3d,,
+ap,func,35ff:0029,in_range,"far char(int,int,int)",render3d,,
+ap,func,35ff:0041,bearing32,"far u16(i32 dx,i32 dy)",render3d,,atan2_32 + C000h
+ap,func,3604:0009,vscale,"far vec*(vec*,int)",render3d,,
+ap,func,3609:0001,vrot_z,"near vec*(vec*,u16)",render3d,,
+ap,func,3611:0007,dir_scaled,near,render3d,,
+ap,func,3614:0009,angles_to,near,render3d,,
+ap,func,361d:000b,lmove_dir,far,render3d,,
+ap,func,3624:0000,lmove_heading,near,render3d,,
+ap,func,3629:0004,bearing_between,near,render3d,,
+ap,func,365a:000c,obj_matrix,far BX=obj,render3d,,matrix cache obj+13h
+ap,func,365a:0032,obj_matrix_t,far BX=obj,render3d,,
+ap,func,365a:0074,obj_set_angles,near,render3d,,
+ap,func,3662:0002,nop_3662,far,render3d,,
+ap,func,3662:000d,lscale,near,render3d,,
+ap,func,3666:0009,l2v_sar,far,render3d,,
+ap,func,3666:003b,v2l_shl,far,render3d,,
+ap,func,3666:0073,lrotate,near,render3d,,
+ap,func,3678:0004,obj_to_world,near,render3d,,
+ap,func,367b:0006,lrot_z,near,render3d,,rotates macro members
+ap,func,3684:000c,vdist,far,render3d,,
+ap,func,3684:0042,vec_outside_mask,far,render3d,,
+ap,func,3684:00a1,lbits,near,render3d,,
+ap,func,4edb:0000,lneg,far,render3d,,
+ap,func,4edb:0030,nop_4edb,far,render3d,,
+ap,func,5137:0000,vec_map_timebase,far,render3d,,
+ap,func,5137:0034,ratio10,far,render3d,,
+ap,func,5137:004f,vratio10,far,render3d,,
+ap,func,5137:0084,v2l_c,far,render3d,,
+ap,func,5137:00b3,ladd_v_c,far,render3d,,
+ap,func,5137:00e2,dir_from_angles_far,far,render3d,,
+ap,func,5137:0128,vec_dt,far,render3d,,
+ap,func,5137:015c,lrot_z2,far,render3d,,
+ap,func,5b91:0000,per4000,far,render3d,,
+ap,func,5b91:0014,nop_5b91,far,render3d,,
+ap,func,277a:01ba,poly_colours,near asm ES:DI=poly,render3d,,"VGA/EGA, shading, remap -> DS:26CC/26CD/26CE"
+ap,func,277a:029f,poly_fill,near,render3d,,1d32:09ce
+ap,func,277a:02e4,poly_fill_bitmap4,near,render3d,,flag 10h
+ap,func,277a:03bb,part_draw_shadow,far void(far var*),render3d,,DS:2403 mode
+ap,func,277a:05c6,part_draw16,far void(far var*),render3d,,mode 0
+ap,func,277a:07ae,part_draw16s,far void(far var*),render3d,,mode 3
+ap,func,277a:361d,part_draw32,far void(far var*),render3d,,"modes 1,2"
+ap,func,277a:25ec,clip2d16,near,render3d,,
+ap,func,277a:2a8d,near_isect16,near,render3d,,
+ap,func,277a:2adf,near_clip16,near,render3d,,
+ap,func,277a:2b5d,poly_add_centre16,near,render3d,,
+ap,func,277a:2b88,clip32a_x_edge,near,render3d,,
+ap,func,277a:2c19,clip32a_y_edge,near,render3d,,
+ap,func,277a:2caa,clip2d32a,near,render3d,,
+ap,func,277a:2ed7,near_isect32a,near,render3d,,
+ap,func,277a:2f4e,near_clip32a,near,render3d,,
+ap,func,277a:3070,clip32b_x_edge,near,render3d,,
+ap,func,277a:3159,clip32b_y_edge,near,render3d,,
+ap,func,277a:3242,clip2d32b,near,render3d,,
+ap,func,277a:346b,near_isect32b,near,render3d,,
+ap,func,277a:3530,near_clip32b,near,render3d,,
+ap,func,277a:35d0,poly_add_centre32,near,render3d,,
+ap,func,2ec2:0002,nop_2ec2,far,render3d,,
+ap,func,2ec2:000d,bitmap4_draw,far,render3d,,calls 07fe:000a
+ap,func,2f0e:0008,ts_visible_lod,far char(void),render3d,,1 = culled
+ap,func,2f0e:033d,part_sort,"far int(self,n,list)",render3d,,
+ap,func,2f0e:06eb,part_list,"far int(self,n,ofs,out)",render3d,,
+ap,func,2f0e:071f,part_walk,"far void(self,n,list)",render3d,,
+ap,func,2f0e:08e9,ts_draw,far void(instance*),render3d,,
+ap,func,2edf:0007,bitmap_global,far int(int),render3d,,
+ap,func,2edf:005e,vtx_eye16,"far vec*(u8,vec*)",render3d,,
+ap,func,2edf:0119,sprite_draw,far void(far var*),render3d,,
+ap,func,70e8:0000,disc_draw,far void(far var*),render3d,,
+ap,func,2ecb:0007,shadow_pos,"far char(lvec*,lvec*)",render3d,,
+ap,func,2ecb:00ba,shadow_draw,"far void(instance*,int lod)",render3d,,
+ap,func,2ecb:013c,set_shadow_colour,far void(u8),render3d,,
+ap,func,2e33:0006,bm_set_size_cap,far void(int),render3d,,
+ap,func,2e33:0011,bm_reset_size_cap,far void(void),render3d,,
+ap,func,2e33:001c,bm_draw_item,far,render3d,,
+ap,func,2e33:0208,bm_visible,far char(void),render3d,,0 = visible
+ap,func,2e33:0333,bm_view_angles,far void(void),render3d,,
+ap,func,2e33:0508,bm_draw_frame,"far void(far u16*,int)",render3d,,
+ap,func,2e33:07f4,bm_draw,far void(instance*),render3d,,
+ap,func,2e33:08b8,bm_is_bitmap,far int(int),render3d,,
+ap,func,2e33:08e7,bm_set_mult,far void(int),render3d,,DS:23BE; 08f2 resets
+ap,func,241c:0005,bmd_load,"far void*(int id,int set,char*name)",render3d,,
+ap,func,241c:01f6,bmd_free,near void(int),render3d,,
+ap,func,243d:0009,sprite_set_load,far,render3d,,
+ap,func,243d:004c,sprite_set_load2,far,render3d,,
+ap,func,243d:008f,sprite_set_free,far,render3d,,
+ap,func,243d:00cd,sprite_set_free2,near,render3d,,
+ap,func,271b:0007,shape_ptr,far void far*(int id),render3d,,sets CS:0A25
+ap,func,271b:011d,shape_set_ptr,far,render3d,,
+ap,func,271b:0251,view_new,far view*(void*eye),render3d,,
+ap,func,271b:02a6,view_free,far,render3d,,
+ap,func,271b:02b5,shape_flags,far,render3d,,
+ap,func,271b:02f5,shape_class,far,render3d,,
+ap,func,271b:0336,shape_set_class,far,render3d,,
+ap,func,271b:037a,shape_subclass,far,render3d,,
+ap,func,271b:03bb,shape_shift,far,render3d,,
+ap,func,271b:03fc,shape_nslots,far,render3d,,
+ap,func,271b:043d,shape_nvariants,far,render3d,,
+ap,func,271b:04b4,shape_radius,far,render3d,,
+ap,func,271b:04f5,shape_set_radius,far,render3d,,
+ap,func,271b:0539,shape_radius_world,far,render3d,,
+ap,func,271b:0584,shape_box,far,render3d,,
+ap,func,7074:0000,ts_init,"far int(int,int)",render3d,,
+ap,func,7074:012d,ts_done,far,render3d,,
+ap,func,7074:0154,ts_load_table,far,render3d,,
+ap,func,7074:022b,ts_free_table,far,render3d,,
+ap,func,7074:02d8,ts_load_table_h,far,render3d,,
+ap,func,7039:0000,ts_read,far,render3d,,
+ap,func,7039:0144,ts_close,far,render3d,,
+ap,func,7039:0187,ts_open,far,render3d,,
+ap,func,7039:020a,ts_load_chunk,far,render3d,,
+ap,func,7039:02a4,ts_load_chunk_h,far,render3d,,
+ap,func,7017:0000,shape_cache_free,far,render3d,,
+ap,func,7017:004f,shape_cache_build,far,render3d,,
+ap,func,7032:0000,shape_count,near,render3d,,
+ap,func,7032:0039,sprite_count,far,render3d,,
+ap,data,277a:0008,light_world,i16[3],render3d,,
+ap,data,277a:000e,near_z,u16,render3d,,
+ap,data,277a:0010,near_shift,u16,render3d,,
+ap,data,277a:09a2,vtx_cache_key,u16:u16,render3d,,
+ap,data,277a:09a6,vtx_ofs,u16,render3d,,
+ap,data,277a:09a8,vtx_count,u16,render3d,,
+ap,data,277a:09aa,obj_shift,i16,render3d,,
+ap,data,277a:09ac,vtx_shift,i16,render3d,,s-k <= 0
+ap,data,277a:09ae,obj_down,i16,render3d,,k
+ap,data,277a:09b0,draw_mode,u8,render3d,,
+ap,data,277a:09b2,force_clip,u8,render3d,,
+ap,data,277a:09b3,need_clip,u8,render3d,,
+ap,data,277a:09b5,backlit,u8,render3d,,
+ap,data,277a:09b6,m_cam,mat,render3d,,
+ap,data,277a:09c9,m_obj_eye,mat,render3d,,
+ap,data,277a:09dc,m_obj,mat,render3d,,
+ap,data,277a:09ef,d_world,lvec,render3d,,
+ap,data,277a:09fb,e_pos,lvec,render3d,,
+ap,data,277a:0a07,eye_in_obj,vec,render3d,,
+ap,data,277a:0a0d,e_pos16,vec,render3d,,
+ap,data,277a:0a13,cam_pos,lvec,render3d,,
+ap,data,277a:0a1f,cam_ang,u16[3],render3d,,
+ap,data,277a:0a25,shape_tbl,u16,render3d,,
+ap,data,277a:0a27,shape_ptr_cur,far,render3d,,
+ap,data,277a:0a2b,state_ptr,u16,render3d,,
+ap,data,277a:0a2d,radius,i32,render3d,,
+ap,data,277a:0a31,e_dist,i32,render3d,,
+ap,data,277a:0a35,e_near,i32,render3d,,
+ap,data,277a:0a39,app_size,u16,render3d,,
+ap,data,277a:0a3b,light_obj,vec,render3d,,
+ap,data,277a:0a41,e_depth,i32,render3d,,
+ap,data,277a:0a47,focal,u16,render3d,,
+ap,data,277a:0a49,proj_shift,u16,render3d,,
+ap,data,277a:0a4b,scr_cx,i16,render3d,,
+ap,data,277a:0a4d,scr_cy,i16,render3d,,
+ap,data,277a:0a4f,poly_n,u16,render3d,,
+ap,data,277a:0a51,poly_idx,u16[20],render3d,,
+ap,data,277a:0a79,vtx_state,u16[255],render3d,,
+ap,data,277a:0c77,poly_px,i16[20],render3d,,
+ap,data,277a:0c9f,poly_py,i16[20],render3d,,
+ap,data,277a:0d17,vtx_ex,i16[255],render3d,,
+ap,data,277a:0f15,vtx_ey,i16[255],render3d,,
+ap,data,277a:1113,vtx_ez,i16[255],render3d,,
+ap,data,277a:1311,vtx_px,i16[255],render3d,,
+ap,data,277a:150f,vtx_py,i16[255],render3d,,
+ap,data,277a:21a3,m_look,mat,render3d,,
+ap,data,277a:21ec,shades_ptr,u16,render3d,,DS pointer
+ap,data,277a:21ee,remap_ptr,u16,render3d,,DS pointer
+ap,data,277a:21f8,shade_ofs,i8[8][32],render3d,,
+ap,data,277a:5664,cos_tab,i16[1025],render3d,,
+ap,data,277a:6028,atan_corr,i8[512],render3d,,
+ap,data,277a:63a6,asin_tab,i16[961],render3d,,
+ap,data,DS:437E,sim_view,view*,render3d,,
+ap,data,DS:4368,sim_eye,record,render3d,,
+ap,data,DS:4092,shades_table,u8[256],render3d,,SHADES1
+ap,data,DS:26C4,clip_x0,i16,render3d,,
+ap,data,DS:26C6,clip_x1,i16,render3d,,
+ap,data,DS:26C8,clip_y0,i16,render3d,,
+ap,data,DS:26CA,clip_y1,i16,render3d,,
+ap,data,DS:26CC,fill_flag,u8,render3d,,
+ap,data,DS:26CD,fill_colour,u8,render3d,,
+ap,data,DS:26CE,edge_colour,u8,render3d,,
+ap,data,DS:26DF,vga_colours,u8,render3d,,0 = EGA bytes
+ap,data,DS:2402,shadow_colour,u8,render3d,,
+ap,data,DS:2403,shadow_mode,u16,render3d,,
+ap,data,DS:2405,shadow_lod,u16,render3d,,
+ap,data,DS:6492,light_world_ds,i16[3],render3d,,
+ap,data,DS:647C,shape_tables,rec12*,render3d,,
+ap,data,DS:647E,shape_total,u16,render3d,,
+ap,data,DS:6480,shape_ntables,u16,render3d,,
+ap,data,DS:6498,sprite_sets,rec4*,render3d,,
+ap,data,DS:649A,sprite_nsets,u16,render3d,,
+ap,data,DS:2294,shape_ptr_cache,far,render3d,,
+ap,data,DS:2298,shape_tbl_cache,far,render3d,,
+ap,data,DS:6482,bm_elev,i16,render3d,,
+ap,data,DS:6484,bm_roll,i16,render3d,,
+ap,data,DS:6486,bm_azim,i16,render3d,,
+ap,data,DS:6488,bmd_ext1,i16,render3d,,
+ap,data,DS:648A,bmd_ext0,i16,render3d,,
+ap,data,DS:648C,bm_sprite_base,u16,render3d,,
+ap,data,DS:648E,bm_hotspots,far,render3d,,
+ap,data,DS:23BC,bm_size_cap,u16,render3d,,
+ap,data,DS:23BE,bm_mult,u16,render3d,,
+ap,func,5440:03aa,render_scene,far,render3d,,render3d_world.md
+ap,func,5440:0269,draw_object,far,render3d,,render3d_world.md
+ap,func,5440:0375,dist_limit,far,render3d,,render3d_world.md
+ap,func,33d1:0004,scene_begin,far,render3d,,render3d_world.md
+ap,func,33d1:00a8,scene_eye_moved,far,render3d,,render3d_world.md
+ap,func,33d1:00f2,list_add,far,render3d,,render3d_world.md
+ap,func,33d1:0140,scene_add_dynamic,far,render3d,,render3d_world.md
+ap,func,33d1:02ea,static_test_add,far,render3d,,render3d_world.md
+ap,func,33d1:02eb,static_test_add_body,far,render3d,,render3d_world.md
+ap,func,33d1:04dc,scene_force_rebuild,far,render3d,,render3d_world.md
+ap,func,33d1:04e7,scene_gather_static,far,render3d,,render3d_world.md
+ap,func,33d1:0e69,tree_flatten,far,render3d,,render3d_world.md
+ap,func,33d1:0e6a,tree_flatten_body,far,render3d,,render3d_world.md
+ap,func,33b4:0004,draw_entry,far,render3d,,render3d_world.md
+ap,func,33b4:002a,draw_entry_default,far,render3d,,render3d_world.md
+ap,func,33b4:010e,draw_record,far,render3d,,render3d_world.md
+ap,func,34bf:0006,scene_draw,far,render3d,,render3d_world.md
+ap,func,34bf:0084,tree_build,far,render3d,,render3d_world.md
+ap,func,34bf:02a3,tree_draw,far,render3d,,render3d_world.md
+ap,func,34bf:02a4,tree_draw_body,far,render3d,,render3d_world.md
+ap,func,465c:0589,sort_compare,far,render3d,,render3d_world.md
+ap,func,0802:000c,overcast,far,render3d,,render3d_world.md
+ap,func,0802:0026,overcast_split,far,render3d,,render3d_world.md
+ap,func,0802:0173,range_cull,far,render3d,,render3d_world.md
+ap,func,1560:055b,spawn_ground_fires,far,render3d,,render3d_world.md
+ap,func,1560:06e9,effect_draw,far,render3d,,render3d_world.md
+ap,func,2466:000a,far_dot_alloc,far,render3d,,render3d_world.md
+ap,func,2466:0023,far_dot_draw,far,render3d,,render3d_world.md
+ap,func,05a9:0005,fx_pool_create,far,render3d,,render3d_world.md
+ap,func,05a9:0043,fx_pool_free,far,render3d,,render3d_world.md
+ap,func,05a9:005a,fx_spawn,far,render3d,,render3d_world.md
+ap,func,05a9:00ad,fx_update_ref,far,render3d,,render3d_world.md
+ap,func,05a9:014c,fx_run,far,render3d,,render3d_world.md
+ap,func,05a9:01d1,fx_recull,far,render3d,,render3d_world.md
+ap,func,05a9:0233,fx_release_list,far,render3d,,render3d_world.md
+ap,func,05a9:025f,fx_in_range,far,render3d,,render3d_world.md
+ap,func,59f9:0000,class_register,far,render3d,,render3d_world.md
+ap,func,59f9:0026,class_register_n,far,render3d,,render3d_world.md
+ap,func,59f9:004e,class_alloc,far,render3d,,render3d_world.md
+ap,func,59f9:0068,class_reset,far,render3d,,render3d_world.md
+ap,func,35a4:000f,obj_angles,far,render3d,,render3d_world.md
+ap,func,35d1:000e,point_in_region,far,render3d,,render3d_world.md
+ap,func,35d6:000c,shape_attr_refresh,far,render3d,,render3d_world.md
+ap,func,35d6:00b8,shape_attr_build,far,render3d,,render3d_world.md
+ap,func,35d6:0128,shape_attr_free,far,render3d,,render3d_world.md
+ap,func,35d6:018a,shape_radius_cached,far,render3d,,render3d_world.md
+ap,func,35d6:01b8,shape_shift_cached,far,render3d,,render3d_world.md
+ap,func,35d6:01e2,shape_layer_cached,far,render3d,,render3d_world.md
+ap,func,35d6:020c,shape_class_cached,far,render3d,,render3d_world.md
+ap,func,35d6:0236,shape_set_class_cached,far,render3d,,render3d_world.md
+ap,func,35d6:0267,shape_set_radius_cached,far,render3d,,render3d_world.md
+ap,func,3368:0001,gid_load,far,render3d,,render3d_world.md
+ap,func,3368:0057,gid_free,far,render3d,,render3d_world.md
+ap,func,3368:0069,ground_query,far,render3d,,render3d_world.md
+ap,func,3368:0128,gid_region,far,render3d,,render3d_world.md
+ap,func,3368:0169,ground_query_obj,far,render3d,,render3d_world.md
+ap,func,3368:02f4,gid_slope_height,far,render3d,,render3d_world.md
+ap,func,333b:000a,flt_load,far,render3d,,render3d_world.md
+ap,func,333b:0098,flt_record,far,render3d,,render3d_world.md
+ap,func,333b:0143,flt_valid,far,render3d,,render3d_world.md
+ap,func,333b:0158,flt_set_detail,far,render3d,,render3d_world.md
+ap,func,333b:024c,lerp_setup_copy,far,render3d,,render3d_world.md
+ap,func,333b:0290,lerp_eval_copy,far,render3d,,render3d_world.md
+ap,func,33a1:0008,lerp_eval,far,render3d,,render3d_world.md
+ap,func,33a1:0055,lerp_setup,far,render3d,,render3d_world.md
+ap,func,33a1:00b3,lerp_step_init,far,render3d,,render3d_world.md
+ap,func,3546:0006,pool_create,far,render3d,,render3d_world.md
+ap,func,3546:007e,pool_create_near,far,render3d,,render3d_world.md
+ap,func,3546:0118,pool_init,far,render3d,,render3d_world.md
+ap,func,3546:019d,pool_destroy,far,render3d,,render3d_world.md
+ap,func,3546:01d4,pool_destroy_near,far,render3d,,render3d_world.md
+ap,func,3546:021a,pool_alloc,far,render3d,,render3d_world.md
+ap,func,3546:02bb,pool_alloc2,far,render3d,,render3d_world.md
+ap,func,3546:02ca,pool_alloc_zero,far,render3d,,render3d_world.md
+ap,func,3546:0304,pool_alloc_zero_near,far,render3d,,render3d_world.md
+ap,func,3546:0333,pool_free,far,render3d,,render3d_world.md
+ap,func,3546:03f2,pool_free2,far,render3d,,render3d_world.md
+ap,func,3546:040a,pool_next,far,render3d,,render3d_world.md
+ap,func,3546:045f,pool_next_near,far,render3d,,render3d_world.md
+ap,func,3546:0498,pool_field0,far,render3d,,render3d_world.md
+ap,func,3546:04a4,pool_misc,far,render3d,,render3d_world.md
+ap,func,3591:0001,ob_init,far,render3d,,render3d_world.md
+ap,func,3591:00dc,ob_done,far,render3d,,render3d_world.md
+ap,func,35ad:000c,wd3_open,far,render3d,,render3d_world.md
+ap,func,35ad:00ce,wd3_close,far,render3d,,render3d_world.md
+ap,func,35ad:00f8,wd3_read_objects,far,render3d,,render3d_world.md
+ap,func,34f1:000b,macros_alloc,far,render3d,,render3d_world.md
+ap,func,34f1:00a8,macros_free,far,render3d,,render3d_world.md
+ap,func,34f1:00e9,macros_clear,far,render3d,,render3d_world.md
+ap,func,34f1:0144,arena_reset,far,render3d,,render3d_world.md
+ap,func,34f1:0155,macro_expand,far,render3d,,render3d_world.md
+ap,func,34f1:0259,macro_distance,far,render3d,,render3d_world.md
+ap,func,34f1:02f5,macro_entry,far,render3d,,render3d_world.md
+ap,func,34f1:0310,macros_load,far,render3d,,render3d_world.md
+ap,func,34f1:04a3,arena_alloc30,far,render3d,,render3d_world.md
+ap,func,34f1:04f0,arena_alloc40,far,render3d,,render3d_world.md
+ap,func,34f1:053a,arena_free30,far,render3d,,render3d_world.md
+ap,func,34f1:0548,arena_free40,far,render3d,,render3d_world.md
+ap,func,62d2:0000,bitlen_long,far,render3d,,render3d_world.md
+ap,func,62d2:001d,group_record,far,render3d,,render3d_world.md
+ap,func,62d2:0133,instance_build,far,render3d,,render3d_world.md
+ap,func,62d2:0199,object_record_handler,far,render3d,,render3d_world.md
+ap,func,62d2:044a,area_free,far,render3d,,render3d_world.md
+ap,func,62d2:049e,area_load,far,render3d,,render3d_world.md
+ap,func,62d2:0969,area_free2,far,render3d,,render3d_world.md
+ap,func,62d2:0a0d,area_init,far,render3d,,render3d_world.md
+ap,func,62d2:0a2e,area_read_groups,far,render3d,,render3d_world.md
+ap,func,628f:0000,wd_list0,far,render3d,,render3d_world.md
+ap,func,628f:0024,wd_list1,far,render3d,,render3d_world.md
+ap,func,628f:0039,wd_list2,far,render3d,,render3d_world.md
+ap,func,628f:0048,wd_list_insert,far,render3d,,render3d_world.md
+ap,func,628f:00aa,wd_list3,far,render3d,,render3d_world.md
+ap,func,628f:00bb,wd_list_insert2,far,render3d,,render3d_world.md
+ap,func,628f:010e,target_free,far,render3d,,render3d_world.md
+ap,func,628f:0144,target_load,far,render3d,,render3d_world.md
+ap,func,628f:031f,target_at_date,far,render3d,,render3d_world.md
+ap,func,62ca:0000,sorted_insert,far,render3d,,render3d_world.md
+ap,func,62ca:004f,sorted_insert2,far,render3d,,render3d_world.md
+ap,func,51ca:0000,fread_word,far,render3d,,render3d_world.md
+ap,func,51ca:0027,fread_long,far,render3d,,render3d_world.md
+ap,func,51ca:008d,fread_str,far,render3d,,render3d_world.md
+ap,func,51ca:00ce,fwrite_word,far,render3d,,render3d_world.md
+ap,func,51ca:010c,fwrite_long,far,render3d,,render3d_world.md
+ap,func,51ca:0180,fwrite_str,far,render3d,,render3d_world.md
+ap,func,4d6e:0000,sky_set_detail,far,render3d,,render3d_sky.md
+ap,func,4d6e:0040,sky_invalidate,far,render3d,,render3d_sky.md
+ap,func,4d6e:004b,sky_alloc,far,render3d,,render3d_sky.md
+ap,func,4d6e:0076,draw_sky,far,render3d,,render3d_sky.md
+ap,func,4d6e:015c,horizon_line,far,render3d,,render3d_sky.md
+ap,func,4d6e:029e,horizon_fill_rest,far,render3d,,render3d_sky.md
+ap,func,4d6e:03be,horizon_fill_rows,far,render3d,,render3d_sky.md
+ap,func,4d6e:0724,horizon_fill_cols,far,render3d,,render3d_sky.md
+ap,func,0a88:000a,span_left_const,far,render3d,,render3d_sky.md
+ap,func,0a88:000f,span_right_const,far,render3d,,render3d_sky.md
+ap,func,0a88:0030,span_left_step,far,render3d,,render3d_sky.md
+ap,func,0a88:0035,span_right_step,far,render3d,,render3d_sky.md
+ap,func,0a88:0059,span_left_edge,far,render3d,,render3d_sky.md
+ap,func,0a88:007c,span_right_edge,far,render3d,,render3d_sky.md
+ap,func,0a88:009a,span_left_dda,far,render3d,,render3d_sky.md
+ap,func,0a88:009f,span_right_dda,far,render3d,,render3d_sky.md
+ap,func,0a88:00cf,span_fill,far,render3d,,render3d_sky.md
+ap,func,0a88:0145,span_flush,far,render3d,,render3d_sky.md
+ap,func,1abf:0008,dda_setup,far,render3d,,render3d_sky.md
+ap,func,1abf:00c6,dda_step,far,render3d,,render3d_sky.md
+ap,func,1abf:00de,dda_fill_edge,far,render3d,,render3d_sky.md
+ap,func,1abf:011d,dda_const_edge,far,render3d,,render3d_sky.md
+ap,func,55e8:0000,stars_load_thunk,far,render3d,,render3d_sky.md
+ap,func,55e8:000a,sky_free,far,render3d,,render3d_sky.md
+ap,func,55e8:0028,date_split,far,render3d,,render3d_sky.md
+ap,func,55e8:00c4,sky_init,far,render3d,,render3d_sky.md
+ap,func,55e8:028f,day_of_year,far,render3d,,render3d_sky.md
+ap,func,55e8:02a3,declination,far,render3d,,render3d_sky.md
+ap,func,59eb:0000,stars_load,far,render3d,,render3d_sky.md
+ap,func,59eb:0097,stars_reset,far,render3d,,render3d_sky.md
+ap,func,4b91:0000,moon_phase,far,render3d,,render3d_sky.md
+ap,func,4b91:008d,moon_phase_days,far,render3d,,render3d_sky.md
+ap,func,6964:0000,sky_advance,far,render3d,,render3d_sky.md
+ap,func,6964:005b,sun_vector_if_up,far,render3d,,render3d_sky.md
+ap,func,6964:0076,sky_update,far,render3d,,render3d_sky.md
+ap,func,6964:01a2,draw_celestial,far,render3d,,render3d_sky.md
+ap,func,6964:0298,celestial_project,far,render3d,,render3d_sky.md
+ap,func,6964:0458,sun_glare,far,render3d,,render3d_sky.md
+ap,func,6964:059b,sun_angle,far,render3d,,render3d_sky.md
+ap,func,6964:05a3,sun_in_window,far,render3d,,render3d_sky.md
+ap,func,6964:05d2,choose_light,far,render3d,,render3d_sky.md
+ap,func,6964:0633,sun_angles_if_up,far,render3d,,render3d_sky.md
+ap,func,6964:064d,darkness_lerp,far,render3d,,render3d_sky.md
+ap,func,1a9a:000a,draw_stars,far,render3d,,render3d_sky.md
+ap,func,1a9a:01da,sky_dir,far,render3d,,render3d_sky.md
+ap,func,1a8b:0004,shadows_default,far,render3d,,render3d_sky.md
+ap,func,1a8b:001e,shadows_set_detail,far,render3d,,render3d_sky.md
+ap,func,1a8b:004c,shadows_spawn,far,render3d,,render3d_sky.md
+ap,func,675d:0000,ground_speed_dots,far,render3d,,render3d_sky.md
+ap,func,655d:038a,gun_flashes,far,render3d,,render3d_sky.md
+ap,func,1792:0000,palfx_level,far,render3d,,render3d_sky.md
+ap,func,1792:0021,palfx_set_base,far,render3d,,render3d_sky.md
+ap,func,1792:0032,palfx_set,far,render3d,,render3d_sky.md
+ap,func,1792:0066,palfx_reset_upload,far,render3d,,render3d_sky.md
+ap,func,1792:009b,palfx_reset_levels,far,render3d,,render3d_sky.md
+ap,func,1792:00c0,palfx_update,far,render3d,,render3d_sky.md
+ap,func,1792:0286,palfx_blend,far,render3d,,render3d_sky.md
+ap,func,1792:038a,palfx_delta_table,far,render3d,,render3d_sky.md
+ap,func,1792:038b,palfx_delta_table_body,far,render3d,,render3d_sky.md
+ap,func,17ce:0008,palfx_force,far,render3d,,render3d_sky.md
+ap,func,17ce:0013,palfx_frame,far,render3d,,render3d_sky.md
+ap,func,51b4:0000,paltrick_load,far,render3d,,render3d_sky.md
+ap,func,51b4:0088,palette_effects_init,far,render3d,,render3d_sky.md
+ap,func,51a8:0000,palfx_alloc,far,render3d,,render3d_sky.md
+ap,func,51a8:004e,palfx_add_channel,far,render3d,,render3d_sky.md
+ap,data,DS:36D4,draw_list,,render3d,,8-byte entries
+ap,data,DS:36D8,draw_count,,render3d,,
+ap,data,DS:36DA,ground_layer_count,,render3d,,
+ap,data,DS:36DC,static_far_count,,render3d,,
+ap,data,DS:367C,draw_capacity,,render3d,,
+ap,data,DS:36E0,class_detail,,render3d,,85-byte records from .FLT
+ap,data,DS:36E2,class_range,,render3d,,i32 per class
+ap,data,DS:36AE,macro_table,,render3d,,
+ap,data,DS:36A8,temp_arena,,render3d,,
+ap,data,DS:36C6,gid_list,,render3d,,
+ap,data,DS:06F3,static_objects,,render3d,,
+ap,data,DS:3666,draw_record_buf,,render3d,,
+ap,data,DS:36CC,draw_callback,,render3d,,
+ap,data,DS:55F1,fx_pool,,render3d,,
+ap,data,DS:5EDE,far_dot_proxies,,render3d,,
+ap,data,DS:3700,shape_class_cache,,render3d,,
+ap,data,DS:5BDB,sky_base,,render3d,,
+ap,data,DS:5BDD,ground_colour,,render3d,,
+ap,data,DS:5BDA,below_overcast,,render3d,,
+ap,data,DS:0320,haze_bands_on,,render3d,,
+ap,data,DS:5BD8,palfx_block,,render3d,,
+ap,data,DS:51D9,light_dir_angles,,render3d,,
+ap,data,DS:1120,sun_angle,,render3d,,
+ap,data,DS:112A,moon_angle,,render3d,,
+ap,data,DS:5CE8,star_table,,render3d,,
+ap,data,DS:5CE0,shadow_lod_cap,,render3d,,
