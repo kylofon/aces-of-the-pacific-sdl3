@@ -177,6 +177,7 @@
 #define PS_DS_gfx_bios_mode                              0x328C  /* video, u8 */
 #define PS_DS_gfx_req_adapter                            0x328D  /* video, u8 */
 #define PS_DS_gfx_driver_ptr                             0x328E  /* video, far */
+#define PS_DS_scn_run_min                                0x3292  /* platform, s16 */
 #define PS_DS_kbd_installed                              0x3294  /* platform, u8 */
 #define PS_DS_kbd_caps_forced                            0x3295  /* platform, u8 */
 #define PS_DS_kbd_last_key                               0x3296  /* platform, u16 */
@@ -226,7 +227,13 @@
 #define PS_DS_ttm_no_restore                             0x3864  /* video, u16 */
 #define PS_DS_ttm_gosub_depth                            0x3866  /* video, u16 */
 #define PS_DS_ttm_fade_speed_tab                         0x3868  /* video, u16[7] */
+#define PS_DS_snd_pk_mode                                0x38B2  /* sound */
+#define PS_DS_snd_patch_tag                              0x38B4  /* sound */
+#define PS_DS_snd_inf_path                               0x38BE  /* sound */
+#define PS_DS_snd_dat_path                               0x38C7  /* sound */
+#define PS_DS_snd_dat_tail                               0x38CC  /* sound */
 #define PS_DS_snd_vol_curve                              0x38D2  /* sound */
+#define PS_DS_snd_drv_tag                                0x3914  /* sound */
 #define PS_DS_snd_drv_code                               0x391E  /* sound */
 #define PS_DS_snd_active                                 0x3964  /* sound */
 #define PS_DS_snd_patch_no                               0x3965  /* sound */
@@ -238,7 +245,10 @@
 #define PS_DS_snd_sng_inf                                0x3975  /* sound */
 #define PS_DS_snd_drv_block                              0x3977  /* sound */
 #define PS_DS_snd_error                                  0x397B  /* sound */
+#define PS_DS_snd_play7e                                 0x397D  /* sound */
 #define PS_DS_snd_disabled                               0x397F  /* sound */
+#define PS_DS_snd_whole                                  0x3981  /* sound */
+#define PS_DS_snd_rd_mode                                0x3984  /* sound */
 #define PS_DS_ts_fast_cache                              0x39E6  /* video, far ptr */
 #define PS_DS_bm_cap                                     0x3B0A  /* video, u16 */
 #define PS_DS_bm_rotated                                 0x3B0C  /* video, u16 */
@@ -251,7 +261,36 @@
 #define PS_DS_ts_stack_low                               0x3BF4  /* video, u32 */
 #define PS_DS_ts_stack_file                              0x3BF8  /* video, far ptr */
 #define PS_DS_ts_stack_line                              0x3BFC  /* video, u16 */
+#define PS_DS__ctype_1                                   0x3CD1  /* platform, u8[] */
+#define PS_DS__exitbuf                                   0x3DD2  /* platform, far fn */
+#define PS_DS__exitfopen                                 0x3DD6  /* platform, far fn */
+#define PS_DS__exitopen                                  0x3DDA  /* platform, far fn */
+#define PS_DS__streams                                   0x3DDE  /* platform, FILE[] */
+#define PS_DS__nfile                                     0x3F1E  /* platform, int */
+#define PS_DS__openfd                                    0x3F20  /* platform, u16[] */
+#define PS_DS__fmode                                     0x3F48  /* platform, int */
+#define PS_DS__notUmask                                  0x3F4A  /* platform, int */
+#define PS_DS__doserrno                                  0x3F4E  /* platform, int */
+#define PS_DS__dosErrorToSV                              0x3F50  /* platform, char[] */
 #define PS_DS__stklen                                    0x3FB4  /* platform, u16 */
+#define PS_DS__vpr_null                                  0x3FB6  /* platform, char[] */
+#define PS_DS__vpr_class                                 0x3FBD  /* platform, u8[] */
+#define PS_DS__cFlag                                     0x4050  /* platform, int */
+#define PS_DS___first                                    0x4052  /* platform, near ptr */
+#define PS_DS___last                                     0x4054  /* platform, near ptr */
+#define PS_DS___rover                                    0x4056  /* platform, near ptr */
+#define PS_DS_environ                                    0x4066  /* platform, char */
+#define PS_DS__fputc_cr                                  0x4068  /* platform, char[] */
+#define PS_DS__stdinbuf_set                              0x406A  /* platform, int */
+#define PS_DS__stdoutbuf_set                             0x406C  /* platform, int */
+#define PS_DS__Days                                      0x406E  /* platform, char[12] */
+#define PS_DS__YDays                                     0x407A  /* platform, int[] */
+#define PS_DS_tzname                                     0x4094  /* platform, char*[2] */
+#define PS_DS_timezone                                   0x4098  /* platform, long */
+#define PS_DS_daylight                                   0x409C  /* platform, int */
+#define PS_DS__tz_TZ                                     0x409E  /* platform, char[] */
+#define PS_DS__tz_EST                                    0x40A1  /* platform, char[] */
+#define PS_DS__tz_EDT                                    0x40A5  /* platform, char[] */
 #define PS_DS_data_prefix                                0x40CA  /* platform, char[] */
 #define PS_DS_emd_bounce                                 0x419A  /* shell_data, u8[128] */
 #define PS_DS_mm_choice                                  0x4224  /* shell_ui, u8 */
@@ -476,6 +515,13 @@
 #define PS_DS_font_uline                                 0x72A8  /* video, u8[20] */
 #define PS_DS_chunk_slots                                0x72BC  /* platform, CHF[4] */
 #define PS_DS_chunk_backup                               0x73C8  /* platform, CHF */
+#define PS_DS_scn_pending_nl                             0x740C  /* platform, s16 */
+#define PS_DS_scn_block                                  0x740E  /* platform, far ptr */
+#define PS_DS_scn_size_par                               0x7412  /* platform, u16 */
+#define PS_DS_scn_src                                    0x7414  /* platform, far ptr */
+#define PS_DS_scn_dst                                    0x7418  /* platform, far ptr */
+#define PS_DS_scn_tmp                                    0x741C  /* platform, near ptr */
+#define PS_DS_scn_mask                                   0x741E  /* platform, u8 */
 #define PS_DS_pk_litbuf                                  0x7420  /* platform, u8[50] */
 #define PS_DS_pk_io                                      0x7452  /* platform, u8 */
 #define PS_DS_pk_file                                    0x7454  /* platform, VFILE */
@@ -543,6 +589,7 @@
 #define PS_DS_ttm_cyc_step                               0x76A6  /* video, u16 */
 #define PS_DS_ttm_cyc_on                                 0x76A8  /* video, u16 */
 #define PS_DS_snd_iter_rec                               0x76AA  /* sound */
+#define PS_DS_snd_iter_sel                               0x76AE  /* sound */
 #define PS_DS_snd_wait_count                             0x76B0  /* sound */
 #define PS_DS_snd_pool                                   0x76B2  /* sound */
 #define PS_DS_ts_sprite_sets                             0x76CE  /* video, far ptr */
@@ -559,6 +606,10 @@
 #define PS_DS_bm_hot                                     0x76E4  /* video, far ptr */
 #define PS_DS_shadow_xyz                                 0x76E8  /* video, s16[3] */
 #define PS_DS_ts_rotbuf                                  0x76EE  /* video, char[2][80] */
+#define PS_DS__fgetc_ch                                  0x781C  /* platform, u8 */
+#define PS_DS__fputc_ch                                  0x781E  /* platform, u8 */
+#define PS_DS__qs_width                                  0x7820  /* platform, u16 */
+#define PS_DS__qs_cmp                                    0x7822  /* platform, far fn */
 
 /* ---- Code-segment globals (CS_x offset, CSSEG_x file segment) */
 #define PS_CS_flyhist_items                              0x0010  /* shell_ui, item[17] */
@@ -610,6 +661,7 @@
 #define PS_FN_atexit                                     0x000017E4u  /* match:intro, far int(void(*)(void)) */
 #define PS_FN_chdir                                      0x00001811u  /* match:intro, far int(const char*) */
 #define PS_FN_access                                     0x00001827u  /* match:intro, far int(const char* int) */
+#define PS_FN_rtl_exit_nop                               0x0000185Fu  /* platform, far void(void) */
 #define PS_FN___exit                                     0x00001860u  /* match:intro, near void(int status int quick int dontexit) */
 #define PS_FN_exit                                       0x000018B7u  /* match:intro, far void(int) */
 #define PS_FN__exit                                      0x000018C6u  /* match:intro, far void(int) */
@@ -712,6 +764,8 @@
 #define PS_FN_vprintf                                    0x000045A3u  /* match:intro, far int(const char* va_list) */
 #define PS_FN_write                                      0x000045B9u  /* match:intro, far int(int fd const void* unsigned) */
 #define PS_FN__write                                     0x000046C7u  /* match:intro, far int(int fd const void* unsigned) */
+#define PS_FN_rtl__xfclose                               0x00004701u  /* platform, far void(void) */
+#define PS_FN_rtl__xfflush                               0x00004729u  /* platform, far void(void) */
 #define PS_FN__fstrcpy                                   0x0000482Fu  /* match:intro, far char far*(char far* const char far*) */
 #define PS_FN_ps_sys_init                                0x048E0009u  /* platform, far void(void) */
 #define PS_FN_please_wait                                0x048E0112u  /* shell_ui, far void(void) */

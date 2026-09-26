@@ -13,6 +13,12 @@
 #define AP_DS_sx_player_engine_type                      0x02D4  /* sound */
 #define AP_DS_sx_ai_engine_type                          0x02DA  /* sound */
 #define AP_DS_coord_by_level                             0x02E0  /* sim_world */
+#define AP_DS_str_FNT                                    0x02E6  /* video, char[] */
+#define AP_DS_str_font1                                  0x02EA  /* video, char[] */
+#define AP_DS_str_font2                                  0x02F0  /* video, char[] */
+#define AP_DS_str_font3                                  0x02F6  /* video, char[] */
+#define AP_DS_str_font4                                  0x02FC  /* video, char[] */
+#define AP_DS_str_talk                                   0x0302  /* video, char[] */
 #define AP_DS_gunlists                                   0x030C  /* sim_world */
 #define AP_DS_haze_bands_on                              0x0320  /* render3d */
 #define AP_DS_opt_sound_drv                              0x052E  /* sound */
@@ -76,6 +82,7 @@
 #define AP_DS_class_factor                               0x1634  /* sim_world */
 #define AP_DS_aa_sites                                   0x18B5  /* sim_world */
 #define AP_DS_tick_count                                 0x18D2  /* sim_flow, u32 */
+#define AP_DS_ship_class_order                           0x18EC  /* sim_flow, i16[9] */
 #define AP_DS_pal_fx_cached_level                        0x1910  /* video, u16 */
 #define AP_DS_rockets_mec                                0x1938  /* sim_world */
 #define AP_DS_rocket_class                               0x193A  /* sim_world */
@@ -155,6 +162,10 @@
 #define AP_DS_ttm_mtx_open                               0x209E  /* video, u8 */
 #define AP_DS_ttm_level                                  0x209F  /* video, u16 */
 #define AP_DS_ttm_gosub_depth                            0x2220  /* video, u16 */
+#define AP_DS_mtx_offsets                                0x2222  /* video, near ptr */
+#define AP_DS_mtx_frame                                  0x2224  /* video, u16[5] */
+#define AP_DS_mtx_scroll_x                               0x222E  /* video, s16 */
+#define AP_DS_mtx_scroll_y                               0x2230  /* video, s16 */
 #define AP_DS_vqt_rect_fn                                0x223C  /* video, far fn */
 #define AP_DS_vqt_putpix                                 0x2240  /* video, far fn */
 #define AP_DS_vqt_bits_fn                                0x2244  /* video, far fn */
@@ -171,13 +182,23 @@
 #define AP_DS_lzw_rmask                                  0x25AC  /* platform, u8[9] */
 #define AP_DS_lzw_resume                                 0x25B5  /* platform, u16 */
 #define AP_DS_rle_ringptr                                0x25B8  /* platform, u16 */
+#define AP_DS_snd_pk_mode                                0x261E  /* sound */
+#define AP_DS_snd_patch_tag                              0x2620  /* sound */
+#define AP_DS_snd_drv_tag                                0x262A  /* sound */
 #define AP_DS_snd_drv_code                               0x2634  /* sound */
 #define AP_DS_snd_active                                 0x2692  /* sound */
 #define AP_DS_snd_patch_no                               0x2693  /* sound */
+#define AP_DS_snd_patch_block                            0x2695  /* sound */
 #define AP_DS_snd_rec_head                               0x2699  /* sound, far ptr */
 #define AP_DS_snd_drv_no                                 0x269D  /* sound */
+#define AP_DS_snd_timer_owned                            0x269F  /* sound */
+#define AP_DS_snd_timer_handle                           0x26A1  /* sound */
 #define AP_DS_snd_sng_inf                                0x26A3  /* sound */
 #define AP_DS_snd_drv_block                              0x26A5  /* sound */
+#define AP_DS_snd_error                                  0x26A9  /* sound */
+#define AP_DS_snd_play7e                                 0x26AB  /* sound */
+#define AP_DS_snd_disabled                               0x26AD  /* sound */
+#define AP_DS_snd_rd_mode                                0x26B8  /* sound */
 #define AP_DS_drv_text_fg                                0x26C0  /* video, u8 */
 #define AP_DS_drv_text_bg                                0x26C1  /* video, u8 */
 #define AP_DS_drv_text_flags                             0x26C2  /* video, u8 */
@@ -254,8 +275,10 @@
 #define AP_DS_divz_installed                             0x347A  /* platform, u8 */
 #define AP_DS_divz_old_seg                               0x347B  /* platform, u16 */
 #define AP_DS_divz_old_off                               0x347D  /* platform, u16 */
+#define AP_DS_gfx_driver_block                           0x3480  /* video, u16 */
 #define AP_DS_drv_jump_table                             0x351A  /* video, far fn[50] */
 #define AP_DS_drv_callbacks                              0x35E6  /* video, far fn[19] */
+#define AP_DS_scn_run_min                                0x3632  /* platform, s16 */
 #define AP_DS_draw_record_buf                            0x3666  /* render3d */
 #define AP_DS_draw_capacity                              0x367C  /* render3d */
 #define AP_DS_temp_arena                                 0x36A8  /* render3d */
@@ -271,6 +294,27 @@
 #define AP_DS_shape_class_cache                          0x3700  /* render3d */
 #define AP_DS_time_div_real                              0x3712  /* sim_flow, s16 */
 #define AP_DS_int24_installed                            0x3726  /* platform, u8 */
+#define AP_DS__ctype_1                                   0x372F  /* platform, u8[] */
+#define AP_DS__exitbuf                                   0x3830  /* platform, far fn */
+#define AP_DS__exitfopen                                 0x3834  /* platform, far fn */
+#define AP_DS__exitopen                                  0x3838  /* platform, far fn */
+#define AP_DS__streams                                   0x383C  /* platform, FILE[] */
+#define AP_DS__nfile                                     0x397C  /* platform, int */
+#define AP_DS__openfd                                    0x397E  /* platform, u16[] */
+#define AP_DS__fmode                                     0x39A6  /* platform, int */
+#define AP_DS__notUmask                                  0x39A8  /* platform, int */
+#define AP_DS__doserrno                                  0x39AC  /* platform, int */
+#define AP_DS__dosErrorToSV                              0x39AE  /* platform, char[] */
+#define AP_DS__rand_seed                                 0x3A12  /* platform, u32 */
+#define AP_DS__vpr_null                                  0x3A16  /* platform, char[] */
+#define AP_DS__vpr_class                                 0x3A1D  /* platform, u8[] */
+#define AP_DS__cFlag                                     0x3AB2  /* platform, int */
+#define AP_DS___first                                    0x3AB4  /* platform, near ptr */
+#define AP_DS___last                                     0x3AB6  /* platform, near ptr */
+#define AP_DS___rover                                    0x3AB8  /* platform, near ptr */
+#define AP_DS__fputc_cr                                  0x3AC8  /* platform, char[] */
+#define AP_DS__stdinbuf_set                              0x3ACA  /* platform, int */
+#define AP_DS__stdoutbuf_set                             0x3ACC  /* platform, int */
 #define AP_DS_player                                     0x3B09  /* sim_flow, obj */
 #define AP_DS_class_draw                                 0x3BE8  /* sim_world */
 #define AP_DS_class_update                               0x3C28  /* sim_world */
@@ -288,6 +332,11 @@
 #define AP_DS_gravity                                    0x3F24  /* sim_world */
 #define AP_DS_gear_touch_timer                           0x3F26  /* sim_world */
 #define AP_DS_gear_touch_latch                           0x3F28  /* sim_world */
+#define AP_DS_font_talk                                  0x3F2A  /* video, font */
+#define AP_DS_font4                                      0x3F2C  /* video, font */
+#define AP_DS_font3                                      0x3F2E  /* video, font */
+#define AP_DS_font2                                      0x3F30  /* video, font */
+#define AP_DS_font1                                      0x3F32  /* video, font */
 #define AP_DS_mission_clock_frac                         0x3F34  /* sim_flow, s16 */
 #define AP_DS_mission_clock                              0x3F36  /* sim_flow, u32 */
 #define AP_DS_gauge_count                                0x3F4C  /* sim_flow, u16 */
@@ -360,6 +409,7 @@
 #define AP_DS_sx_audible                                 0x48E3  /* sound */
 #define AP_DS_sx_continuous                              0x4983  /* sound */
 #define AP_DS_sx_oneshots                                0x4C3F  /* sound */
+#define AP_DS_namelist_free                              0x4DE4  /* sim_flow, Node */
 #define AP_DS_vcr_ctrl                                   0x4DE9  /* sim_flow, CTRL */
 #define AP_DS_vcr_redraw                                 0x4DFF  /* sim_flow, u16 */
 #define AP_DS_end_prompt_delay                           0x4E1C  /* sim_flow, s32 */
@@ -404,6 +454,7 @@
 #define AP_DS_best_candidate                             0x5814  /* sim_world */
 #define AP_DS_gdamage_classes                            0x5A82  /* sim_world */
 #define AP_DS_msg_slots                                  0x5B1A  /* sim_flow, MsgSlot[2] */
+#define AP_DS_order_targets                              0x5B6C  /* sim_flow, u8[8][12] */
 #define AP_DS_hold_formation_order                       0x5BD4  /* sim_world */
 #define AP_DS_pal_fx                                     0x5BD8  /* video, near ptr */
 #define AP_DS_below_overcast                             0x5BDA  /* render3d */
@@ -461,6 +512,13 @@
 #define AP_DS_ttm_skip                                   0x6408  /* video, u16 */
 #define AP_DS_ttm_gosub_dx                               0x640E  /* video, s16 */
 #define AP_DS_ttm_gosub_dy                               0x6410  /* video, s16 */
+#define AP_DS_mtx_lim_x                                  0x6412  /* video, u16 */
+#define AP_DS_mtx_lim_y                                  0x6414  /* video, u16 */
+#define AP_DS_mtx_tw                                     0x6416  /* video, u16 */
+#define AP_DS_mtx_th                                     0x6418  /* video, u16 */
+#define AP_DS_mtx_rows                                   0x641A  /* video, near ptr[30] */
+#define AP_DS_mtx_ncols                                  0x6456  /* video, u16 */
+#define AP_DS_mtx_nrows                                  0x6458  /* video, u16 */
 #define AP_DS_vqt_draw_zero                              0x645A  /* video, u8 */
 #define AP_DS_vqt_nbits                                  0x645C  /* video, u16 */
 #define AP_DS_vqt_fill_fn                                0x645E  /* video, far fn */
@@ -510,6 +568,8 @@
 #define AP_DS_lzw_maxcode                                0x65C6  /* platform, u16 */
 #define AP_DS_lzw_nbits                                  0x65C8  /* platform, u16 */
 #define AP_DS_lzw_free                                   0x65CA  /* platform, u16 */
+#define AP_DS_snd_iter_rec                               0x65E6  /* sound */
+#define AP_DS_snd_iter_sel                               0x65EA  /* sound */
 #define AP_DS_snd_wait_count                             0x65EC  /* sound */
 #define AP_DS_snd_pool                                   0x65EE  /* sound */
 #define AP_DS_cyc_step3                                  0x660A  /* video, s16[10] */
@@ -525,6 +585,12 @@
 #define AP_DS_font_uline                                 0x6F72  /* video, u8[20] */
 #define AP_DS_chunk_slots                                0x6F86  /* platform, CHF[4] */
 #define AP_DS_chunk_backup                               0x7092  /* platform, CHF */
+#define AP_DS_scn_pending_nl                             0x70D6  /* platform, s16 */
+#define AP_DS_scn_block                                  0x70D8  /* platform, far ptr */
+#define AP_DS_scn_size_par                               0x70DC  /* platform, u16 */
+#define AP_DS_scn_src                                    0x70DE  /* platform, far ptr */
+#define AP_DS_scn_dst                                    0x70E2  /* platform, far ptr */
+#define AP_DS_scn_tmp                                    0x70E6  /* platform, near ptr */
 #define AP_DS_scn_mask                                   0x70E8  /* platform, u8 */
 #define AP_DS_circle_state                               0x70EA  /* video, i16[8] */
 #define AP_DS_frame_ticks                                0x7116  /* sim_flow, s16 */
@@ -532,6 +598,12 @@
 #define AP_DS_dt_real                                    0x711A  /* sim_flow, s16 */
 #define AP_DS_dt_log                                     0x711C  /* sim_flow, s16 */
 #define AP_DS_dt_scale                                   0x711E  /* sim_world */
+#define AP_DS_filename_buf                               0x712C  /* platform, char[30] */
+#define AP_DS_itoa_buf                                   0x714A  /* platform, char[] */
+#define AP_DS__fgetc_ch                                  0x71EE  /* platform, u8 */
+#define AP_DS__fputc_ch                                  0x71F0  /* platform, u8 */
+#define AP_DS__qs_width                                  0x71F2  /* platform, u16 */
+#define AP_DS__qs_cmp                                    0x71F4  /* platform, far fn */
 
 /* ---- Code-segment globals (CS_x offset, CSSEG_x file segment) */
 #define AP_CS_light_world                                0x0008  /* render3d, i16[3] */
@@ -640,6 +712,8 @@
 #define AP_CSSEG_asin_tab                                0x277A
 #define AP_CS_key_bindings                               0x0000  /* sim_flow, rec10[] */
 #define AP_CSSEG_key_bindings                            0x3923
+#define AP_CS_kill_msg_buf                               0x0000  /* sim_world, char far[256] */
+#define AP_CSSEG_kill_msg_buf                            0x39E5
 
 /* ---- Original functions (file segment << 16 | offset) */
 #define AP_FN__c0_startup                                0x00000000u  /* match:intro, void(void) */
@@ -685,6 +759,7 @@
 #define AP_FN_atexit                                     0x00001B0Au  /* match:intro, far int(void(*)(void)) */
 #define AP_FN_chdir                                      0x00001B37u  /* match:intro, far int(const char*) */
 #define AP_FN_access                                     0x00001B4Du  /* match:intro, far int(const char* int) */
+#define AP_FN_rtl_exit_nop                               0x00001BAFu  /* platform, far void(void) */
 #define AP_FN___exit                                     0x00001BB0u  /* match:intro, near void(int status int quick int dontexit) */
 #define AP_FN_exit                                       0x00001C07u  /* match:intro, far void(int) */
 #define AP_FN__exit                                      0x00001C16u  /* match:intro, far void(int) */
@@ -775,6 +850,8 @@
 #define AP_FN_strupr                                     0x00004908u  /* match:intro, far char*(char*) */
 #define AP_FN_write                                      0x00004928u  /* match:intro, far int(int fd const void* unsigned) */
 #define AP_FN__write                                     0x00004A36u  /* match:intro, far int(int fd const void* unsigned) */
+#define AP_FN_rtl__xfclose                               0x00004A70u  /* platform, far void(void) */
+#define AP_FN_rtl__xfflush                               0x00004A98u  /* platform, far void(void) */
 #define AP_FN__fstrcpy                                   0x00004B91u  /* match:intro, far char far*(char far* const char far*) */
 #define AP_FN_flak_set_range                             0x04C4000Bu  /* sim_world */
 #define AP_FN_flak_register                              0x04C40057u  /* sim_world */
@@ -1151,7 +1228,11 @@
 #define AP_FN_order_text                                 0x16600685u  /* sim_flow, far char *(int code int index char *dst) */
 #define AP_FN_mates_have_bombers                         0x16600706u  /* sim_world */
 #define AP_FN_ship_priority                              0x16600787u  /* sim_world */
+#define AP_FN_targets_list                               0x166007BBu  /* sim_flow, far int(u16 *items int n int air) */
+#define AP_FN_targets_exist                              0x16600BAEu  /* sim_flow, far int(int bombers) */
 #define AP_FN_alive_count                                0x16600BD7u  /* sim_world */
+#define AP_FN_add_attack_item                            0x16600C12u  /* sim_flow, far int(u16 *items int n int bombers) */
+#define AP_FN_orders_list                                0x16600C47u  /* sim_flow, far int(u16 *items int max Plane **near int k) */
 #define AP_FN_orders_title                               0x16600F5Fu  /* sim_flow, far int(void) */
 #define AP_FN_orders_reset                               0x16600F6Eu  /* sim_flow, far void(void) */
 #define AP_FN_order_send                                 0x16600F85u  /* sim_flow, far int(int code int index) */
@@ -1733,11 +1814,19 @@
 #define AP_FN_ts_draw                                    0x2F0E08E9u  /* render3d, far void(instance*) */
 #define AP_FN_snd_rec_iter                               0x2FCA0004u  /* sound, far */
 #define AP_FN_snd_pool_free                              0x2FD80003u  /* sound, far */
+#define AP_FN_snd_node_new                               0x2FDC0000u  /* sound, far Node far*(void far *res) */
 #define AP_FN_snd_res_read                               0x2FE40005u  /* sound, far */
+#define AP_FN_chlist_free                                0x2FE401F5u  /* sound, far void(Ch far*) */
+#define AP_FN_res_find_track                             0x2FE40238u  /* sound, far int(FILE *f, u8 dev) */
+#define AP_FN_chlist_read                                0x2FE40339u  /* sound, far Ch far*(FILE *f) */
+#define AP_FN_chlist_insert                              0x2FE4041Du  /* sound, far Ch far*(Ch far *list, Ch far *item) */
+#define AP_FN_res_build                                  0x2FE404C9u  /* sound, far int(FILE*, Ch far*, u8 far*, u16, u16, u8) */
 #define AP_FN_snd_node_stop_far                          0x303F0000u  /* sound, far */
 #define AP_FN_snd_pool_alloc                             0x3040000Cu  /* sound, far */
+#define AP_FN_snd_pool_find                              0x30480006u  /* sound, far Node far*(void far *res) */
 #define AP_FN_ovl_load_chunk                             0x304E0000u  /* sound, far */
 #define AP_FN_snd_unload                                 0x3056000Bu  /* sound, far */
+#define AP_FN_snd_rec_node                               0x3056007Au  /* sound, far Node far*(Rec far*) */
 #define AP_FN_snd_get_cue                                0x30600007u  /* sound, far */
 #define AP_FN_snd_node_set_priority                      0x3060001Au  /* sound, far */
 #define AP_FN_snd_get_position                           0x3060002Eu  /* sound, far */
@@ -1813,6 +1902,10 @@
 #define AP_FN_snd_enable                                 0x32DE0008u  /* sound, far */
 #define AP_FN_snd_stop                                   0x32E70005u  /* sound, far */
 #define AP_FN_res_skip_header                            0x33010005u  /* sound, far */
+#define AP_FN_node_stop_nth                              0x33030000u  /* sound, far void(Node far*, int) */
+#define AP_FN_node_nth                                   0x3305000Cu  /* sound, far Node far*(Node far*, int) */
+#define AP_FN_node_play_nth                              0x3308000Cu  /* sound, far Node far*(Node far*, int, u8 vol) */
+#define AP_FN_snd_pool_stop_data                         0x330D0001u  /* sound, far void(void far *res) */
 #define AP_FN_sng_free                                   0x3312000Au  /* sound, far */
 #define AP_FN_snd_pool_play                              0x33180005u  /* sound, far */
 #define AP_FN_snd_alloc                                  0x3326000Du  /* sound, far */
@@ -1936,6 +2029,30 @@
 #define AP_FN_vdist                                      0x3684000Cu  /* render3d, far */
 #define AP_FN_vec_outside_mask                           0x36840042u  /* render3d, far */
 #define AP_FN_lbits                                      0x368400A1u  /* render3d, near */
+#define AP_FN_memswap                                    0x368F000Eu  /* platform, far void(u8 *a, u8 *b, int n) */
+#define AP_FN_memswap_huge                               0x368F002Fu  /* platform, far void(u8 huge *a, u8 huge *b, int n) */
+#define AP_FN_floppy_off                                 0x368F008Du  /* video, far void(void) */
+#define AP_FN_dec_floor                                  0x368F009Fu  /* video, far int(int *p) */
+#define AP_FN_countdown_get                              0x368F00B7u  /* video, far int(void) */
+#define AP_FN_countdown_wait                             0x368F00CAu  /* video, far int(void) */
+#define AP_FN_delay18                                    0x368F00E6u  /* video, far void(int n) */
+#define AP_FN_wipe                                       0x368F00FFu  /* video, far void(int x, int y, int w, int h, int ticks,  */
+#define AP_FN_wipe_in                                    0x368F017Fu  /* video, far void(int ticks) */
+#define AP_FN_wipe_black                                 0x368F01A3u  /* video, far void(void) */
+#define AP_FN_clip_full                                  0x368F01CFu  /* video, far void(void) */
+#define AP_FN_copy_screen                                0x368F01F2u  /* video, far void(void) */
+#define AP_FN_str_subst                                  0x368F020Au  /* platform, far char*(char *s, char c, char r) */
+#define AP_FN_strip_ext_all                              0x368F0243u  /* platform, far void(char **v, int n) */
+#define AP_FN_strlist_remove                             0x368F0268u  /* platform, far int(char **v, char *s, int n) */
+#define AP_FN_make_filename                              0x368F02E6u  /* platform, far char*(char *name, char *ext) */
+#define AP_FN_make_filename_dev                          0x368F035Cu  /* platform, far char*(char *name, char *ext) */
+#define AP_FN_itoa_static                                0x368F03A1u  /* platform, far char*(int v) */
+#define AP_FN_write_back                                 0x368F03B6u  /* video, far void(void) */
+#define AP_FN_read_back                                  0x368F03C1u  /* video, far void(void) */
+#define AP_FN_write_bg                                   0x368F03CCu  /* video, far void(void) */
+#define AP_FN_read_bg                                    0x368F03D7u  /* video, far void(void) */
+#define AP_FN_write_front                                0x368F03E2u  /* video, far void(void) */
+#define AP_FN_read_front                                 0x368F03EDu  /* video, far void(void) */
 #define AP_FN_rd_open                                    0x36CE0008u  /* sim_world */
 #define AP_FN_rd_skip                                    0x36CE001Bu  /* sim_world */
 #define AP_FN_rd_read                                    0x36CE002Du  /* sim_world */
@@ -1949,6 +2066,7 @@
 #define AP_FN_all_zero                                   0x36E8000Fu  /* sim_world */
 #define AP_FN_gather                                     0x36EA000Eu  /* sim_world */
 #define AP_FN_disk_free                                  0x36EE0003u  /* sim_flow, far long(int drive) */
+#define AP_FN_kill_msg_seg                               0x39E50000u  /* sim_world, data char far[256] */
 #define AP_FN_slots_from_counts                          0x45CC0000u  /* sim_world */
 #define AP_FN_model_slots_assign                         0x45CC0056u  /* sim_world */
 #define AP_FN_rating_lerp                                0x45CC0080u  /* sim_world */
@@ -2157,6 +2275,7 @@
 #define AP_FN_steer_speed_match                          0x4BF9098Bu  /* sim_world */
 #define AP_FN_controls_neutral                           0x4BF909F4u  /* sim_world */
 #define AP_FN_fly_module_end                             0x4BF90A18u  /* sim_world */
+#define AP_FN_fonts_load                                 0x4C9B0000u  /* video, far int(void) */
 #define AP_FN_clock_reset                                0x4CA70000u  /* sim_flow, far void(void) */
 #define AP_FN_clock_tick                                 0x4CA70014u  /* sim_flow, far void(void) */
 #define AP_FN_clock_get                                  0x4CA70045u  /* sim_flow, far long(void) */
@@ -2508,12 +2627,18 @@
 #define AP_FN_tok_hold                                   0x5A750000u  /* sound, near-far */
 #define AP_FN_sx_release                                 0x5A750034u  /* sound, far */
 #define AP_FN_tok_busy                                   0x5A75008Au  /* sound, far */
+#define AP_FN_sx_frag_00fa                               0x5A7500FAu  /* sound, byte */
 #define AP_FN_sx_age_oneshots                            0x5A7500FBu  /* sound, near */
+#define AP_FN_sx_frag_01dd                               0x5A7501DDu  /* sound, byte */
 #define AP_FN_sx_volume                                  0x5A7501DEu  /* sound, near */
+#define AP_FN_sx_frag_0243                               0x5A750243u  /* sound, byte */
 #define AP_FN_sx_collect                                 0x5A750244u  /* sound, near */
 #define AP_FN_sx_collect_all                             0x5A7502DFu  /* sound, near */
+#define AP_FN_sx_frag_030a                               0x5A75030Au  /* sound, byte */
 #define AP_FN_sx_substitute                              0x5A75030Bu  /* sound, near */
+#define AP_FN_sx_frag_034c                               0x5A75034Cu  /* sound, byte */
 #define AP_FN_sx_node_stop                               0x5A75034Du  /* sound, near */
+#define AP_FN_sx_frag_0383                               0x5A750383u  /* sound, byte */
 #define AP_FN_sx_match_nodes                             0x5A750384u  /* sound, near */
 #define AP_FN_sx_cmp                                     0x5A75042Au  /* sound, far */
 #define AP_FN_sx_sort                                    0x5A750478u  /* sound, near */
@@ -2521,11 +2646,16 @@
 #define AP_FN_sx_budget_start                            0x5A7504C5u  /* sound, far */
 #define AP_FN_sx_fits                                    0x5A75051Cu  /* sound, far */
 #define AP_FN_sx_can_start                               0x5A7505A3u  /* sound, far */
+#define AP_FN_sx_frag_05d7                               0x5A7505D7u  /* sound, byte */
 #define AP_FN_sx_trim                                    0x5A7505D8u  /* sound, near */
 #define AP_FN_sx_free_node                               0x5A75066Fu  /* sound, near */
+#define AP_FN_sx_frag_0697                               0x5A750697u  /* sound, byte */
 #define AP_FN_node_clear                                 0x5A750698u  /* sound, near */
+#define AP_FN_sx_frag_06b2                               0x5A7506B2u  /* sound, byte */
 #define AP_FN_sx_doppler                                 0x5A7506B3u  /* sound, near */
+#define AP_FN_sx_frag_0777                               0x5A750777u  /* sound, byte */
 #define AP_FN_sx_eff_vol                                 0x5A750778u  /* sound, near */
+#define AP_FN_sx_frag_0797                               0x5A750797u  /* sound, byte */
 #define AP_FN_sx_apply                                   0x5A750798u  /* sound, near */
 #define AP_FN_sx_update                                  0x5A75095Eu  /* sound, far */
 #define AP_FN_sx_stop_nodes                              0x5A7509A7u  /* sound, near */
@@ -2541,14 +2671,21 @@
 #define AP_FN_sx_setup_tan                               0x5A750AD3u  /* sound, near */
 #define AP_FN_sx_is_mt32                                 0x5A750AE6u  /* sound, far */
 #define AP_FN_sx_init                                    0x5A750AFAu  /* sound, far */
+#define AP_FN_sx_countdown_get                           0x5A750D27u  /* sound, near int(void) */
+#define AP_FN_sx_wait10                                  0x5A750D2Bu  /* sound, near void(void) */
 #define AP_FN_sx_shutdown                                0x5A750D39u  /* sound, far */
 #define AP_FN_sx_enable                                  0x5A750D66u  /* sound, far */
+#define AP_FN_sx_nop                                     0x5A750DB0u  /* sound, far void(void) */
+#define AP_FN_sx_frag_0db5                               0x5A750DB5u  /* sound, byte */
 #define AP_FN_sx_add                                     0x5A750DB6u  /* sound, near */
 #define AP_FN_sx_stop_all                                0x5A750E96u  /* sound, far */
 #define AP_FN_sx_play_vol                                0x5A750EA9u  /* sound, far */
 #define AP_FN_sx_play                                    0x5A750EEAu  /* sound, far */
 #define AP_FN_sx_play_rsv                                0x5A750F2Cu  /* sound, far */
 #define AP_FN_sx_play_ex                                 0x5A750F72u  /* sound, far */
+#define AP_FN_namelist_add                               0x5B710000u  /* sim_flow, far int(int id, char *name, Node *head) */
+#define AP_FN_namelist_find                              0x5B7100CDu  /* sim_flow, far Node*(int id, char *name, Node *head) */
+#define AP_FN_namelist_load                              0x5B710118u  /* sim_flow, far int(VFILE *f, char *path, Node *head) */
 #define AP_FN_per4000                                    0x5B910000u  /* render3d, far */
 #define AP_FN_nop_5b91                                   0x5B910014u  /* render3d, far */
 #define AP_FN_vcr_world_reset                            0x5B930000u  /* sim_flow, far void(void) */
@@ -2741,7 +2878,7 @@
 #define AP_FN_vcr_message                                0x606E029Du  /* video, void (char *text) */
 #define AP_FN_banner_w                                   0x606E0396u  /* sim_flow, far void(char *s) */
 #define AP_FN_buttons_poll                               0x60A90000u  /* sim_flow, far void(void) */
-#define AP_FN_input_frag_017c                            0x60A9017Cu  /* sim_flow, ? */
+#define AP_FN_clear_button_latches                       0x60A9017Cu  /* sim_flow, ? */
 #define AP_FN_buttons_to_record                          0x60A901B2u  /* sim_flow, far void(u8*in) */
 #define AP_FN_input_poll                                 0x60A902C4u  /* sim_flow, far u8*(u8*in) */
 #define AP_FN_mouse_enable_set                           0x60A907D2u  /* sim_flow, far void(int) */

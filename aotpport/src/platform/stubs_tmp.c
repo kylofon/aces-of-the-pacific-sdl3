@@ -78,7 +78,6 @@ __attribute__((weak)) s16 snd_disable(s16 cls) { (void)cls; return 0; }
 __attribute__((weak)) void intro_sequence(void) { }
 __attribute__((weak)) void real_apply_preset(u16 dst_ds, u16 p) { (void)p; rtl_setmem_ds(dst_ds, 16, 0); }
 __attribute__((weak)) u16 res_add_ext(u16 name_ds, u16 ext_ds) { (void)ext_ds; return name_ds; }
-__attribute__((weak)) s32 ap_fread_far_4bb7(FarPtr dst, s32 size, s32 count, u16 f_ds) { return my_hread(dst, size, count, f_ds); }
 __attribute__((weak)) s16 ap_file_exists(u16 path_ds) { (void)path_ds; return 0; }
 __attribute__((weak)) u16 calib_ptr(s16 a0) { return (u16)(0x6000 + 12 * a0); }   /* scratch DS words */
 __attribute__((weak)) void controls_apply(void) { }
@@ -89,3 +88,31 @@ __attribute__((weak)) void sim_init(void) { }
 __attribute__((weak)) void sim_shutdown(void) { }
 __attribute__((weak)) void simprefs_save(void) { }
 __attribute__((weak)) s16 vcr_session(s16 sim_mode) { (void)sim_mode; return 0; }
+
+/* ---- shared-build link: render3d's PS/AP math library and shell_data/shell_ui functions still
+ * being written (their real definitions override these) */
+#include "render3d/render3d.h"
+__attribute__((weak)) u32 mul32(u16 a0, u16 a1) { return (u32)a0 * a1; }
+__attribute__((weak)) u16 lmid(u16 a, u16 b) { return (u16)((a + b) / 2); }
+__attribute__((weak)) u32 ldist2(u16 a_ds, u16 b_ds) { (void)a_ds; (void)b_ds; return 0; }
+__attribute__((weak)) u16 atan2_32(u16 a0, u16 a1, u16 a2, u16 a3) { (void)a0; (void)a1; (void)a2; (void)a3; return 0; }
+__attribute__((weak)) u16 service_side(u16 s) { (void)s; return 0; }
+__attribute__((weak)) void fltplan_build(void) { }
+__attribute__((weak)) u16 fltplan_messages(void) { return 0; }
+__attribute__((weak)) void fltplan_free(void) { }
+__attribute__((weak)) void fltplan_sim_on(void) { }
+__attribute__((weak)) u16 fm_bearing(u16 a_ds, u16 b_ds) { (void)a_ds; (void)b_ds; return 0; }
+
+/* ---- generated: link stubs for functions of modules still being written (autostub) */
+__attribute__((weak)) void cam_begin_frame(u16 c_ds) { (void)c_ds; }
+__attribute__((weak)) s8 shadow_pos(u16 p0_ds, u16 p1_ds) { (void)p0_ds; (void)p1_ds; return 0; }
+__attribute__((weak)) s16 shape_nslots(s16 id) { (void)id; return 0; }
+__attribute__((weak)) s16 shape_nvariants(s16 id, s16 slot) { (void)id; (void)slot; return 0; }
+__attribute__((weak)) s16 shape_radius(s16 id) { (void)id; return 0; }
+__attribute__((weak)) u8 shape_subclass(s16 id) { (void)id; return 0; }
+__attribute__((weak)) void ts_draw(u16 o_ds) { (void)o_ds; }
+__attribute__((weak)) void ts_free_table(s16 t) { (void)t; }
+__attribute__((weak)) s16 ts_load_table(s16 t, u16 name_ds) { (void)t; (void)name_ds; return 0; }
+__attribute__((weak)) void view_free(u16 v_ds) { (void)v_ds; }
+__attribute__((weak)) u16 view_new(s16 eye) { (void)eye; return 0; }
+__attribute__((weak)) u16 vw_model_name(u16 t) { (void)t; return 0; }

@@ -310,4 +310,7 @@ __attribute__((constructor)) static void vqt_codeptrs(void)
     codeptr_register_shared(F_vqt_fill_hv, (CodeFn)vqt_fill_hv);
     codeptr_register_shared(F_gfx_put_pixel, (CodeFn)gfx_put_pixel);
     codeptr_register_shared(F_gfx_rect, (CodeFn)gfx_rect);
+    /* scn_draw_fn (initialised data: a far pointer to gfx_sprite_scn), called by gfx_sprite_scn_ind
+     * (added in platform's integration round: AP's SCN frames reached it unregistered) */
+    codeptr_register_shared(F_gfx_sprite_scn, (CodeFn)gfx_sprite_scn);
 }

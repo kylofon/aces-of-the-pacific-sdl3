@@ -1,42 +1,54 @@
 #pragma once
 /* Borland C++ 3.0 RTL internals shared by platform/rtl_*.c (not for game code).
  *
- * The RTL globals (_streams, _openfd, errno, the near-heap pointers ...) are not in port/symbols.csv;
- * their DS offsets were found by aligning the RTL functions of INTRO, PS and AP (the code is
- * byte-identical apart from DS offsets) and are listed here per program. PORT: a private offset table
- * instead of symbols.csv rows (several module owners work at the same time); the lead may move them
- * into symbols.csv / symbols_layout.h later. The globals themselves stay in mem[] at these offsets. */
+ * The RTL globals (_streams, _openfd, errno, the near-heap pointers ...) were found by aligning the RTL
+ * functions of INTRO, PS and AP (byte-identical apart from DS offsets); they are symbols.csv rows
+ * (port/spec/platform_extra2_symbols.csv) and reached through the layout table: RL(field) = the DS
+ * offset of the current program's global (fatal where the program has none). The globals themselves
+ * stay in mem[]. */
 #include <stdarg.h>
 
 #include "platform/platform.h"
 
-typedef struct {
-    u16 doserrno, dos_err_tab;              /* _doserrno, _dosErrorToSV[] */
-    u16 streams, nfile, openfd;             /* _streams[] (FILE 10h each), _nfile, _openfd[] */
-    u16 fmode, notumask;                    /* _fmode, _notUmask */
-    u16 exitbuf, exitfopen, exitopen;       /* void (far *)() exit hooks (0 = not set) */
-    u16 stdin_setbuf, stdout_setbuf;        /* "user gave stdin/stdout a buffer" flags (setvbuf) */
-    u16 first, last, rover;                 /* near heap: __first, __last, __rover */
-    u16 cvt_ch;                             /* kbhit: pending ungetch char flag (_cFlag) */
-    u16 ctype1;                             /* _ctype + 1 (index by c, EOF at -1) */
-    u16 rand_seed;                          /* u32 */
-    u16 cr_str;                             /* "\r" (fputc text mode) */
-    u16 fputc_ch, fgetc_ch;                 /* one-byte scratch of fputc / fgetc */
-    u16 qs_width, qs_cmp;                   /* qsort: width, comparator far pointer */
-    u16 null_str, pf_class;                 /* __vprinter: "(null)", character class table */
-    u16 environ;                            /* char **environ (INTRO/PS) */
-    u16 tzname, timezone, daylight;         /* char *tzname[2]; long timezone; int daylight */
-    u16 tz_str, est_str, edt_str;           /* "TZ", "EST", "EDT" */
-    u16 month_days, cum_days;               /* char _Days[12]; int _YDays[] */
-    u16 xfflush_off, xfclose_off, dummy_off;/* code offsets (seg 0000) of _xfflush, _xfclose, the retf */
-} RtlLayout;
-
-#define RTL_ABSENT 0xFFFF
-
-extern const RtlLayout rtl_layouts[4];     /* indexed by PROG_INTRO..PROG_AP */
-const RtlLayout *rtl_lay(void);
-u16 rtl_off(u16 ofs, const char *what);    /* fatal if RTL_ABSENT */
-#define RL(field) rtl_off(rtl_lay()->field, #field)
+/* RTL field -> layout id */
+#define RLG_doserrno       G__doserrno
+#define RLG_dos_err_tab    G__dosErrorToSV
+#define RLG_streams        G__streams
+#define RLG_nfile          G__nfile
+#define RLG_openfd         G__openfd
+#define RLG_fmode          G__fmode
+#define RLG_notumask       G__notUmask
+#define RLG_exitbuf        G__exitbuf
+#define RLG_exitfopen      G__exitfopen
+#define RLG_exitopen       G__exitopen
+#define RLG_stdin_setbuf   G__stdinbuf_set
+#define RLG_stdout_setbuf  G__stdoutbuf_set
+#define RLG_first          G___first
+#define RLG_last           G___last
+#define RLG_rover          G___rover
+#define RLG_cvt_ch         G__cFlag
+#define RLG_ctype1         G__ctype_1
+#define RLG_rand_seed      G__rand_seed
+#define RLG_cr_str         G__fputc_cr
+#define RLG_fputc_ch       G__fputc_ch
+#define RLG_fgetc_ch       G__fgetc_ch
+#define RLG_qs_width       G__qs_width
+#define RLG_qs_cmp         G__qs_cmp
+#define RLG_null_str       G__vpr_null
+#define RLG_pf_class       G__vpr_class
+#define RLG_environ        G_environ
+#define RLG_tzname         G_tzname
+#define RLG_timezone       G_timezone
+#define RLG_daylight       G_daylight
+#define RLG_tz_str         G__tz_TZ
+#define RLG_est_str        G__tz_EST
+#define RLG_edt_str        G__tz_EDT
+#define RLG_month_days     G__Days
+#define RLG_cum_days       G__YDays
+#define RL(field) lds(RLG_##field)
+/* code offsets (segment 0000) of the exit-hook targets _xfflush and _xfclose */
+#define RTL_XFFLUSH_OFF ((u16)prog_layout->fn[F_rtl__xfflush])
+#define RTL_XFCLOSE_OFF ((u16)prog_layout->fn[F_rtl__xfclose])
 
 /* Fixed c0 globals (the same DS offsets in the three programs). */
 #define RTL_DS_errno      0x0094

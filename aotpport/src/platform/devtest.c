@@ -287,6 +287,9 @@ int platform_dev_test(void)
 {
     const char *t = getenv("AOTP_TEST");
     if (!t || !*t) return -1;
+    if (strcmp(t, "volumes") && strcmp(t, "chunks") && strcmp(t, "loaders") && strcmp(t, "pictures") &&
+        strcmp(t, "ttm"))
+        return -1;
     load_host_volumes();
     open_program_volumes();
     int r = 0;
@@ -297,7 +300,10 @@ int platform_dev_test(void)
         printf("gfx_init: %d\n", v);
         r = test_loaders();
     } else {
-        return -1;
+        int v = video_dev_test();                     /* pictures, ttm (video; opens nothing twice:
+                                                         vol_init returns when already done) */
+        if (v < 0) return -1;
+        r = v;
     }
     fflush(stdout);
     exit(r);

@@ -312,7 +312,7 @@ u16 bmp_load(u16 x);
 /* INTRO 0f2c:0010 bmp_count — platform.md §1.2 */
 u16 intro_bmp_count(u16 a0);
 /* INTRO 0f35:000a / PS 39aa:000a / AP 6f83:0000 — platform.md §7.5; last 1 word(s) unused by the original */
-void scr_load(u16 page, u16 x);
+void scr_load(u16 name_ds, u16 unused);
 /* INTRO 0f48:000c / PS 39bd:000c / AP 26db:0009 — platform.md §7.8 */
 u16 bmp_mtx_load(u16 a0);
 /* AP 7229:0598 bmp_count — platform.md §5.4.1 */

@@ -181,7 +181,7 @@ int prog_run(int id, const char *extra_args)
     int argc = build_argv(path_ofs, tail, &argv_ds);
     DSW(0x0084) = (u16)argc;
     DSW(0x0086) = argv_ds;
-    DSW(0x0088) = 0;          /* TODO(phase 5, RTL): _setenvp's environ[] (heap) and the _StartTable */
+    DSW(0x0088) = 0;                                       /* envp: set by _setenvp (INTRO/PS) */
     atexit_count = 0;
 
     if (host_trace())
@@ -189,7 +189,9 @@ int prog_run(int id, const char *extra_args)
                 d->exe, LOAD_SEG, cur_dgroup, top, (unsigned)dos_mem_largest() * 16, tail);
 
     if (setjmp(exit_jmp) == 0) {
-        int rc = d->main(argc, argv_ds);
+        rtl_c0_start();                                    /* c0 _StartTable (platform) */
+        int rc = platform_dev_test();                      /* AOTP_TEST developer aids */
+        if (rc < 0) rc = d->main(argc, argv_ds);
         prog_exit(rc);                                     /* c0: exit(main(...)) */
     }
     platform_prog_end();
@@ -202,12 +204,14 @@ int prog_run(int id, const char *extra_args)
 
 _Noreturn void prog_exit(int code)
 {
-    /* Borland exit(): atexit functions in reverse order, then _cleanup / _checknull / _restorezero /
-     * stream flushing (TODO phase 5, RTL), then INT 21h/4Ch = back to the chain loop. */
+    /* Borland exit(): atexit functions in reverse order, then _cleanup (#pragma exit: only AP's
+     * overlay manager, dropped), (*_exitbuf)(), _restorezero, _checknull, (*_exitfopen)(),
+     * (*_exitopen)() (platform rtl_c0_exit), then INT 21h/4Ch = back to the chain loop. */
     while (atexit_count > 0) {
         void (*fn)(void) = atexit_fns[--atexit_count];
         fn();
     }
+    rtl_c0_exit();
     exit_code = code;
     longjmp(exit_jmp, 1);
 }

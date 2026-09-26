@@ -15,8 +15,8 @@
 #define DRV_BLOCK_SIZE 9424u                      /* OVL:VGA: */
 
 /* Library globals the layout lacks for INTRO (named pal_slots / font_ptr in symbols.csv). */
-u16 ds_pal_slot(void) { return pid() == PROG_INTRO ? INTRO_DS_pal_slots : lds(G_pal_slot); }
-u16 ds_font_glyphs(void) { return pid() == PROG_INTRO ? INTRO_DS_font_ptr : lds(G_font_glyphs); }
+u16 ds_pal_slot(void) { return lds(G_pal_slot); }
+u16 ds_font_glyphs(void) { return lds(G_font_glyphs); }
 
 /* PORT: effects that draw straight into the displayed page show it at once (the host presents at its own
  * vsync when the composed picture changed). */
@@ -48,7 +48,7 @@ static const struct { u16 off; CodeFn fn; } drv_table[50] = {
 
 static u16 ds_driver_block(void)                  /* the loaded driver block far pointer */
 {
-    return pid() == PROG_AP ? 0x3480 /* AP gfx_driver_block (70ff:0000) */ : lds(G_gfx_driver_block);
+    return lds(G_gfx_driver_block);
 }
 
 /* INTRO 05da:4933 / PS 16e3:4c57 / AP 70ff:0000 — video.md §2.1. Returns the driver's far address. */

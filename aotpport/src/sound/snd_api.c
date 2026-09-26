@@ -1,9 +1,8 @@
 /* The Dynamix sound API (INTRO 157f..172c, PS 4516..46c3, AP 2fca..3326 around the player) and the TTM
  * sound opcodes (INTRO 11d2:000c / PS 3baf:000d) — sound.md §6, §7, §9, §12.1, sound_extra.md §1.
  *
- * Shared library code: the globals the three programs share by name go through the layout table
- * (G_snd_*); the ones symbols.csv does not name in every program are in the per-program table snd_ds
- * below (TODO(symbols): add the rows to port/symbols.csv and switch to G_ ids). Sound records (0x14
+ * Shared library code: the globals go through the layout table (G_snd_*; the rows missing in some
+ * programs were added in port/spec/sound_extra2_symbols.csv). Sound records (0x14
  * bytes), nodes (0x17A) and channel lists live in DOS / near-heap memory in mem[] like the original.
  *
  * PORT (sound.md §13, PLAN.md decision 1): every driver number loads and runs the AdLib driver model
@@ -17,35 +16,16 @@
 #include "prog.h"
 #include "symbols_ap.h"
 
-/* ---- per-program DGROUP offsets without a layout id */
-typedef struct {
-    u16 patch_block, timer_owned, timer_handle, error, play7e, disabled, whole;
-    u16 iter_rec, iter_sel, patch_tag, drv_tag, pk_mode, rd_mode, inf_path, dat_path, dat_tail, vol_curve;
-} SndDs;
-
-static const SndDs snd_ds_intro = {
-    0x1F43, 0x1F4D, 0x1F4F, 0x1F57, 0x1F59, 0x1F5B, 0x1F5D,
-    0x33CE, 0x33D2, 0x1E90, 0x1EF0, 0x1E8E, 0x1F60, 0x1E9A, 0x1EA3, 0x1EA8, 0x1EAE,
-};
-static const SndDs snd_ds_ps = {
-    0x3967, 0x3971, 0x3973, 0x397B, 0x397D, 0x397F, 0x3981,
-    0x76AA, 0x76AE, 0x38B4, 0x3914, 0x38B2, 0x3984, 0x38BE, 0x38C7, 0x38CC, 0x38D2,
-};
-static const SndDs snd_ds_ap = {          /* AP: no "whole resource" flag, no SX loader / vol curve */
-    0x2695, 0x269F, 0x26A1, 0x26A9, 0x26AB, 0x26AD, 0,
-    0x65E6, 0x65EA, 0x2620, 0x262A, 0x261E, 0x26B8, 0, 0, 0, 0,
-};
-
-static const SndDs *snd_ds(void)
+/* ---- DGROUP globals of the sound API through the layout (port/spec/sound_extra2_symbols.csv); a global
+ * a program does not have (AP: whole, inf_path, dat_path, dat_tail, vol_curve) reads as offset 0, as
+ * the former per-program table had it */
+static u16 sd_ofs(int g)
 {
-    switch (prog_current_id()) {
-    case PROG_INTRO: return &snd_ds_intro;
-    case PROG_PS:    return &snd_ds_ps;
-    case PROG_AP:    return &snd_ds_ap;
-    }
-    host_fatal("sound API called with no program running");
+    if (!prog_layout) host_fatal("sound API called with no program running");
+    u16 o = prog_layout->ds[g];
+    return o == LAYOUT_ABSENT_DS ? 0 : o;
 }
-#define SD(f) (snd_ds()->f)
+#define SD(f) sd_ofs(G_snd_##f)
 
 static const FarPtr FAR_NULL = { 0, 0 };
 static inline bool far_eq(FarPtr a, FarPtr b) { return a.off == b.off && a.seg == b.seg; }

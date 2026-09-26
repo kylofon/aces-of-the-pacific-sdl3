@@ -42,6 +42,7 @@ ap,func,0000:1ab0,int24_restore,far void(void),platform,,
 ap,func,0000:1b0a,atexit,far int(void(*)(void)),match:intro,,= intro 0000:049a
 ap,func,0000:1b37,chdir,far int(const char*),match:intro,,= intro 0000:04c7
 ap,func,0000:1b4d,access,far int(const char* int),match:intro,,= intro 0000:04dd
+ap,func,0000:1baf,rtl_exit_nop,far void(void),platform,,Borland RTL exit hook target
 ap,func,0000:1bb0,__exit,near void(int status int quick int dontexit),match:intro,,= intro 0000:0516
 ap,func,0000:1c07,exit,far void(int),match:intro,,= intro 0000:056d
 ap,func,0000:1c16,_exit,far void(int),match:intro,,= intro 0000:057c
@@ -132,6 +133,8 @@ ap,func,0000:48a8,strstr,far char*(const char* const char*),match:intro,,= intro
 ap,func,0000:4908,strupr,far char*(char*),match:intro,,= intro 0000:3178
 ap,func,0000:4928,write,far int(int fd const void* unsigned),match:intro,,= intro 0000:36f7
 ap,func,0000:4a36,_write,far int(int fd const void* unsigned),match:intro,,= intro 0000:3805
+ap,func,0000:4a70,rtl__xfclose,far void(void),platform,,Borland RTL exit hook target
+ap,func,0000:4a98,rtl__xfflush,far void(void),platform,,Borland RTL exit hook target
 ap,func,0000:4b91,_fstrcpy,far char far*(char far* const char far*),match:intro,,= intro 0000:388a
 ap,func,04c4:000b,flak_set_range,,sim_world,,spec: sim_world_wpn.md
 ap,func,04c4:0057,flak_register,,sim_world,,spec: sim_world_wpn.md
@@ -2643,6 +2646,12 @@ ap,global,DS:02CE,fm_mode_by_realism,,sim_world,,"u8[3] = 1,2,3"
 ap,global,DS:02D4,sx_player_engine_type,,sound,engine_sound_id,6 bytes
 ap,global,DS:02DA,sx_ai_engine_type,,sound,engine_sound_id_ai,6 bytes
 ap,global,DS:02E0,coord_by_level,,sim_world,,"i16[3] 750,875,1024"
+ap,global,DS:02E6,str_FNT,char[],video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:02EA,str_font1,char[],video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:02F0,str_font2,char[],video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:02F6,str_font3,char[],video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:02FC,str_font4,char[],video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:0302,str_talk,char[],video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
 ap,global,DS:030C,gunlists,,sim_world,,
 ap,global,DS:0320,haze_bands_on,,render3d,,
 ap,global,DS:052E,opt_sound_drv,,sound,sound_drv_override,"-s<n> (debug mode only, DS:053F)"
@@ -2786,6 +2795,10 @@ ap,global,DS:209C,ttm_ctx,near ptr,video,,current context (last created)
 ap,global,DS:209E,ttm_mtx_open,u8,video,,
 ap,global,DS:209F,ttm_level,u16,video,,4; 2 if drv[1D]==0Ch
 ap,global,DS:2220,ttm_gosub_depth,u16,video,,
+ap,global,DS:2222,mtx_offsets,near ptr,video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:2224,mtx_frame,u16[5],video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:222E,mtx_scroll_x,s16,video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:2230,mtx_scroll_y,s16,video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
 ap,global,DS:223C,vqt_rect_fn,far fn,video,,= gfx_rect
 ap,global,DS:2240,vqt_putpix,far fn,video,,gfx_pixel or driver entry 22
 ap,global,DS:2244,vqt_bits_fn,far fn,video,,= vqt_bits
@@ -2802,13 +2815,23 @@ ap,global,DS:25A0,lzw_buf,u8[12],platform,,
 ap,global,DS:25AC,lzw_rmask,u8[9],platform,,
 ap,global,DS:25B5,lzw_resume,u16,platform,,
 ap,global,DS:25B8,rle_ringptr,u16,platform,,
+ap,global,DS:261E,snd_pk_mode,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ap,global,DS:2620,snd_patch_tag,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ap,global,DS:262A,snd_drv_tag,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 ap,global,DS:2634,snd_drv_code,,sound,,
 ap,global,DS:2692,snd_active,,sound,,
 ap,global,DS:2693,snd_patch_no,,sound,,
+ap,global,DS:2695,snd_patch_block,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 ap,global,DS:2699,snd_rec_head,far ptr,sound,,"record-list head; never written in AP (read by 2fca:0004, 3299:0003)"
 ap,global,DS:269D,snd_drv_no,,sound,,
+ap,global,DS:269F,snd_timer_owned,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ap,global,DS:26A1,snd_timer_handle,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 ap,global,DS:26A3,snd_sng_inf,,sound,,
 ap,global,DS:26A5,snd_drv_block,,sound,,
+ap,global,DS:26A9,snd_error,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ap,global,DS:26AB,snd_play7e,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ap,global,DS:26AD,snd_disabled,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ap,global,DS:26B8,snd_rd_mode,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 ap,global,DS:26C0,drv_text_fg,u8,video,,driver shared block drv[00]
 ap,global,DS:26C1,drv_text_bg,u8,video,,drv[01]
 ap,global,DS:26C2,drv_text_flags,u8,video,,drv[02] 1 transp 2 bold 4 italic 8 underline 10h halftone
@@ -2885,8 +2908,10 @@ ap,global,DS:3450,rot_iR,u16,video,,
 ap,global,DS:347A,divz_installed,u8,platform,,
 ap,global,DS:347B,divz_old_seg,u16,platform,,
 ap,global,DS:347D,divz_old_off,u16,platform,,
+ap,global,DS:3480,gfx_driver_block,u16,video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
 ap,global,DS:351A,drv_jump_table,far fn[50],video,,AP 40 entries
 ap,global,DS:35E6,drv_callbacks,far fn[19],video,,passed to drv_init
+ap,global,DS:3632,scn_run_min,s16,platform,,shortest run coded as a run (6)
 ap,global,DS:3666,draw_record_buf,,render3d,,
 ap,global,DS:367C,draw_capacity,,render3d,,
 ap,global,DS:36A8,temp_arena,,render3d,,
@@ -2902,6 +2927,27 @@ ap,global,DS:36E2,class_range,,render3d,,i32 per class
 ap,global,DS:3700,shape_class_cache,,render3d,,
 ap,global,DS:3712,time_div_real,s16,sim_flow,,20
 ap,global,DS:3726,int24_installed,u8,platform,,
+ap,global,DS:372F,_ctype_1,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3830,_exitbuf,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3834,_exitfopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3838,_exitopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:383C,_streams,FILE[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:397C,_nfile,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:397E,_openfd,u16[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:39A6,_fmode,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:39A8,_notUmask,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:39AC,_doserrno,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:39AE,_dosErrorToSV,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3A12,_rand_seed,u32,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3A16,_vpr_null,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3A1D,_vpr_class,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3AB2,_cFlag,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3AB4,__first,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3AB6,__last,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3AB8,__rover,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3AC8,_fputc_cr,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3ACA,_stdinbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3ACC,_stdoutbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
 ap,global,DS:3B09,player,obj*,sim_flow,,
 ap,global,DS:3BE8,class_draw,,sim_world,,
 ap,global,DS:3C28,class_update,,sim_world,,
@@ -3099,6 +3145,13 @@ ap,global,DS:6406,ttm_flip,u16,video,,
 ap,global,DS:6408,ttm_skip,u16,video,,always 0
 ap,global,DS:640E,ttm_gosub_dx,s16,video,,
 ap,global,DS:6410,ttm_gosub_dy,s16,video,,
+ap,global,DS:6412,mtx_lim_x,u16,video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:6414,mtx_lim_y,u16,video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:6416,mtx_tw,u16,video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:6418,mtx_th,u16,video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:641A,mtx_rows,near ptr[30],video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:6456,mtx_ncols,u16,video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
+ap,global,DS:6458,mtx_nrows,u16,video,,AP 26db:0009 bmp_mtx_load / 4c9b:0000 fonts_load / gfx_init (platform integration round)
 ap,global,DS:645A,vqt_draw_zero,u8,video,,always 0: pixel value 0 transparent
 ap,global,DS:645C,vqt_nbits,u16,video,,index bits of the current leaf
 ap,global,DS:645E,vqt_fill_fn,far fn,video,,flipped leaf filler or null
@@ -3148,6 +3201,8 @@ ap,global,DS:65C4,lzw_size,u16,platform,,
 ap,global,DS:65C6,lzw_maxcode,u16,platform,,
 ap,global,DS:65C8,lzw_nbits,u16,platform,,
 ap,global,DS:65CA,lzw_free,u16,platform,,
+ap,global,DS:65E6,snd_iter_rec,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ap,global,DS:65EA,snd_iter_sel,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 ap,global,DS:65EC,snd_wait_count,,sound,,
 ap,global,DS:65EE,snd_pool,,sound,,7 far node ptrs
 ap,global,DS:660A,cyc_step3,s16[10],video,,
@@ -3163,6 +3218,12 @@ ap,global,DS:6F22,font_wid,far[20],video,,
 ap,global,DS:6F72,font_uline,u8[20],video,,
 ap,global,DS:6F86,chunk_slots,CHF[4],platform,,43h each
 ap,global,DS:7092,chunk_backup,CHF,platform,,
+ap,global,DS:70D6,scn_pending_nl,s16,platform,,bmp_to_scn state
+ap,global,DS:70D8,scn_block,far ptr,platform,,bmp_to_scn state
+ap,global,DS:70DC,scn_size_par,u16,platform,,bmp_to_scn state
+ap,global,DS:70DE,scn_src,far ptr,platform,,bmp_to_scn state
+ap,global,DS:70E2,scn_dst,far ptr,platform,,bmp_to_scn state
+ap,global,DS:70E6,scn_tmp,near ptr,platform,,bmp_to_scn state
 ap,global,DS:70E8,scn_mask,u8,platform,,
 ap,global,DS:70EA,circle_state,i16[8],video,,"xc, top, yc-top, far ptr, y1-top, plotter, y2-top"
 ap,global,DS:7116,frame_ticks,s16,sim_flow,,
@@ -3172,6 +3233,10 @@ ap,global,DS:711C,dt_log,s16,sim_flow,,
 ap,global,DS:711E,dt_scale,,sim_world,dt,frame time scale 100h = nominal frame (sim_flow 362b)
 ap,global,DS:712C,filename_buf,char[30],platform,,
 ap,global,DS:714A,itoa_buf,char[],platform,,
+ap,global,DS:71EE,_fgetc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:71F0,_fputc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:71F2,_qs_width,u16,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:71F4,_qs_cmp,far fn,platform,,Borland RTL (found by aligning the three RTLs)
 intro,func,0000:0000,_c0_startup,void(void),seed,,"Borland C++ 3.0 c0m.asm entry: mov dx,DGROUP; DOS version; env/PSP; SaveVectors; __init table; main(argc,argv,envp); exit"
 intro,func,0000:0163,__cleanup,far void(void),seed,,c0: walks the #pragma exit table (ExitTable 0000:0264)
 intro,func,0000:0176,__checknull,far void(void),seed,,"c0: checksums DS:0000-002E (copyright) == 0D5Ch, else 'Null pointer assignment'"
@@ -3185,6 +3250,7 @@ intro,func,0000:042d,__hread,far long(int fd void far* buf long n),seed,,huge DO
 intro,func,0000:049a,atexit,far int(void(*)(void)),seed,,32-entry table
 intro,func,0000:04c7,chdir,far int(const char*),seed,,INT 21h/3Bh
 intro,func,0000:04dd,access,far int(const char* int),seed,,INT 21h/4300h
+intro,func,0000:0515,rtl_exit_nop,far void(void),platform,,Borland RTL exit hook target
 intro,func,0000:0516,__exit,near void(int status int quick int dontexit),seed,,"runs atexit, _cleanup, _checknull, _restorezero, _terminate"
 intro,func,0000:056d,exit,far void(int),seed,,
 intro,func,0000:057c,_exit,far void(int),seed,,
@@ -3304,6 +3370,8 @@ intro,func,0000:3481,tzset,far void(void),seed,,"'EST' 'EDT', TZ"
 intro,func,0000:36e1,vprintf,far int(const char* va_list),seed,,
 intro,func,0000:36f7,write,far int(int fd const void* unsigned),seed,,text-mode write (LF -> CRLF)
 intro,func,0000:3805,_write,far int(int fd const void* unsigned),seed,,INT 21h/40h
+intro,func,0000:383f,rtl__xfclose,far void(void),platform,,Borland RTL exit hook target
+intro,func,0000:3867,rtl__xfflush,far void(void),platform,,Borland RTL exit hook target
 intro,func,0000:388a,_fstrcpy,far char far*(char far* const char far*),seed,,
 intro,func,0000:38b3,_fstrncpy,far char far*(char far* const char far* unsigned),seed,,
 intro,func,038e:0004,ipow,"far int(int,int)",platform,,
@@ -3817,7 +3885,7 @@ intro,global,DS:0BA4,poly_y2,i16[20],video,,
 intro,global,DS:0BCC,poly_ox,i16[20],video,,
 intro,global,DS:0BF4,poly_oy,i16[20],video,,
 intro,global,DS:0C1C,poly_n,u16,video,,
-intro,global,DS:0C1E,pal_slots,void far*[10],platform,drv_pal_buf pal_slot,
+intro,global,DS:0C1E,pal_slot,far ptr[10],platform,drv_pal_buf pal_slots,named as in PS/AP for the layout
 intro,global,DS:113C,drv_xlat_tab,u16,video,,drv[6BC]
 intro,global,DS:1162,drv_use_entry28,u16,video,,
 intro,global,DS:1168,drv_yshift,u8,video,,
@@ -3876,6 +3944,7 @@ intro,global,DS:1A04,drv_callbacks,far fn[19],video,,passed to drv_init
 intro,global,DS:1A50,gfx_bios_mode,u8,video,,
 intro,global,DS:1A51,gfx_req_adapter,u8,video,,
 intro,global,DS:1A52,gfx_driver_ptr,far,video,,
+intro,global,DS:1A56,scn_run_min,s16,platform,,shortest run coded as a run (6)
 intro,global,DS:1A58,pk_shared_scratch,void far*,platform,,LZW scratch set by bitmap loader
 intro,global,DS:1A5C,pk_methods,struct[3] (0Eh),platform,,"ring, scratch_r, scratch_w, read, write, winit, rinit"
 intro,global,DS:1A90,lzw_buf,u8[12],platform,,
@@ -3908,7 +3977,13 @@ intro,global,DS:1CFD,ttm_level,u16,video,,4; 2 if drv[1D]==0Ch
 intro,global,DS:1E7C,ttm_no_restore,u16,video,,0500/0510
 intro,global,DS:1E7E,ttm_gosub_depth,u16,video,,
 intro,global,DS:1E80,ttm_fade_speed_tab,u16[7],video,ttm_fade_speed,"0,80,20,10,5,2,1"
+intro,global,DS:1E8E,snd_pk_mode,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+intro,global,DS:1E90,snd_patch_tag,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+intro,global,DS:1E9A,snd_inf_path,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+intro,global,DS:1EA3,snd_dat_path,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+intro,global,DS:1EA8,snd_dat_tail,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 intro,global,DS:1EAE,snd_vol_curve,,sound,,64 bytes
+intro,global,DS:1EF0,snd_drv_tag,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 intro,global,DS:1EFA,snd_drv_code,,sound,,10 ptrs
 intro,global,DS:1F40,snd_active,,sound,,
 intro,global,DS:1F41,snd_patch_no,,sound,,
@@ -3920,12 +3995,45 @@ intro,global,DS:1F4F,snd_timer_handle,,sound,,
 intro,global,DS:1F51,snd_sng_inf,,sound,,
 intro,global,DS:1F53,snd_drv_block,,sound,,
 intro,global,DS:1F57,snd_error,,sound,,
+intro,global,DS:1F59,snd_play7e,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 intro,global,DS:1F5B,snd_disabled,,sound,,"-4 none,-1 music,-2 effects,0 all"
+intro,global,DS:1F5D,snd_whole,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+intro,global,DS:1F60,snd_rd_mode,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 intro,global,DS:1F62,ems_signature,char[8],platform,,"""EMMXXXX0"""
 intro,global,DS:1F6A,ems_present,u8,platform,,
 intro,global,DS:1F6B,ems_error,u8,platform,,last INT 67h error AH
 intro,global,DS:1F6C,ems_handles,u16[32],platform,,
+intro,global,DS:1FAF,_ctype_1,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:20B0,_exitbuf,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:20B4,_exitfopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:20B8,_exitopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:20BC,_streams,FILE[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:21FC,_nfile,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:21FE,_openfd,u16[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2226,_fmode,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2228,_notUmask,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:222C,_doserrno,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:222E,_dosErrorToSV,char[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2292,_rand_seed,u32,platform,,Borland RTL (found by aligning the three RTLs)
 intro,global,DS:2316,_stklen,u16,platform,,
+intro,global,DS:2318,_vpr_null,char[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:231F,_vpr_class,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23B2,_cFlag,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23B4,__first,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23B6,__last,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23B8,__rover,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23C8,environ,char**,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23CA,_fputc_cr,char[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23CC,_stdinbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23CE,_stdoutbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23D0,_Days,char[12],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23DC,_YDays,int[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23F6,tzname,char*[2],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23FA,timezone,long,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23FE,daylight,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2400,_tz_TZ,char[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2403,_tz_EST,char[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2407,_tz_EDT,char[],platform,,Borland RTL (found by aligning the three RTLs)
 intro,global,DS:2460,prf_loaded,u8,platform,,
 intro,global,DS:2461,data_prefix,char[],platform,work_dir,-n<path> + backslash
 intro,global,DS:24B1,control_prf,u8[37],platform,,
@@ -3958,12 +4066,18 @@ intro,global,DS:2698,scale_cols,i16[641],video,,
 intro,global,DS:2B98,scale_rows,i16[401],video,,
 intro,global,DS:2EB8,flood_stack,far[2],video,,"base, top"
 intro,global,DS:2EC0,font_kind,u8[20],platform,,
-intro,global,DS:2ED4,font_ptr,void far*[20],platform,font_glyphs,
+intro,global,DS:2ED4,font_glyphs,far ptr[20],platform,font_ptr,named as in PS/AP for the layout
 intro,global,DS:2F24,font_ofs,void far*[20],platform,,
 intro,global,DS:2F74,font_wid,void far*[20],platform,,
 intro,global,DS:2FC4,font_uline,u8[20],video,,
 intro,global,DS:2FD8,chunk_slots,CHF[4],platform,,43h each
 intro,global,DS:30E4,chunk_backup,CHF,platform,,
+intro,global,DS:3128,scn_pending_nl,s16,platform,,bmp_to_scn state
+intro,global,DS:312A,scn_block,far ptr,platform,,bmp_to_scn state
+intro,global,DS:312E,scn_size_par,u16,platform,,bmp_to_scn state
+intro,global,DS:3130,scn_src,far ptr,platform,,bmp_to_scn state
+intro,global,DS:3134,scn_dst,far ptr,platform,,bmp_to_scn state
+intro,global,DS:3138,scn_tmp,near ptr,platform,,bmp_to_scn state
 intro,global,DS:313A,scn_mask,u8,platform,,
 intro,global,DS:313C,pk_litbuf,u8[50],platform,,
 intro,global,DS:316E,pk_io,u8,platform,,"20h file, 40h store"
@@ -4038,6 +4152,8 @@ intro,global,DS:33CE,snd_iter_rec,,sound,,
 intro,global,DS:33D2,snd_iter_sel,,sound,,
 intro,global,DS:33D4,snd_wait_count,,sound,,
 intro,global,DS:33D6,snd_pool,,sound,,7 far node ptrs
+intro,global,DS:3480,_fgetc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:3482,_fputc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
 ps,func,0000:0000,_c0_startup,void(void),match:intro,,= intro 0000:0000
 ps,func,0000:0163,__cleanup,far void(void),match:intro,,= intro 0000:0163
 ps,func,0000:0176,__checknull,far void(void),match:intro,,= intro 0000:0176
@@ -4077,6 +4193,7 @@ ps,func,0000:162e,vol_int24,interrupt,platform,,critical error: AL=3 fail while 
 ps,func,0000:17e4,atexit,far int(void(*)(void)),match:intro,,= intro 0000:049a
 ps,func,0000:1811,chdir,far int(const char*),match:intro,,= intro 0000:04c7
 ps,func,0000:1827,access,far int(const char* int),match:intro,,= intro 0000:04dd
+ps,func,0000:185f,rtl_exit_nop,far void(void),platform,,Borland RTL exit hook target
 ps,func,0000:1860,__exit,near void(int status int quick int dontexit),match:intro,,= intro 0000:0516
 ps,func,0000:18b7,exit,far void(int),match:intro,,= intro 0000:056d
 ps,func,0000:18c6,_exit,far void(int),match:intro,,= intro 0000:057c
@@ -4179,6 +4296,8 @@ ps,func,0000:4343,tzset,far void(void),match:intro,,= intro 0000:3481
 ps,func,0000:45a3,vprintf,far int(const char* va_list),match:intro,,= intro 0000:36e1
 ps,func,0000:45b9,write,far int(int fd const void* unsigned),match:intro,,= intro 0000:36f7
 ps,func,0000:46c7,_write,far int(int fd const void* unsigned),match:intro,,= intro 0000:3805
+ps,func,0000:4701,rtl__xfclose,far void(void),platform,,Borland RTL exit hook target
+ps,func,0000:4729,rtl__xfflush,far void(void),platform,,Borland RTL exit hook target
 ps,func,0000:482f,_fstrcpy,far char far*(char far* const char far*),match:intro,,= intro 0000:388a
 ps,func,048e:0009,ps_sys_init,far void(void),platform,sys_init,
 ps,func,048e:0112,please_wait,far void(void),shell_ui,,"""Please Wait..."" box drawn on the front page (shell_ui.md §3.3)"
@@ -6130,6 +6249,7 @@ ps,global,DS:3240,drv_callbacks,far fn[19],video,,passed to drv_init
 ps,global,DS:328C,gfx_bios_mode,u8,video,,
 ps,global,DS:328D,gfx_req_adapter,u8,video,,
 ps,global,DS:328E,gfx_driver_ptr,far,video,,
+ps,global,DS:3292,scn_run_min,s16,platform,,shortest run coded as a run (6)
 ps,global,DS:3294,kbd_installed,u8,platform,,1 after kbd_install
 ps,global,DS:3295,kbd_caps_forced,u8,platform,,"init 0 in all exes, never written: ≠0 would force CapsLock on and ignore the Caps key"
 ps,global,DS:3296,kbd_last_key,u16,platform,,scan<<8
@@ -6179,7 +6299,13 @@ ps,global,DS:36E5,ttm_level,u16,video,,4; 2 if drv[1D]==0Ch
 ps,global,DS:3864,ttm_no_restore,u16,video,,0500/0510
 ps,global,DS:3866,ttm_gosub_depth,u16,video,,
 ps,global,DS:3868,ttm_fade_speed_tab,u16[7],video,ttm_fade_speed,
+ps,global,DS:38B2,snd_pk_mode,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ps,global,DS:38B4,snd_patch_tag,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ps,global,DS:38BE,snd_inf_path,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ps,global,DS:38C7,snd_dat_path,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ps,global,DS:38CC,snd_dat_tail,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 ps,global,DS:38D2,snd_vol_curve,,sound,,
+ps,global,DS:3914,snd_drv_tag,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 ps,global,DS:391E,snd_drv_code,,sound,,
 ps,global,DS:3964,snd_active,,sound,,
 ps,global,DS:3965,snd_patch_no,,sound,,
@@ -6191,7 +6317,10 @@ ps,global,DS:3973,snd_timer_handle,,sound,,
 ps,global,DS:3975,snd_sng_inf,,sound,,
 ps,global,DS:3977,snd_drv_block,,sound,,
 ps,global,DS:397B,snd_error,,sound,,
+ps,global,DS:397D,snd_play7e,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 ps,global,DS:397F,snd_disabled,,sound,,
+ps,global,DS:3981,snd_whole,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
+ps,global,DS:3984,snd_rd_mode,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 ps,global,DS:39E6,ts_fast_cache,far ptr,video,,never built in PS
 ps,global,DS:3B0A,bm_cap,u16,video,,"init 109h, reset 100h"
 ps,global,DS:3B0C,bm_rotated,u16,video,,"1, never written"
@@ -6204,7 +6333,36 @@ ps,global,DS:3BF2,ts_rotbuf_sel,u16,video,,
 ps,global,DS:3BF4,ts_stack_low,u32,video,,
 ps,global,DS:3BF8,ts_stack_file,far ptr,video,,
 ps,global,DS:3BFC,ts_stack_line,u16,video,,
+ps,global,DS:3CD1,_ctype_1,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3DD2,_exitbuf,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3DD6,_exitfopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3DDA,_exitopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3DDE,_streams,FILE[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3F1E,_nfile,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3F20,_openfd,u16[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3F48,_fmode,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3F4A,_notUmask,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3F4E,_doserrno,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3F50,_dosErrorToSV,char[],platform,,Borland RTL (found by aligning the three RTLs)
 ps,global,DS:3FB4,_stklen,u16,platform,,
+ps,global,DS:3FB6,_vpr_null,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3FBD,_vpr_class,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4050,_cFlag,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4052,__first,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4054,__last,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4056,__rover,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4066,environ,char**,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4068,_fputc_cr,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:406A,_stdinbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:406C,_stdoutbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:406E,_Days,char[12],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:407A,_YDays,int[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4094,tzname,char*[2],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4098,timezone,long,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:409C,daylight,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:409E,_tz_TZ,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:40A1,_tz_EST,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:40A5,_tz_EDT,char[],platform,,Borland RTL (found by aligning the three RTLs)
 ps,global,DS:40CA,data_prefix,char[],platform,work_dir,-n<path> + backslash
 ps,global,DS:419A,emd_bounce,u8[128],shell_data,,
 ps,global,DS:4224,mm_choice,u8,shell_ui,,main menu selection (item index)
@@ -6429,6 +6587,13 @@ ps,global,DS:7258,font_wid,far[20],video,,
 ps,global,DS:72A8,font_uline,u8[20],video,,
 ps,global,DS:72BC,chunk_slots,CHF[4],platform,,43h each
 ps,global,DS:73C8,chunk_backup,CHF,platform,,
+ps,global,DS:740C,scn_pending_nl,s16,platform,,bmp_to_scn state
+ps,global,DS:740E,scn_block,far ptr,platform,,bmp_to_scn state
+ps,global,DS:7412,scn_size_par,u16,platform,,bmp_to_scn state
+ps,global,DS:7414,scn_src,far ptr,platform,,bmp_to_scn state
+ps,global,DS:7418,scn_dst,far ptr,platform,,bmp_to_scn state
+ps,global,DS:741C,scn_tmp,near ptr,platform,,bmp_to_scn state
+ps,global,DS:741E,scn_mask,u8,platform,,
 ps,global,DS:7420,pk_litbuf,u8[50],platform,,
 ps,global,DS:7452,pk_io,u8,platform,,"20h file, 40h store"
 ps,global,DS:7454,pk_file,VFILE*,platform,,
@@ -6496,6 +6661,7 @@ ps,global,DS:76A4,ttm_delay,s16,video,,"frame delay, 59.18 Hz ticks"
 ps,global,DS:76A6,ttm_cyc_step,u16,video,,
 ps,global,DS:76A8,ttm_cyc_on,u16,video,,
 ps,global,DS:76AA,snd_iter_rec,,sound,,
+ps,global,DS:76AE,snd_iter_sel,,sound,,from sound/snd_api.c snd_ds table (platform integration round)
 ps,global,DS:76B0,snd_wait_count,,sound,,
 ps,global,DS:76B2,snd_pool,,sound,,
 ps,global,DS:76CE,ts_sprite_sets,far ptr,video,,= AP 6498
@@ -6512,3 +6678,7 @@ ps,global,DS:76E2,bm_base,u16,video,,bitmap index base
 ps,global,DS:76E4,bm_hot,far ptr,video,,hot-spot table
 ps,global,DS:76E8,shadow_xyz,s16[3],video,,
 ps,global,DS:76EE,ts_rotbuf,char[2][80],video,,
+ps,global,DS:781C,_fgetc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:781E,_fputc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:7820,_qs_width,u16,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:7822,_qs_cmp,far fn,platform,,Borland RTL (found by aligning the three RTLs)

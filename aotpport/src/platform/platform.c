@@ -4,6 +4,7 @@
 #include "codeptr.h"
 #include "host.h"
 #include "prog.h"
+#include "sound/sound.h"
 #include "symbols_intro.h"
 #include "symbols_ps.h"
 
@@ -36,5 +37,5 @@ void platform_prog_end(void)
     timer_unhook();
     kbd_unhook();
     int33_unhook();
-    host_set_sound_service(NULL);
+    snd_host_detach();                /* also after a fatal exit through prog_exit */
 }

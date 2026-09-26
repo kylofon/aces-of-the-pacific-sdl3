@@ -13,6 +13,9 @@
  *                  --intro-args -pi, --ps-args override)
  *   --check        load and verify the three executables (AP flattened), print a summary and exit;
  *                  with a path, also compare the flattened AP with that file (work/AP_flat.exe)
+ * AOTP_TEST (developer aids): "dro" (sound, no program is loaded) runs here; the tests that need a
+ * loaded program (platform: volumes, chunks, loaders; video: pictures, ttm) run from prog_run through
+ * platform_dev_test() in the program --start selects.
  */
 #define SDL_MAIN_HANDLED
 #include <SDL3/SDL.h>
@@ -31,6 +34,8 @@
 /* GCD.COM stores the largest free DOS block after shrinking itself in 0000:0512 (paragraphs). Any value
  * >= 94BBh passes INTRO's (609 200 bytes) and PS's (590 000) memory checks (platform.md §2.2, §9.3). */
 #define GCD_FREE_PARAS 0x9C00
+
+int snd_test_dro(void);     /* sound/snd_test.c */
 
 static int usage(const char *prog)
 {
@@ -70,6 +75,9 @@ int main(int argc, char **argv)
         else return usage(argv[0]);
     }
     if (!prog_args[PROG_INTRO]) prog_args[PROG_INTRO] = "";
+
+    const char *test = getenv("AOTP_TEST");
+    if (test && !strcmp(test, "dro")) return snd_test_dro();
 
     if (check) {
         /* no window: only the file lookup of the host is needed */

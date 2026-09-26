@@ -53,11 +53,11 @@ intro func 05da:4640: platform=huge_add; video_palette=far_add_long
 intro func 05da:4a8f: platform=font_load; video=gfx_font_load
 intro func 05da:4e01: platform=font_free; video=gfx_font_free
 intro global DS:0A9F: video_palette=drv_dac_flag; video=drv_inits
-intro global DS:0C1E: platform=pal_slots; video_palette=pal_slot; video=drv_pal_buf
+intro global DS:0C1E: platform_extra2=pal_slot; platform=pal_slots; video_palette=pal_slot; video=drv_pal_buf
 intro global DS:1E80: video_palette=ttm_fade_speed_tab; video_ttm=ttm_fade_speed
 intro global DS:2461: platform_res=data_prefix; platform=work_dir
 intro global DS:24D8: video_palette=intro_ticks; video_ttm=ttm_ticks
-intro global DS:2ED4: platform=font_ptr; video=font_glyphs
+intro global DS:2ED4: platform_extra2=font_glyphs; platform=font_ptr; video=font_glyphs
 intro global DS:3398: video_ttm=ttm_snd_bank; sound=ttm_sound_bank
 intro global DS:33C0: video_ttm=ttm_op; sound=ttm_sound_opcode
 intro global DS:33C8: video_ttm=ttm_delay; shell_ui=ttm_frame_delay

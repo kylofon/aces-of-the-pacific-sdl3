@@ -7,38 +7,22 @@
 
 #include "prog.h"
 
-/* the encoder's DGROUP state: INTRO DS:3128, PS DS:740C, AP DS:70D6 */
-#define S_pending  0x00   /* s16 pending new lines */
-#define S_block    0x02   /* far: the pixel block */
-#define S_sizepar  0x06
-#define S_src      0x08   /* far */
-#define S_dst      0x0C   /* far */
-#define S_tmp      0x10   /* near: literal list */
-#define S_mask     0x12   /* u8: colours - 1 */
-
-static u16 st(void)
-{
-    switch (prog_current_id()) {
-    case PROG_PS: return 0x740C;
-    case PROG_AP: return 0x70D6;
-    default:      return 0x3128;
-    }
-}
-static s16 run_min(void)
-{
-    switch (prog_current_id()) {
-    case PROG_PS: return DSS(0x3292);
-    case PROG_AP: return DSS(0x3632);
-    default:      return DSS(0x1A56);
-    }
-}
-#define SW(f) DSW((u16)(st() + (f)))
-#define SS(f) DSS((u16)(st() + (f)))
-#define MASK  DSB((u16)(st() + S_mask))
+/* the encoder's DGROUP state (layout ids; INTRO DS:3128.., PS DS:740C.., AP DS:70D6..) */
+#define S_pending  G_scn_pending_nl   /* s16 pending new lines */
+#define S_block    G_scn_block        /* far: the pixel block */
+#define S_sizepar  G_scn_size_par
+#define S_src      G_scn_src          /* far */
+#define S_dst      G_scn_dst          /* far */
+#define S_tmp      G_scn_tmp          /* near: literal list */
+static s16 run_min(void) { return LS(G_scn_run_min); }   /* 6 */
+#define SW(f) DSW(lds(f))
+#define SS(f) DSS(lds(f))
+#define SW2(f) DSW((u16)(lds(f) + 2))                   /* segment word of a far global */
+#define MASK  LB(G_scn_mask)
 
 static void out(u8 b)
 {
-    u16 off = SW(S_dst), seg = SW(S_dst + 2);
+    u16 off = SW(S_dst), seg = SW2(S_dst);
     wr8(seg, off, b);
     SW(S_dst) = (u16)(off + 1);
 }
@@ -113,11 +97,11 @@ static void scn_encode(u16 fr)
     SW(S_pending) = 0;
     SW(S_sizepar) = 0;
     SW(S_src) = DSW((u16)(fr + 2));
-    SW(S_src + 2) = DSW(fr);
+    SW2(S_src) = DSW(fr);
     if (MASK == 0x0F && LB(G_drv_dac_flag)) {
         for (s16 y = 0; (s16)h > y; y++)
             for (s16 x = 0; (s16)w > x; x++) {
-                u8 c = rd8(SW(S_src + 2), SW(S_src));
+                u8 c = rd8(SW2(S_src), SW(S_src));
                 SW(S_src) = (u16)(SW(S_src) + 1);
                 if (c && c < base) base = c;
             }
@@ -125,11 +109,11 @@ static void scn_encode(u16 fr)
         base = 1;
     }
     SW(S_src) = DSW((u16)(fr + 2));
-    SW(S_src + 2) = DSW(fr);
-    FarPtr ph = far_make(SW(S_dst + 2), SW(S_dst));
+    SW2(S_src) = DSW(fr);
+    FarPtr ph = far_make(SW2(S_dst), SW(S_dst));
     SW(S_dst) = (u16)(SW(S_dst) + 1);
     for (s16 y = 0; (s16)h > y; y++) {
-        u32 a = far_lin(far_make(SW(S_src + 2), SW(S_src)));      /* huge_memcpy of the row */
+        u32 a = far_lin(far_make(SW2(S_src), SW(S_src)));      /* huge_memcpy of the row */
         for (u16 i = 0; i < w; i++) row[i] = mem[(a + i) % MEM_SIZE];
         SW(S_src) = (u16)(SW(S_src) + w);
         for (s16 x = 0; (s16)w > x; x++) {
@@ -169,19 +153,19 @@ void bmp_to_scn(u16 bmp, u16 colours)
     }
     u16 fr0 = DSW(bmp);
     SW(S_block) = SW(S_dst) = DSW((u16)(fr0 + 2));
-    SW(S_block + 2) = SW(S_dst + 2) = DSW(fr0);
+    SW2(S_block) = SW2(S_dst) = DSW(fr0);
     for (u16 s = bmp; DSW(s); s += 2) {
         u16 di = SW(S_dst);
-        SW(S_dst + 2) = (u16)(SW(S_dst + 2) + ((s16)di >> 4));
+        SW2(S_dst) = (u16)(SW2(S_dst) + ((s16)di >> 4));
         SW(S_dst) = di & 0x0F;
-        u16 seg = SW(S_dst + 2), off = SW(S_dst);
+        u16 seg = SW2(S_dst), off = SW(S_dst);
         u16 fr = DSW(s);
         scn_encode(fr);
         DSW(fr) = seg;
         DSW((u16)(fr + 2)) = off;
         DSS((u16)(fr + 4)) = -2;
     }
-    u16 dseg = (u16)(SW(S_dst + 2) - SW(S_block + 2));
+    u16 dseg = (u16)(SW2(S_dst) - SW2(S_block));
     u16 doff = (u16)(SW(S_dst) - SW(S_block));
     SW(S_sizepar) = (u16)(dseg + ((s16)(doff + 15) >> 4));
     u16 largest;

@@ -99,13 +99,12 @@ void wipe_black(void)
 
 /* ---------------------------------------------------------------- §4 font set */
 
-/* 4c9b:0000 fonts_load. PORT: the slots DS:3F32..3F2A and the name strings DS:02E6..0302 have no
- * symbols in symbols_ap.h yet; literal offsets (requested). */
+/* 4c9b:0000 fonts_load */
 s16 ap_fonts_load(void)
 {
-    static const u16 names[5] = { 0x02EA, 0x02F0, 0x02F6, 0x02FC, 0x0302 };
-    static const u16 slots[5] = { 0x3F32, 0x3F30, 0x3F2E, 0x3F2C, 0x3F2A };
-    for (int i = 0; i < 5; i++) DSW(slots[i]) = font_load(res_name(names[i], 0x02E6));
+    static const u16 names[5] = { AP_DS_str_font1, AP_DS_str_font2, AP_DS_str_font3, AP_DS_str_font4, AP_DS_str_talk };
+    static const u16 slots[5] = { AP_DS_font1, AP_DS_font2, AP_DS_font3, AP_DS_font4, AP_DS_font_talk };
+    for (int i = 0; i < 5; i++) DSW(slots[i]) = font_load(res_name(names[i], AP_DS_str_FNT));
     for (int i = 0; i < 5; i++) if (!DSW(slots[i])) return 0;
     return 1;
 }

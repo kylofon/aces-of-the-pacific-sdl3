@@ -57,7 +57,7 @@
 #define INTRO_DS_poly_ox                                 0x0BCC  /* video, i16[20] */
 #define INTRO_DS_poly_oy                                 0x0BF4  /* video, i16[20] */
 #define INTRO_DS_poly_n                                  0x0C1C  /* video, u16 */
-#define INTRO_DS_pal_slots                               0x0C1E  /* platform, void far*[10] */
+#define INTRO_DS_pal_slot                                0x0C1E  /* platform, far ptr[10] */
 #define INTRO_DS_drv_xlat_tab                            0x113C  /* video, u16 */
 #define INTRO_DS_drv_use_entry28                         0x1162  /* video, u16 */
 #define INTRO_DS_drv_yshift                              0x1168  /* video, u8 */
@@ -116,6 +116,7 @@
 #define INTRO_DS_gfx_bios_mode                           0x1A50  /* video, u8 */
 #define INTRO_DS_gfx_req_adapter                         0x1A51  /* video, u8 */
 #define INTRO_DS_gfx_driver_ptr                          0x1A52  /* video, far */
+#define INTRO_DS_scn_run_min                             0x1A56  /* platform, s16 */
 #define INTRO_DS_pk_shared_scratch                       0x1A58  /* platform, void far */
 #define INTRO_DS_pk_methods                              0x1A5C  /* platform, struct[3] (0Eh) */
 #define INTRO_DS_lzw_buf                                 0x1A90  /* platform, u8[12] */
@@ -148,7 +149,13 @@
 #define INTRO_DS_ttm_no_restore                          0x1E7C  /* video, u16 */
 #define INTRO_DS_ttm_gosub_depth                         0x1E7E  /* video, u16 */
 #define INTRO_DS_ttm_fade_speed_tab                      0x1E80  /* video, u16[7] */
+#define INTRO_DS_snd_pk_mode                             0x1E8E  /* sound */
+#define INTRO_DS_snd_patch_tag                           0x1E90  /* sound */
+#define INTRO_DS_snd_inf_path                            0x1E9A  /* sound */
+#define INTRO_DS_snd_dat_path                            0x1EA3  /* sound */
+#define INTRO_DS_snd_dat_tail                            0x1EA8  /* sound */
 #define INTRO_DS_snd_vol_curve                           0x1EAE  /* sound */
+#define INTRO_DS_snd_drv_tag                             0x1EF0  /* sound */
 #define INTRO_DS_snd_drv_code                            0x1EFA  /* sound */
 #define INTRO_DS_snd_active                              0x1F40  /* sound */
 #define INTRO_DS_snd_patch_no                            0x1F41  /* sound */
@@ -160,12 +167,45 @@
 #define INTRO_DS_snd_sng_inf                             0x1F51  /* sound */
 #define INTRO_DS_snd_drv_block                           0x1F53  /* sound */
 #define INTRO_DS_snd_error                               0x1F57  /* sound */
+#define INTRO_DS_snd_play7e                              0x1F59  /* sound */
 #define INTRO_DS_snd_disabled                            0x1F5B  /* sound */
+#define INTRO_DS_snd_whole                               0x1F5D  /* sound */
+#define INTRO_DS_snd_rd_mode                             0x1F60  /* sound */
 #define INTRO_DS_ems_signature                           0x1F62  /* platform, char[8] */
 #define INTRO_DS_ems_present                             0x1F6A  /* platform, u8 */
 #define INTRO_DS_ems_error                               0x1F6B  /* platform, u8 */
 #define INTRO_DS_ems_handles                             0x1F6C  /* platform, u16[32] */
+#define INTRO_DS__ctype_1                                0x1FAF  /* platform, u8[] */
+#define INTRO_DS__exitbuf                                0x20B0  /* platform, far fn */
+#define INTRO_DS__exitfopen                              0x20B4  /* platform, far fn */
+#define INTRO_DS__exitopen                               0x20B8  /* platform, far fn */
+#define INTRO_DS__streams                                0x20BC  /* platform, FILE[] */
+#define INTRO_DS__nfile                                  0x21FC  /* platform, int */
+#define INTRO_DS__openfd                                 0x21FE  /* platform, u16[] */
+#define INTRO_DS__fmode                                  0x2226  /* platform, int */
+#define INTRO_DS__notUmask                               0x2228  /* platform, int */
+#define INTRO_DS__doserrno                               0x222C  /* platform, int */
+#define INTRO_DS__dosErrorToSV                           0x222E  /* platform, char[] */
+#define INTRO_DS__rand_seed                              0x2292  /* platform, u32 */
 #define INTRO_DS__stklen                                 0x2316  /* platform, u16 */
+#define INTRO_DS__vpr_null                               0x2318  /* platform, char[] */
+#define INTRO_DS__vpr_class                              0x231F  /* platform, u8[] */
+#define INTRO_DS__cFlag                                  0x23B2  /* platform, int */
+#define INTRO_DS___first                                 0x23B4  /* platform, near ptr */
+#define INTRO_DS___last                                  0x23B6  /* platform, near ptr */
+#define INTRO_DS___rover                                 0x23B8  /* platform, near ptr */
+#define INTRO_DS_environ                                 0x23C8  /* platform, char */
+#define INTRO_DS__fputc_cr                               0x23CA  /* platform, char[] */
+#define INTRO_DS__stdinbuf_set                           0x23CC  /* platform, int */
+#define INTRO_DS__stdoutbuf_set                          0x23CE  /* platform, int */
+#define INTRO_DS__Days                                   0x23D0  /* platform, char[12] */
+#define INTRO_DS__YDays                                  0x23DC  /* platform, int[] */
+#define INTRO_DS_tzname                                  0x23F6  /* platform, char*[2] */
+#define INTRO_DS_timezone                                0x23FA  /* platform, long */
+#define INTRO_DS_daylight                                0x23FE  /* platform, int */
+#define INTRO_DS__tz_TZ                                  0x2400  /* platform, char[] */
+#define INTRO_DS__tz_EST                                 0x2403  /* platform, char[] */
+#define INTRO_DS__tz_EDT                                 0x2407  /* platform, char[] */
 #define INTRO_DS_prf_loaded                              0x2460  /* platform, u8 */
 #define INTRO_DS_data_prefix                             0x2461  /* platform, char[] */
 #define INTRO_DS_control_prf                             0x24B1  /* platform, u8[37] */
@@ -198,12 +238,18 @@
 #define INTRO_DS_scale_rows                              0x2B98  /* video, i16[401] */
 #define INTRO_DS_flood_stack                             0x2EB8  /* video, far[2] */
 #define INTRO_DS_font_kind                               0x2EC0  /* platform, u8[20] */
-#define INTRO_DS_font_ptr                                0x2ED4  /* platform, void far*[20] */
+#define INTRO_DS_font_glyphs                             0x2ED4  /* platform, far ptr[20] */
 #define INTRO_DS_font_ofs                                0x2F24  /* platform, void far*[20] */
 #define INTRO_DS_font_wid                                0x2F74  /* platform, void far*[20] */
 #define INTRO_DS_font_uline                              0x2FC4  /* video, u8[20] */
 #define INTRO_DS_chunk_slots                             0x2FD8  /* platform, CHF[4] */
 #define INTRO_DS_chunk_backup                            0x30E4  /* platform, CHF */
+#define INTRO_DS_scn_pending_nl                          0x3128  /* platform, s16 */
+#define INTRO_DS_scn_block                               0x312A  /* platform, far ptr */
+#define INTRO_DS_scn_size_par                            0x312E  /* platform, u16 */
+#define INTRO_DS_scn_src                                 0x3130  /* platform, far ptr */
+#define INTRO_DS_scn_dst                                 0x3134  /* platform, far ptr */
+#define INTRO_DS_scn_tmp                                 0x3138  /* platform, near ptr */
 #define INTRO_DS_scn_mask                                0x313A  /* platform, u8 */
 #define INTRO_DS_pk_litbuf                               0x313C  /* platform, u8[50] */
 #define INTRO_DS_pk_io                                   0x316E  /* platform, u8 */
@@ -278,6 +324,8 @@
 #define INTRO_DS_snd_iter_sel                            0x33D2  /* sound */
 #define INTRO_DS_snd_wait_count                          0x33D4  /* sound */
 #define INTRO_DS_snd_pool                                0x33D6  /* sound */
+#define INTRO_DS__fgetc_ch                               0x3480  /* platform, u8 */
+#define INTRO_DS__fputc_ch                               0x3482  /* platform, u8 */
 
 /* ---- Code-segment globals (CS_x offset, CSSEG_x file segment) */
 
@@ -295,6 +343,7 @@
 #define INTRO_FN_atexit                                  0x0000049Au  /* seed, far int(void(*)(void)) */
 #define INTRO_FN_chdir                                   0x000004C7u  /* seed, far int(const char*) */
 #define INTRO_FN_access                                  0x000004DDu  /* seed, far int(const char* int) */
+#define INTRO_FN_rtl_exit_nop                            0x00000515u  /* platform, far void(void) */
 #define INTRO_FN___exit                                  0x00000516u  /* seed, near void(int status int quick int dontexit) */
 #define INTRO_FN_exit                                    0x0000056Du  /* seed, far void(int) */
 #define INTRO_FN__exit                                   0x0000057Cu  /* seed, far void(int) */
@@ -414,6 +463,8 @@
 #define INTRO_FN_vprintf                                 0x000036E1u  /* seed, far int(const char* va_list) */
 #define INTRO_FN_write                                   0x000036F7u  /* seed, far int(int fd const void* unsigned) */
 #define INTRO_FN__write                                  0x00003805u  /* seed, far int(int fd const void* unsigned) */
+#define INTRO_FN_rtl__xfclose                            0x0000383Fu  /* platform, far void(void) */
+#define INTRO_FN_rtl__xfflush                            0x00003867u  /* platform, far void(void) */
 #define INTRO_FN__fstrcpy                                0x0000388Au  /* seed, far char far*(char far* const char far*) */
 #define INTRO_FN__fstrncpy                               0x000038B3u  /* seed, far char far*(char far* const char far* unsigned */
 #define INTRO_FN_ipow                                    0x038E0004u  /* platform, far int(int,int) */

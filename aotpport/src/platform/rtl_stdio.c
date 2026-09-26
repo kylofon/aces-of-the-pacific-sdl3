@@ -36,7 +36,7 @@ s16 rtl_setvbuf(u16 fp, u16 buf_ds, s16 type, u16 size)
     FBS(fp) = 0;
     FBUF(fp) = FCUR(fp) = (u16)(fp + FILE_hold);
     if (type != 2 && size > 0) {
-        rtl_set_hook(RL(exitbuf), rtl_lay()->xfflush_off);
+        rtl_set_hook(RL(exitbuf), RTL_XFFLUSH_OFF);
         if (buf_ds == 0) {
             buf_ds = rtl_malloc(size);
             if (!buf_ds) return -1;
@@ -131,7 +131,7 @@ static u16 fopen_mode(u16 mode_ds, u16 *oflag, u16 *pmode)
         dx |= DSW(RL(fmode)) & 0xC000;
         if (dx & 0x8000) di |= 0x40;
     }
-    rtl_set_hook(RL(exitfopen), rtl_lay()->xfclose_off);
+    rtl_set_hook(RL(exitfopen), RTL_XFCLOSE_OFF);
     *oflag = dx;
     *pmode = pm;
     return di;
@@ -510,14 +510,13 @@ void rtl_setupio(void)
  * _exitopen is never set. Then DOS closes the remaining handles (INT 21h/4Ch). */
 void rtl_exit_streams(void)
 {
-    const RtlLayout *L = rtl_lay();
-    FarPtr eb = ds_far(L->exitbuf), ef = ds_far(L->exitfopen);
-    if (eb.off == L->xfflush_off) {                  /* INTRO 0000:3867 / PS 0000:4729 / AP 0000:4a98 */
+    FarPtr eb = ds_far(RL(exitbuf)), ef = ds_far(RL(exitfopen));
+    if (eb.off == RTL_XFFLUSH_OFF) {                  /* INTRO 0000:3867 / PS 0000:4729 / AP 0000:4a98 */
         for (int i = 0; i < 4; i++)
             if (FF(stream(i)) & F_RDWR) rtl_fflush(stream(i));
     }
-    if (ef.off == L->xfclose_off) {                  /* INTRO 0000:383f / PS 0000:4701 / AP 0000:4a70 */
-        u16 n = DSW(L->nfile);
+    if (ef.off == RTL_XFCLOSE_OFF) {                  /* INTRO 0000:383f / PS 0000:4701 / AP 0000:4a70 */
+        u16 n = DSW(RL(nfile));
         for (u16 i = 0; i < n; i++)
             if (FF(stream(i)) & F_RDWR) rtl_fclose(stream(i));
     }

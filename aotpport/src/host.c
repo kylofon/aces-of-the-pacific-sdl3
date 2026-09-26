@@ -578,6 +578,7 @@ _Noreturn void host_fatal(const char *fmt, ...)
     vsnprintf(msg, sizeof msg, fmt, ap);
     va_end(ap);
     fprintf(stderr, "fatal: %s\n", msg);
+    host_set_sound_service(NULL);         /* the audio thread must not run the game's service any more */
     if (window && !headless) SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Aces of the Pacific", msg, window);
     host_shutdown();
     exit(3);

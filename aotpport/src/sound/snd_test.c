@@ -10,8 +10,7 @@
  * patch chunks <OVL>/ADL.DRV, PATCH.003), read with stdio. Directory: AOTP_DRO_DIR, else ../work/sound
  * or work/sound. Nothing is played (no audio device is opened).
  *
- * PORT: main.c (coordinator) has no AOTP_TEST dispatch yet, so the test runs from a constructor before
- * main() when AOTP_TEST=dro and exits with 0 (all equal) or 1. */
+ * Run by main.c's AOTP_TEST dispatch (AOTP_TEST=dro); returns 0 (all equal) or 1. */
 #include "sound/snd_priv.h"
 
 #include <math.h>
@@ -247,10 +246,4 @@ int snd_test_dro(void)
     free(cap);
     printf("AOTP_TEST=dro: %d/%d sounds identical to the reference DROs\n", good, total);
     return good == total && total > 0 ? 0 : 1;
-}
-
-__attribute__((constructor)) static void snd_test_hook(void)
-{
-    const char *t = getenv("AOTP_TEST");
-    if (t && !strcmp(t, "dro")) exit(snd_test_dro());
 }

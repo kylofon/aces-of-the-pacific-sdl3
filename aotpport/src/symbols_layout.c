@@ -4,7 +4,37 @@
 const ProgLayout layout_intro = {
     "intro",
     {
+        0x23D0, /* _Days */
+        0x23DC, /* _YDays */
+        0x23B4, /* __first */
+        0x23B6, /* __last */
+        0x23B8, /* __rover */
+        0x23B2, /* _cFlag */
+        0x1FAF, /* _ctype_1 */
+        0x222E, /* _dosErrorToSV */
+        0x222C, /* _doserrno */
+        0x20B0, /* _exitbuf */
+        0x20B4, /* _exitfopen */
+        0x20B8, /* _exitopen */
+        0x3480, /* _fgetc_ch */
+        0x2226, /* _fmode */
+        0x3482, /* _fputc_ch */
+        0x23CA, /* _fputc_cr */
+        0x21FC, /* _nfile */
+        0x2228, /* _notUmask */
+        0x21FE, /* _openfd */
+        LAYOUT_ABSENT_DS, /* _qs_cmp */
+        LAYOUT_ABSENT_DS, /* _qs_width */
+        0x2292, /* _rand_seed */
+        0x23CC, /* _stdinbuf_set */
+        0x23CE, /* _stdoutbuf_set */
         0x2316, /* _stklen */
+        0x20BC, /* _streams */
+        0x2407, /* _tz_EDT */
+        0x2403, /* _tz_EST */
+        0x2400, /* _tz_TZ */
+        0x231F, /* _vpr_class */
+        0x2318, /* _vpr_null */
         0x164A, /* adapter_pix_shift */
         LAYOUT_ABSENT_DS, /* bm_azim */
         LAYOUT_ABSENT_DS, /* bm_elev */
@@ -21,6 +51,7 @@ const ProgLayout layout_intro = {
         0x2670, /* cyc_start3 */
         0x265C, /* cyc_step3 */
         0x2461, /* data_prefix */
+        0x23FE, /* daylight */
         0x0A51, /* dir_axis_tab */
         0x0A59, /* dir_bits_tab */
         0x1870, /* divz_installed */
@@ -60,6 +91,7 @@ const ProgLayout layout_intro = {
         0x1F6C, /* ems_handles */
         0x1F6A, /* ems_present */
         0x1F62, /* ems_signature */
+        0x23C8, /* environ */
         0x153A, /* fade_colour */
         0x1538, /* fade_level */
         LAYOUT_ABSENT_DS, /* flights */
@@ -67,7 +99,7 @@ const ProgLayout layout_intro = {
         0x165E, /* font_aa_map */
         0x0AF0, /* font_count */
         0x0ADC, /* font_first */
-        LAYOUT_ABSENT_DS, /* font_glyphs */
+        0x2ED4, /* font_glyphs */
         0x0AC8, /* font_h */
         0x2EC0, /* font_kind */
         0x2F24, /* font_ofs */
@@ -135,7 +167,7 @@ const ProgLayout layout_intro = {
         0x1592, /* pal_current */
         0x153C, /* pal_size */
         0x153E, /* pal_size_tab */
-        LAYOUT_ABSENT_DS, /* pal_slot */
+        0x0C1E, /* pal_slot */
         0x1596, /* pal_tag_amg */
         0x1576, /* pal_tag_tab */
         0x3250, /* pk_count */
@@ -179,8 +211,15 @@ const ProgLayout layout_intro = {
         0x1840, /* rot_iT */
         0x2698, /* scale_cols */
         0x2B98, /* scale_rows */
+        0x312A, /* scn_block */
         0x15BA, /* scn_draw_fn */
+        0x3134, /* scn_dst */
         0x313A, /* scn_mask */
+        0x3128, /* scn_pending_nl */
+        0x1A56, /* scn_run_min */
+        0x312E, /* scn_size_par */
+        0x3130, /* scn_src */
+        0x3138, /* scn_tmp */
         0x32F2, /* scroller_maxw */
         0x32F0, /* scroller_pos */
         LAYOUT_ABSENT_DS, /* shadow_colour */
@@ -190,21 +229,31 @@ const ProgLayout layout_intro = {
         LAYOUT_ABSENT_DS, /* sim_in */
         LAYOUT_ABSENT_DS, /* sim_out */
         0x1F40, /* snd_active */
+        0x1EA3, /* snd_dat_path */
+        0x1EA8, /* snd_dat_tail */
         0x1F5B, /* snd_disabled */
         0x1F53, /* snd_drv_block */
         0x1EFA, /* snd_drv_code */
         0x1F4B, /* snd_drv_no */
+        0x1EF0, /* snd_drv_tag */
         0x1F57, /* snd_error */
+        0x1E9A, /* snd_inf_path */
         0x33CE, /* snd_iter_rec */
+        0x33D2, /* snd_iter_sel */
         0x1F43, /* snd_patch_block */
         0x1F41, /* snd_patch_no */
+        0x1E90, /* snd_patch_tag */
+        0x1E8E, /* snd_pk_mode */
+        0x1F59, /* snd_play7e */
         0x33D6, /* snd_pool */
+        0x1F60, /* snd_rd_mode */
         0x1F47, /* snd_rec_head */
         0x1F51, /* snd_sng_inf */
         0x1F4F, /* snd_timer_handle */
         0x1F4D, /* snd_timer_owned */
         0x1EAE, /* snd_vol_curve */
         0x33D4, /* snd_wait_count */
+        0x1F5D, /* snd_whole */
         0x0A63, /* tandy_remap_from */
         0x0A6E, /* tandy_remap_to */
         0x15C5, /* timer_bios_count */
@@ -215,6 +264,7 @@ const ProgLayout layout_intro = {
         0x15C9, /* timer_fn */
         0x15BE, /* timer_installed */
         0x15C7, /* timer_mask */
+        0x23FA, /* timezone */
         0x3396, /* ttm_1041 */
         0x3332, /* ttm_argbuf */
         0x1CFA, /* ttm_ctx */
@@ -245,6 +295,7 @@ const ProgLayout layout_intro = {
         0x33A5, /* ttm_snd_name */
         0x1BC0, /* ttm_space_str */
         0x1CDE, /* ttm_str_slot */
+        0x23F6, /* tzname */
         0x1BC6, /* upd_flush_pairs */
         0x331E, /* upd_free */
         0x32F6, /* upd_heads */
@@ -397,6 +448,7 @@ const ProgLayout layout_intro = {
         LAYOUT_ABSENT_FN, /* clip32a_y_edge */
         LAYOUT_ABSENT_FN, /* clip32b_x_edge */
         LAYOUT_ABSENT_FN, /* clip32b_y_edge */
+        LAYOUT_ABSENT_FN, /* clip_full */
         0x00001E68u, /* close */
         0x038E04D6u, /* config_write */
         0x038E0181u, /* control_load */
@@ -453,6 +505,7 @@ const ProgLayout layout_intro = {
         0x05DA2ABAu, /* flood_push */
         0x05DA4E01u, /* font_free */
         0x05DA4A8Fu, /* font_load */
+        LAYOUT_ABSENT_FN, /* fonts_load */
         0x000022A4u, /* fopen */
         0x000022C3u, /* fprintf */
         0x00002A82u, /* fputc */
@@ -610,6 +663,7 @@ const ProgLayout layout_intro = {
         0x049D04F4u, /* my_hread */
         0x049D084Du, /* my_rewind */
         0x049D09F8u, /* my_setbuf */
+        LAYOUT_ABSENT_FN, /* namelist_load */
         LAYOUT_ABSENT_FN, /* near_clip16 */
         LAYOUT_ABSENT_FN, /* near_clip32a */
         LAYOUT_ABSENT_FN, /* near_clip32b */
@@ -735,6 +789,9 @@ const ProgLayout layout_intro = {
         LAYOUT_ABSENT_FN, /* rng_next */
         LAYOUT_ABSENT_FN, /* rng_seed */
         0x05DA3C84u, /* rot_edge_dda */
+        0x0000383Fu, /* rtl__xfclose */
+        0x00003867u, /* rtl__xfflush */
+        0x00000515u, /* rtl_exit_nop */
         0x00001872u, /* sbrk */
         0x13731FB5u, /* scale_volume */
         0x05DA607Cu, /* scn_emit_skip */
@@ -968,7 +1025,37 @@ const ProgLayout layout_intro = {
 const ProgLayout layout_ps = {
     "ps",
     {
+        0x406E, /* _Days */
+        0x407A, /* _YDays */
+        0x4052, /* __first */
+        0x4054, /* __last */
+        0x4056, /* __rover */
+        0x4050, /* _cFlag */
+        0x3CD1, /* _ctype_1 */
+        0x3F50, /* _dosErrorToSV */
+        0x3F4E, /* _doserrno */
+        0x3DD2, /* _exitbuf */
+        0x3DD6, /* _exitfopen */
+        0x3DDA, /* _exitopen */
+        0x781C, /* _fgetc_ch */
+        0x3F48, /* _fmode */
+        0x781E, /* _fputc_ch */
+        0x4068, /* _fputc_cr */
+        0x3F1E, /* _nfile */
+        0x3F4A, /* _notUmask */
+        0x3F20, /* _openfd */
+        0x7822, /* _qs_cmp */
+        0x7820, /* _qs_width */
+        LAYOUT_ABSENT_DS, /* _rand_seed */
+        0x406A, /* _stdinbuf_set */
+        0x406C, /* _stdoutbuf_set */
         0x3FB4, /* _stklen */
+        0x3DDE, /* _streams */
+        0x40A5, /* _tz_EDT */
+        0x40A1, /* _tz_EST */
+        0x409E, /* _tz_TZ */
+        0x3FBD, /* _vpr_class */
+        0x3FB6, /* _vpr_null */
         0x2ECA, /* adapter_pix_shift */
         0x76DC, /* bm_azim */
         0x76D8, /* bm_elev */
@@ -985,6 +1072,7 @@ const ProgLayout layout_ps = {
         0x6954, /* cyc_start3 */
         0x6940, /* cyc_step3 */
         0x40CA, /* data_prefix */
+        0x409C, /* daylight */
         0x33FB, /* dir_axis_tab */
         0x3403, /* dir_bits_tab */
         0x30D4, /* divz_installed */
@@ -1024,6 +1112,7 @@ const ProgLayout layout_ps = {
         LAYOUT_ABSENT_DS, /* ems_handles */
         LAYOUT_ABSENT_DS, /* ems_present */
         LAYOUT_ABSENT_DS, /* ems_signature */
+        0x4066, /* environ */
         0x2DBA, /* fade_colour */
         0x2DB8, /* fade_level */
         0x62C5, /* flights */
@@ -1143,8 +1232,15 @@ const ProgLayout layout_ps = {
         0x30A4, /* rot_iT */
         0x697C, /* scale_cols */
         0x6E7C, /* scale_rows */
+        0x740E, /* scn_block */
         0x2E3A, /* scn_draw_fn */
-        LAYOUT_ABSENT_DS, /* scn_mask */
+        0x7418, /* scn_dst */
+        0x741E, /* scn_mask */
+        0x740C, /* scn_pending_nl */
+        0x3292, /* scn_run_min */
+        0x7412, /* scn_size_par */
+        0x7414, /* scn_src */
+        0x741C, /* scn_tmp */
         0x75D6, /* scroller_maxw */
         0x75D4, /* scroller_pos */
         0x3B52, /* shadow_colour */
@@ -1154,21 +1250,31 @@ const ProgLayout layout_ps = {
         0x4B86, /* sim_in */
         0x4227, /* sim_out */
         0x3964, /* snd_active */
+        0x38C7, /* snd_dat_path */
+        0x38CC, /* snd_dat_tail */
         0x397F, /* snd_disabled */
         0x3977, /* snd_drv_block */
         0x391E, /* snd_drv_code */
         0x396F, /* snd_drv_no */
+        0x3914, /* snd_drv_tag */
         0x397B, /* snd_error */
+        0x38BE, /* snd_inf_path */
         0x76AA, /* snd_iter_rec */
+        0x76AE, /* snd_iter_sel */
         0x3967, /* snd_patch_block */
         0x3965, /* snd_patch_no */
+        0x38B4, /* snd_patch_tag */
+        0x38B2, /* snd_pk_mode */
+        0x397D, /* snd_play7e */
         0x76B2, /* snd_pool */
+        0x3984, /* snd_rd_mode */
         0x396B, /* snd_rec_head */
         0x3975, /* snd_sng_inf */
         0x3973, /* snd_timer_handle */
         0x3971, /* snd_timer_owned */
         0x38D2, /* snd_vol_curve */
         0x76B0, /* snd_wait_count */
+        0x3981, /* snd_whole */
         0x340D, /* tandy_remap_from */
         0x3418, /* tandy_remap_to */
         0x2E45, /* timer_bios_count */
@@ -1179,6 +1285,7 @@ const ProgLayout layout_ps = {
         0x2E49, /* timer_fn */
         0x2E3E, /* timer_installed */
         0x2E47, /* timer_mask */
+        0x4098, /* timezone */
         0x7672, /* ttm_1041 */
         0x760E, /* ttm_argbuf */
         0x36E2, /* ttm_ctx */
@@ -1209,6 +1316,7 @@ const ProgLayout layout_ps = {
         0x7681, /* ttm_snd_name */
         0x35A8, /* ttm_space_str */
         0x36C6, /* ttm_str_slot */
+        0x4094, /* tzname */
         0x35AE, /* upd_flush_pairs */
         0x7602, /* upd_free */
         0x75DA, /* upd_heads */
@@ -1361,6 +1469,7 @@ const ProgLayout layout_ps = {
         0x3D503455u, /* clip32a_y_edge */
         0x3D50385Au, /* clip32b_x_edge */
         0x3D50392Fu, /* clip32b_y_edge */
+        0x22CE0110u, /* clip_full */
         0x00002B4Cu, /* close */
         0x11930AD2u, /* config_write */
         0x1193027Au, /* control_load */
@@ -1417,6 +1526,7 @@ const ProgLayout layout_ps = {
         0x16E330CEu, /* flood_push */
         0x16E35125u, /* font_free */
         0x16E34DB3u, /* font_load */
+        0x0A710001u, /* fonts_load */
         0x00002F26u, /* fopen */
         0x00002F45u, /* fprintf */
         0x000037A8u, /* fputc */
@@ -1574,6 +1684,7 @@ const ProgLayout layout_ps = {
         0x00000983u, /* my_hread */
         0x00000CD6u, /* my_rewind */
         0x00000E81u, /* my_setbuf */
+        0x125A0203u, /* namelist_load */
         0x3D5032F6u, /* near_clip16 */
         0x3D50376Eu, /* near_clip32a */
         0x3D503CB4u, /* near_clip32b */
@@ -1699,6 +1810,9 @@ const ProgLayout layout_ps = {
         0x24B7000Cu, /* rng_next */
         0x24B70070u, /* rng_seed */
         0x16E33FA8u, /* rot_edge_dda */
+        0x00004701u, /* rtl__xfclose */
+        0x00004729u, /* rtl__xfflush */
+        0x0000185Fu, /* rtl_exit_nop */
         0x00002562u, /* sbrk */
         0x430A1FB6u, /* scale_volume */
         0x16E35DD6u, /* scn_emit_skip */
@@ -1932,7 +2046,37 @@ const ProgLayout layout_ps = {
 const ProgLayout layout_ap = {
     "ap",
     {
+        LAYOUT_ABSENT_DS, /* _Days */
+        LAYOUT_ABSENT_DS, /* _YDays */
+        0x3AB4, /* __first */
+        0x3AB6, /* __last */
+        0x3AB8, /* __rover */
+        0x3AB2, /* _cFlag */
+        0x372F, /* _ctype_1 */
+        0x39AE, /* _dosErrorToSV */
+        0x39AC, /* _doserrno */
+        0x3830, /* _exitbuf */
+        0x3834, /* _exitfopen */
+        0x3838, /* _exitopen */
+        0x71EE, /* _fgetc_ch */
+        0x39A6, /* _fmode */
+        0x71F0, /* _fputc_ch */
+        0x3AC8, /* _fputc_cr */
+        0x397C, /* _nfile */
+        0x39A8, /* _notUmask */
+        0x397E, /* _openfd */
+        0x71F4, /* _qs_cmp */
+        0x71F2, /* _qs_width */
+        0x3A12, /* _rand_seed */
+        0x3ACA, /* _stdinbuf_set */
+        0x3ACC, /* _stdoutbuf_set */
         0x05B2, /* _stklen */
+        0x383C, /* _streams */
+        LAYOUT_ABSENT_DS, /* _tz_EDT */
+        LAYOUT_ABSENT_DS, /* _tz_EST */
+        LAYOUT_ABSENT_DS, /* _tz_TZ */
+        0x3A1D, /* _vpr_class */
+        0x3A16, /* _vpr_null */
         0x3270, /* adapter_pix_shift */
         0x6486, /* bm_azim */
         0x6482, /* bm_elev */
@@ -1949,6 +2093,7 @@ const ProgLayout layout_ap = {
         0x661E, /* cyc_start3 */
         0x660A, /* cyc_step3 */
         0x4032, /* data_prefix */
+        LAYOUT_ABSENT_DS, /* daylight */
         0x1CCE, /* dir_axis_tab */
         0x1CD6, /* dir_bits_tab */
         0x347A, /* divz_installed */
@@ -1988,6 +2133,7 @@ const ProgLayout layout_ap = {
         0x202E, /* ems_handles */
         0x1FEC, /* ems_present */
         0x1FE4, /* ems_signature */
+        LAYOUT_ABSENT_DS, /* environ */
         0x317A, /* fade_colour */
         0x3178, /* fade_level */
         0x4753, /* flights */
@@ -2003,7 +2149,7 @@ const ProgLayout layout_ap = {
         0x26F4, /* font_w */
         0x6F22, /* font_wid */
         0x1B44, /* gfx_bios_mode */
-        LAYOUT_ABSENT_DS, /* gfx_driver_block */
+        0x3480, /* gfx_driver_block */
         0x1B46, /* gfx_driver_ptr */
         LAYOUT_ABSENT_DS, /* gfx_ovl_tags */
         0x1B45, /* gfx_req_adapter */
@@ -2049,17 +2195,17 @@ const ProgLayout layout_ap = {
         0x3422, /* mouse_stack_top */
         0x328A, /* mouse_x4 */
         0x328C, /* mouse_y4 */
-        LAYOUT_ABSENT_DS, /* mtx_frame */
-        LAYOUT_ABSENT_DS, /* mtx_lim_x */
-        LAYOUT_ABSENT_DS, /* mtx_lim_y */
-        LAYOUT_ABSENT_DS, /* mtx_ncols */
-        LAYOUT_ABSENT_DS, /* mtx_nrows */
-        LAYOUT_ABSENT_DS, /* mtx_offsets */
-        LAYOUT_ABSENT_DS, /* mtx_rows */
-        LAYOUT_ABSENT_DS, /* mtx_scroll_x */
-        LAYOUT_ABSENT_DS, /* mtx_scroll_y */
-        LAYOUT_ABSENT_DS, /* mtx_th */
-        LAYOUT_ABSENT_DS, /* mtx_tw */
+        0x2224, /* mtx_frame */
+        0x6412, /* mtx_lim_x */
+        0x6414, /* mtx_lim_y */
+        0x6456, /* mtx_ncols */
+        0x6458, /* mtx_nrows */
+        0x2222, /* mtx_offsets */
+        0x641A, /* mtx_rows */
+        0x222E, /* mtx_scroll_x */
+        0x2230, /* mtx_scroll_y */
+        0x6418, /* mtx_th */
+        0x6416, /* mtx_tw */
         0x31D2, /* pal_current */
         0x317C, /* pal_size */
         0x317E, /* pal_size_tab */
@@ -2107,8 +2253,15 @@ const ProgLayout layout_ap = {
         0x344A, /* rot_iT */
         0x6646, /* scale_cols */
         0x6B46, /* scale_rows */
+        0x70D8, /* scn_block */
         0x31E0, /* scn_draw_fn */
+        0x70E2, /* scn_dst */
         0x70E8, /* scn_mask */
+        0x70D6, /* scn_pending_nl */
+        0x3632, /* scn_run_min */
+        0x70DC, /* scn_size_par */
+        0x70DE, /* scn_src */
+        0x70E6, /* scn_tmp */
         LAYOUT_ABSENT_DS, /* scroller_maxw */
         LAYOUT_ABSENT_DS, /* scroller_pos */
         0x2402, /* shadow_colour */
@@ -2118,21 +2271,31 @@ const ProgLayout layout_ap = {
         0x439A, /* sim_in */
         0x5CA3, /* sim_out */
         0x2692, /* snd_active */
-        LAYOUT_ABSENT_DS, /* snd_disabled */
+        LAYOUT_ABSENT_DS, /* snd_dat_path */
+        LAYOUT_ABSENT_DS, /* snd_dat_tail */
+        0x26AD, /* snd_disabled */
         0x26A5, /* snd_drv_block */
         0x2634, /* snd_drv_code */
         0x269D, /* snd_drv_no */
-        LAYOUT_ABSENT_DS, /* snd_error */
-        LAYOUT_ABSENT_DS, /* snd_iter_rec */
-        LAYOUT_ABSENT_DS, /* snd_patch_block */
+        0x262A, /* snd_drv_tag */
+        0x26A9, /* snd_error */
+        LAYOUT_ABSENT_DS, /* snd_inf_path */
+        0x65E6, /* snd_iter_rec */
+        0x65EA, /* snd_iter_sel */
+        0x2695, /* snd_patch_block */
         0x2693, /* snd_patch_no */
+        0x2620, /* snd_patch_tag */
+        0x261E, /* snd_pk_mode */
+        0x26AB, /* snd_play7e */
         0x65EE, /* snd_pool */
+        0x26B8, /* snd_rd_mode */
         0x2699, /* snd_rec_head */
         0x26A3, /* snd_sng_inf */
-        LAYOUT_ABSENT_DS, /* snd_timer_handle */
-        LAYOUT_ABSENT_DS, /* snd_timer_owned */
+        0x26A1, /* snd_timer_handle */
+        0x269F, /* snd_timer_owned */
         LAYOUT_ABSENT_DS, /* snd_vol_curve */
         0x65EC, /* snd_wait_count */
+        LAYOUT_ABSENT_DS, /* snd_whole */
         0x1CE0, /* tandy_remap_from */
         0x1CEB, /* tandy_remap_to */
         0x31EB, /* timer_bios_count */
@@ -2143,6 +2306,7 @@ const ProgLayout layout_ap = {
         0x31EF, /* timer_fn */
         0x31E4, /* timer_installed */
         0x31ED, /* timer_mask */
+        LAYOUT_ABSENT_DS, /* timezone */
         LAYOUT_ABSENT_DS, /* ttm_1041 */
         0x639E, /* ttm_argbuf */
         0x209C, /* ttm_ctx */
@@ -2173,6 +2337,7 @@ const ProgLayout layout_ap = {
         LAYOUT_ABSENT_DS, /* ttm_snd_name */
         LAYOUT_ABSENT_DS, /* ttm_space_str */
         0x2080, /* ttm_str_slot */
+        LAYOUT_ABSENT_DS, /* tzname */
         LAYOUT_ABSENT_DS, /* upd_flush_pairs */
         LAYOUT_ABSENT_DS, /* upd_free */
         LAYOUT_ABSENT_DS, /* upd_heads */
@@ -2301,9 +2466,9 @@ const ProgLayout layout_ap = {
         0x000028DEu, /* calloc */
         0x277A004Bu, /* cam_begin_frame */
         0x00001B37u, /* chdir */
-        LAYOUT_ABSENT_FN, /* chlist_free */
-        LAYOUT_ABSENT_FN, /* chlist_insert */
-        LAYOUT_ABSENT_FN, /* chlist_read */
+        0x2FE401F5u, /* chlist_free */
+        0x2FE4041Du, /* chlist_insert */
+        0x2FE40339u, /* chlist_read */
         0x718704F7u, /* chunk_close */
         0x718701A2u, /* chunk_fail */
         0x718701D4u, /* chunk_find */
@@ -2325,6 +2490,7 @@ const ProgLayout layout_ap = {
         0x277A2C19u, /* clip32a_y_edge */
         0x277A3070u, /* clip32b_x_edge */
         0x277A3159u, /* clip32b_y_edge */
+        0x368F01CFu, /* clip_full */
         0x000033D8u, /* close */
         LAYOUT_ABSENT_FN, /* config_write */
         LAYOUT_ABSENT_FN, /* control_load */
@@ -2381,6 +2547,7 @@ const ProgLayout layout_ap = {
         0x1D324F08u, /* flood_push */
         0x71150372u, /* font_free */
         0x71150000u, /* font_load */
+        0x4C9B0000u, /* fonts_load */
         0x000037B2u, /* fopen */
         0x000037D1u, /* fprintf */
         0x0000404Eu, /* fputc */
@@ -2538,15 +2705,16 @@ const ProgLayout layout_ap = {
         LAYOUT_ABSENT_FN, /* my_hread */
         0x00000C44u, /* my_rewind */
         0x00000DCDu, /* my_setbuf */
+        0x5B710118u, /* namelist_load */
         0x277A2ADFu, /* near_clip16 */
         0x277A2F4Eu, /* near_clip32a */
         0x277A3530u, /* near_clip32b */
         0x277A2A8Du, /* near_isect16 */
         0x277A2ED7u, /* near_isect32a */
         0x277A346Bu, /* near_isect32b */
-        LAYOUT_ABSENT_FN, /* node_nth */
-        LAYOUT_ABSENT_FN, /* node_play_nth */
-        LAYOUT_ABSENT_FN, /* node_stop_nth */
+        0x3305000Cu, /* node_nth */
+        0x3308000Cu, /* node_play_nth */
+        0x33030000u, /* node_stop_nth */
         0x277A24EFu, /* obj_near_depth */
         0x277A237Du, /* obj_set_orientation */
         0x277A22F8u, /* obj_set_position */
@@ -2650,8 +2818,8 @@ const ProgLayout layout_ap = {
         0x47A80094u, /* rect_restore */
         0x47A80077u, /* rect_save */
         0x47A8005Du, /* rect_shrink */
-        LAYOUT_ABSENT_FN, /* res_build */
-        LAYOUT_ABSENT_FN, /* res_find_track */
+        0x2FE404C9u, /* res_build */
+        0x2FE40238u, /* res_find_track */
         0x33010005u, /* res_skip_header */
         0x0000461Fu, /* rewind */
         0x1D32286Cu, /* rle_fill */
@@ -2663,6 +2831,9 @@ const ProgLayout layout_ap = {
         0x1889005Fu, /* rng_next */
         0x18890002u, /* rng_seed */
         0x1D325DE2u, /* rot_edge_dda */
+        0x00004A70u, /* rtl__xfclose */
+        0x00004A98u, /* rtl__xfflush */
+        0x00001BAFu, /* rtl_exit_nop */
         0x000028CEu, /* sbrk */
         0x30601FB9u, /* scale_volume */
         0x71DB00E7u, /* scn_emit_skip */
@@ -2717,7 +2888,7 @@ const ProgLayout layout_ap = {
         0x306000B3u, /* snd_node_fade */
         0x3060011Au, /* snd_node_hold */
         0x3060017Fu, /* snd_node_mute_all */
-        LAYOUT_ABSENT_FN, /* snd_node_new */
+        0x2FDC0000u, /* snd_node_new */
         0x30600065u, /* snd_node_pause */
         0x306000F2u, /* snd_node_pitch_bend */
         0x3060009Fu, /* snd_node_play */
@@ -2731,16 +2902,16 @@ const ProgLayout layout_ap = {
         0x32990003u, /* snd_play */
         0x30600054u, /* snd_player_master_volume */
         0x3040000Cu, /* snd_pool_alloc */
-        LAYOUT_ABSENT_FN, /* snd_pool_find */
+        0x30480006u, /* snd_pool_find */
         0x2FD80003u, /* snd_pool_free */
         0x33180005u, /* snd_pool_play */
         0x328C000Eu, /* snd_pool_stop_all */
-        LAYOUT_ABSENT_FN, /* snd_pool_stop_data */
+        0x330D0001u, /* snd_pool_stop_data */
         LAYOUT_ABSENT_FN, /* snd_priority */
         0x332F000Du, /* snd_read_all */
         0x2FCA0004u, /* snd_rec_iter */
         LAYOUT_ABSENT_FN, /* snd_rec_load */
-        LAYOUT_ABSENT_FN, /* snd_rec_node */
+        0x3056007Au, /* snd_rec_node */
         0x2FE40005u, /* snd_res_read */
         LAYOUT_ABSENT_FN, /* snd_resume */
         LAYOUT_ABSENT_FN, /* snd_reverb */
@@ -2894,7 +3065,37 @@ const ProgLayout layout_ap = {
 };
 
 const char *const layout_g_names[G_COUNT] = {
+    "_Days",
+    "_YDays",
+    "__first",
+    "__last",
+    "__rover",
+    "_cFlag",
+    "_ctype_1",
+    "_dosErrorToSV",
+    "_doserrno",
+    "_exitbuf",
+    "_exitfopen",
+    "_exitopen",
+    "_fgetc_ch",
+    "_fmode",
+    "_fputc_ch",
+    "_fputc_cr",
+    "_nfile",
+    "_notUmask",
+    "_openfd",
+    "_qs_cmp",
+    "_qs_width",
+    "_rand_seed",
+    "_stdinbuf_set",
+    "_stdoutbuf_set",
     "_stklen",
+    "_streams",
+    "_tz_EDT",
+    "_tz_EST",
+    "_tz_TZ",
+    "_vpr_class",
+    "_vpr_null",
     "adapter_pix_shift",
     "bm_azim",
     "bm_elev",
@@ -2911,6 +3112,7 @@ const char *const layout_g_names[G_COUNT] = {
     "cyc_start3",
     "cyc_step3",
     "data_prefix",
+    "daylight",
     "dir_axis_tab",
     "dir_bits_tab",
     "divz_installed",
@@ -2950,6 +3152,7 @@ const char *const layout_g_names[G_COUNT] = {
     "ems_handles",
     "ems_present",
     "ems_signature",
+    "environ",
     "fade_colour",
     "fade_level",
     "flights",
@@ -3069,8 +3272,15 @@ const char *const layout_g_names[G_COUNT] = {
     "rot_iT",
     "scale_cols",
     "scale_rows",
+    "scn_block",
     "scn_draw_fn",
+    "scn_dst",
     "scn_mask",
+    "scn_pending_nl",
+    "scn_run_min",
+    "scn_size_par",
+    "scn_src",
+    "scn_tmp",
     "scroller_maxw",
     "scroller_pos",
     "shadow_colour",
@@ -3080,21 +3290,31 @@ const char *const layout_g_names[G_COUNT] = {
     "sim_in",
     "sim_out",
     "snd_active",
+    "snd_dat_path",
+    "snd_dat_tail",
     "snd_disabled",
     "snd_drv_block",
     "snd_drv_code",
     "snd_drv_no",
+    "snd_drv_tag",
     "snd_error",
+    "snd_inf_path",
     "snd_iter_rec",
+    "snd_iter_sel",
     "snd_patch_block",
     "snd_patch_no",
+    "snd_patch_tag",
+    "snd_pk_mode",
+    "snd_play7e",
     "snd_pool",
+    "snd_rd_mode",
     "snd_rec_head",
     "snd_sng_inf",
     "snd_timer_handle",
     "snd_timer_owned",
     "snd_vol_curve",
     "snd_wait_count",
+    "snd_whole",
     "tandy_remap_from",
     "tandy_remap_to",
     "timer_bios_count",
@@ -3105,6 +3325,7 @@ const char *const layout_g_names[G_COUNT] = {
     "timer_fn",
     "timer_installed",
     "timer_mask",
+    "timezone",
     "ttm_1041",
     "ttm_argbuf",
     "ttm_ctx",
@@ -3135,6 +3356,7 @@ const char *const layout_g_names[G_COUNT] = {
     "ttm_snd_name",
     "ttm_space_str",
     "ttm_str_slot",
+    "tzname",
     "upd_flush_pairs",
     "upd_free",
     "upd_heads",
@@ -3287,6 +3509,7 @@ const char *const layout_f_names[F_COUNT] = {
     "clip32a_y_edge",
     "clip32b_x_edge",
     "clip32b_y_edge",
+    "clip_full",
     "close",
     "config_write",
     "control_load",
@@ -3343,6 +3566,7 @@ const char *const layout_f_names[F_COUNT] = {
     "flood_push",
     "font_free",
     "font_load",
+    "fonts_load",
     "fopen",
     "fprintf",
     "fputc",
@@ -3500,6 +3724,7 @@ const char *const layout_f_names[F_COUNT] = {
     "my_hread",
     "my_rewind",
     "my_setbuf",
+    "namelist_load",
     "near_clip16",
     "near_clip32a",
     "near_clip32b",
@@ -3625,6 +3850,9 @@ const char *const layout_f_names[F_COUNT] = {
     "rng_next",
     "rng_seed",
     "rot_edge_dda",
+    "rtl__xfclose",
+    "rtl__xfflush",
+    "rtl_exit_nop",
     "sbrk",
     "scale_volume",
     "scn_emit_skip",

@@ -1,0 +1,124 @@
+exe,kind,address,name,type,owner,other_names,notes
+intro,global,DS:222C,_doserrno,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:222E,_dosErrorToSV,char[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:20BC,_streams,FILE[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:21FC,_nfile,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:21FE,_openfd,u16[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2226,_fmode,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2228,_notUmask,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:20B0,_exitbuf,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:20B4,_exitfopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:20B8,_exitopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23CC,_stdinbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23CE,_stdoutbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23B4,__first,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23B6,__last,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23B8,__rover,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23B2,_cFlag,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:1FAF,_ctype_1,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2292,_rand_seed,u32,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23CA,_fputc_cr,char[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:3482,_fputc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:3480,_fgetc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2318,_vpr_null,char[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:231F,_vpr_class,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23C8,environ,char**,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23F6,tzname,char*[2],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23FA,timezone,long,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23FE,daylight,int,platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2400,_tz_TZ,char[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2403,_tz_EST,char[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:2407,_tz_EDT,char[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23D0,_Days,char[12],platform,,Borland RTL (found by aligning the three RTLs)
+intro,global,DS:23DC,_YDays,int[],platform,,Borland RTL (found by aligning the three RTLs)
+intro,func,0000:3867,rtl__xfflush,far void(void),platform,,Borland RTL exit hook target
+intro,func,0000:383f,rtl__xfclose,far void(void),platform,,Borland RTL exit hook target
+intro,func,0000:0515,rtl_exit_nop,far void(void),platform,,Borland RTL exit hook target
+ps,global,DS:3F4E,_doserrno,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3F50,_dosErrorToSV,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3DDE,_streams,FILE[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3F1E,_nfile,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3F20,_openfd,u16[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3F48,_fmode,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3F4A,_notUmask,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3DD2,_exitbuf,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3DD6,_exitfopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3DDA,_exitopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:406A,_stdinbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:406C,_stdoutbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4052,__first,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4054,__last,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4056,__rover,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4050,_cFlag,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3CD1,_ctype_1,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4068,_fputc_cr,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:781E,_fputc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:781C,_fgetc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:7820,_qs_width,u16,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:7822,_qs_cmp,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3FB6,_vpr_null,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:3FBD,_vpr_class,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4066,environ,char**,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4094,tzname,char*[2],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:4098,timezone,long,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:409C,daylight,int,platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:409E,_tz_TZ,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:40A1,_tz_EST,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:40A5,_tz_EDT,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:406E,_Days,char[12],platform,,Borland RTL (found by aligning the three RTLs)
+ps,global,DS:407A,_YDays,int[],platform,,Borland RTL (found by aligning the three RTLs)
+ps,func,0000:4729,rtl__xfflush,far void(void),platform,,Borland RTL exit hook target
+ps,func,0000:4701,rtl__xfclose,far void(void),platform,,Borland RTL exit hook target
+ps,func,0000:185f,rtl_exit_nop,far void(void),platform,,Borland RTL exit hook target
+ap,global,DS:39AC,_doserrno,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:39AE,_dosErrorToSV,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:383C,_streams,FILE[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:397C,_nfile,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:397E,_openfd,u16[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:39A6,_fmode,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:39A8,_notUmask,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3830,_exitbuf,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3834,_exitfopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3838,_exitopen,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3ACA,_stdinbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3ACC,_stdoutbuf_set,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3AB4,__first,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3AB6,__last,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3AB8,__rover,near ptr,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3AB2,_cFlag,int,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:372F,_ctype_1,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3A12,_rand_seed,u32,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3AC8,_fputc_cr,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:71F0,_fputc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:71EE,_fgetc_ch,u8,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:71F2,_qs_width,u16,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:71F4,_qs_cmp,far fn,platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3A16,_vpr_null,char[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,global,DS:3A1D,_vpr_class,u8[],platform,,Borland RTL (found by aligning the three RTLs)
+ap,func,0000:4a98,rtl__xfflush,far void(void),platform,,Borland RTL exit hook target
+ap,func,0000:4a70,rtl__xfclose,far void(void),platform,,Borland RTL exit hook target
+ap,func,0000:1baf,rtl_exit_nop,far void(void),platform,,Borland RTL exit hook target
+intro,global,DS:3128,scn_pending_nl,s16,platform,,bmp_to_scn state
+intro,global,DS:312A,scn_block,far ptr,platform,,bmp_to_scn state
+intro,global,DS:312E,scn_size_par,u16,platform,,bmp_to_scn state
+intro,global,DS:3130,scn_src,far ptr,platform,,bmp_to_scn state
+intro,global,DS:3134,scn_dst,far ptr,platform,,bmp_to_scn state
+intro,global,DS:3138,scn_tmp,near ptr,platform,,bmp_to_scn state
+intro,global,DS:1A56,scn_run_min,s16,platform,,shortest run coded as a run (6)
+ps,global,DS:740C,scn_pending_nl,s16,platform,,bmp_to_scn state
+ps,global,DS:740E,scn_block,far ptr,platform,,bmp_to_scn state
+ps,global,DS:7412,scn_size_par,u16,platform,,bmp_to_scn state
+ps,global,DS:7414,scn_src,far ptr,platform,,bmp_to_scn state
+ps,global,DS:7418,scn_dst,far ptr,platform,,bmp_to_scn state
+ps,global,DS:741C,scn_tmp,near ptr,platform,,bmp_to_scn state
+ps,global,DS:3292,scn_run_min,s16,platform,,shortest run coded as a run (6)
+ap,global,DS:70D6,scn_pending_nl,s16,platform,,bmp_to_scn state
+ap,global,DS:70D8,scn_block,far ptr,platform,,bmp_to_scn state
+ap,global,DS:70DC,scn_size_par,u16,platform,,bmp_to_scn state
+ap,global,DS:70DE,scn_src,far ptr,platform,,bmp_to_scn state
+ap,global,DS:70E2,scn_dst,far ptr,platform,,bmp_to_scn state
+ap,global,DS:70E6,scn_tmp,near ptr,platform,,bmp_to_scn state
+ap,global,DS:3632,scn_run_min,s16,platform,,shortest run coded as a run (6)
+ps,global,DS:741E,scn_mask,u8,platform,,
+intro,global,DS:0C1E,pal_slot,far ptr[10],platform,pal_slots,named as in PS/AP for the layout
+intro,global,DS:2ED4,font_glyphs,far ptr[20],platform,font_ptr,named as in PS/AP for the layout

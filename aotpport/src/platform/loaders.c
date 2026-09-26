@@ -21,13 +21,6 @@
 
 static int prog(void) { return prog_current_id(); }
 
-/* a layout global, or the given DS offset where symbols.csv does not list it for this program */
-static u16 gofs(int g, u16 fallback)
-{
-    u16 o = prog_layout->ds[g];
-    return o == LAYOUT_ABSENT_DS ? fallback : o;
-}
-
 /* ---- per-program library calls */
 static u16 L_malloc(u16 n)
 {
@@ -52,6 +45,27 @@ static s32 L_hread(FarPtr buf, s32 size, s32 n, u16 f)
     return my_hread(buf, size, n, f);
 }
 
+/* AP 4bb7:0000 fread_far(dst, size, count, f): my_fread in 20-byte pieces through a stack buffer, the
+ * destination OFFSET advanced (no normalisation: a read past 64 KB wraps in the segment, as the
+ * original); returns the bytes read. PORT: modules.csv assigns it to sim_flow (messages.c); it lives
+ * here because the AP picture loaders need it (sim_flow should not define it again). */
+s32 ap_fread_far_4bb7(FarPtr dst, s32 size, s32 count, u16 f_ds)
+{
+    u16 m = stk_mark();
+    u16 tmp = stk_alloc(0x14);
+    s32 left = size * count, got = 0;
+    for (;;) {
+        u16 n = left < 0x14 ? (u16)left : 0x14;
+        if (!n) break;
+        got += (u16)my_fread(tmp, 1, (s16)n, f_ds);
+        for (u16 i = 0; i < n; i++) wr8(dst.seg, (u16)(dst.off + i), DSB((u16)(tmp + i)));   /* _fmemcpy */
+        dst.off = (u16)(dst.off + n);
+        left -= (s16)n;
+    }
+    stk_release(m);
+    return got;
+}
+
 static bool found(s32 r) { return r != -1; }
 static FarPtr pada(FarPtr p, u32 n) { return far_norm(far_lin(p) + n); }   /* PADA@ / PADD@ */
 static FarPtr psba(FarPtr p, u32 n) { return far_norm(far_lin(p) - n); }   /* PSBA@ */
@@ -63,7 +77,7 @@ u32 drv_call_bm_size(u16 bmp_ds, u16 out_ds) { return ((DrvBmSizeFn)drv_entry(13
 
 /* ======================================================================= palettes (§7.6) */
 
-static u16 pal_slots(void) { return gofs(G_pal_slot, 0x0C1E); }
+static u16 pal_slots(void) { return lds(G_pal_slot); }
 
 /* INTRO 05da:070b / PS 16e3:0d1f / AP 1d32:3e0b pal_load(x) -> far palette (0 on failure) */
 u32 pal_load(u16 x)
@@ -120,7 +134,7 @@ void pal_free(FarPtr pal)
 
 /* ========================================================================== fonts (§7.7) */
 
-static u16 f_ptr(int i) { return (u16)(gofs(G_font_glyphs, 0x2ED4) + 4 * i); }
+static u16 f_ptr(int i) { return (u16)(lds(G_font_glyphs) + 4 * i); }
 static u16 f_ofs(int i) { return (u16)(lds(G_font_ofs) + 4 * i); }
 static u16 f_wid(int i) { return (u16)(lds(G_font_wid) + 4 * i); }
 #define F_B(g, i) DSB((u16)(lds(g) + (i)))
@@ -494,12 +508,12 @@ close:
 }
 
 /* INTRO 0f35:000a / PS 39aa:000a / AP 6f83:0000 scr_load(x): VQT screens decode straight to the
- * drawing page; the rest go through scr_load_planes. Returns 0 / -1 / the planes result (the
- * header's first argument is x; the second is unused). */
-void scr_load(u16 page, u16 x)
+ * drawing page; the rest go through scr_load_planes. Returns 0 / -1 / the planes result (dropped:
+ * no caller uses it). The second word is unused. */
+void scr_load(u16 name_ds, u16 unused)
 {
-    (void)x;
-    u16 f = page, m = stk_mark();
+    (void)unused;
+    u16 f = name_ds, m = stk_mark();
     u16 st = stk_alloc(CHK_STATE);
     FarPtr buf = far_make(0, 0);
     bool opened = false;
@@ -709,8 +723,7 @@ close:
 
 /* ================================================================ bmp_mtx_load (§7.8) */
 
-/* AP: symbols.csv lists no mtx_* globals; the offsets are from AP 26db:0009 */
-#define MTX(g, ap) gofs(g, ap)
+#define MTX(g, ap) lds(g)      /* (the AP offsets, from 26db:0009, are symbols.csv rows now) */
 
 /* INTRO 0f48:000c / PS 39bd:000c / AP 26db:0009 bmp_mtx_load(x): tile bitmap + BMP:MTX: matrix */
 u16 bmp_mtx_load(u16 a0)
