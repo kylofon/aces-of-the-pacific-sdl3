@@ -1,0 +1,454 @@
+exe,kind,address,name,type,owner,other_names,notes
+intro,func,0000:0000,_c0_startup,void(void),seed,,"Borland C++ 3.0 c0m.asm entry: mov dx,DGROUP; DOS version; env/PSP; SaveVectors; __init table; main(argc,argv,envp); exit"
+intro,func,0000:0163,__cleanup,far void(void),seed,,c0: walks the #pragma exit table (ExitTable 0000:0264)
+intro,func,0000:0176,__checknull,far void(void),seed,,"c0: checksums DS:0000-002E (copyright) == 0D5Ch, else 'Null pointer assignment'"
+intro,func,0000:019e,__terminate,near void(int),seed,,INT 21h/4Ch
+intro,func,0000:01b0,_SaveVectors,near void(void),seed,,"c0: saves INT 0/4/5/6, installs divide-error handler"
+intro,func,0000:01f3,__restorezero,far void(void),seed,,c0: restores INT 0/4/5/6
+intro,func,0000:0220,_StartTable,near void(void),seed,,c0: #pragma startup walker (lowest priority first)
+intro,func,0000:0264,_ExitTable,near void(void),seed,,c0: #pragma exit walker
+intro,func,0000:02a5,_ErrorDisplay,near void(void),seed,,"c0: INT 21h/40h to stderr; abort() follows at 0000:02a9 ('Abnormal program termination', _exit(3))"
+intro,func,0000:042d,__hread,far long(int fd void far* buf long n),seed,,huge DOS read (INT 21h/3Fh in 7FFFh pieces); shares 0000:043b
+intro,func,0000:049a,atexit,far int(void(*)(void)),seed,,32-entry table
+intro,func,0000:04c7,chdir,far int(const char*),seed,,INT 21h/3Bh
+intro,func,0000:04dd,access,far int(const char* int),seed,,INT 21h/4300h
+intro,func,0000:0516,__exit,near void(int status int quick int dontexit),seed,,"runs atexit, _cleanup, _checknull, _restorezero, _terminate"
+intro,func,0000:056d,exit,far void(int),seed,,
+intro,func,0000:057c,_exit,far void(int),seed,,
+intro,func,0000:05a8,LXMUL@,far,seed,,long multiply helper (far)
+intro,func,0000:05bf,PCMP@,far,seed,,huge pointer compare
+intro,func,0000:05e0,SCOPY@,far,seed,,struct copy (retf 8)
+intro,func,0000:05fc,getdate,far void(struct date*),seed,,INT 21h/2Ah
+intro,func,0000:060f,gettime,far void(struct time*),seed,,INT 21h/2Ch
+intro,func,0000:0622,getvect,far void interrupt(*)(int),seed,,INT 21h/35h
+intro,func,0000:0631,setvect,far void(int void interrupt(*)()),seed,,INT 21h/25h
+intro,func,0000:0642,N_LDIV@,near,seed,,"long division family: N_LDIV@ (0642), LDIV@ (0645), LUDIV@ (064c), N_LMOD@ (0651), LMOD@ (0654), LUMOD@ (065c, common body)"
+intro,func,0000:0645,LDIV@,far,seed,,
+intro,func,0000:064c,LUDIV@,far,seed,,
+intro,func,0000:0651,N_LMOD@,near,seed,,
+intro,func,0000:0654,LMOD@,far,seed,,
+intro,func,0000:065c,LUMOD@,far,seed,,
+intro,func,0000:06f3,LXLSH@,far,seed,,long shift left
+intro,func,0000:0714,LXRSH@,far,seed,,long arithmetic shift right
+intro,func,0000:0734,LXURSH@,far,seed,,long logical shift right
+intro,func,0000:0755,PADA@,far,seed,,huge pointer add-assign
+intro,func,0000:0799,PSBA@,far,seed,,huge pointer subtract-assign
+intro,func,0000:07dd,PADD@,far,seed,,huge pointer add (PSUB@ follows at 0000:0801)
+intro,func,0000:083d,PINA@,far,seed,,huge pointer increment-assign
+intro,func,0000:08a0,__IOerror,near int(int doserr),seed,,DOS error -> errno/_doserrno; returns -1
+intro,func,0000:08d9,__DOSerror,near int(int),seed,,
+intro,func,0000:08eb,isatty,far int(int fd),seed,,INT 21h/4400h
+intro,func,0000:08fc,__longtoa,near,seed,,itoa/ltoa/ultoa engine
+intro,func,0000:0996,_lrotl,far unsigned long(unsigned long int),seed,,
+intro,func,0000:09b2,lseek,far long(int fd long off int whence),seed,,INT 21h/42h
+intro,func,0000:09db,__mkname,near char*(int num char* buf),seed,,TMPnnnnn.$$$
+intro,func,0000:0a1a,__tmpnam,near char*(char*),seed,,
+intro,func,0000:0a5d,N_LXMUL@,near,seed,,long multiply helper (near)
+intro,func,0000:0a74,outport,far void(int port int value),seed,,out dx ax
+intro,func,0000:0a80,outportb,far void(int port unsigned char),seed,,out dx al
+intro,func,0000:0a8c,outpw,far unsigned(unsigned port unsigned),seed,,
+intro,func,0000:0a98,outp,far int(unsigned port int),seed,,
+intro,func,0000:0aa6,srand,far void(unsigned),seed,,
+intro,func,0000:0ab7,rand,far int(void),seed,,LCG seed*015A4E35h+1 (DS:2292)
+intro,func,0000:0add,_read,far int(int fd void* buf unsigned n),seed,,INT 21h/3Fh
+intro,func,0000:0b0a,_scanner,near,seed,,scanf engine
+intro,func,0000:114f,setbuf,far void(FILE* char*),seed,,
+intro,func,0000:1173,setdate,far void(struct date*),seed,,INT 21h/2Bh
+intro,func,0000:1186,settime,far void(struct time*),seed,,INT 21h/2Dh
+intro,func,0000:123e,stime,far int(long*),seed,,
+intro,func,0000:1276,time,far long(long*),seed,,
+intro,func,0000:12c3,tell,far long(int fd),seed,,
+intro,func,0000:12dd,tolower,far int(int),seed,,
+intro,func,0000:1309,unlink,far int(const char*),seed,,INT 21h/41h
+intro,func,0000:1337,__vprinter_entry,near,seed,,"printf family front end (0000:1367 = __vprinter, 1107 bytes)"
+intro,func,0000:1367,__vprinter,near,seed,,
+intro,func,0000:17ea,stpcpy,far char*(char* const char*),seed,,
+intro,func,0000:1813,__brk,near int(void*),seed,,
+intro,func,0000:1835,__sbrk,near void*(long),seed,,
+intro,func,0000:1866,brk,far int(void*),seed,,
+intro,func,0000:1872,sbrk,far void*(int),seed,,
+intro,func,0000:1882,calloc,far void*(unsigned unsigned),seed,,
+intro,func,0000:18f2,__int86,near,seed,,builds INT nn on the stack (int86/int86x/intdos core; INT 25h/26h special-cased)
+intro,func,0000:1996,ioctl,far int(int fd int func ...),seed,,INT 21h/44h
+intro,func,0000:19bd,kbhit,far int(void),seed,,INT 21h/0Bh
+intro,func,0000:19cf,free,far void(void*),seed,,near heap
+intro,func,0000:1a9e,malloc,far void*(unsigned),seed,,near heap
+intro,func,0000:1bf9,realloc,far void*(void* unsigned),seed,,
+intro,func,0000:1dd0,atol,far long(const char*),seed,,
+intro,func,0000:1e40,atoi,far int(const char*),seed,,
+intro,func,0000:1e4d,_chmod,far int(const char* int ...),seed,,INT 21h/43h
+intro,func,0000:1e68,close,far int(int fd),seed,,
+intro,func,0000:1e90,_close,far int(int fd),seed,,INT 21h/3Eh
+intro,func,0000:1eae,eof,far int(int fd),seed,,INT 21h/42h+44h
+intro,func,0000:1f25,fclose,far int(FILE*),seed,,
+intro,func,0000:1fa6,fflush,far int(FILE*),seed,,
+intro,func,0000:2027,fgets,far char*(char* int FILE*),seed,,
+intro,func,0000:2089,findfirst,far int(const char* struct ffblk* int),seed,,INT 21h/1Ah+4Eh
+intro,func,0000:20bc,findnext,far int(struct ffblk*),seed,,INT 21h/1Ah+4Fh
+intro,func,0000:21dd,__openfp,near FILE*(FILE* const char* const char* int),seed,,
+intro,func,0000:2279,__getfp,near FILE*(void),seed,,
+intro,func,0000:22a4,fopen,far FILE*(const char* const char*),seed,,
+intro,func,0000:22c3,fprintf,far int(FILE* const char* ...),seed,,
+intro,func,0000:23e9,fread,far unsigned(void* unsigned unsigned FILE*),seed,,
+intro,func,0000:2491,fseek,far int(FILE* long int),seed,,
+intro,func,0000:24f9,ftell,far long(FILE*),seed,,
+intro,func,0000:25c0,fwrite,far unsigned(const void* unsigned unsigned FILE*),seed,,
+intro,func,0000:268e,_fgetc,far int(FILE*),seed,,buffer refill path of getc
+intro,func,0000:275c,getenv,far char*(const char*),seed,,
+intro,func,0000:27bb,itoa,far char*(int char* int),seed,,
+intro,func,0000:27e3,ultoa,far char*(unsigned long char* int),seed,,
+intro,func,0000:27fd,ltoa,far char*(long char* int),seed,,
+intro,func,0000:2822,memcpy,far void*(void* const void* unsigned),seed,,
+intro,func,0000:2841,setmem,far void(void* unsigned char),seed,,
+intro,func,0000:2867,memset,far void*(void* int unsigned),seed,,
+intro,func,0000:2882,__creat,near,seed,,INT 21h/3Ch (used by open)
+intro,func,0000:289b,__trunc,near,seed,,INT 21h/40h with CX=0
+intro,func,0000:28ad,open,far int(const char* int ...),seed,,
+intro,func,0000:2a05,_open,far int(const char* int),seed,,INT 21h/3Dh
+intro,func,0000:2a52,printf,far int(const char* ...),seed,,
+intro,func,0000:2a69,_fputc,far int(int FILE*),seed,,
+intro,func,0000:2a82,fputc,far int(int FILE*),seed,,
+intro,func,0000:2bb8,fputchar,far int(int),seed,,
+intro,func,0000:2bca,__fputn,near,seed,,
+intro,func,0000:2d72,read,far int(int fd void* buf unsigned n),seed,,text-mode read (CR/LF)
+intro,func,0000:2e43,rewind,far void(FILE*),seed,,
+intro,func,0000:2e65,setvbuf,far int(FILE* char* int unsigned),seed,,
+intro,func,0000:2f68,sscanf,far int(const char* const char* ...),seed,,
+intro,func,0000:2f86,vsscanf,far int(const char* const char* va_list),seed,,
+intro,func,0000:2fa3,strcat,far char*(char* const char*),seed,,
+intro,func,0000:2fdc,strchr,far char*(const char* int),seed,,
+intro,func,0000:3012,strcmp,far int(const char* const char*),seed,,
+intro,func,0000:3041,strcpy,far char*(char* const char*),seed,,
+intro,func,0000:3063,stricmp,far int(const char* const char*),seed,,
+intro,func,0000:30a3,strlen,far unsigned(const char*),seed,,
+intro,func,0000:30bd,strncpy,far char*(char* const char* unsigned),seed,,
+intro,func,0000:30e9,strrchr,far char*(const char* int),seed,,
+intro,func,0000:3118,strstr,far char*(const char* const char*),seed,,
+intro,func,0000:3178,strupr,far char*(char*),seed,,
+intro,func,0000:3198,dostounix,far long(struct date* struct time*),seed,,
+intro,func,0000:32b1,unixtodos,far void(long struct date* struct time*),seed,,
+intro,func,0000:3481,tzset,far void(void),seed,,"'EST' 'EDT', TZ"
+intro,func,0000:36e1,vprintf,far int(const char* va_list),seed,,
+intro,func,0000:36f7,write,far int(int fd const void* unsigned),seed,,text-mode write (LF -> CRLF)
+intro,func,0000:3805,_write,far int(int fd const void* unsigned),seed,,INT 21h/40h
+intro,func,0000:388a,_fstrcpy,far char far*(char far* const char far*),seed,,
+intro,func,0000:38b3,_fstrncpy,far char far*(char far* const char far* unsigned),seed,,
+intro,func,038e:0284,config_read,far void(void),seed,,resource.cfg parser (%*s %*s %d)
+intro,func,038e:04d6,config_write,far void(void),seed,,resource.cfg writer
+intro,func,038e:080d,sys_init,far void(void),seed,,"gfx_init('vmcode.ovl') + snd_init(driver,'sxcode.ovl'), divide handler, keyboard, mouse, sound resource 'ttd.sx'"
+intro,func,038e:0ac1,main,int(int argc char** argv),seed,,"INTRO main: options, memory check (610 000 bytes + EMS), resource.cfg/control.prf, sys_init, intro TTM sequence (intace1..4), exit(2) -> GCD runs PS.EXE"
+intro,func,049d:00bb,vol_fopen,far FILE*(const char* name const char* mode),seed,,my_fopen: file from a volume or from disk ('[not in volume]')
+intro,func,049d:0a2c,vol_open_index,far,seed,,'Dynamix Volume File' header check (volume.c)
+intro,func,049d:0c4a,vol_init,far,seed,,"findfirst('*.DYN'), opens every volume (volume.c)"
+intro,func,049d:0fa3,vol_open,far,seed,,'cannot open volume %s'
+intro,func,05bb:0052,fatal_error,far void(const char* fmt ...),seed,,"restore video, printf, wait key, exit(0)"
+intro,func,05bb:009f,assert_fail,near,seed,,"'%s:%d (%s)': file, line, expression"
+intro,func,05da:0014,kbd_install,far void(int),seed,,hooks INT 9 (05da:0117) and INT 1Ch (05da:02fd)
+intro,func,05da:00d9,kbd_restore,far int(void),seed,,restores INT 9 / INT 1Ch; flushes BIOS key buffer
+intro,func,05da:0117,kbd_isr,interrupt,seed,,INT 9 handler: port 60h/61h
+intro,func,05da:02fd,tick_isr_1c,interrupt,seed,,INT 1Ch handler (18.2 Hz): per-key/axis state at DS:0A43..
+intro,func,05da:2374,timer_install,far void(int mult),seed,,PIT ch0 divisor 65535/mult (called with 13: 236.7 Hz); INT 8 -> 05da:241a; old INT 8 chained every mult ticks
+intro,func,05da:23e1,timer_restore,far int(void),seed,,PIT divisor 0 (18.2 Hz) + old INT 8
+intro,func,05da:241a,timer_isr,interrupt,seed,,INT 8: up to N far callbacks (mask DS:15C7) with countdowns
+intro,func,05da:35e0,dos_alloc,far void far*(long size ...),seed,,INT 21h/48h
+intro,func,05da:3657,dos_free,far void(void far*),seed,,INT 21h/49h
+intro,func,05da:3667,joy_read_axes,near,seed,,port 201h timing loop
+intro,func,05da:390d,joy_read_buttons,far int(void),seed,,port 201h
+intro,func,05da:3a40,mouse_init,far int(void),seed,,INT 33h/0
+intro,func,05da:3ab0,mouse_set_range,far void(int x int y int w int h),seed,,INT 33h/7+8
+intro,func,05da:3bf0,mouse_shutdown,far int(void),seed,,INT 33h/0 + /0Ch
+intro,func,05da:3c36,mouse_set_pos,far int(int x int y),seed,,INT 33h/4
+intro,func,05da:4844,divzero_install,far void(void),seed,,INT 0 vector -> 05da:486e
+intro,func,05da:48a7,divzero_restore,far void(void),seed,,
+intro,func,05da:4933,gfx_load_driver,far void far*(int adapter const char* res),seed,,loads the adapter chunk (OVL:VGA: ...) of VMCODE.OVL from the volumes; returns its far address
+intro,func,05da:5c93,gfx_init,far int(const char* res int a int b),seed,,"detect adapter, load driver, call its entry, copy its 50-entry far jump table to DS:1938"
+intro,func,05da:5dc9,gfx_restore_text,far void(void),seed,,
+intro,func,05da:5de1,gfx_detect_adapter,near int(void),seed,,INT 10h/1Ah + 12h + CRTC probe
+intro,func,05da:5f48,bios_set_text_mode,near,seed,,equipment byte + INT 10h mode 3
+intro,func,05da:5f97,bmp_to_scn,far,seed,,INT 21h/4Ah
+intro,func,0db2:0002,win_detect,far int(void),seed,,"INT 2Fh/1600h (Windows enhanced mode), 4680h"
+intro,func,0db2:0035,win_critical_section,far void(int enter),seed,,INT 2Fh/1681h-1682h
+intro,func,1593:0004,snd_init,far int(int driver const char* res),seed,,"loads the sound module (SXCODE.OVL), timer_install(13) if needed, registers the 1373 sound service"
+intro,func,1659:000b,snd_load_resource,far,seed,,SND:INF: / DAT: chunks
+intro,func,17bd:0000,ems_detect,far int(void),seed,,"INT 21h/3567h, 'EMMXXXX0' at vector segment:000Ah"
+intro,func,17bd:002a,ems_free_pages,far int(void),seed,,INT 67h/42h
+intro,func,17bd:003a,ems_alloc,far int(int pages),seed,,INT 67h/43h
+intro,func,17bd:0080,ems_realloc,far int(int handle int pages),seed,,INT 67h/51h
+intro,func,17bd:00b2,ems_free,far int(int handle),seed,,INT 67h/45h
+intro,func,17bd:00fa,ems_map_save,far,seed,,"INT 67h/41h, 47h (save map), 44h, 4Ch"
+intro,func,17bd:013b,ems_restore_map,far,seed,,INT 67h/48h
+intro,func,17bd:014b,ems_map,far,seed,,"INT 67h/41h (page frame), 44h (map), 4Ch"
+ps,func,0000:0000,_c0_startup,void(void),match:intro,,= intro 0000:0000
+ps,func,0000:0163,__cleanup,far void(void),match:intro,,= intro 0000:0163
+ps,func,0000:0176,__checknull,far void(void),match:intro,,= intro 0000:0176
+ps,func,0000:019e,__terminate,near void(int),match:intro,,= intro 0000:019e
+ps,func,0000:01b0,_SaveVectors,near void(void),match:intro,,= intro 0000:01b0
+ps,func,0000:01f3,__restorezero,far void(void),match:intro,,= intro 0000:01f3
+ps,func,0000:0220,_StartTable,near void(void),match:intro,,= intro 0000:0220
+ps,func,0000:0264,_ExitTable,near void(void),match:intro,,= intro 0000:0264
+ps,func,0000:02a5,_ErrorDisplay,near void(void),match:intro,,= intro 0000:02a5
+ps,func,0000:17e4,atexit,far int(void(*)(void)),match:intro,,= intro 0000:049a
+ps,func,0000:1811,chdir,far int(const char*),match:intro,,= intro 0000:04c7
+ps,func,0000:1827,access,far int(const char* int),match:intro,,= intro 0000:04dd
+ps,func,0000:1860,__exit,near void(int status int quick int dontexit),match:intro,,= intro 0000:0516
+ps,func,0000:18b7,exit,far void(int),match:intro,,= intro 0000:056d
+ps,func,0000:18c6,_exit,far void(int),match:intro,,= intro 0000:057c
+ps,func,0000:18f2,LXMUL@,far,match:intro,,= intro 0000:05a8
+ps,func,0000:1909,PCMP@,far,match:intro,,= intro 0000:05bf
+ps,func,0000:192a,SCOPY@,far,match:intro,,= intro 0000:05e0
+ps,func,0000:1946,getdate,far void(struct date*),match:intro,,= intro 0000:05fc
+ps,func,0000:196c,getvect,far void interrupt(*)(int),match:intro,,= intro 0000:0622
+ps,func,0000:197b,setvect,far void(int void interrupt(*)()),match:intro,,= intro 0000:0631
+ps,func,0000:198c,N_LDIV@,near,match:intro,,= intro 0000:0642
+ps,func,0000:198f,LDIV@,far,match:intro,,= intro 0000:0645
+ps,func,0000:1996,LUDIV@,far,match:intro,,= intro 0000:064c
+ps,func,0000:19a6,LUMOD@,far,match:intro,,= intro 0000:065c
+ps,func,0000:1a3d,LXLSH@,far,match:intro,,= intro 0000:06f3
+ps,func,0000:1a5e,LXRSH@,far,match:intro,,= intro 0000:0714
+ps,func,0000:1a7e,LXURSH@,far,match:intro,,= intro 0000:0734
+ps,func,0000:1a9f,PADA@,far,match:intro,,= intro 0000:0755
+ps,func,0000:1ae3,PSBA@,far,match:intro,,= intro 0000:0799
+ps,func,0000:1b27,PADD@,far,match:intro,,= intro 0000:07dd
+ps,func,0000:1b87,PINA@,far,match:intro,,= intro 0000:083d
+ps,func,0000:1bea,__IOerror,near int(int doserr),match:intro,,= intro 0000:08a0
+ps,func,0000:1c23,__DOSerror,near int(int),match:intro,,= intro 0000:08d9
+ps,func,0000:1c35,isatty,far int(int fd),match:intro,,= intro 0000:08eb
+ps,func,0000:1c6e,__longtoa,near,match:intro,,= intro 0000:08fc
+ps,func,0000:1d08,_lrotl,far unsigned long(unsigned long int),match:intro,,= intro 0000:0996
+ps,func,0000:1d24,lseek,far long(int fd long off int whence),match:intro,,= intro 0000:09b2
+ps,func,0000:1d4d,__mkname,near char*(int num char* buf),match:intro,,= intro 0000:09db
+ps,func,0000:1d8c,__tmpnam,near char*(char*),match:intro,,= intro 0000:0a1a
+ps,func,0000:1dcf,N_LXMUL@,near,match:intro,,= intro 0000:0a5d
+ps,func,0000:1de6,_read,far int(int fd void* buf unsigned n),match:intro,,= intro 0000:0add
+ps,func,0000:1e13,setbuf,far void(FILE* char*),match:intro,,= intro 0000:114f
+ps,func,0000:1e37,setdate,far void(struct date*),match:intro,,= intro 0000:1173
+ps,func,0000:1f02,stime,far int(long*),match:intro,,= intro 0000:123e
+ps,func,0000:1f3a,time,far long(long*),match:intro,,= intro 0000:1276
+ps,func,0000:1f87,tell,far long(int fd),match:intro,,= intro 0000:12c3
+ps,func,0000:1fa1,tolower,far int(int),match:intro,,= intro 0000:12dd
+ps,func,0000:2027,__vprinter_entry,near,match:intro,,= intro 0000:1337
+ps,func,0000:2057,__vprinter,near,match:intro,,= intro 0000:1367
+ps,func,0000:24da,stpcpy,far char*(char* const char*),match:intro,,= intro 0000:17ea
+ps,func,0000:2503,__brk,near int(void*),match:intro,,= intro 0000:1813
+ps,func,0000:2525,__sbrk,near void*(long),match:intro,,= intro 0000:1835
+ps,func,0000:2556,brk,far int(void*),match:intro,,= intro 0000:1866
+ps,func,0000:2562,sbrk,far void*(int),match:intro,,= intro 0000:1872
+ps,func,0000:2572,calloc,far void*(unsigned unsigned),match:intro,,= intro 0000:1882
+ps,func,0000:25e2,__int86,near,match:intro,,= intro 0000:18f2
+ps,func,0000:2686,ioctl,far int(int fd int func ...),match:intro,,= intro 0000:1996
+ps,func,0000:26ad,kbhit,far int(void),match:intro,,= intro 0000:19bd
+ps,func,0000:26bf,free,far void(void*),match:intro,,= intro 0000:19cf
+ps,func,0000:278e,malloc,far void*(unsigned),match:intro,,= intro 0000:1a9e
+ps,func,0000:28e9,realloc,far void*(void* unsigned),match:intro,,= intro 0000:1bf9
+ps,func,0000:2ab4,atol,far long(const char*),match:intro,,= intro 0000:1dd0
+ps,func,0000:2b24,atoi,far int(const char*),match:intro,,= intro 0000:1e40
+ps,func,0000:2b31,_chmod,far int(const char* int ...),match:intro,,= intro 0000:1e4d
+ps,func,0000:2b4c,close,far int(int fd),match:intro,,= intro 0000:1e68
+ps,func,0000:2b74,_close,far int(int fd),match:intro,,= intro 0000:1e90
+ps,func,0000:2b92,eof,far int(int fd),match:intro,,= intro 0000:1eae
+ps,func,0000:2c09,fclose,far int(FILE*),match:intro,,= intro 0000:1f25
+ps,func,0000:2c8a,fflush,far int(FILE*),match:intro,,= intro 0000:1fa6
+ps,func,0000:2d0b,findfirst,far int(const char* struct ffblk* int),match:intro,,= intro 0000:2089
+ps,func,0000:2d3e,findnext,far int(struct ffblk*),match:intro,,= intro 0000:20bc
+ps,func,0000:2e5f,__openfp,near FILE*(FILE* const char* const char* int),match:intro,,= intro 0000:21dd
+ps,func,0000:2efb,__getfp,near FILE*(void),match:intro,,= intro 0000:2279
+ps,func,0000:2f26,fopen,far FILE*(const char* const char*),match:intro,,= intro 0000:22a4
+ps,func,0000:2f45,fprintf,far int(FILE* const char* ...),match:intro,,= intro 0000:22c3
+ps,func,0000:306b,fread,far unsigned(void* unsigned unsigned FILE*),match:intro,,= intro 0000:23e9
+ps,func,0000:3113,fseek,far int(FILE* long int),match:intro,,= intro 0000:2491
+ps,func,0000:317b,ftell,far long(FILE*),match:intro,,= intro 0000:24f9
+ps,func,0000:3242,fwrite,far unsigned(const void* unsigned unsigned FILE*),match:intro,,= intro 0000:25c0
+ps,func,0000:3310,_fgetc,far int(FILE*),match:intro,,= intro 0000:268e
+ps,func,0000:33de,getenv,far char*(const char*),match:intro,,= intro 0000:275c
+ps,func,0000:343d,itoa,far char*(int char* int),match:intro,,= intro 0000:27bb
+ps,func,0000:3465,ultoa,far char*(unsigned long char* int),match:intro,,= intro 0000:27e3
+ps,func,0000:347f,ltoa,far char*(long char* int),match:intro,,= intro 0000:27fd
+ps,func,0000:34c3,memcpy,far void*(void* const void* unsigned),match:intro,,= intro 0000:2822
+ps,func,0000:34e2,setmem,far void(void* unsigned char),match:intro,,= intro 0000:2841
+ps,func,0000:3508,memset,far void*(void* int unsigned),match:intro,,= intro 0000:2867
+ps,func,0000:35a8,__creat,near,match:intro,,= intro 0000:2882
+ps,func,0000:35c1,__trunc,near,match:intro,,= intro 0000:289b
+ps,func,0000:35d3,open,far int(const char* int ...),match:intro,,= intro 0000:28ad
+ps,func,0000:372b,_open,far int(const char* int),match:intro,,= intro 0000:2a05
+ps,func,0000:3778,printf,far int(const char* ...),match:intro,,= intro 0000:2a52
+ps,func,0000:378f,_fputc,far int(int FILE*),match:intro,,= intro 0000:2a69
+ps,func,0000:37a8,fputc,far int(int FILE*),match:intro,,= intro 0000:2a82
+ps,func,0000:38de,fputchar,far int(int),match:intro,,= intro 0000:2bb8
+ps,func,0000:38f0,__fputn,near,match:intro,,= intro 0000:2bca
+ps,func,0000:3c8b,read,far int(int fd void* buf unsigned n),match:intro,,= intro 0000:2d72
+ps,func,0000:3d5c,setvbuf,far int(FILE* char* int unsigned),match:intro,,= intro 0000:2e65
+ps,func,0000:3e95,strcat,far char*(char* const char*),match:intro,,= intro 0000:2fa3
+ps,func,0000:3ece,strchr,far char*(const char* int),match:intro,,= intro 0000:2fdc
+ps,func,0000:3f04,strcmp,far int(const char* const char*),match:intro,,= intro 0000:3012
+ps,func,0000:3f33,strcpy,far char*(char* const char*),match:intro,,= intro 0000:3041
+ps,func,0000:3f55,stricmp,far int(const char* const char*),match:intro,,= intro 0000:3063
+ps,func,0000:3f95,strlen,far unsigned(const char*),match:intro,,= intro 0000:30a3
+ps,func,0000:3faf,strncpy,far char*(char* const char* unsigned),match:intro,,= intro 0000:30bd
+ps,func,0000:3fdb,strrchr,far char*(const char* int),match:intro,,= intro 0000:30e9
+ps,func,0000:403a,strupr,far char*(char*),match:intro,,= intro 0000:3178
+ps,func,0000:405a,dostounix,far long(struct date* struct time*),match:intro,,= intro 0000:3198
+ps,func,0000:4173,unixtodos,far void(long struct date* struct time*),match:intro,,= intro 0000:32b1
+ps,func,0000:4343,tzset,far void(void),match:intro,,= intro 0000:3481
+ps,func,0000:45a3,vprintf,far int(const char* va_list),match:intro,,= intro 0000:36e1
+ps,func,0000:45b9,write,far int(int fd const void* unsigned),match:intro,,= intro 0000:36f7
+ps,func,0000:46c7,_write,far int(int fd const void* unsigned),match:intro,,= intro 0000:3805
+ps,func,0000:482f,_fstrcpy,far char far*(char far* const char far*),match:intro,,= intro 0000:388a
+ps,func,048e:0009,sys_init,far void(void),seed,,"gfx_init('vmcode.ovl'), snd_init('sxcode.ovl')"
+ps,func,048e:0259,main,int(int argc char** argv),seed,,"PS main: -n<dir> work dir, options, checks 0:0510 marker (29Ah = from GCD, 3E7h = back from AP), runs the shell (048e:0009 sys_init ...), shell_exit"
+ps,func,1193:08f6,sim_in_read,far int(void),seed,,reads SIM.IN (13 bytes) into DS:4B86 (shell\file.c)
+ps,func,1193:093e,sim_in_build_write,far void(void),seed,,fills the SIM.IN record DS:4B86 from the mission set-up and writes it
+ps,func,1193:09fe,sim_out_read,far int(void),seed,,reads SIM.OUT (36 bytes) into DS:4227 (shell\file.c)
+ps,func,1671:0007,win_detect,far int(void),match:intro,,= intro 0db2:0002
+ps,func,1671:003a,win_critical_section,far void(int enter),match:intro,,= intro 0db2:0035
+ps,func,16e3:000e,joy_read_axes,near,match:intro,,= intro 05da:3667
+ps,func,16e3:02ef,joy_read_buttons,far int(void),match:intro,,= intro 05da:390d
+ps,func,16e3:2988,timer_install,far void(int mult),match:intro,,= intro 05da:2374
+ps,func,16e3:29f5,timer_restore,far int(void),match:intro,,= intro 05da:23e1
+ps,func,16e3:2a2e,timer_isr,interrupt,match:intro,,= intro 05da:241a
+ps,func,16e3:3bf4,dos_alloc,far void far*(long size ...),match:intro,,= intro 05da:35e0
+ps,func,16e3:3c6b,dos_free,far void(void far*),match:intro,,= intro 05da:3657
+ps,func,16e3:3d64,mouse_init,far int(void),match:intro,,= intro 05da:3a40
+ps,func,16e3:3dd4,mouse_set_range,far void(int x int y int w int h),match:intro,,= intro 05da:3ab0
+ps,func,16e3:3f14,mouse_shutdown,far int(void),match:intro,,= intro 05da:3bf0
+ps,func,16e3:3f5a,mouse_set_pos,far int(int x int y),match:intro,,= intro 05da:3c36
+ps,func,16e3:4b68,divzero_install,far void(void),match:intro,,= intro 05da:4844
+ps,func,16e3:4bcb,divzero_restore,far void(void),match:intro,,= intro 05da:48a7
+ps,func,16e3:4c57,gfx_load_driver,far void far*(int adapter const char* res),match:intro,,= intro 05da:4933
+ps,func,16e3:59ed,gfx_init,far int(const char* res int a int b),match:intro,,= intro 05da:5c93
+ps,func,16e3:5b23,gfx_restore_text,far void(void),match:intro,,= intro 05da:5dc9
+ps,func,16e3:5b3b,gfx_detect_adapter,near int(void),match:intro,,= intro 05da:5de1
+ps,func,16e3:5ca2,bios_set_text_mode,near,match:intro,,= intro 05da:5f48
+ps,func,16e3:5cf1,bmp_to_scn,far,match:intro,,= intro 05da:5f97
+ps,func,16e3:62c9,kbd_install,far void(int),match:intro,,= intro 05da:0014 (score 0.91)
+ps,func,16e3:638d,kbd_restore,far int(void),match:intro,,= intro 05da:00d9
+ps,func,16e3:65aa,tick_isr_1c,interrupt,match:intro,,= intro 05da:02fd
+ps,func,227c:0072,shell_exit,far void(int to_sim),seed,,"to_sim != 0: writes SIM.IN, sets 0:0510 = 3E7h or 29Ah, exit(3) -> GCD runs AP.EXE; else exit(0) -> DOS"
+ps,func,452a:0005,snd_init,far int(int driver const char* res),match:intro,,= intro 1593:0004 (score 0.98)
+ps,func,45f0:000c,snd_load_resource,far,match:intro,,= intro 1659:000b
+ap,func,0000:0000,_c0_startup,void(void),match:intro,,= intro 0000:0000
+ap,func,0000:0163,__cleanup,far void(void),match:intro,,= intro 0000:0163
+ap,func,0000:0176,__checknull,far void(void),match:intro,,= intro 0000:0176
+ap,func,0000:019e,__terminate,near void(int),match:intro,,= intro 0000:019e
+ap,func,0000:01b0,_SaveVectors,near void(void),match:intro,,= intro 0000:01b0
+ap,func,0000:01f3,__restorezero,far void(void),match:intro,,= intro 0000:01f3
+ap,func,0000:0220,_StartTable,near void(void),match:intro,,= intro 0000:0220
+ap,func,0000:0264,_ExitTable,near void(void),match:intro,,= intro 0000:0264
+ap,func,0000:1b0a,atexit,far int(void(*)(void)),match:intro,,= intro 0000:049a
+ap,func,0000:1b37,chdir,far int(const char*),match:intro,,= intro 0000:04c7
+ap,func,0000:1b4d,access,far int(const char* int),match:intro,,= intro 0000:04dd
+ap,func,0000:1bb0,__exit,near void(int status int quick int dontexit),match:intro,,= intro 0000:0516
+ap,func,0000:1c07,exit,far void(int),match:intro,,= intro 0000:056d
+ap,func,0000:1c16,_exit,far void(int),match:intro,,= intro 0000:057c
+ap,func,0000:1c42,LXMUL@,far,match:intro,,= intro 0000:05a8
+ap,func,0000:1c59,PCMP@,far,match:intro,,= intro 0000:05bf
+ap,func,0000:1c7a,SCOPY@,far,match:intro,,= intro 0000:05e0
+ap,func,0000:1c96,getdate,far void(struct date*),match:intro,,= intro 0000:05fc
+ap,func,0000:1d46,getvect,far void interrupt(*)(int),match:intro,,= intro 0000:0622
+ap,func,0000:1d55,setvect,far void(int void interrupt(*)()),match:intro,,= intro 0000:0631
+ap,func,0000:1e17,LXLSH@,far,match:intro,,= intro 0000:06f3
+ap,func,0000:1e38,LXRSH@,far,match:intro,,= intro 0000:0714
+ap,func,0000:1e58,PADA@,far,match:intro,,= intro 0000:0755
+ap,func,0000:1e9c,PSBA@,far,match:intro,,= intro 0000:0799
+ap,func,0000:1ee0,PADD@,far,match:intro,,= intro 0000:07dd
+ap,func,0000:1f40,PINA@,far,match:intro,,= intro 0000:083d
+ap,func,0000:1fa3,__IOerror,near int(int doserr),match:intro,,= intro 0000:08a0
+ap,func,0000:1fdc,__DOSerror,near int(int),match:intro,,= intro 0000:08d9
+ap,func,0000:1fee,isatty,far int(int fd),match:intro,,= intro 0000:08eb
+ap,func,0000:2027,__longtoa,near,match:intro,,= intro 0000:08fc
+ap,func,0000:20c1,_lrotl,far unsigned long(unsigned long int),match:intro,,= intro 0000:0996
+ap,func,0000:20dd,lseek,far long(int fd long off int whence),match:intro,,= intro 0000:09b2
+ap,func,0000:2106,__mkname,near char*(int num char* buf),match:intro,,= intro 0000:09db
+ap,func,0000:2145,__tmpnam,near char*(char*),match:intro,,= intro 0000:0a1a
+ap,func,0000:2188,N_LXMUL@,near,match:intro,,= intro 0000:0a5d
+ap,func,0000:21dc,srand,far void(unsigned),match:intro,,= intro 0000:0aa6
+ap,func,0000:21ed,rand,far int(void),match:intro,,= intro 0000:0ab7
+ap,func,0000:2213,_read,far int(int fd void* buf unsigned n),match:intro,,= intro 0000:0add
+ap,func,0000:2256,setbuf,far void(FILE* char*),match:intro,,= intro 0000:114f
+ap,func,0000:231f,tell,far long(int fd),match:intro,,= intro 0000:12c3
+ap,func,0000:2339,tolower,far int(int),match:intro,,= intro 0000:12dd
+ap,func,0000:2393,__vprinter_entry,near,match:intro,,= intro 0000:1337
+ap,func,0000:23c3,__vprinter,near,match:intro,,= intro 0000:1367
+ap,func,0000:2846,stpcpy,far char*(char* const char*),match:intro,,= intro 0000:17ea
+ap,func,0000:286f,__brk,near int(void*),match:intro,,= intro 0000:1813
+ap,func,0000:2891,__sbrk,near void*(long),match:intro,,= intro 0000:1835
+ap,func,0000:28c2,brk,far int(void*),match:intro,,= intro 0000:1866
+ap,func,0000:28ce,sbrk,far void*(int),match:intro,,= intro 0000:1872
+ap,func,0000:28de,calloc,far void*(unsigned unsigned),match:intro,,= intro 0000:1882
+ap,func,0000:2eaf,__int86,near,match:intro,,= intro 0000:18f2
+ap,func,0000:2f53,ioctl,far int(int fd int func ...),match:intro,,= intro 0000:1996
+ap,func,0000:2f7a,kbhit,far int(void),match:intro,,= intro 0000:19bd
+ap,func,0000:2f8c,free,far void(void*),match:intro,,= intro 0000:19cf
+ap,func,0000:305b,malloc,far void*(unsigned),match:intro,,= intro 0000:1a9e
+ap,func,0000:31b6,realloc,far void*(void* unsigned),match:intro,,= intro 0000:1bf9
+ap,func,0000:3340,atol,far long(const char*),match:intro,,= intro 0000:1dd0
+ap,func,0000:33b0,atoi,far int(const char*),match:intro,,= intro 0000:1e40
+ap,func,0000:33bd,_chmod,far int(const char* int ...),match:intro,,= intro 0000:1e4d
+ap,func,0000:33d8,close,far int(int fd),match:intro,,= intro 0000:1e68
+ap,func,0000:3400,_close,far int(int fd),match:intro,,= intro 0000:1e90
+ap,func,0000:341e,eof,far int(int fd),match:intro,,= intro 0000:1eae
+ap,func,0000:3495,fclose,far int(FILE*),match:intro,,= intro 0000:1f25
+ap,func,0000:3516,fflush,far int(FILE*),match:intro,,= intro 0000:1fa6
+ap,func,0000:3597,findfirst,far int(const char* struct ffblk* int),match:intro,,= intro 0000:2089
+ap,func,0000:35ca,findnext,far int(struct ffblk*),match:intro,,= intro 0000:20bc
+ap,func,0000:36eb,__openfp,near FILE*(FILE* const char* const char* int),match:intro,,= intro 0000:21dd
+ap,func,0000:3787,__getfp,near FILE*(void),match:intro,,= intro 0000:2279
+ap,func,0000:37b2,fopen,far FILE*(const char* const char*),match:intro,,= intro 0000:22a4
+ap,func,0000:37d1,fprintf,far int(FILE* const char* ...),match:intro,,= intro 0000:22c3
+ap,func,0000:38f7,fread,far unsigned(void* unsigned unsigned FILE*),match:intro,,= intro 0000:23e9
+ap,func,0000:399f,fseek,far int(FILE* long int),match:intro,,= intro 0000:2491
+ap,func,0000:3a07,ftell,far long(FILE*),match:intro,,= intro 0000:24f9
+ap,func,0000:3ace,fwrite,far unsigned(const void* unsigned unsigned FILE*),match:intro,,= intro 0000:25c0
+ap,func,0000:3b9c,_fgetc,far int(FILE*),match:intro,,= intro 0000:268e
+ap,func,0000:3d02,itoa,far char*(int char* int),match:intro,,= intro 0000:27bb
+ap,func,0000:3d2a,ultoa,far char*(unsigned long char* int),match:intro,,= intro 0000:27e3
+ap,func,0000:3d44,ltoa,far char*(long char* int),match:intro,,= intro 0000:27fd
+ap,func,0000:3d69,memcpy,far void*(void* const void* unsigned),match:intro,,= intro 0000:2822
+ap,func,0000:3d88,setmem,far void(void* unsigned char),match:intro,,= intro 0000:2841
+ap,func,0000:3dae,memset,far void*(void* int unsigned),match:intro,,= intro 0000:2867
+ap,func,0000:3e4e,__creat,near,match:intro,,= intro 0000:2882
+ap,func,0000:3e67,__trunc,near,match:intro,,= intro 0000:289b
+ap,func,0000:3e79,open,far int(const char* int ...),match:intro,,= intro 0000:28ad
+ap,func,0000:3fd1,_open,far int(const char* int),match:intro,,= intro 0000:2a05
+ap,func,0000:401e,printf,far int(const char* ...),match:intro,,= intro 0000:2a52
+ap,func,0000:4035,_fputc,far int(int FILE*),match:intro,,= intro 0000:2a69
+ap,func,0000:404e,fputc,far int(int FILE*),match:intro,,= intro 0000:2a82
+ap,func,0000:4184,fputchar,far int(int),match:intro,,= intro 0000:2bb8
+ap,func,0000:4196,__fputn,near,match:intro,,= intro 0000:2bca
+ap,func,0000:4531,read,far int(int fd void* buf unsigned n),match:intro,,= intro 0000:2d72
+ap,func,0000:461f,rewind,far void(FILE*),match:intro,,= intro 0000:2e43
+ap,func,0000:4641,setvbuf,far int(FILE* char* int unsigned),match:intro,,= intro 0000:2e65
+ap,func,0000:477a,strcat,far char*(char* const char*),match:intro,,= intro 0000:2fa3
+ap,func,0000:47b3,strchr,far char*(const char* int),match:intro,,= intro 0000:2fdc
+ap,func,0000:47e9,strcpy,far char*(char* const char*),match:intro,,= intro 0000:3041
+ap,func,0000:480b,stricmp,far int(const char* const char*),match:intro,,= intro 0000:3063
+ap,func,0000:484b,strlen,far unsigned(const char*),match:intro,,= intro 0000:30a3
+ap,func,0000:48a8,strstr,far char*(const char* const char*),match:intro,,= intro 0000:3118
+ap,func,0000:4908,strupr,far char*(char*),match:intro,,= intro 0000:3178
+ap,func,0000:4928,write,far int(int fd const void* unsigned),match:intro,,= intro 0000:36f7
+ap,func,0000:4a36,_write,far int(int fd const void* unsigned),match:intro,,= intro 0000:3805
+ap,func,0000:4b91,_fstrcpy,far char far*(char far* const char far*),match:intro,,= intro 0000:388a
+ap,func,1d32:013f,gfx_restore_text,far void(void),match:intro,,= intro 05da:5dc9
+ap,func,1d32:02be,bios_set_text_mode,near,match:intro,,= intro 05da:5f48
+ap,func,1d32:030d,joy_read_axes,near,match:intro,,= intro 05da:3667
+ap,func,1d32:05f5,joy_read_buttons,far int(void),match:intro,,= intro 05da:390d
+ap,func,1d32:0668,kbd_install,far void(int),match:intro,,= intro 05da:0014
+ap,func,1d32:47c2,timer_install,far void(int mult),match:intro,,= intro 05da:2374
+ap,func,1d32:482f,timer_restore,far int(void),match:intro,,= intro 05da:23e1
+ap,func,1d32:4868,timer_isr,interrupt,match:intro,,= intro 05da:241a
+ap,func,1d32:5a2e,dos_alloc,far void far*(long size ...),match:intro,,= intro 05da:35e0
+ap,func,1d32:5aa5,dos_free,far void(void far*),match:intro,,= intro 05da:3657
+ap,func,1d32:5b9e,mouse_init,far int(void),match:intro,,= intro 05da:3a40
+ap,func,1d32:5c0e,mouse_set_range,far void(int x int y int w int h),match:intro,,= intro 05da:3ab0
+ap,func,1d32:5d4e,mouse_shutdown,far int(void),match:intro,,= intro 05da:3bf0
+ap,func,1d32:5d94,mouse_set_pos,far int(int x int y),match:intro,,= intro 05da:3c36
+ap,func,1d32:69a2,divzero_install,far void(void),match:intro,,= intro 05da:4844
+ap,func,1d32:6a05,divzero_restore,far void(void),match:intro,,= intro 05da:48a7
+ap,func,24e1:0000,ems_detect,far int(void),seed,,EMMXXXX0 + INT 67h/41h
+ap,func,24e1:0031,ems_free_pages,far int(void),match:intro,,= intro 17bd:002a
+ap,func,24e5:0139,ems_restore_map,far,match:intro,,= intro 17bd:013b
+ap,func,4e0d:0000,sim_init,far,seed,,"init.c: OVL/VMCODE2 video driver, palettes, clouds, sound 'simsnds1.sng' / 'sx1', weapon tables"
+ap,func,4e0d:09d0,sim_write_results,far,seed,,simprefs.prf + sim.out
+ap,func,4e0d:0bb0,sim_exit,far void(int code int flag),seed,,"shutdown, 0:0510 = 3E7h, exit(code): 2 = back to PS.EXE, 1 = INTRO.EXE, 0 = DOS"
+ap,func,50c8:0008,main,int(int argc char** argv),seed,,"AP main (sim\s\c\main.c): -n<dir>, CPU check (24e1), EMS >= 112K, 0:0510 must be 29Ah or 3E7h else exit(1), cleared to 0; switches -s -S -x -t -W -o -w -d; sim.in; mission; sim_exit(2)"
+ap,func,5254:0859,sim_out_write,far,seed,,SIM.OUT (results.c)
+ap,func,71db:0000,bmp_to_scn,far,match:intro,,= intro 05da:5f97 (score 0.92)

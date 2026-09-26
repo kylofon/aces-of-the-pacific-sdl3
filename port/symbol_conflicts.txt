@@ -1,0 +1,162 @@
+ap func 1792:0000: video_palette=pal_fx_level; render3d=palfx_level
+ap func 1792:0021: video_palette=pal_fx_set_base; render3d=palfx_set_base
+ap func 1792:0032: video_palette=pal_fx_set; render3d=palfx_set
+ap func 1792:0066: video_palette=pal_fx_show_base; render3d=palfx_reset_upload
+ap func 1792:009b: video_palette=pal_fx_reset_levels; render3d=palfx_reset_levels
+ap func 1792:00c0: video_palette=pal_fx_update; render3d=palfx_update
+ap func 1792:0286: video_palette=pal_fx_tint; render3d=palfx_blend
+ap func 1792:038a: video_palette=pal_fx_build_delta; render3d=palfx_delta_table
+ap func 1d32:676f: platform=huge_norm; video_palette=far_normalize
+ap func 1d32:679e: platform=huge_add; video_palette=far_add_long
+ap func 4b9e:0000: platform_sys=heap_hook; sim_flow=debug_hook0
+ap func 4e0d:05e0: platform=realism_name; sim_flow=realprf_name
+ap func 50c8:0000: platform=is_debug; sim_flow=sim_nop
+ap func 51a8:0000: video_palette=pal_fx_create; render3d=palfx_alloc
+ap func 51a8:004e: video_palette=pal_fx_add; render3d=palfx_add_channel
+ap func 5440:0269: render3d=draw_object; sim_flow=object_draw_cb
+ap func 5440:0375: render3d=dist_limit; sim_flow=range_helper
+ap func 5440:03aa: render3d=render_scene; sim_flow=world_draw
+ap func 5440:07bd: video_palette=pal_request_upload; sim_flow=palette_queue
+ap func 5440:07e1: video_palette=frame_present; sim_flow=page_flip
+ap func 644a:0912: video_palette=cockpit_pal_aces; sim_flow_cockpit=palette_aces
+ap func 644a:0961: video_palette=cockpit_pal_gunner; sim_flow_cockpit=palette_gunner
+ap func 7115:0000: platform=font_load; video=gfx_font_load
+ap func 7115:0372: platform=font_free; video=gfx_font_free
+ap global DS:02D4: sound=sx_player_engine_type; sim_world_fm=engine_sound_id
+ap global DS:02DA: sound=sx_ai_engine_type; sim_world_fm=engine_sound_id_ai
+ap global DS:052E: sound=opt_sound_drv; sim_flow=sound_drv_override
+ap global DS:0532: sound=opt_no_sound; sim_flow=no_sound
+ap global DS:0539: platform=ems_tier; sim_flow=ems_class
+ap global DS:053F: platform=debug; sim_flow=debug_flag
+ap global DS:069C: sim_flow_results=autopilot_state; sim_flow=skip_state
+ap global DS:069F: video_palette=pal_pend_src; sim_flow=pal_queue
+ap global DS:0887: sim_flow=frame_count; sim_flow_vcr=vcr_frames_flown
+ap global DS:0B80: platform_sys=ap_quit_request; sim_flow=quit_request
+ap global DS:26C4: video=drv_clip_x1; render3d=clip_x0
+ap global DS:26C6: video=drv_clip_x2; render3d=clip_x1
+ap global DS:26C8: video=drv_clip_y1; render3d=clip_y0
+ap global DS:26CA: video=drv_clip_y2; render3d=clip_y1
+ap global DS:26CC: video=drv_fill_on; render3d=fill_flag
+ap global DS:26CD: video=drv_fill_col; render3d=fill_colour
+ap global DS:26CE: video=drv_draw_col; render3d=edge_colour
+ap global DS:26DF: video_palette=drv_dac_flag; video=drv_inits; render3d=vga_colours
+ap global DS:285E: video_palette=pal_slot; video=drv_pal_buf
+ap global DS:31E5: platform_sys=timer_countdown; sim_flow=pit_countdown
+ap global DS:4032: platform_res=data_prefix; platform=work_dir; sim_flow=work_dir
+ap global DS:42C8: platform=realism_prf; sim_flow=real_prf; sim_flow_ui=realism
+ap global DS:437E: render3d=sim_view; sim_flow=camera_obj
+ap global DS:4454: sim_world_dmg=rng_state; sim_flow_results=rng_sim
+ap global DS:4E74: sim_flow=end_alert_state; sim_flow_ui=end_request_code
+ap global DS:5BD8: video_palette=pal_fx; render3d=palfx_block
+ap global DS:711E: sim_world_fm=dt_scale; sim_flow=dt
+intro func 05da:4611: platform=huge_norm; video_palette=far_normalize
+intro func 05da:4640: platform=huge_add; video_palette=far_add_long
+intro func 05da:4a8f: platform=font_load; video=gfx_font_load
+intro func 05da:4e01: platform=font_free; video=gfx_font_free
+intro global DS:0A9F: video_palette=drv_dac_flag; video=drv_inits
+intro global DS:0C1E: platform=pal_slots; video_palette=pal_slot; video=drv_pal_buf
+intro global DS:1E80: video_palette=ttm_fade_speed_tab; video_ttm=ttm_fade_speed
+intro global DS:2461: platform_res=data_prefix; platform=work_dir
+intro global DS:24D8: video_palette=intro_ticks; video_ttm=ttm_ticks
+intro global DS:2ED4: platform=font_ptr; video=font_glyphs
+intro global DS:3398: video_ttm=ttm_snd_bank; sound=ttm_sound_bank
+intro global DS:33C0: video_ttm=ttm_op; sound=ttm_sound_opcode
+intro global DS:33C8: video_ttm=ttm_delay; shell_ui=ttm_frame_delay
+ps func 1193:0115: platform=make_name; shell_data=file_name
+ps func 1193:027a: platform=control_load; shell_data=control_prf_read
+ps func 1193:0306: platform=control_save; shell_data=control_prf_write
+ps func 1193:0818: platform=realism_load; shell_data=prf_read16
+ps func 1193:0840: platform=realism_save; shell_data=prf_write16
+ps func 1193:0856: platform=realism_save_current; shell_data=real_prf_write
+ps func 16e3:4935: platform=huge_norm; video_palette=far_normalize
+ps func 16e3:4964: platform=huge_add; video_palette=far_add_long
+ps func 16e3:4db3: platform=font_load; video=gfx_font_load
+ps func 16e3:5125: platform=font_free; video=gfx_font_free
+ps func 21f4:0009: video_palette=shell_tick_cb; shell_data_sys=ttm_tick
+ps func 22a0:0089: video_palette=ttm_timer_done; shell_data_sys=ttm_tmr_expired
+ps func 22a0:00d2: video_palette=ttm_timer_value; shell_data_sys=ttm_tmr_lerp
+ps func 22a0:018e: video_palette=ttm_timer_start; shell_data_sys=ttm_tmr_set
+ps func 22a0:01aa: video_palette=ttm_timer_expire; shell_data_sys=ttm_tmr_set_expired
+ps func 22ce:004a: video=page_copy_full; shell_data_sys=copy_full_screen
+ps func 22ce:0063: video=pages_bg_to_back; shell_data_sys=pages_spare_to_work
+ps func 22ce:0074: video=pages_front_to_back; shell_data_sys=pages_front_to_work
+ps func 22ce:0085: video=pages_back_to_front; shell_data_sys=pages_work_to_front
+ps func 22ce:0096: video=pages_back_to_bg; shell_data_sys=pages_work_to_spare
+ps func 22ce:00a7: video=copy_bg_to_back; shell_data_sys=copy_spare_to_work
+ps func 22ce:00bc: video=copy_back_to_bg; shell_data_sys=copy_work_to_spare
+ps func 22ce:00d1: video=copy_bg_to_front; shell_data_sys=copy_spare_to_front
+ps func 22ce:00e6: video=copy_back_to_front; shell_data_sys=copy_work_to_front
+ps func 22ce:00fb: video=copy_front_to_back; shell_data_sys=copy_front_to_work
+ps func 2316:000f: platform_sys=mouse_init_dos3; shell_data_sys=mouse_glue_init
+ps func 2316:0028: platform_sys=mouse_shutdown_dos3; shell_data_sys=mouse_glue_shutdown
+ps func 2316:0041: platform_sys=mouse_get_pos_dos3; shell_data_sys=mouse_get_pos
+ps func 2316:0062: platform_sys=mouse_button_dos3; shell_data_sys=mouse_button
+ps global DS:00C5: platform=rand_seed_opt; shell_data=debug_seed
+ps global DS:0DFF: platform_res=vol_active; shell_data=volumes_present
+ps global DS:1CC8: video_ttm=step_clock_ps_done; shell_data_sys=shell_tick_count
+ps global DS:231F: video_palette=drv_dac_flag; video=drv_inits
+ps global DS:249E: video_palette=pal_slot; video=drv_pal_buf
+ps global DS:3868: video_palette=ttm_fade_speed_tab; video_ttm=ttm_fade_speed
+ps global DS:40CA: platform_res=data_prefix; platform=work_dir
+ps global DS:52AA: video_palette=shell_ticks; video_ttm=ttm_ticks; shell_data_sys=ttm_ticks
+ps global DS:7674: video_ttm=ttm_snd_bank; sound=ttm_sound_bank
+ap name aircraft_free used for 45cc:0556 45cc:0557
+ap name alert_pair used for 14c3:000b 14c3:000c
+ap name approach used for 0590:0002 0deb:03d0
+ap name arena_reset used for 24d3:00ca 34f1:0144
+ap name band_factor used for 1142:008e 1142:008f
+ap name bmp_count used for 26d2:000f 7229:0598
+ap name brain_jitter used for 69fe:0005 DS:488C
+ap name choose_target used for 1142:0ba6 1142:0ba7
+ap name clamp_sym used for 0b01:1b14 0b01:1b15 277a:3f27
+ap name cmp3_gt used for 1142:001d 1142:001e
+ap name cnt_dec used for 14c3:0130 14c3:0131
+ap name dlg_redraw_all used for 53a6:044d 606e:0057
+ap name dt_scale used for 362b:00be DS:711E
+ap name engage_best used for 1142:0eab 1142:0eac
+ap name flight_active used for 5058:03bb 5254:1348
+ap name fm_drag used for 0b01:1aaf 0b01:1ab0
+ap name fm_integrate_vel used for 0b01:1b9b 0b01:1b9c
+ap name fm_per_frame_velocity used for 0b01:1cb5 0b01:1cb6
+ap name frac_carry used for 0b01:1c22 0b01:1c23
+ap name fread_far used for 4bb7:0000 55a4:0108
+ap name is_tandy used for 1d32:4f56 DS:26DC
+ap name joy_scale used for 1d32:0374 DS:1B55
+ap name kill_credit used for 088a:054f 1899:0cf0
+ap name lso_signal used for 6dfc:0000 DS:523B
+ap name mouse_button used for 1d32:5dbf 60a9:087c
+ap name mouse_present used for 60a9:0804 DS:3434
+ap name nearest_enemy used for 1284:0184 496a:070e
+ap name offer used for 1142:027c 1142:027d
+ap name offer_air_target used for 1142:08fb 1142:08fc
+ap name offer_keep used for 1142:005d 1142:005e
+ap name poly_n used for 277a:0a4f DS:285C
+ap name pool_alloc used for 1d32:22f4 3546:021a
+ap name pool_free used for 1d32:24b6 3546:0333
+ap name pos_step used for 0b01:1c4f 0b01:1c50
+ap name radio_queue used for 1815:05e0 DS:5C26
+ap name realism_changed used for 522c:0162 606e:012d
+ap name shape_box used for 1560:086f 271b:0584
+ap name ship_free_dat used for 45cc:0748 45cc:0749
+ap name step_toward used for 0b01:1b3b 0b01:1b3c
+ap name sun_angle used for 6964:059b DS:1120
+ap name sun_glare used for 583c:04a9 6964:0458
+ap name sx_on used for 5a75:09f0 DS:48A2
+ap name view_free used for 271b:02a6 5440:012c
+intro name bmp_count used for 05da:53ef 0f2c:0010
+intro name is_tandy used for 05da:2b08 DS:0A9C
+intro name joy_scale used for 05da:36ce DS:166F
+ps name bmp_count used for 168a:04dc 39a1:0010
+ps name convoy_count used for 29ae:0078 DS:6269
+ps name fm_btn_cb used for 06c7:00fd 0b16:0050
+ps name fm_frame used for 06c7:026b 0b16:013a
+ps name fread_far used for 1193:0a46 125a:0139
+ps name is_tandy used for 16e3:311c DS:231C
+ps name joy_scale used for 16e3:0075 DS:1003
+ps name mission_free used for 1f06:0782 3164:0005
+ps name scr_load used for 2e8a:02c7 39aa:000a
+ps name shell_ticks used for 229e:001f DS:52AA
+ps name strings_load used for 1193:08b9 24e3:0268
+ps name timer_countdown used for 22ce:000d DS:2E3F
+
+# skipped rows
