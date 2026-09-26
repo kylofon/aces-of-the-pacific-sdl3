@@ -37,8 +37,10 @@ s32 rtl_lseek(s16 fd, s32 offset, s16 whence);
 s16 rtl_open(u16 path_ds, u16 access, ...);
 /* INTRO 0000:0a74 outport */
 void rtl_outport(u16 port, u16 value);
-/* INTRO 0000:2e40 / PS 0000:3d59 / AP 0000:45ff remove */
-s16 rtl_remove(u16 path_ds);
+/* INTRO 0000:2d72 / PS 0000:3c8b / AP 0000:4531 read (text mode). HEADER FIX: INTRO 0000:2e40 /
+ * PS 0000:3d59 / AP 0000:45ff (listed as "remove") are a JMP to read; only the DS:1A04 callback
+ * wrappers call them. */
+s16 rtl_read(s16 fd, u16 buf_ds, u16 n);
 /* AP 0000:4602 rename */
 s16 rtl_rename(u16 old_ds, u16 new_ds);
 /* INTRO 0000:12c3 / PS 0000:1f87 / AP 0000:231f tell */
@@ -173,7 +175,8 @@ u16 rtl_strrev(u16 s_ds);
 u16 rtl_strstr(u16 s_ds, u16 sub_ds);
 /* INTRO 0000:3178 / PS 0000:403a / AP 0000:4908 strupr */
 u16 rtl_strupr(u16 s_ds);
-/* INTRO 0000:12dd / PS 0000:1fa1 / AP 0000:2339 tolower */
+/* INTRO 0000:12dd / PS 0000:1fa1 tolower */
 s16 rtl_tolower(s16 c);
-/* PS 0000:1fcd toupper */
+/* PS 0000:1fcd / AP 0000:2339 toupper (HEADER FIX: AP 0000:2339 was listed as tolower; its code tests
+ * _IS_LOW and subtracts 20h) */
 s16 rtl_toupper(s16 c);

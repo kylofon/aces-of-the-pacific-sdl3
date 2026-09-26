@@ -11,6 +11,15 @@ void platform_init(void);             /* once: host tick/keyboard/mouse handlers
 void platform_prog_start(void);       /* after a program is loaded: vectors unhooked */
 void platform_prog_end(void);         /* after it exited: PORT: detach anything left hooked */
 
+/* Borland c0 hooks called by prog.c (platform/rtl_*.c): the #pragma startup routines after the c0
+ * set-up (RTL stdio/heap/environment), and exit()'s stream and handle clean-up after the atexit
+ * functions. */
+void rtl_c0_start(void);
+void rtl_c0_exit(void);
+/* Developer tests (AOTP_TEST=chunks|loaders|volumes|..., platform/devtest.c): run instead of the
+ * program's main when set; returns the exit code to use, or -1 when no test is selected. */
+int  platform_dev_test(void);
+
 /* ---- Timer (platform.md §4), timer.c */
 int  timer_install(int mult);         /* 05da:2374 / 16e3:2988 / 1d32:47c2 */
 int  timer_restore(void);             /* 05da:23e1 / 16e3:29f5 / 1d32:482f */
@@ -162,11 +171,11 @@ void lib_free(u16 a0);
 /* PS 0000:0476 lib_strcpy — video.md §7 */
 void ps_lib_strcpy(u16 a0, u16 a1);
 /* AP 0000:18d6 — video_misc.md §2; register input DX */
-void floppy_motor_off(u16 dx);
+u16 floppy_motor_off(u16 dx);    /* HEADER FIX: returns CX (rounds left) */
 /* INTRO 0000:042d __hread — no spec; [file] */
-s32 hread_far(s16 fd, FarPtr buf, s32 n);
+u32 hread_far(FarPtr buf, u32 n, s16 fd);    /* HEADER FIX: the frame is (buf, n, fd) */
 /* INTRO 0000:043b / PS 0000:02c8 / AP 0000:1694 — video.md §7; [file] */
-u32 lib_hread(FarPtr a0, u16 a1, u16 a2, u16 a3);
+u32 lib_hread(FarPtr buf, u32 n, s16 fd);    /* HEADER FIX: __hread(buf, n, fd): n, or 0 on a DOS error */
 /* AP 0000:183c lib_calloc — video.md §7; [file] */
 u16 ap_lib_calloc(u16 a0, u16 a1);
 
@@ -175,14 +184,27 @@ u16 ap_lib_calloc(u16 a0, u16 a1);
 FarPtr dos_alloc(u32 size, u16 a1, u16 flags);
 /* INTRO 05da:3657 / PS 16e3:3c6b / AP 1d32:5aa5 — platform.md §5.1 */
 void dos_free(FarPtr p);
-/* INTRO 05da:469d / PS 16e3:49c1 / AP 1d32:67fb — platform.md §5.2 */
+/* INTRO 05da:469d / PS 16e3:49c1 / AP 1d32:67fb — platform.md §5.2; words (dst off, seg, src off,
+ * seg, n lo, hi); returns dst (DX:AX) */
 void far_memmove(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4, u16 a5);
-/* INTRO 05da:47b0 / PS 16e3:4ad4 / AP 1d32:690e — platform.md §5.2 */
+/* INTRO 05da:47b0 / PS 16e3:4ad4 / AP 1d32:690e — platform.md §5.2; words (dst off, seg, v, n lo, hi) */
 void huge_memset(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4);
-/* INTRO 05da:4776 / PS 16e3:4a9a / AP 1d32:68d4 — platform.md §5.2; [file] */
+/* INTRO 05da:4776 / PS 16e3:4a9a / AP 1d32:68d4 — platform.md §5.2; [file]; words (dst off, seg, src off, seg, n) */
 void huge_memcpy(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4);
-/* INTRO 05da:4836 / PS 16e3:4b5a / AP 1d32:6994 — platform.md §5.2; [file] */
+/* INTRO 05da:4836 / PS 16e3:4b5a / AP 1d32:6994 — platform.md §5.2; [file]; returns seg<<16 | off */
 u32 huge_norm_far(u16 a0, u16 a1);
+/* HEADER ADD: the same four with FarPtr parameters (what the platform code uses) */
+FarPtr far_memmove_fp(FarPtr dst, FarPtr src, u32 n);
+void huge_memset_fp(FarPtr dst, u8 v, u32 n);
+void huge_memcpy_fp(FarPtr dst, FarPtr src, u16 n);
+FarPtr huge_norm_far_fp(FarPtr p);
+/* INTRO 05da:4611 / 4623 / 4640 / 4654 / 480a (PS 16e3:4935.., AP 1d32:676f..) — platform.md §5.2;
+ * the near register helpers as C functions (HEADER ADD) */
+FarPtr huge_norm(FarPtr p);
+FarPtr huge_norm_top(FarPtr p);
+FarPtr huge_add(FarPtr p, u32 n);
+FarPtr huge_sub(FarPtr p, u32 n);
+s16 huge_cmp(FarPtr a, FarPtr b);
 
 /* ==== platform/emm_pool.c ========================================================================= */
 /* AP 1d32:214e — platform.md §5.4 */

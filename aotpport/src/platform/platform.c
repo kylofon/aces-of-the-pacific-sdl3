@@ -1,7 +1,11 @@
 /* Platform glue: host handlers and the per-program hardware state. */
 #include "platform/plat_priv.h"
 
+#include "codeptr.h"
 #include "host.h"
+#include "prog.h"
+#include "symbols_intro.h"
+#include "symbols_ps.h"
 
 void platform_init(void)
 {
@@ -9,6 +13,12 @@ void platform_init(void)
     host_set_kbd_handler(kbd_host_byte);
     host_set_focus_lost_handler(kbd_host_focus_lost);
     host_set_mouse_handler(int33_host_event);
+    /* library functions whose far addresses the programs store (vectors, hooks, callbacks) */
+    volume_register();
+    codeptr_register_shared(F_mouse_event_handler, (CodeFn)mouse_event_handler);
+    codeptr_register_shared(F_divzero_isr, divzero_isr);
+    codeptr_register(PROG_INTRO, INTRO_FN_kbd_break_hook, (CodeFn)kbd_break_hook);
+    codeptr_register(PROG_PS, PS_FN_ctrl_esc_hook, (CodeFn)ctrl_esc_hook);
 }
 
 void platform_prog_start(void)
