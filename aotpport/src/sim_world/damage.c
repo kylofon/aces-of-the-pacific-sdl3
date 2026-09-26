@@ -7,7 +7,7 @@
 #include "codeptr.h"
 #include "prog.h"
 
-#define LD3(a, b) ((s32)ldist3((a), (b), 0, 0, 0, 0))
+#define LD3(a, b) ((s32)ldist3((a), (b)))
 #define MTIME DSL(0x4086)
 
 /* sim_flow 1899:102f target_credit — not declared in sim_flow.h (request) */

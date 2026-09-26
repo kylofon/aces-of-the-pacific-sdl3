@@ -17,7 +17,7 @@ report. The lead appends new requests from each report.
       `TODO(symbols)` until rows exist (platform/lead: add rows to `port/spec/sound_extra_symbols.csv`). (`port/spec/sound_extra2_symbols.csv`; `snd_api.c` uses `G_snd_*` via `SD()`.)
 
 ## render3d
-- [ ] `ldist3` takes two near pointers: `(u16 a_ds, u16 b_ds)`, not 6 words (used by `sound/sx_sim.c`).
+- [x] `ldist3` takes two near pointers: `(u16 a_ds, u16 b_ds)`, not 6 words (used by `sound/sx_sim.c`).
       (render3d: semantics done — a0/a1 are the two near pointers, the 4 extra words are ignored. The header keeps
       the 6-word form until sound drops its 6-word weak stub in `sound/stubs_tmp.c`; then switch header + the one
       call in `sx_sim.c` together.)
@@ -68,18 +68,24 @@ report. The lead appends new requests from each report.
       work/img PNGs older than dynimg's nibble fix (stored vs fresh differ for the nib BMPs).)
 
 ## shell_data / shell_ui / render3d (from platform, integration round)
-- [ ] `platform/stubs_tmp.c` carries weak link stubs for your functions the shared build references (math library, `service_side`, `fltplan_*`, `fm_bearing`, and a generated block at the end of the file). Delete a stub's line (or leave it: the weak stub loses to your definition) — tell platform if one collides.
+- [x] `platform/stubs_tmp.c` carries weak link stubs for your functions the shared build references (math library, `service_side`, `fltplan_*`, `fm_bearing`, and a generated block at the end of the file). Delete a stub's line (or leave it: the weak stub loses to your definition) — tell platform if one collides.
 
 ## from render3d (2026-09-26)
 - [x] platform: call `render3d_dev_test()` from `platform_dev_test` (AOTP_TEST=shapes, run with --start 3).
-- [ ] video: `video.h` uses `CodeFn` without including `codeptr.h`; its static `pal_fx_build_delta`
+- [x] video: `video.h` uses `CodeFn` without including `codeptr.h`; its static `pal_fx_build_delta`
       duplicates `palfx_delta_table_body` (1792:038b) — harmless, dedupe later.
-- [ ] shell_data: use `ts_load_table_far` (far table in DX:AX) and the new `mul_cos`/`mul_sin` signatures.
-- [ ] sim_world: register 655d:1bb7 (gun-smoke callback, via stub 3DFF:0061) with codeptr.
-- [ ] sound + render3d: switch `ldist3` to `(u16 a_ds, u16 b_ds)` together (semantics already match).
+- [x] shell_data: use `ts_load_table_far` (far table in DX:AX) and the new `mul_cos`/`mul_sin` signatures.
+- [x] sim_world: register 655d:1bb7 (gun-smoke callback, via stub 3DFF:0061) with codeptr.
+- [x] sound + render3d: switch `ldist3` to `(u16 a_ds, u16 b_ds)` together (semantics already match).
 
 ## from sim_world A (2026-09-26)
 - [x] platform: call `sim_world_a_dev_test()` (AOTP_TEST=fm / ballistics) from `platform_dev_test` so build_sim_world_a's `--wrap` flags can go.
 - [x] sim_flow: implement `misc.c` (`res_name`, `file_load`, `res_load_set`, `res_free`, `ap_fread_far_55a4`) — only no-op stubs exist; snario.c/acedata.c need them to run.
 - [x] sim_world B (AI): fix the `ai_*.c` compile errors (conflicting prototypes, missing `PROG_AP`/`stdarg.h`); they break the shared build. (sim_world B: fixed; all 11 AI files build warning-free with part A.)
 - [x] 655d:1bb7 gun-smoke callback registered (damage.c).
+
+## integration round (2026-09-26)
+- [x] All `*/stubs_tmp*.c` deleted; the only link gap was `fd_init` (shell_ui/fltdeck.c had made it static; once-init 0a71:01be calls it).
+- [x] `gfx_sprite_rotated` registered in `video/vqt.c` (removed from `sim_flow/vcr_runtime.c`); `gfx_sprite_rotated`, `drv_set_unselect`, `pal_fx_build_delta` declared in `video.h` (which now includes `codeptr.h`); render3d's `palfx_delta_table_body` calls video's `pal_fx_build_delta`.
+- [x] `ldist3(a, b)` everywhere (render3d, sim_flow, sim_world, sound).
+- [x] shell_data threed.c: `ts_load_table_far` for both tables (the chunk offset is 0: the AX-only test made view3d_load_scene assert 0xE7 = line 231).

@@ -266,7 +266,7 @@ void finish_positions(u16 buf)
 {
     for (s16 i = 0; i < DSS(0x4776); i++, buf = (u16)(buf + 0x10)) {
         u16 o = DSW((u16)(DSW(0x475B) + 2 * i));
-        if (ldist3(buf, (u16)(o + 4), 0, 0, 0, 0) > 0x1F4) {
+        if (ldist3(buf, (u16)(o + 4)) > 0x1F4) {
             DSW(o + 0x12) = 0;
             DSW(o + 0x10) = 0;
             DSW(o + 0x14) = bearing_between((u16)(o + 4), buf);
@@ -357,7 +357,7 @@ u16 approach_hit(u16 hit, u16 o, u16 to, s32 r, u8 ships)
 /* AP 496a:093c advance_point(out, from, to, d) -> the distance left */
 s32 advance_point(u16 out, u16 from, u16 to, s32 d)
 {
-    s32 D = (s32)ldist3(from, to, 0, 0, 0, 0);
+    s32 D = (s32)ldist3(from, to);
     if (d >= D) {
         vcopy(out, to);
         return 0;

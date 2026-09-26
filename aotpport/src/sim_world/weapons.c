@@ -531,7 +531,7 @@ u16 gunlist_attach(u16 slot, u16 gl_out, u16 st_out, u16 obj)
 
 /* ==== 0688: bombs.c ============================================================================== */
 
-#define LD3(a, b) ((s32)ldist3((a), (b), 0, 0, 0, 0))
+#define LD3(a, b) ((s32)ldist3((a), (b)))
 
 /* AP 0688:0004 — BOMBS.MEC (10-byte records) and the bomb class (update only) */
 void bombs_load(u16 name)

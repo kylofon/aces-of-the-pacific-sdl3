@@ -92,8 +92,8 @@ s16 swb_rng_range(s16 n);                                /* 1889:00b4 */
 /* ---- math wrappers ------------------------------------------------------------------------------------ */
 static inline s32 dist2(u16 a, u16 b) { return (s32)ldist2((u16)(a + 4), (u16)(b + 4)); }   /* objects */
 static inline s32 dist2v(u16 a, u16 b) { return (s32)ldist2(a, b); }                          /* vectors */
-static inline s32 dist3(u16 a, u16 b) { return (s32)ldist3((u16)(a + 4), (u16)(b + 4), 0, 0, 0, 0); }
-static inline s32 dist3v(u16 a, u16 b) { return (s32)ldist3(a, b, 0, 0, 0, 0); }
+static inline s32 dist3(u16 a, u16 b) { return (s32)ldist3((u16)(a + 4), (u16)(b + 4)); }
+static inline s32 dist3v(u16 a, u16 b) { return (s32)ldist3(a, b); }
 #define TIMER16(p)   timer16_dec(p)
 #define THROTTLE(p)  OW(p, 0xB2)
 #define CRUISE(p)    plane_cruise_throttle(p)

@@ -215,6 +215,16 @@ void host_snapshot_now(const char *tag)
     save_snapshot(dir, tag);
 }
 
+static void present(void);
+/* Developer aid: an unchanged picture still gets its periodic snapshot (a static screen or a hang). */
+static void snapshot_static(void)
+{
+    const char *dir = SDL_getenv("AOTP_SNAPSHOT_DIR");
+    const char *ms = SDL_getenv("AOTP_SNAPSHOT_MS");
+    Uint64 interval = (ms && SDL_atoi(ms) > 0) ? (Uint64)SDL_atoi(ms) * SDL_NS_PER_MS : SDL_NS_PER_SECOND;
+    if (dir && snap_n && SDL_GetTicksNS() - snap_last_ns >= interval) save_snapshot(dir, NULL);
+}
+
 static void present(void)
 {
     snapshot();
@@ -294,7 +304,8 @@ void host_pump(void)
 
     /* Present at most once per ~8 ms; VSync paces it further. */
     if (frame_source && now - last_present_ns >= 8 * SDL_NS_PER_MS) {
-        if (frame_source(frame)) {
+        if (!frame_source(frame)) snapshot_static();
+        else {
             present();
             last_present_ns = SDL_GetTicksNS();
             worked = true;

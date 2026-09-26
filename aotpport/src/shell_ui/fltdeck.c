@@ -113,8 +113,8 @@ void flight_deck(void)
     }
 }
 
-/* PS 0787:031b fd_init — no caller (dialogs_init does not list it): the table keeps its file links */
-static void fd_init(void)
+/* PS 0787:031b fd_init - called from once-init 0a71:01be */
+void fd_init(void)
 {
     hs_default_links(hs_item(FD_TBL, 0), 8);
 }
@@ -124,5 +124,4 @@ __attribute__((constructor)) static void fltdeck_codeptrs(void)
     UREG(fd_draw_window);
     UREG(fd_btn_cb);
     UREG(fd_frame);
-    (void)fd_init;
 }

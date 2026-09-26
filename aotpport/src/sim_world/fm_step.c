@@ -60,7 +60,7 @@ void plane_engine_sound(u16 p)
         u16 q = DSW((u16)(DSW(0x475B) + si));
         u16 qd = plane_dat(q);
         if ((s8)DSB((u16)(qd + 0x75)) >= 3) continue;
-        s32 d = (s32)ldist3((u16)(q + 4), cam, 0, 0, 0, 0);
+        s32 d = (s32)ldist3((u16)(q + 4), cam);
         if (d >= best) continue;
         q = DSW((u16)(DSW(0x475B) + si));
         if (OW(q, 0xB2) == 0) continue;

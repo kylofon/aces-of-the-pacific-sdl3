@@ -48,7 +48,7 @@ u16 fx_in_range(FarPtr e)
     memcpy(DSP(p), far_mp(far_add(e, 4)), 12);
     u32 r = (u32)rd16(e.seg, (u16)(e.off + 0x1C)) << 10;
     u16 res = 0;
-    if (ldist2(p, FX_VIEW) < r && ldist3(p, FX_VIEW, 0, 0, 0, 0) < r) res = 1;
+    if (ldist2(p, FX_VIEW) < r && ldist3(p, FX_VIEW) < r) res = 1;
     stk_release(m);
     return res;
 }
@@ -92,7 +92,7 @@ void fx_recull(void)
 void fx_update_ref(u16 eye)
 {
     memcpy(DSP(FX_VIEW), DSP(eye), 12);
-    if (ldist3(FX_VIEW, FX_REF, 0, 0, 0, 0) > 3000) fx_recull();
+    if (ldist3(FX_VIEW, FX_REF) > 3000) fx_recull();
     if (!DSB(FX_CULLED)) {
         u16 m = stk_mark(), list = stk_alloc(0x194);
         s16 n = 0;
@@ -686,7 +686,7 @@ u16 object_record_handler(u16 r)
             bool link = false;
             s16 ti = 0;
             for (s16 si = 0; si < (s16)DSW(A_TGT_N); si++) {
-                if (ldist3((u16)(r + 4), (u16)(DSW(A_TGT_POS) + 12 * si), 0, 0, 0, 0) < 10) {
+                if (ldist3((u16)(r + 4), (u16)(DSW(A_TGT_POS) + 12 * si)) < 10) {
                     link = true; ti = si;
                     DSL(DSW(A_LINKS) + 6 * si) = g;
                     break;

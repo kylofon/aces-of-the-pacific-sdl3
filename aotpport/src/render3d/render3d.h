@@ -142,7 +142,7 @@ void part_draw32(FarPtr a0);
 
 /* ==== render3d/r3d_math.c ========================================================================= */
 /* AP 277a:3b3c — sim_world_fm.md Math primitives used (render3d `277a`); spec: (lvec*, lvec*) */
-u32 ldist3(u16 a_ds, u16 b_ds, u16 u2, u16 u3, u16 u4, u16 u5);   /* a0/a1 = the two near pointers (REQUESTS); the 4 extra words are ignored until sound/stubs_tmp.c + sx_sim.c switch to 2 args */
+u32 ldist3(u16 a_ds, u16 b_ds);   /* a0/a1 = the two near pointers (REQUESTS); the 4 extra words are ignored until sound/stubs_tmp.c + sx_sim.c switch to 2 args */
 /* AP 277a:3c36 — sim_world_fm.md Math primitives used (render3d `277a`) */
 u32 ldist2v(u32 a0, u32 a1);
 /* AP 277a:3dc1 — render3d_sky.md §2.4; callers also read DX */

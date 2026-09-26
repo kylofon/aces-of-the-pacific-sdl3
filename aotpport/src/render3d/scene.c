@@ -34,7 +34,7 @@ static u32 dist_obj(u16 e, FarPtr o)
 {
     u16 m = stk_mark(), p = stk_alloc(12);
     memcpy(DSP(p), far_mp(far_add(o, 4)), 12);
-    u32 d = ldist3(e, p, 0, 0, 0, 0);
+    u32 d = ldist3(e, p);
     stk_release(m);
     return d;
 }
@@ -118,7 +118,7 @@ void scene_begin(u16 v)
 u8 scene_eye_moved(u16 v)
 {
     u16 eye = (u16)(DSW(v + 2) + 2);
-    u32 d = ldist3(eye, W_GATHER_EYE, 0, 0, 0, 0);
+    u32 d = ldist3(eye, W_GATHER_EYE);
     if (d > (u32)(s32)(s16)DSW(W_REGATHER_DIST)) { memcpy(DSP(W_GATHER_EYE), DSP(eye), 12); return 1; }
     return 0;
 }
@@ -167,7 +167,7 @@ u8 scene_add_dynamic(FarPtr o)
     if (f & 0x1000) return 0;
     u16 m = stk_mark(), p = stk_alloc(12);
     memcpy(DSP(p), far_mp(far_add(o, 4)), 12);
-    u32 d = ldist3(eye_ofs(), p, 0, 0, 0, 0);
+    u32 d = ldist3(eye_ofs(), p);
     u8 vis = class_visible(o, d, p, 0);                    /* no big-range minimum here */
     stk_release(m);
     if (!vis) return 0;
@@ -185,7 +185,7 @@ u8 static_test_add_body(void)
     FarPtr o = ds_far(W_GATHER_OBJ);
     u16 m = stk_mark(), p = stk_alloc(12);
     memcpy(DSP(p), far_mp(far_add(o, 4)), 12);
-    u32 d = ldist3(eye_ofs(), p, 0, 0, 0, 0);
+    u32 d = ldist3(eye_ofs(), p);
     u8 vis = class_visible(o, d, p, 1);
     stk_release(m);
     if (vis) {
@@ -592,7 +592,7 @@ void render_scene(void)
     for (s16 i = 0; i < (s16)DSW(S_NMOVERS); i++, pp = (u16)(pp + 2)) {
         u16 o = DSW(pp);
         if ((DSB(DSW(o + 0x34) + 0x3B) & 2) && DSB(o + 0x18) != 1) continue;
-        u32 d = ldist3(eye, (u16)(o + 4), 0, 0, 0, 0);
+        u32 d = ldist3(eye, (u16)(o + 4));
         if (DSB(o + 0x18) == 0 && !(DSW(o) & 0x100)) {     /* aircraft */
             s32 R = (s32)(s16)shape_radius_cached(DSW(o + 2)) << 7;
             if (!((u32)(R << 1) > d)) continue;            /* not drawn at all */

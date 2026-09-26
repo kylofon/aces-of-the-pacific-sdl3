@@ -341,7 +341,7 @@ void pal_fx_reset_levels(void)
 }
 
 /* AP 1792:038a (near): T[d] = ((d-1) * lvl) >> 6, T[-d] = -T[d], d = 1..63 (at fx + 347h) */
-static void pal_fx_build_delta(s16 lvl)
+void pal_fx_build_delta(s16 lvl)
 {
     s16 acc = 0;
     for (s16 d = 1; d < 0x40; d++) {

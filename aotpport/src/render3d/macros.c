@@ -81,7 +81,7 @@ u32 macro_distance(FarPtr g)
         FarPtr M = far_add(ds_far(W_MACRO_TAB), (u16)((type & 0x7FFF) * 0x12));
         memcpy(DSP(v), far_mp(far_add(M, 2)), 12);
     } else { stk_release(m); return 0; }
-    r = ldist3(z, v, 0, 0, 0, 0);
+    r = ldist3(z, v);
     stk_release(m);
     return r;
 }

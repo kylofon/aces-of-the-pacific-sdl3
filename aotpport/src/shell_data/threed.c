@@ -86,7 +86,7 @@ void view3d_load_model(u8 type, s16 alt)
     DSW(V_ALT) = DSB(V_IS_AC) ? (u16)alt : 0;
     if (DSC(V_LOADED)) return;
     u16 name = make_name(vw_model_name((u16)(s16)(s8)type), -1, 0x1B46);
-    if (ts_load_table(0, name)) {   /* TODO(verify): the original tests DX:AX (far table pointer) */
+    if (ts_load_table_far(0, name)) {   /* DX:AX far table pointer */
         u16 d = DSW(TS_DESC);
         DSW(d + 6) = 0xFFFF;
         DSW(d + 8) = 0x100;
@@ -181,9 +181,8 @@ void view3d_load_scene(s8 scene)
         DSW(V_N) = 0;
         return;
     }
-    s16 t = ts_load_table(1, make_name(shapes, -1, 0x1B71));
-    ds_far_wr(V_BGTAB, far_make(0, (u16)t));  /* TODO(verify): render3d returns only AX here; the
-                                                 original stores DX:AX (far table) */
+    u32 t = ts_load_table_far(1, make_name(shapes, -1, 0x1B71));   /* DX:AX (the chunk offset is often 0) */
+    ds_far_wr(V_BGTAB, far_make((u16)(t >> 16), (u16)t));
     if (!t) sd_fatal(FS_THREED, 0xE7);
     u16 d = DSW(TS_DESC);
     DSW(d + 0x12) = 0xFFFF;

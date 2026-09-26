@@ -215,7 +215,7 @@ u32 r3d_ldist2v(u32 a, u32 b)
 }
 
 /* AP 277a:3b3c — ldist3(lvec *a, lvec *b) (REQUESTS: two near pointers) */
-u32 ldist3(u16 a_ds, u16 b_ds, u16 u2, u16 u3, u16 u4, u16 u5)
+u32 ldist3(u16 a_ds, u16 b_ds)
 {
     u8 *a = DSP(a_ds), *b = DSP(b_ds);
     return r3d_ldist3v(labs32_ge(gs32(a, 0), gs32(b, 0)), labs32_ge(gs32(a, 4), gs32(b, 4)),

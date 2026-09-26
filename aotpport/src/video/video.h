@@ -13,6 +13,7 @@
  * other files of this module.
  */
 #include "mem.h"
+#include "codeptr.h"
 
 /* ==== video/ap_screen.c =========================================================================== */
 /* AP 368f:008d — video_misc.md §2 */
@@ -87,6 +88,9 @@ void gfx_get_rect(FarPtr dst, s16 x, s16 y, s16 w, s16 h);
 u32 gfx_rect_size(u16 w, u16 h);
 /* INTRO 05da:3cfd / PS 16e3:4021 / AP 1d32:5e5b — video_rotate.md; ljmp [rot_fn] with gfx_sprite_rotated's
  * arguments (changed from 9 words) */
+void gfx_sprite_rotated(u16 f_ds, s16 x, s16 y, u16 angle, s16 w, s16 h, s16 px, s16 py); /* AP 1d32:5e5f */
+void drv_set_unselect(void);                                             /* AP 244d:0170 */
+void pal_fx_build_delta(s16 lvl);                                        /* AP 1792:038a (near) */
 void gfx_sprite_rotated_ind(u16 f_ds, s16 x, s16 y, u16 angle, s16 w, s16 h, s16 px, s16 py);
 /* INTRO 05da:492f / PS 16e3:4c53 / AP 1d32:6a8d — video_ttm.md §7 */
 void gfx_put_rect(FarPtr src, s16 x, s16 y, s16 w, s16 h);

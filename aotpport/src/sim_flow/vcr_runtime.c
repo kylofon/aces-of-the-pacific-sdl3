@@ -1040,12 +1040,3 @@ void demo_loop(void)
     rtl_unlink(0x0A22);
     stk_release(m);
 }
-
-/* TODO(video): the rotated-sprite driver hook G_rot_fn holds 1d32:5e5f (gfx_sprite_rotated), which video
- * never registers with codeptr; the demo films hit it (drv_thunks.c:68). Registered here until video's
- * vqt.c registers it next to F_gfx_sprite_scn. */
-void gfx_sprite_rotated(u16 f_ds, s16 x, s16 y, u16 angle, s16 w, s16 h, s16 px, s16 py);
-__attribute__((constructor)) static void vcr_runtime_codeptrs(void)
-{
-    codeptr_register_shared(F_gfx_sprite_rotated, (CodeFn)gfx_sprite_rotated);
-}

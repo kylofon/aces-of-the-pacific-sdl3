@@ -21,7 +21,6 @@
 #include <stdlib.h>
 
 /* video/gfx_init.c: AP 244d:0170 (no iface in modules.csv, so not in video.h) */
-void drv_set_unselect(void);
 
 /* bstream.c */
 void bs_file_fill(u16 s, FarPtr cache);

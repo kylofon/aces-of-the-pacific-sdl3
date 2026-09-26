@@ -119,7 +119,7 @@ u16 lrotate(u16 v, u16 m, u16 out)
 {
     u16 mk = stk_mark(), zero = stk_alloc(12), t6 = stk_alloc(6), tc = stk_alloc(6);
     memset(DSP(zero), 0, 12);
-    s32 d = (s32)ldist3(zero, v, 0, 0, 0, 0);
+    s32 d = (s32)ldist3(zero, v);
     s16 e = (s16)(lbits((u32)(d + (d >> 1))) - 15);
     if (e > 0) {
         vec_rotate(l2v_sar(t6, v, (u16)e), m, tc);
@@ -154,7 +154,7 @@ u32 vdist(u16 a, u16 b)
 {
     u16 m = stk_mark(), la = stk_alloc(12), lb = stk_alloc(12);
     v2l(la, a); v2l(lb, b);
-    u32 d = ldist3(la, lb, 0, 0, 0, 0);
+    u32 d = ldist3(la, lb);
     stk_release(m);
     return d;
 }

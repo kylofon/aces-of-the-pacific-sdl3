@@ -17,7 +17,7 @@
 #include "symbols_ap.h"
 
 /* ---- calls into other modules, in one place so a header fix there is a one-line change here */
-static u32 sx_dist3(u16 a_ds, u16 b_ds) { return ldist3(a_ds, b_ds, 0, 0, 0, 0); }   /* 277a:3b3c (a, b) */
+static u32 sx_dist3(u16 a_ds, u16 b_ds) { return ldist3(a_ds, b_ds); }   /* 277a:3b3c (a, b) */
 static void sx_timeout_start(u16 t_ds, s32 n) { timeout_start(t_ds, (u16)n); }      /* 4b31:0041 (t, long) */
 
 /* types: T[type] = 8 bytes (sound.md §12.3), maxdist[type] words */

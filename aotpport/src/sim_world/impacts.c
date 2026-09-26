@@ -5,7 +5,7 @@
 #include "codeptr.h"
 #include "prog.h"
 
-#define LD3(a, b) ((s32)ldist3((a), (b), 0, 0, 0, 0))
+#define LD3(a, b) ((s32)ldist3((a), (b)))
 
 u16 shape_shift_cached(u16 ax);          /* render3d 35d6:01b8 (declared in r3d_priv.h only) */
 u16 lsub_far(u16 a, FarPtr b);           /* render3d 277a:50f4 (not in render3d.h) */

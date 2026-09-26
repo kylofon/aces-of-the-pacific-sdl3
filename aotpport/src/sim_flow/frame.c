@@ -251,7 +251,7 @@ static s16 commands(u16 ctl)
         u16 fl = DSW(P() + 0x34);
         if (DSC(fl + 3) == 0) {
             u16 base = DSW(fl + 4);
-            if (ldist3((u16)(P() + 4), (u16)(base + 4), 0, 0, 0, 0) <= 0x4268) {
+            if (ldist3((u16)(P() + 4), (u16)(base + 4)) <= 0x4268) {
                 DSW(AP_DS_landed_base) = 1;
                 end_request(3);
             }

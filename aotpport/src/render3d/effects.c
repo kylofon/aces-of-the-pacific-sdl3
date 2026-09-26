@@ -70,7 +70,7 @@ void range_cull(void)
         for (s16 i = 0; i < (s16)DSW(E_NOBJS); i++, di = (u16)(di + 2)) {
             u16 o = DSW(di);
             if (DSW(o) & 0x100) continue;
-            if (ldist3(E, (u16)(o + 4), 0, 0, 0, 0) > 3000) DSW(o) |= 0x100;
+            if (ldist3(E, (u16)(o + 4)) > 3000) DSW(o) |= 0x100;
         }
     } else {
         DSB(E_IN_CLOUD) = 0;
@@ -78,7 +78,7 @@ void range_cull(void)
         for (s16 i = 0; i < (s16)DSW(E_NAIR); i++, di = (u16)(di + 2)) {
             u16 o = DSW(di);
             if (DSW(o) & 0x100) continue;
-            u32 d = ldist3((u16)(o + 4), E, 0, 0, 0, 0);
+            u32 d = ldist3((u16)(o + 4), E);
             if (d > 200000 || cloud_blocks_segment((u16)(o + 4), E)) DSW(o) |= 0x100;
         }
     }

@@ -15,7 +15,7 @@
 #define W_TORP       DSW(0x19EC)
 #define W_BULLET     DSW(0x1348)
 
-static u32 dist(u16 a, u16 b) { return ldist3((u16)(a + 4), (u16)(b + 4), 0, 0, 0, 0); }
+static u32 dist(u16 a, u16 b) { return ldist3((u16)(a + 4), (u16)(b + 4)); }
 
 /* ---- 1889: lagged-Fibonacci RNG -------------------------------------------------------------------- */
 
@@ -644,7 +644,7 @@ u8 captured(void)
         FarPtr obj = far_rd(it.seg, it.off);
         it = far_add(it, 4);
         memcpy(DSP(op), far_mp(far_add(obj, 4)), 12);
-        u32 d = ldist3(pp, op, 0, 0, 0, 0);
+        u32 d = ldist3(pp, op);
         u16 k = (u16)(rd16(obj.seg, obj.off) & 0x1F);
         u8 flag;
         if ((me == 0 && k == 0x10) || (me == 1 && k == 2)) { d <<= 1; flag = 1; }
@@ -655,7 +655,7 @@ u8 captured(void)
     for (s16 i = 0; i < DSS(0x4774); i++) {
         u16 s = DSW((u16)(DSW(0x4759) + 2 * i));
         memcpy(DSP(op), DSP(s + 4), 12);
-        u32 d = ldist3(pp, op, 0, 0, 0, 0);
+        u32 d = ldist3(pp, op);
         u8 flag;
         if (SIDE(s) != me) { d <<= 1; flag = 1; }
         else flag = 0;

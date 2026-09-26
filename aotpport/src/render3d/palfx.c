@@ -19,15 +19,7 @@ enum {
 
 /* AP 1792:038b — body of the near routine 1792:038a (video's pal_fx_build_delta, called with the
  * `inc bp` entry): T[c] = ((c − 1)·k) >> 6, T[−c] = −T[c] at block + 347h */
-void palfx_delta_table_body(s16 k)
-{
-    s16 s = 0;
-    for (s16 c = 1; c < 0x40; c++, s = (s16)(s + k)) {
-        s8 v = (s8)(s >> 6);
-        DSC((u16)(DSW(P_BLOCK) + c + 0x347)) = v;
-        DSC((u16)(DSW(P_BLOCK) - c + 0x347)) = (s8)-v;
-    }
-}
+void palfx_delta_table_body(s16 k) { pal_fx_build_delta(k); }   /* same block: DS:5BD8 = AP_DS_pal_fx */
 
 /* AP 17ce:0008 — force the night levels to be re-sent (map screen) */
 void palfx_force(void) { DSW(P_PREV_NIGHT) = 0xFFFF; }
