@@ -283,10 +283,17 @@ static int test_loaders(void)
     return bad[0] + bad[1] + bad[2] != 0;
 }
 
+int shell_data_dev_test(void);
+
 int platform_dev_test(void)
 {
     const char *t = getenv("AOTP_TEST");
     if (!t || !*t) return -1;
+    if (!strcmp(t, "missions")) {                     /* shell_data (run with --start 2) */
+        int v = shell_data_dev_test();
+        fflush(stdout);
+        exit(v < 0 ? 1 : v);
+    }
     if (strcmp(t, "volumes") && strcmp(t, "chunks") && strcmp(t, "loaders") && strcmp(t, "pictures") &&
         strcmp(t, "ttm"))
         return -1;

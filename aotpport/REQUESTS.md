@@ -37,8 +37,9 @@ report. The lead appends new requests from each report.
 - [x] AP loaders call `ap_fread_far_4bb7`, which must behave like `my_hread`. (implemented by platform in `platform/loaders.c`; sim_flow must not define it again.)
 
 ## video (from platform)
-- [ ] Driver entry 14 receives 5 arguments and entry 15 a 16-bit count; the current function types
-      are narrower (works for the loaders).
+- [x] Driver entry 14 receives 5 arguments and entry 15 a 16-bit count; the current function types
+      are narrower (works for the loaders). (video: entry 14 already takes 5 words (list, far buf, u32 n);
+      `DrvBmMergeFn`/`drv_bm_merge_hi` now take a `u16` count, as `0E04` reads CX = [bp+0Eh].)
 
 ## render3d / video (from platform's link of shell_data)
 - [ ] shell_data needs `mul32`, `lmid`, `atan2_32`, `ldist2` (PS 3d50 math library, owned by render3d).
@@ -56,8 +57,12 @@ report. The lead appends new requests from each report.
       AP font slots DS:3F2A..3F32 and name strings DS:02E6..0302.
 
 ## video (from platform, integration round)
-- [ ] `vqt.c`'s constructor now also registers `F_gfx_sprite_scn` (AP's `scn_draw_fn` reached it unregistered: fatal in AP pictures). Please keep it.
-- [ ] AOTP_TEST=pictures under AP: 154 BMP / 864 frames load and draw; against work/img 123 PNGs are identical or identical up to the palette, 34 differ in their colour indices (mostly `nib` bitmaps, some `vqt`: ALERTS, MOON*, SMOKE, BACK4, RGUN*, ...; the shapes are right) — check AP's drawing/palette path; SCR strips (322x202) cannot be compared with dynimg's 320x200.
+- [x] `vqt.c`'s constructor now also registers `F_gfx_sprite_scn` (AP's `scn_draw_fn` reached it unregistered: fatal in AP pictures). Please keep it.
+- [x] AOTP_TEST=pictures under AP: 154 BMP / 864 frames load and draw; against work/img 123 PNGs are identical or identical up to the palette, 34 differ in their colour indices (mostly `nib` bitmaps, some `vqt`: ALERTS, MOON*, SMOKE, BACK4, RGUN*, ...; the shapes are right) — check AP's drawing/palette path; SCR strips (322x202) cannot be compared with dynimg's 320x200.
+      (video: not a port bug. Index-level comparison against the current dynimg decoders: AP 157/157 BMPs
+      identical incl. SIM1/SIM2/M1SIM, INTRO/PS 106/107 (DEMO.SCR not openable). The RGB differences come from
+      SIM.PAL existing only in SHELL1 (not openable from AP, so the test falls back to grey) and from
+      work/img PNGs older than dynimg's nibble fix (stored vs fresh differ for the nib BMPs).)
 
 ## shell_data / shell_ui / render3d (from platform, integration round)
 - [ ] `platform/stubs_tmp.c` carries weak link stubs for your functions the shared build references (math library, `service_side`, `fltplan_*`, `fm_bearing`, and a generated block at the end of the file). Delete a stub's line (or leave it: the weak stub loses to your definition) — tell platform if one collides.

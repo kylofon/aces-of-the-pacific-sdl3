@@ -77,7 +77,6 @@ __attribute__((weak)) void vqt_scr_node(u16 x, u16 y, u16 w, u16 h) { (void)x; (
 __attribute__((weak)) s16 snd_disable(s16 cls) { (void)cls; return 0; }
 __attribute__((weak)) void intro_sequence(void) { }
 __attribute__((weak)) void real_apply_preset(u16 dst_ds, u16 p) { (void)p; rtl_setmem_ds(dst_ds, 16, 0); }
-__attribute__((weak)) u16 res_add_ext(u16 name_ds, u16 ext_ds) { (void)ext_ds; return name_ds; }
 __attribute__((weak)) s16 ap_file_exists(u16 path_ds) { (void)path_ds; return 0; }
 __attribute__((weak)) u16 calib_ptr(s16 a0) { return (u16)(0x6000 + 12 * a0); }   /* scratch DS words */
 __attribute__((weak)) void controls_apply(void) { }
@@ -96,11 +95,6 @@ __attribute__((weak)) u32 mul32(u16 a0, u16 a1) { return (u32)a0 * a1; }
 __attribute__((weak)) u16 lmid(u16 a, u16 b) { return (u16)((a + b) / 2); }
 __attribute__((weak)) u32 ldist2(u16 a_ds, u16 b_ds) { (void)a_ds; (void)b_ds; return 0; }
 __attribute__((weak)) u16 atan2_32(u16 a0, u16 a1, u16 a2, u16 a3) { (void)a0; (void)a1; (void)a2; (void)a3; return 0; }
-__attribute__((weak)) u16 service_side(u16 s) { (void)s; return 0; }
-__attribute__((weak)) void fltplan_build(void) { }
-__attribute__((weak)) u16 fltplan_messages(void) { return 0; }
-__attribute__((weak)) void fltplan_free(void) { }
-__attribute__((weak)) void fltplan_sim_on(void) { }
 __attribute__((weak)) u16 fm_bearing(u16 a_ds, u16 b_ds) { (void)a_ds; (void)b_ds; return 0; }
 
 /* ---- generated: link stubs for functions of modules still being written (autostub) */
@@ -116,3 +110,31 @@ __attribute__((weak)) s16 ts_load_table(s16 t, u16 name_ds) { (void)t; (void)nam
 __attribute__((weak)) void view_free(u16 v_ds) { (void)v_ds; }
 __attribute__((weak)) u16 view_new(s16 eye) { (void)eye; return 0; }
 __attribute__((weak)) u16 vw_model_name(u16 t) { (void)t; return 0; }
+
+/* Exact PS versions of two shell_ui functions shell_data needs (0f67:02ed, 125a:000f), from
+ * shell_data's test build; weak until shell_ui delivers them. */
+__attribute__((weak)) u16 service_side(u16 s)
+{
+    s8 c = (s8)s, r;
+    if (c <= 2) r = 1; else if (c <= 4) r = 0; else if (c <= 7) r = 2; else if (c == 8) r = 3;
+    else if (c == 9) r = 4; else if (c == 10) r = 5; else r = -1;
+    return (u16)(s16)r;
+}
+__attribute__((weak)) u16 res_add_ext(u16 name_ds, u16 ext_ds)
+{
+    u16 n = 0;
+    while (DSB(name_ds + n)) n++;
+    DSB(name_ds + n) = '.';
+    DSB(name_ds + n + 1) = 0;
+    rtl_strcat(name_ds, ext_ds);
+    if (DSB(0x0DFF) == 0) {                      /* PS: no volumes -> "<ext>\name" */
+        rtl_strcpy(0x4B94, ext_ds);
+        n = 0;
+        while (DSB(0x4B94 + n)) n++;
+        DSB(0x4B94 + n) = 0x5C;
+        DSB(0x4B94 + n + 1) = 0;
+        rtl_strcat(0x4B94, name_ds);
+        return 0x4B94;
+    }
+    return name_ds;
+}

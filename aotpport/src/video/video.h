@@ -373,7 +373,7 @@ void drv_hspan(u16 es_page, u16 di_row, s16 bx_x, s16 cx_count, u8 al_a, u8 ah_b
 void drv_hspan_dither(u16 es_page, u16 di_row, s16 bx_x, s16 cx_count, u8 al_a, u8 ah_b, u16 dx_parity); /* 11 R 0205 */
 u32  drv_bm_size(u16 list_ds, u16 out_ds);                               /* 13 C 0CD6 */
 void drv_bm_layout(u16 list_ds, FarPtr buf, u32 n);                      /* 14 C 0D09 */
-void drv_bm_merge_hi(FarPtr src, FarPtr dst, u32 n);                     /* 15 C 0E04 */
+void drv_bm_merge_hi(FarPtr src, FarPtr dst, u16 n);                       /* 15 C 0E04 */
 void drv_nib_put(FarPtr src, u16 xb, u16 y, u16 w, u16 rows);            /* 17 C 126D */
 void drv_nib_or_hi(FarPtr src, u16 xb, u16 y, u16 w, u16 rows);          /* 18 C 131C */
 void drv_cols_xlat(u16 es_page, u16 di_row, s16 dx_x, s16 cx_count, FarPtr ds_si_src, u16 bp_table_ds); /* 19 R 050E */
@@ -407,7 +407,7 @@ typedef void (*DrvWord1Fn)(u16);                                         /* 8, 2
 typedef void (*DrvHspanFn)(u16, u16, s16, s16, u8, u8, u16);             /* 10, 11 */
 typedef u32  (*DrvBmSizeFn)(u16, u16);                                   /* 13 */
 typedef void (*DrvBmLayoutFn)(u16, FarPtr, u32);                         /* 14 */
-typedef void (*DrvBmMergeFn)(FarPtr, FarPtr, u32);                       /* 15 */
+typedef void (*DrvBmMergeFn)(FarPtr, FarPtr, u16);                       /* 15: 16-bit count (0 = 65536) */
 typedef void (*DrvNibFn)(FarPtr, u16, u16, u16, u16);                    /* 17, 18 */
 typedef void (*DrvColsXlatFn)(u16, u16, s16, s16, FarPtr, u16);          /* 19 */
 typedef void (*DrvFarFn)(FarPtr);                                        /* 20, 23, 27 */

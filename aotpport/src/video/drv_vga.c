@@ -410,11 +410,11 @@ void drv_bm_layout(u16 list_ds, FarPtr buf, u32 n)
     }
 }
 
-/* 0E04 (C): dst[2k] |= src[k] & F0h, dst[2k+1] |= (src[k] & 0Fh) << 4, k < low word of n (0 = 65536). */
-void drv_bm_merge_hi(FarPtr src, FarPtr dst, u32 n)
+/* 0E04 (C): dst[2k] |= src[k] & F0h, dst[2k+1] |= (src[k] & 0Fh) << 4, k < n (0 = 65536). */
+void drv_bm_merge_hi(FarPtr src, FarPtr dst, u16 n)
 {
     u32 s = far_lin(src), d = far_lin(dst);
-    u16 c = (u16)n;
+    u16 c = n;
     do {
         u8 b = lin_rd(s++);
         lin_wr(d, lin_rd(d) | (b & 0xF0));

@@ -282,7 +282,7 @@ s16 table_count(s16 s, u16 counts_ds);
 /* PS 2008:12eb â€” shell_data_sys.md Â§4.6 */
 FarPtr table_rec(s16 s, s16 id);
 /* PS 2008:138b â€” shell_data_sys.md Â§4.6; varargs: stack words as unsigned */
-FarPtr table_text(s16 s, s16 id, u16 ofs, ...);
+FarPtr table_text(s16 s, s16 id, u32 ofs);   /* HEADER FIX: u32 offset */
 /* PS 2008:019e â€” shell_data_sys.md Â§4.6; [file]; last 1 word(s) unused by the original */
 void files_foreach(u16 p0_ds, FarPtr fn);
 /* PS 2008:13fa â€” shell_data_sys.md Â§4.6; [file] */
@@ -512,70 +512,70 @@ u8 rank_extra(s8 r);
 
 /* ==== shell_data/s_types.c ======================================================================== */
 /* PS 3570:0003 â€” shell_data_missions.md Type 0 â€” `3570:0003` ace duel (MT_DACE); [file] */
-void mission_dace(u16 a0, u16 a1);
+void mission_dace(s8 a0, s8 kind);
 /* PS 35b3:000f â€” shell_data_missions.md Type 1 â€” `35b3:000f` dogfight with a squ; [file] */
-void mission_dsqd(u16 a0, u16 a1);
+void mission_dsqd(s8 a0, s8 kind);
 /* PS 35ed:0000 â€” shell_data_missions.md Type 2 â€” `35ed:0000` combat air patrol (; [file] */
-void mission_cap(u16 a0, u16 a1);
+void mission_cap(s8 a0, s8 kind);
 /* PS 3641:0005 â€” shell_data_missions.md Type 3 â€” `3641:0005` fighter sweep (MT_F; [file] */
-void mission_fswp(u16 a0, u16 a1);
+void mission_fswp(s8 a0, s8 kind);
 /* PS 36ab:0001 â€” shell_data_missions.md Type 4 â€” `36ab:0001` scramble (MT_SCRM); [file] */
-void mission_scrm(u16 a0, u16 a1);
+void mission_scrm(s8 a0, s8 kind);
 /* PS 36dd:000e â€” shell_data_missions.md Type 6 â€” `36dd:000e` escort (MT_ESCT) â€”; [file] */
-void mission_esct(u16 a0, u16 a1);
+void mission_esct(s8 a0, s8 kind);
 /* PS 372e:000c â€” shell_data_missions.md Type 8 â€” `372e:000c` anti-shipping (MT_A; [file] */
-void mission_anti(u16 a0, u16 a1);
+void mission_anti(s8 a0, s8 kind);
 /* PS 3769:0866 â€” shell_data_missions.md Type 7 â€” `3769:0866` intercept (MT_INTR); [file] */
-void mission_intr(u16 a0, u16 a1);
+void mission_intr(s8 a0, s8 kind);
 /* PS 37fc:0005 â€” shell_data_missions.md Type 9 â€” `37fc:0005` ground attack (MT_G; [file] */
-void mission_grnd(u16 a0, u16 a1);
+void mission_grnd(s8 a0, s8 kind);
 
 /* ==== shell_data/script.c ========================================================================= */
-/* PS 3164:0005 mission_free â€” shell_data.md Â§7.1 */
+/* PS 3164:0005 mission_free — shell_data.md §7.1 */
 void ps_mission_free_3164(void);
-/* PS 3164:0944 â€” shell_data.md Â§7.1 */
-u16 career_pick_mission(void);
-/* PS 3164:0a27 â€” shell_data.md Â§7.1 */
-void mission_build(u16 a0, u16 a1, u16 a2);
-/* PS 3164:23e3 â€” shell_data.md Â§8 */
+/* PS 3164:0944 — shell_data.md §7.1 (HEADER FIX: returns the s8 mission type / MISS number) */
+s8 career_pick_mission(void);
+/* PS 3164:0a27 — shell_data.md §7.1 (HEADER FIX: char type, char service, char kind) */
+void mission_build(s8 type, s8 service, s8 kind);
+/* PS 3164:23e3 — shell_data.md §8 */
 void script_write(s8 resume);
-/* PS 3164:349d â€” shell_data.md Â§7.5 */
+/* PS 3164:349d — shell_data.md §7.5 */
 u16 wp_message(u16 i);
-/* PS 3164:3602 â€” shell_data.md Â§9 */
+/* PS 3164:3602 — shell_data.md §9 */
 void load_free(void);
-/* PS 3164:09bd â€” shell_data.md Â§5; [file] */
+/* PS 3164:09bd — shell_data.md §5; [file] */
 void mission_reset(void);
-/* PS 3164:0b49 â€” shell_data.md Â§1.1; [file] */
+/* PS 3164:0b49 — shell_data.md §1.1; [file] */
 void mission_setup(s8 service);
-/* PS 3164:0c50 â€” shell_data.md Â§7.3; [file] */
-u16 enemy_service(u16 a0);
-/* PS 3164:0c89 â€” shell_data.md Â§5; [file]; spec: (0) */
-void add_flight(u16 a0, u16 a1, u16 a2);
-/* PS 3164:0f39 â€” shell_data.md Â§7.3; [file] */
-void add_escort_flights(u16 a0, u16 a1, u16 a2);
-/* PS 3164:0fb2 â€” shell_data.md Â§7.4; [file] */
-void pick_convoy(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4, u16 a5);
-/* PS 3164:14bc â€” shell_data.md Â§7.4; [file] */
-void pick_ground_target(u16 a0, u16 a1, u16 a2, u16 a3);
-/* PS 3164:1a38 â€” shell_data.md Â§7.4; [file]; spec: (0) */
-void pick_base(u16 a0, u16 a1, u16 a2, u16 a3);
-/* PS 3164:34ad â€” shell_data.md Â§9; [file] */
+/* PS 3164:0c50 — shell_data.md §7.3; [file] (HEADER FIX: typed) */
+s8 enemy_service(s8 service);
+/* PS 3164:0c89 — shell_data.md §7.3; [file] (HEADER FIX: typed) */
+void add_flight(s8 service, s8 side, s8 mode);
+/* PS 3164:0f39 — shell_data.md §7.3; [file] */
+void add_escort_flights(s8 service, s8 side, s8 mode);
+/* PS 3164:0fb2 — shell_data.md §7.4; [file] (positions are near pointers; returns out) */
+u16 pick_convoy(s8 side, s8 ckind, s8 service, s8 quality, u16 from_ds, u16 out_ds);
+/* PS 3164:14bc — shell_data.md §7.4; [file] */
+u16 pick_ground_target(s8 side, s8 service, u16 from_ds, u16 out_ds);
+/* PS 3164:1a38 — shell_data.md §7.4; [file] */
+u16 pick_base(s8 side, s16 station, s8 ref_side, u16 out_ds);
+/* PS 3164:34ad — shell_data.md §9; [file] */
 void load_alloc(u16 nac, u16 nsh, u16 npl, u16 nwp, u16 ngr, u16 n3);
-/* PS 3164:366d â€” shell_data.md Â§9; [file] */
+/* PS 3164:366d — shell_data.md §9; [file] (records are near pointers) */
 void load_add3(u16 rec6);
-/* PS 3164:3694 â€” shell_data.md Â§9; [file] */
+/* PS 3164:3694 — shell_data.md §9; [file] */
 void load_add_aircraft(u16 a0);
-/* PS 3164:36d0 â€” shell_data.md Â§9; [file] */
+/* PS 3164:36d0 — shell_data.md §9; [file] */
 void load_add_ship(u16 a0);
-/* PS 3164:36f6 â€” shell_data.md Â§9; [file] */
+/* PS 3164:36f6 — shell_data.md §9; [file] */
 void load_add_place(u16 a0);
-/* PS 3164:371d â€” shell_data.md Â§9; [file] */
+/* PS 3164:371d — shell_data.md §9; [file] */
 void load_add_waypoint(u16 p0_ds, u16 data);
-/* PS 3164:3788 â€” shell_data.md Â§9; [file] */
+/* PS 3164:3788 — shell_data.md §9; [file] */
 void load_add_group(u16 a0);
-/* PS 3164:3efe â€” shell_data.md Â§9; [file] */
+/* PS 3164:3efe — shell_data.md §9; [file] */
 void load_finish(u16 p);
-/* PS 3555:0133 â€” shell_data.md Â§2; [file] */
+/* PS 3555:0133 — shell_data.md §2; [file] */
 void tables_load(void);
 
 /* ==== shell_data/snario.c ========================================================================= */
@@ -674,7 +674,7 @@ s8 ord_any_droptank(s16 type);
 /* PS 2b1f:00f9 â€” shell_data_emd2.md Â§14; [file] */
 s16 heading_deg(FarPtr a, FarPtr b);
 /* PS 2b1f:021d â€” shell_data_emd2.md Â§14; [file]; last 2 word(s) unused by the original */
-s32 dist(FarPtr a, FarPtr b);
+s32 dist(u16 a_ds, u16 b_ds);   /* HEADER FIX: near pointers (2b1f:021d reads two words) */
 
 /* ==== shell_data/strp.c =========================================================================== */
 /* PS 24e3:0087 â€” shell_data_emd1.md Â§3.2 */
@@ -726,11 +726,11 @@ void wd_close(void);
 /* PS 2322:04b1 â€” shell_data.md Â§7.4 */
 void wd_load_database(u16 name_ds);
 /* PS 2322:0888 â€” shell_data_emd1.md Â§2.4; last 1 word(s) unused by the original */
-FarPtr wd_position(s16 rec, u16 date, FarPtr a2, s8 by_id);
+u16 wd_position(s16 rec, u16 date, u16 out_ds, s8 by_id);   /* HEADER FIX: near out */
 /* PS 2322:0678 â€” shell_data_emd1.md Â§2.4; [file] */
 s16 wd_count(void);
 /* PS 2322:09d8 â€” shell_data_emd1.md Â§2.4; [file]; last 1 word(s) unused by the original */
-FarPtr wd_position_mid(s16 rec, u16 date, FarPtr a2, s8 by_id);
+u16 wd_position_mid(s16 rec, u16 date, u16 out_ds, s8 by_id);   /* HEADER FIX: near out */
 /* PS 2322:0bd5 â€” shell_data_emd1.md Â§2.4; [file] */
 s8 wd_side_matches(s16 rec, u16 date, s8 side, s8 by_id);
 /* PS 2322:0cfc â€” shell_data_emd1.md Â§2.4; [file] */
