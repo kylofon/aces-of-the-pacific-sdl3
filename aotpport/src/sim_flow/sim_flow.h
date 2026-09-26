@@ -29,26 +29,26 @@ void autopilot_msg(s16 r, s16 stopped);
 void autopilot_jump(void);
 
 /* ==== sim_flow/bstream.c ========================================================================== */
-/* AP 48c7:0190 — sim_flow_vcr.md §3.3; [file]; spec: (char * name, u16 mode far void * buf, u32 size) */
-u16 bs_open(u16 a0, u16 a1, u32 a2, u32 a3);
+/* AP 48c7:0190 — sim_flow_vcr.md §3.3; [file] */
+u16 bs_open(u16 name_ds, u16 mode, FarPtr buf, u32 size);
 /* AP 48c7:02dd — sim_flow_vcr.md §3.3; [file] */
-s16 bs_close(u16 s_ds);
+s16 bs_close(u16 s);
 /* AP 48c7:0329 — sim_flow_vcr.md §3.3; [file] */
-void bs_rewind(u16 s_ds);
+void bs_rewind(u16 s);
 /* AP 48c7:035e — sim_flow_vcr.md §3.3; [file] */
-s16 bs_abort(u16 s_ds);
+s16 bs_abort(u16 s);
+/* AP 63ed:0000 — sim_flow_vcr.md §3.2; [file] */
+s16 bs_write_bits(u16 src_ds, s16 nbits, u16 s);
+/* AP 63ed:00e7 — sim_flow_vcr.md §3.2; [file] */
+s16 bs_read_bits(u16 dst_ds, s16 nbits, u16 s);
 /* AP 4d15:0036 — sim_flow_vcr.md §3.4; [file] */
 u16 huff_load(u16 path_ds);
-/* AP 63ed:0000 — sim_flow_vcr.md §3.2; [file]; spec: (void * src, int nbits BSTREAM * s) */
-s16 bs_write_bits(u16 a0, u16 a1, u16 a2);
-/* AP 63ed:00e7 — sim_flow_vcr.md §3.2; [file]; spec: (void * dst, int nbits BSTREAM * s) */
-s16 bs_read_bits(u16 a0, u16 a1, u16 a2);
 /* AP 6922:0000 — sim_flow_vcr.md §3.4; [file] */
-u16 huff_code(u16 t_ds, s16 sym, u16 nbits_ds);
+u16 huff_code(u16 t, s16 sym, u16 nbits_ds);
 /* AP 6922:00dd — sim_flow_vcr.md §3.4; [file] */
-void huff_dec_begin(u16 t_ds);
+void huff_dec_begin(u16 t);
 /* AP 6922:0105 — sim_flow_vcr.md; [file] */
-s16 huff_dec_bit(s16 b);
+s16 huff_dec_bit(s16 bit);
 /* AP 6922:0155 — sim_flow_vcr.md; [file] */
 s16 huff_dec_end(void);
 
@@ -105,106 +105,106 @@ void mask_on(void);
 void mask_off(void);
 
 /* ==== sim_flow/dialogs.c ========================================================================== */
-/* AP 5247:0000 — sim_flow_ui.md §6; last 2 word(s) unused by the original */
-void dlg_title_text(FarPtr a0);
-/* AP 5247:0070 — sim_flow_vcr.md §10; last 2 word(s) unused by the original */
-void dlg_title_shadow(FarPtr a0);
-/* AP 53ec:013f — sim_flow_ui.md; last 1 word(s) unused by the original */
-void text_shadow(FarPtr s, s16 x, s16 y);
-/* AP 6396:0159 — sim_flow_vcr.md §9.5; last 1 word(s) unused by the original */
-void item_center(FarPtr it);
-/* AP 53a6:0016 — sim_flow_ui.md §6; [file]; spec says void, callers read AX */
-u16 pointer_buf_alloc(u16 a0);
-/* AP 53a6:0255 — sim_flow_ui.md §6; [file]; spec: (int x, int y) */
-s16 dlg_click(u16 a0, u16 a1, u16 a2);
+/* AP 5247:0000 — sim_flow_ui.md §6 */
+void dlg_title_text(FarPtr unused);
+/* AP 5247:0070 — sim_flow_vcr.md §10 */
+void dlg_title_shadow(FarPtr unused);
+/* AP 53a6:0016 — sim_flow_ui.md §6; [file] */
+u16 pointer_buf_alloc(u16 bm);
+/* AP 53a6:0255 — sim_flow_ui.md §6; [file] */
+s16 dlg_click(s16 x, s16 y, s16 button);
 /* AP 53a6:02cf — sim_flow_ui.md §6; [file] */
 void dlg_activate(FarPtr items, s16 n);
 /* AP 53a6:0360 — sim_flow_ui.md; [file] */
 void dlg_select(s16 i);
-/* AP 53a6:0393 — sim_flow_vcr.md §8.3; [file]; spec: (int key) */
-s16 dlg_key_filter(u32 a0, u16 a1);
-/* AP 53a6:044d dlg_redraw_all — sim_flow_vcr.md §10; [file] */
-void ap_dlg_redraw_all_53a6(u16 a0, u16 a1);
+/* AP 53a6:0393 — sim_flow_vcr.md §8.3; [file] */
+s16 dlg_key_filter(FarPtr items, s16 n);
+/* AP 53a6:044d — sim_flow_vcr.md §10; [file] */
+void ap_dlg_redraw_all_53a6(u16 key, u16 ascii);
+/* AP 53ec:013f — sim_flow_ui.md */
+void text_shadow(u16 s, s16 x, s16 y);
 /* AP 53ec:0174 — sim_flow_ui.md §6; [file] */
-void text_title(FarPtr s, s16 x, s16 y);
+void text_title(u16 s, u16 c1, u16 c2, u16 c3);
 /* AP 6396:0000 — sim_flow_ui.md §6; [file] */
 void box_load(FarPtr items, u16 name_ds, s16 n);
 /* AP 6396:00ff — sim_flow_ui.md §6; [file] */
 void clear_26c3(void);
-/* AP 6396:0127 — sim_flow_ui.md; [file]; spec: (...) */
-void vline(u16 a0, u16 a1, u16 a2, u16 a3);
-/* AP 6396:0140 — sim_flow_ui.md; [file]; spec: (Item far * it) */
-void fill_c1_item(u16 a0, u16 a1, u16 a2, u16 a3);
-/* AP 6396:0335 — sim_flow_vcr.md §10; [file]; last 2 word(s) unused by the original; spec says void, callers read AX */
+/* AP 6396:0127 — sim_flow_ui.md; [file] */
+void vline(s16 x0, s16 y0, s16 x1, s16 y1);
+/* AP 6396:0140 — sim_flow_ui.md; [file] */
+void fill_c1_item(s16 x, s16 y, s16 w, s16 h);
+/* AP 6396:0159 — sim_flow_vcr.md §9.5 */
+void item_center(FarPtr col);
+/* AP 6396:0335 — sim_flow_vcr.md §10; [file] */
 u16 button_style_a(FarPtr it);
-/* AP 6396:036a — sim_flow_ui.md; [file]; last 2 word(s) unused by the original; spec says void, callers read AX */
+/* AP 6396:036a — sim_flow_ui.md; [file] */
 u16 button_style_b(FarPtr it);
-/* AP 6396:0548 — sim_flow_vcr.md §10; [file]; last 2 word(s) unused by the original; spec says void, callers read AX */
+/* AP 6396:0548 — sim_flow_vcr.md §10; [file] */
 u16 lib2_cb_c(FarPtr it);
 
 /* ==== sim_flow/dlglib.c =========================================================================== */
-/* AP 47a8:00ce — sim_flow_ui.md §6; last 4 word(s) unused by the original */
-void bevel_box(s16 x, s16 y, s16 w, u16 a3);
-/* AP 47a8:09d0 — sim_flow_ui.md §6; last 2 word(s) unused by the original */
-void framed_panel(FarPtr it);
-/* AP 47a8:0ae1 — sim_flow_ui.md §6; last 4 word(s) unused by the original */
-void window_frame_title(FarPtr it, FarPtr title);
-/* AP 47a8:0ba3 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void item_draw_dispatch(FarPtr it);
 /* AP 0de8:0020 — sim_flow_ui.md §2.3; [file] */
 s16 far_text_width(FarPtr s);
-/* AP 46de:0000 — sim_flow_ui.md; [file]; last 1 word(s) unused by the original */
-FarPtr item_iter(s16 i);
-/* AP 46de:0057 — sim_flow_ui.md; [file]; last 2 word(s) unused by the original */
-s16 point_in_item(FarPtr it, s16 x, s16 y);
-/* AP 46de:00ee — sim_flow_ui.md §6; [file]; spec: (int x, int y, int buttons) */
-s16 dlg_hit_dispatch(u16 a0, u16 a1, u16 a2, u16 a3);
+/* AP 46de:0000 — sim_flow_ui.md; [file] */
+FarPtr item_iter(s16 unused);
+/* AP 46de:0057 — sim_flow_ui.md; [file] */
+s16 point_in_item(FarPtr it_unused, s16 x, s16 y);
+/* AP 46de:00ee — sim_flow_ui.md §6; [file] */
+s16 dlg_hit_dispatch(s16 x, s16 y, s16 buttons, s16 redraw);
 /* AP 46de:02f3 — sim_flow_ui.md §6; [file] */
 void dlg_redraw_dirty(void);
 /* AP 46de:04bc — sim_flow_vcr.md §9.7; [file] */
 void mouse_show_over(void);
 /* AP 46de:04de — sim_flow_vcr.md §9.7; [file] */
 s16 mouse_over_panel(void);
-/* AP 472f:0782 — sim_flow_ui.md §6; [file]; last 2 word(s) unused by the original */
+/* AP 472f:0782 — sim_flow_ui.md §6; [file] */
 void dlg_frame(FarPtr it);
 /* AP 47a8:0000 — sim_flow_ui.md §6; [file] */
 void savebuf_alloc(void);
 /* AP 47a8:0031 — sim_flow.md §3.4; [file] */
 void savebuf_free(void);
-/* AP 47a8:005d rect_shrink — sim_flow_cockpit.md §6.2; [file]; last 1 word(s) unused by the original */
-void ap_rect_shrink(u16 r_ds, s16 d);
-/* AP 47a8:0094 rect_restore — sim_flow_cockpit.md §6.2; [file]; last 1 word(s) unused by the original */
-void ap_rect_restore(u16 r_ds);
-/* AP 47a8:0232 — sim_flow_ui.md §6; [file]; spec: (Item far * it far Bitmaps * b) */
-void item_frame_bitmap(u16 a0, u16 a1, u16 a2);
+/* AP 47a8:005d — sim_flow_cockpit.md §6.2; [file] */
+void ap_rect_shrink(u16 d_, s16 unused);
+/* AP 47a8:0094 — sim_flow_cockpit.md §6.2; [file] */
+void ap_rect_restore(u16 unused);
+/* AP 47a8:00ce — sim_flow_ui.md §6 */
+void bevel_box(s16 a0, s16 a1, s16 a2, u16 a3);
+/* AP 47a8:0232 — sim_flow_ui.md §6; [file] */
+void item_frame_bitmap(s16 x, s16 y, s16 n);
 /* AP 47a8:0335 — sim_flow_ui.md; [file] */
 void inset_box(void);
-/* AP 47a8:0477 — sim_flow_cockpit.md §7; [file]; last 2 word(s) unused by the original */
+/* AP 47a8:0477 — sim_flow_cockpit.md §7; [file] */
 void inset_box_item(FarPtr it);
-/* AP 47a8:0480 text_center_x — sim_flow_ui.md §6; [file]; last 1 word(s) unused by the original */
-s16 ap_text_center_x(FarPtr s, s16 x, s16 w);
-/* AP 47a8:0549 — sim_flow_ui.md; [file]; last 3 word(s) unused by the original */
+/* AP 47a8:0480 — sim_flow_ui.md §6; [file] */
+s16 ap_text_center_x(u16 s, s16 x, s16 w);
+/* AP 47a8:0549 — sim_flow_ui.md; [file] */
 void fill_item(FarPtr it, s16 c);
 /* AP 47a8:0593 — sim_flow_ui.md; [file] */
 void fill_c1(void);
-/* AP 47a8:06ca — sim_flow_ui.md; [file]; last 2 word(s) unused by the original */
+/* AP 47a8:06ca — sim_flow_ui.md; [file] */
 void frame_lines_item(FarPtr it);
-/* AP 47a8:0712 — sim_flow_ui.md §6; [file]; last 2 word(s) unused by the original */
+/* AP 47a8:0712 — sim_flow_ui.md §6; [file] */
 void button_up_a(FarPtr it);
-/* AP 47a8:076e — sim_flow_ui.md; [file]; last 2 word(s) unused by the original */
+/* AP 47a8:076e — sim_flow_ui.md; [file] */
 void button_down_a(FarPtr it);
-/* AP 47a8:0bf2 — sim_flow_ui.md; [file]; last 2 word(s) unused by the original */
+/* AP 47a8:09d0 — sim_flow_ui.md §6 */
+void framed_panel(FarPtr it);
+/* AP 47a8:0ae1 — sim_flow_ui.md §6 */
+void window_frame_title(FarPtr it, FarPtr title);
+/* AP 47a8:0ba3 — sim_flow_ui.md */
+void item_draw_dispatch(FarPtr it);
+/* AP 47a8:0bf2 — sim_flow_ui.md; [file] */
 void button_up_c(FarPtr it);
-/* AP 47a8:0c51 — sim_flow_ui.md; [file]; last 2 word(s) unused by the original */
+/* AP 47a8:0c51 — sim_flow_ui.md; [file] */
 void button_down_c(FarPtr it);
-/* AP 47a8:0cb0 — sim_flow_ui.md §6; [file]; last 1 word(s) unused by the original */
-s16 button_press(FarPtr it);
-/* AP 47a8:0d92 — sim_flow_ui.md §6; [file]; last 2 word(s) unused by the original */
+/* AP 47a8:0cb0 — sim_flow_ui.md §6; [file] */
+s16 button_press(s16 framed);
+/* AP 47a8:0d92 — sim_flow_ui.md §6; [file] */
 s16 toggle_press(FarPtr it);
-/* AP 47a8:0dc7 — sim_flow_ui.md; [file]; last 2 word(s) unused by the original */
-void button_bitmap(FarPtr it);
-/* AP 48a2:0000 text_emboss — sim_flow_ui.md §6; [file]; spec: (char far * s, int x, int y ...) */
-void ap_text_emboss(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4, u16 a5);
+/* AP 47a8:0dc7 — sim_flow_ui.md; [file] */
+s16 button_bitmap(FarPtr it);
+/* AP 48a2:0000 — sim_flow_ui.md §6; [file] */
+void ap_text_emboss(u16 s, u16 x_, u16 y_, u16 c1, u16 c2, u16 c3);
 
 /* ==== sim_flow/flight_loop.c ====================================================================== */
 /* AP 362b:00be — sim_flow.md §4.3 */
@@ -525,54 +525,54 @@ void ap_modules_detect(void);
 u8 modules_mask(void);
 
 /* ==== sim_flow/prefs.c ============================================================================ */
-/* AP 6b4d:0174 — sim_flow_ui.md §5; last 2 word(s) unused by the original */
-void prefs_cb_labels(FarPtr it);
-/* AP 6b4d:01e2 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void prefs_cb_devices(FarPtr it);
-/* AP 6b4d:0257 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void prefs_cb_button(FarPtr it);
-/* AP 6b4d:0295 — sim_flow_ui.md §5; last 2 word(s) unused by the original */
-void prefs_slider0(FarPtr it);
-/* AP 6b4d:02a4 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void prefs_slider1(FarPtr it);
-/* AP 6b4d:02b3 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void prefs_slider2(FarPtr it);
-/* AP 6b4d:02c2 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void prefs_cb_a(FarPtr it);
-/* AP 6b4d:02d6 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void prefs_cb_b(FarPtr it);
-/* AP 6b4d:0431 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void toggle_joystick_cb(FarPtr it);
-/* AP 6b4d:046e — sim_flow_ui.md; last 2 word(s) unused by the original */
-void toggle_mouse_cb(FarPtr it);
-/* AP 6b4d:04a8 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void toggle_sound_cb(FarPtr it);
-/* AP 6b4d:04c0 — sim_flow_ui.md */
-void toggle_ground(void);
-/* AP 6b4d:04e2 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void prefs_cb_c(FarPtr it);
-/* AP 6b4d:04fb — sim_flow_ui.md; last 2 word(s) unused by the original */
-void prefs_cb_d(FarPtr it);
-/* AP 6b4d:0514 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void prefs_cb_e(FarPtr it);
-/* AP 6b4d:052d — sim_flow_ui.md; last 2 word(s) unused by the original */
-void prefs_cb_f(FarPtr it);
-/* AP 6b4d:0751 — sim_flow.md §3.2 */
-void controls_apply(void);
+/* AP 6b4d:0174 — sim_flow_ui.md §5 */
+void prefs_cb_labels(FarPtr unused);
+/* AP 6b4d:01e2 — sim_flow_ui.md */
+void prefs_cb_devices(FarPtr unused);
+/* AP 6b4d:0257 — sim_flow_ui.md */
+void prefs_cb_button(FarPtr unused);
+/* AP 6b4d:0295 — sim_flow_ui.md §5 */
+void prefs_slider0(FarPtr unused);
+/* AP 6b4d:02a4 — sim_flow_ui.md */
+void prefs_slider1(FarPtr unused);
+/* AP 6b4d:02b3 — sim_flow_ui.md */
+void prefs_slider2(FarPtr unused);
+/* AP 6b4d:02c2 — sim_flow_ui.md */
+void prefs_cb_a(FarPtr unused);
+/* AP 6b4d:02d6 — sim_flow_ui.md */
+void prefs_cb_b(FarPtr unused);
 /* AP 6b4d:0308 — sim_flow.md §3.1; [file] */
 void prefs_init(void);
 /* AP 6b4d:0408 — sim_flow.md §5.2; [file] */
-void toggle_joystick(void);
+s16 toggle_joystick(void);
+/* AP 6b4d:0431 — sim_flow_ui.md */
+void toggle_joystick_cb(FarPtr unused);
 /* AP 6b4d:0443 — sim_flow.md §5.2; [file] */
-void toggle_mouse(void);
+s16 toggle_mouse(void);
+/* AP 6b4d:046e — sim_flow_ui.md */
+void toggle_mouse_cb(FarPtr unused);
 /* AP 6b4d:0480 — sim_flow.md §5.2; [file] */
-void toggle_sound(void);
+s16 toggle_sound(void);
+/* AP 6b4d:04a8 — sim_flow_ui.md */
+void toggle_sound_cb(FarPtr unused);
+/* AP 6b4d:04c0 — sim_flow_ui.md */
+void toggle_ground(void);
+/* AP 6b4d:04e2 — sim_flow_ui.md */
+void prefs_cb_c(FarPtr unused);
+/* AP 6b4d:04fb — sim_flow_ui.md */
+void prefs_cb_d(FarPtr unused);
+/* AP 6b4d:0514 — sim_flow_ui.md */
+void prefs_cb_e(FarPtr unused);
+/* AP 6b4d:052d — sim_flow_ui.md */
+void prefs_cb_f(FarPtr unused);
+/* AP 6b4d:0751 — sim_flow.md §3.2 */
+void controls_apply(void);
 /* AP 6b4d:0f95 — sim_flow.md §4.5; [file] */
 s16 prefs_dialog(void);
-/* AP 6c5f:0000 — sim_flow_ui.md §6; [file]; spec: (...) */
-void tl_init(u16 a0, u16 a1, u16 a2);
-/* AP 6c5f:02d1 — sim_flow_ui.md; [file]; spec: (char * d, char far * fmt ...); spec says void, callers read AX */
-u16 tl_format(u32 a0, u16 a1, u32 a2);
+/* AP 6c5f:0000 — sim_flow_ui.md §6; [file] */
+void tl_init(u16 engrave, u16 lh, u16 draw);
+/* AP 6c5f:02d1 — sim_flow_ui.md; [file] */
+u16 tl_format(u32 fmt_, u16 nlines, u32 cb_);
 
 /* ==== sim_flow/radio.c ============================================================================ */
 /* AP 1660:0f6e — sim_flow_cockpit.md §7; [file] */
@@ -591,48 +591,48 @@ void radio_menu_reset(void);
 s16 radio_menu_key(s16 cmd);
 
 /* ==== sim_flow/realism.c ========================================================================== */
-/* AP 6e9f:00ba — sim_flow_ui.md §3; last 2 word(s) unused by the original */
-void realism_preset(FarPtr it);
-/* AP 6e9f:0141 — sim_flow_ui.md §3; last 2 word(s) unused by the original */
-void realism_toggle(FarPtr it);
-/* AP 6e9f:01c6 — sim_flow_ui.md §3; last 2 word(s) unused by the original */
-void realism_cycle_fm(FarPtr it);
-/* AP 6e9f:01f2 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void realism_cycle_combat(FarPtr it);
-/* AP 6e9f:021e — sim_flow_ui.md §3; last 2 word(s) unused by the original */
-void realism_accept(FarPtr it);
-/* AP 6e9f:0232 — sim_flow.md §3.3 */
-void realism_bind(u16 r_ds);
-/* AP 6e9f:023d — sim_flow_ui.md §3; last 2 word(s) unused by the original */
-void realism_restore(FarPtr it);
-/* AP 6e9f:026f — sim_flow_ui.md; last 2 word(s) unused by the original */
-void realism_cb_frame(FarPtr it);
-/* AP 6e9f:02ab — sim_flow_ui.md §3; last 2 word(s) unused by the original */
-void realism_title(FarPtr it);
-/* AP 6e9f:033c — sim_flow_ui.md; last 2 word(s) unused by the original */
-void realism_cb_panel(FarPtr it);
-/* AP 6e9f:0394 — sim_flow_ui.md §6; last 2 word(s) unused by the original */
-void realism_cb_a(FarPtr it);
-/* AP 6e9f:03c0 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void realism_cb_b(FarPtr it);
-/* AP 6e9f:03ec — sim_flow_ui.md; last 2 word(s) unused by the original */
-void realism_cb_c(FarPtr it);
-/* AP 6e9f:0418 — sim_flow_ui.md; last 2 word(s) unused by the original */
-void realism_bar(FarPtr it);
-/* AP 6e9f:078a — sim_flow_ui.md; last 2 word(s) unused by the original */
-void realism_cb_d(FarPtr it);
-/* AP 522c:0038 realism_percent — sim_flow_ui.md §3; [file] */
+/* AP 522c:0038 — sim_flow_ui.md §3; [file] */
 s16 ap_realism_percent(void);
 /* AP 522c:011c — sim_flow_ui.md §3; [file] */
 void realism_init(void);
-/* AP 522c:0162 realism_changed — sim_flow_ui.md §3; [file] */
+/* AP 522c:0162 — sim_flow_ui.md §3; [file] */
 void ap_realism_changed_522c(void);
 /* AP 6e9b:0000 — sim_flow_ui.md §3; [file] */
 void realism_timer(void);
 /* AP 6e9f:0000 — sim_flow.md §3.1; [file] */
 void realism_dlg_init(void);
+/* AP 6e9f:00ba — sim_flow_ui.md §3 */
+void realism_preset(FarPtr unused);
+/* AP 6e9f:0141 — sim_flow_ui.md §3 */
+void realism_toggle(FarPtr unused);
+/* AP 6e9f:01c6 — sim_flow_ui.md §3 */
+void realism_cycle_fm(FarPtr unused);
+/* AP 6e9f:01f2 — sim_flow_ui.md */
+void realism_cycle_combat(FarPtr unused);
+/* AP 6e9f:021e — sim_flow_ui.md §3 */
+void realism_accept(FarPtr unused);
+/* AP 6e9f:0232 — sim_flow.md §3.3 */
+void realism_bind(u16 r_ds);
+/* AP 6e9f:023d — sim_flow_ui.md §3 */
+void realism_restore(FarPtr unused);
+/* AP 6e9f:026f — sim_flow_ui.md */
+void realism_cb_frame(FarPtr unused);
+/* AP 6e9f:02ab — sim_flow_ui.md §3 */
+void realism_title(FarPtr unused);
 /* AP 6e9f:02d5 — sim_flow_ui.md §3; [file] */
 void realism_open(void);
+/* AP 6e9f:033c — sim_flow_ui.md */
+void realism_cb_panel(FarPtr unused);
+/* AP 6e9f:0394 — sim_flow_ui.md §6 */
+void realism_cb_a(FarPtr unused);
+/* AP 6e9f:03c0 — sim_flow_ui.md */
+void realism_cb_b(FarPtr unused);
+/* AP 6e9f:03ec — sim_flow_ui.md */
+void realism_cb_c(FarPtr unused);
+/* AP 6e9f:0418 — sim_flow_ui.md */
+void realism_bar(FarPtr unused);
+/* AP 6e9f:078a — sim_flow_ui.md */
+void realism_cb_d(FarPtr unused);
 
 /* ==== sim_flow/results.c ========================================================================== */
 /* AP 14b8:0057 — sim_flow_results.md §2 */
@@ -645,7 +645,7 @@ u16 ap_rng_next(u16 st_ds);
 s16 rng_mod(u16 st_ds, s16 n);
 /* AP 1899:0cf0 — sim_flow_results.md §5.1; spec: (Object * killer Object * victim, int wclass ..., u8 destroyed) */
 void kill_credit(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4, u16 a5);
-/* AP 1899:102f � sim_flow_results.md �5.2 (added: called by sim_world's weapon impacts) */
+/* AP 1899:102f — sim_flow_results.md �5.2 (added: called by sim_world's weapon impacts) */
 void target_credit(u16 o, FarPtr t, FarPtr ref, u16 wclass, u16 type, u16 delta, u16 destroyed);
 /* AP 14b8:000d — sim_flow_results.md §2; [file] */
 void rand_table_init(void);
@@ -675,15 +675,11 @@ void bxl_load_slot(s16 slot, u16 name_ds);
 FarPtr bxl_load(u16 name_ds);
 /* AP 48af:015a — sim_flow_ui.md §7.2 */
 void bxl_get(s16 slot, u16 out_ds);
-/* AP 6b3d:0000 — sim_flow_ui.md §7.3 */
-void cockpit_leave(void);
-/* AP 6b3d:00ac — sim_flow_cockpit.md §4.2 */
-void cockpit_unload(void);
 /* AP 5613:0068 — sim_flow_ui.md §1; [file] */
 void sliders_load(u16 name_ds);
 /* AP 5613:0155 — sim_flow_ui.md §1; [file] */
-FarPtr slider_bitmaps(void);
-/* AP 5613:0161 — sim_flow_ui.md §1; [file]; callers also read DX */
+u16 slider_bitmaps(void);
+/* AP 5613:0161 — sim_flow_ui.md §1; [file] */
 s16 slider_value(s16 i);
 /* AP 5613:01cb — sim_flow_ui.md §1; [file] */
 s16 slider_lo(s16 i);
@@ -695,24 +691,28 @@ s16 slider_set(s16 i, s16 v);
 s16 slider_settled(s16 i);
 /* AP 5613:026a — sim_flow_ui.md §1; [file] */
 void slider_range(s16 i, s16 lo, s16 hi);
-/* AP 5613:0489 — sim_flow_ui.md §1; [file]; last 1 word(s) unused by the original */
-void slider_draw(FarPtr it);
+/* AP 5613:0489 — sim_flow_ui.md §1; [file] */
+void slider_draw(s16 i);
 /* AP 565f:008a — sim_flow.md §5.2; [file] */
 void iff_write(u16 name_ds);
+/* AP 6b3d:0000 — sim_flow_ui.md §7.3 */
+void cockpit_leave(void);
+/* AP 6b3d:00ac — sim_flow_cockpit.md §4.2 */
+void cockpit_unload(void);
 
 /* ==== sim_flow/stdalert.c ========================================================================= */
-/* AP 5da1:0000 — sim_flow.md §7 */
-void end_request(u8 code);
 /* AP 5a01:00e9 — sim_flow_ui.md §2.1; [file] */
 s16 alert_build(u16 texts_ds, u16 buttons_ds, u16 codes_ds);
-/* AP 5a01:0395 — sim_flow.md §5.1; [file]; spec: (...); callers also read DX */
-u32 quit_box(u16 a0);                                 /* (changed: returns the far handle DX:AX, used by 60a9:0a04) */
-/* AP 5a01:05d5 — sim_flow.md §5.1; [file]; types from the frame */
-void quit_box_close(u32 h);
+/* AP 5a01:0395 — sim_flow.md §5.1; [file] */
+u32 quit_box(u16 texts_ds);
+/* AP 5a01:05d5 — sim_flow.md §5.1; [file] */
+void quit_box_close(u32 hh);
+/* AP 5da1:0000 — sim_flow.md §7 */
+void end_request(u8 code);
 /* AP 5da1:00cb — sim_flow_ui.md §2.1; [file] */
-s16 plane_in_trouble(u16 p_ds);
+s16 plane_in_trouble(u16 p);
 /* AP 5da1:01cb — sim_flow_ui.md §2.1; [file] */
-u16 end_danger(u16 p_ds);
+u16 end_danger(u16 p);
 /* AP 5da1:022e — sim_flow_ui.md §2.1; [file] */
 s16 end_prompt(void);
 /* AP 5da1:02da — sim_flow.md §3.3; [file] */
@@ -721,42 +721,30 @@ void end_reset(void);
 void end_init(void);
 /* AP 6210:05e0 — sim_flow_results.md §1; [file] */
 void results_text(u16 ids_ds, u16 buf_ds);
-/* AP 6210:07a8 — sim_flow_ui.md §2.2; [file]; spec: (...) */
-s16 alert_modal(u32 a0, u32 a1);
+/* AP 6210:07a8 — sim_flow_ui.md §2.2; [file] */
+s16 alert_modal(FarPtr texts, FarPtr buttons);
 
 /* ==== sim_flow/vcr_codec.c ======================================================================== */
 /* AP 6a63:0000 — sim_flow_radio.md `1660:07bb targets_list(u16 *items, int */
 s16 addon1_flag(void);
 /* AP 6a63:04d0 — sim_flow.md §1; [file] */
 s16 vcr_put(s16 type, u16 ptr_ds);
-/* AP 6a63:0515 — sim_flow.md §4.5; [file]; varargs: stack words as unsigned */
-s16 vcr_put_data(s16 sub, s16 len, u16 ptr_ds, ...);
+/* AP 6a63:0515 — sim_flow.md §4.5; [file] */
+s16 vcr_put_data(s16 sub, s16 len, u16 ptr_ds);
 /* AP 6a63:0576 — sim_flow_vcr.md §4; [file] */
 s16 vcr_take(u16 dst_ds, s16 len);
 /* AP 6a63:05aa — sim_flow_vcr.md §4; [file] */
 s16 vcr_get(u16 sub_ds, u16 len_ds);
 
 /* ==== sim_flow/vcr_files.c ======================================================================== */
-/* AP 4bcd:01df file_exists — sim_flow_ui.md §7.4 */
-s16 ap_file_exists(u16 path_ds);
-/* AP 5fef:0000 — sim_flow_vcr.md §11.2 */
-void list_cb_scroll(void);
-/* AP 5fef:001e — sim_flow_vcr.md §11.2 */
-void list_scroll_arrows(void);
-/* AP 5fef:0105 — sim_flow_vcr.md §11.2 */
-void list_draw_rows(void);
-/* AP 5fef:058b — sim_flow_vcr.md §11.2 */
-void list_draw_edit(void);
-/* AP 5fef:06d5 — sim_flow_vcr.md §11.2 */
-void list_edit_cb(void);
-/* AP 5fef:06e9 — sim_flow_vcr.md §11.2 */
-void list_clear_cb(void);
 /* AP 4bcd:0077 — sim_flow_vcr.md §11.4; [file] */
 u16 files_out_name(void);
 /* AP 4bcd:01ce — sim_flow_vcr.md §11.4; [file] */
 s16 list_files_all(u16 pattern_ds);
+/* AP 4bcd:01df — sim_flow_ui.md §7.4 */
+s16 ap_file_exists(u16 path_ds);
 /* AP 5155:0000 — sim_flow_vcr.md §11.3; [file] */
-void module_block(u16 block_ds, u16 mask);
+void module_block(u16 block, u16 mask);
 /* AP 5155:0082 — sim_flow_vcr.md §11.3; [file] */
 s16 is_marked(u16 rec_ds);
 /* AP 5155:0207 — sim_flow_vcr.md §11.3; [file] */
@@ -774,17 +762,27 @@ u16 tape_pick(s16 title1, s16 title2);
 /* AP 5e06:02d9 — sim_flow_vcr.md §11.1; [file] */
 s16 director_mode(s16 set);
 /* AP 5e06:03a2 — sim_flow_vcr.md §11.1; [file] */
-s16 tape_save_changes(void);
+u8 tape_save_changes(void);
 /* AP 5e06:04f4 — sim_flow_vcr.md §11.1; [file] */
 u16 tape_ask_name(void);
 /* AP 5e06:090a — sim_flow_vcr.md §11.1; [file] */
 u8 tape_menu(void);
+/* AP 5fef:0000 — sim_flow_vcr.md §11.2 */
+void list_cb_scroll(void);
+/* AP 5fef:001e — sim_flow_vcr.md §11.2 */
+void list_scroll_arrows(void);
+/* AP 5fef:0105 — sim_flow_vcr.md §11.2 */
+void list_draw_rows(void);
+/* AP 5fef:058b — sim_flow_vcr.md §11.2 */
+void list_draw_edit(void);
+/* AP 5fef:06d5 — sim_flow_vcr.md §11.2 */
+void list_edit_cb(void);
+/* AP 5fef:06e9 — sim_flow_vcr.md §11.2 */
+void list_clear_cb(void);
 /* AP 5fef:0710 — sim_flow_vcr.md §11.2; [file] */
 void list_boxes_load(void);
 
 /* ==== sim_flow/vcr_modes.c ======================================================================== */
-/* AP 1c0f:0053 — sim_flow.md §6.1 */
-void vcr_poll_panel(void);
 /* AP 1c0f:000a — sim_flow_vcr.md §9.1; [file] */
 void vcr_panel_poll_on(void);
 /* AP 1c0f:0014 — sim_flow_vcr.md §9.1; [file] */
@@ -793,8 +791,10 @@ void vcr_panel_poll_off(void);
 void vcr_panel_first(void);
 /* AP 1c0f:0032 — sim_flow_vcr.md §8.3; [file] */
 void vcr_panel_reset_snap(void);
+/* AP 1c0f:0053 — sim_flow.md §6.1 */
+void vcr_poll_panel(void);
 /* AP 51e7:0076 — sim_flow_vcr.md §9.3; [file] */
-u16 q_pop(u16 q_ds);
+u16 q_pop(u16 q);
 /* AP 5d46:0086 — sim_flow_vcr.md §9.3; [file] */
 void panel_disable(u16 ids_ds, u16 bits);
 /* AP 5dd0:00d2 — sim_flow_vcr.md §9.1; [file] */
@@ -811,10 +811,14 @@ s16 vcr_mode_paused(void);
 s16 vcr_mode_end(void);
 
 /* ==== sim_flow/vcr_panel.c ======================================================================== */
+/* AP 5ea5:0000 — sim_flow_vcr.md §10; [file] */
+u16 panel_cb_0000(void);
 /* AP 5ea5:0020 — sim_flow_vcr.md §10 */
 void panel_cb_0020(void);
 /* AP 5ea5:002a — sim_flow_vcr.md §10 */
 void panel_cb_slider(void);
+/* AP 5ea5:0039 — sim_flow_vcr.md §10; [file] */
+void panel_slider_enable(s16 on);
 /* AP 5ea5:005c — sim_flow_vcr.md §10 */
 void panel_cb_click1(void);
 /* AP 5ea5:0079 — sim_flow_vcr.md */
@@ -825,24 +829,10 @@ void panel_cb_click3(void);
 void panel_draw_time(void);
 /* AP 5ea5:017f — sim_flow_vcr.md §10 */
 void panel_draw_lamp(void);
-/* AP 5ea5:047a — sim_flow_vcr.md §10 */
-void panel_draw_frame(void);
-/* AP 5ea5:07df — sim_flow_vcr.md §10 */
-void panel_draw_title(void);
-/* AP 5ea5:0839 — sim_flow_vcr.md */
-void panel_cb_click4(void);
-/* AP 606e:0208 — sim_flow_vcr.md §10 */
-s16 key_or_click(void);
-/* AP 606e:0243 — sim_flow_vcr.md §10 */
-void wait_key_release(void);
-/* AP 606e:025f — sim_flow_vcr.md §10 */
-void banner_text(u16 s_ds);
-/* AP 5ea5:0000 — sim_flow_vcr.md §10; [file]; spec says void, callers read AX */
-u16 panel_cb_0000(void);
-/* AP 5ea5:0039 — sim_flow_vcr.md §10; [file] */
-void panel_slider_enable(s16 on);
 /* AP 5ea5:02f7 — sim_flow_vcr.md §10; [file] */
 s16 panel_update(void);
+/* AP 5ea5:047a — sim_flow_vcr.md §10 */
+void panel_draw_frame(void);
 /* AP 5ea5:04b0 — sim_flow_vcr.md §10; [file] */
 void panel_view_labels(void);
 /* AP 5ea5:04ff — sim_flow_vcr.md §10; [file] */
@@ -851,6 +841,10 @@ void panel_end_label(s16 ended);
 u16 panel_view_name(void);
 /* AP 5ea5:0784 — sim_flow_vcr.md §10; [file] */
 void panel_set_title(u16 name_ds);
+/* AP 5ea5:07df — sim_flow_vcr.md §10 */
+void panel_draw_title(void);
+/* AP 5ea5:0839 — sim_flow_vcr.md */
+void panel_cb_click4(void);
 /* AP 5ea5:085b — sim_flow_vcr.md §10; [file] */
 void panel_init_lamp(void);
 /* AP 606e:0000 — sim_flow_vcr.md §10; [file] */
@@ -859,22 +853,26 @@ u16 tape_tmp_name(void);
 void dlg_force_redraw(void);
 /* AP 606e:0018 — sim_flow_vcr.md §10; [file] */
 void panel_click(u16 m_ds);
-/* AP 606e:0057 dlg_redraw_all — sim_flow_vcr.md §10; [file] */
+/* AP 606e:0057 — sim_flow_vcr.md §10; [file] */
 void ap_dlg_redraw_all_606e(void);
 /* AP 606e:007a — sim_flow_vcr.md §10; [file] */
 s16 dlg_poll(void);
-/* AP 606e:012d realism_changed — sim_flow_vcr.md §10; [file] */
+/* AP 606e:012d — sim_flow_vcr.md §10; [file] */
 void ap_realism_changed_606e(void);
 /* AP 606e:0137 — sim_flow_vcr.md §10; [file] */
 s16 realism_dialog_in_flight(void);
-/* AP 606e:01e6 — sim_flow_vcr.md §10; [file]; last 1 word(s) unused by the original */
+/* AP 606e:01e6 — sim_flow_vcr.md §10; [file] */
 void flight_message(u16 s_ds);
+/* AP 606e:0208 — sim_flow_vcr.md §10 */
+s16 key_or_click(void);
+/* AP 606e:0243 — sim_flow_vcr.md §10 */
+void wait_key_release(void);
+/* AP 606e:025f — sim_flow_vcr.md §10 */
+void banner_text(u16 s_ds);
 /* AP 606e:0396 — sim_flow_vcr.md §10; [file] */
 void banner_w(u16 s_ds);
 
 /* ==== sim_flow/vcr_runtime.c ====================================================================== */
-/* AP 5c9b:0000 — sim_flow_vcr.md §6 */
-s16 vcr_session(s16 sim_mode);
 /* AP 5b93:0000 — sim_flow.md §3.3; [file] */
 void vcr_world_reset(void);
 /* AP 5b93:0032 — sim_flow_vcr.md §6.1; [file] */
@@ -888,7 +886,7 @@ void vcr_panel_region0(void);
 /* AP 5b93:0153 — sim_flow.md §5.2; [file] */
 s16 vcr_is_playing(void);
 /* AP 5b93:0166 — sim_flow_vcr.md §8.1; [file] */
-s16 vcr_view(u16 v_ds);
+s16 vcr_view(u16 v);
 /* AP 5b93:01e2 — sim_flow.md §7; [file] */
 void vcr_redraw_all(void);
 /* AP 5b93:0231 — sim_flow_vcr.md §8.1; [file] */
@@ -906,7 +904,7 @@ u16 vcr_set_name(u16 n_ds);
 /* AP 5b93:0528 — sim_flow_vcr.md §1; [file] */
 s16 vcr_rewind(s16 reopen);
 /* AP 5b93:05c1 — sim_flow_vcr.md §8.2; [file] */
-void vcr_view_button(u16 e_ds);
+void vcr_view_button(u16 e);
 /* AP 5b93:07ee — sim_flow_vcr.md §8.2; [file] */
 void vcr_track_views_draw(void);
 /* AP 5b93:082f — sim_flow_vcr.md §8.2; [file] */
@@ -924,21 +922,21 @@ void vcr_world_init_hook(void);
 /* AP 5c5f:0242 — sim_flow_vcr.md §6.2; [file] */
 s16 vcr_reopen(u16 name_ds);
 /* AP 5c5f:03a0 — sim_flow_vcr.md §6.2; [file] */
-s16 vcr_switch(u16 name_ds, s16 a1);
+s16 vcr_switch(u16 name_ds, s16 close);
+/* AP 5c9b:0000 — sim_flow_vcr.md §6 */
+s16 vcr_session(s16 sim_mode);
 
 /* ==== sim_flow/vcr_tape.c ========================================================================= */
-/* AP 618d:04e4 — sim_flow_vcr.md §5 */
-u16 module_flags(u16 bits);
 /* AP 618d:0000 — sim_flow_vcr.md §5; [file] */
 u16 tape_path_to(u16 dst_ds, u16 name_ds);
 /* AP 618d:0043 — sim_flow_vcr.md §5; [file] */
 u16 tape_path(u16 name_ds);
-/* AP 618d:0067 — sim_flow_vcr.md §5; [file]; spec: (char * file far void * * ptr, int * len) */
-s16 load_script_file(u16 a0, u16 a1, u16 a2);
+/* AP 618d:0067 — sim_flow_vcr.md §5; [file] */
+s16 load_script_file(u16 file_ds, u16 p_ds, u16 n_ds);
 /* AP 618d:00fb — sim_flow_vcr.md §5; [file] */
 s16 free_script(void);
-/* AP 618d:011f — sim_flow_vcr.md §5; [file]; spec: (char * name far void * * ptr, int * len) */
-s16 tape_read_script(u16 a0, u16 a1, u16 a2);
+/* AP 618d:011f — sim_flow_vcr.md §5; [file] */
+s16 tape_read_script(u16 name_ds, u16 p_ds, u16 n_ds);
 /* AP 618d:0210 — sim_flow_vcr.md §5; [file] */
 s16 free_script2(void);
 /* AP 618d:021c — sim_flow_vcr.md §5; [file] */
@@ -947,6 +945,8 @@ s16 alloc_bit_buffers(void);
 void alloc_decode_buffer(s16 size);
 /* AP 618d:0430 — sim_flow_vcr.md §5; [file] */
 s16 rec_begin(u16 name_ds);
+/* AP 618d:04e4 — sim_flow_vcr.md §5 */
+u16 module_flags(u16 bits);
 /* AP 618d:0502 — sim_flow_vcr.md §5; [file] */
 s16 rec_finish(void);
 /* AP 618d:0629 — sim_flow_vcr.md §5; [file] */
@@ -955,8 +955,8 @@ s16 rec_abort(void);
 s16 play_open(u16 name_ds);
 /* AP 618d:0742 — sim_flow_vcr.md §5; [file] */
 s16 play_rewind(void);
-/* AP 618d:0759 — sim_flow_vcr.md §5; [file]; spec says void, callers read AX */
-u16 play_close(void);
+/* AP 618d:0759 — sim_flow_vcr.md §5; [file] */
+void play_close(void);
 /* AP 618d:07b3 — sim_flow_vcr.md §5; [file] */
 void load_huff_tables(void);
 /* AP 618d:0820 — sim_flow_vcr.md §5; [file] */
