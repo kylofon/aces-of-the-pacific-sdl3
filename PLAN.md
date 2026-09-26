@@ -72,7 +72,7 @@ video (VGA 320 driver, palettes, blitters), resources (volumes, chunks, decompre
 VCR), flight model, AI / weapons / damage, render3d (3Space: transform, polygons, terrain, sky,
 cockpits), sound (SCI driver interface + AdLib device).
 
-### 4. `aotpport/` skeleton
+### 4. `aotpport/` skeleton — done (2026-09-26): loader + C VROOMM flattening (verified byte-exact), mem/EMS/DOS arena, GCD chain loop, layout table for shared-library globals, host (236.69 Hz timer, XT keyboard, mouse, gamepad, OPL2), VGA page model; placeholder programs run INTRO → PS → AP → PS headless
 CMake + SDL3, adapted from `td3port`: loaders for the three exes (AP flattened), `mem.h` memory
 model, EMS model (page frame in `mem[]`), host (timer, keyboard, mouse, joystick, OPL), VGA model,
 generated `symbols.h`, `PORTING.md`. INTRO/PS/AP run in one process; the `GCD.COM` chain becomes
