@@ -278,14 +278,14 @@ compiler fails silently otherwise):
 ```
 cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=gcc -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
-./build/aotp.exe --game-dir ../Game --check ../work/AP_flat.exe
+./build/aotp.exe --game-dir ../work/game --check ../work/AP_flat.exe
 ```
 
 Headless end-to-end run (always muted; INTRO → PS → AP → PS → quit with the phase 4 placeholders):
 
 ```
 SDL_VIDEO_DRIVER=dummy SDL_AUDIO_DRIVER=dummy AOTP_TRACE=1 AOTP_SNAPSHOT_DIR=../work/snap \
-AOTP_KEYS="3:01,6:01,9:01,12:01" ./build/aotp.exe --game-dir ../Game
+AOTP_KEYS="3:01,6:01,9:01,12:01" ./build/aotp.exe --game-dir ../work/game
 ```
 
 Developer aids (`host.h`): `AOTP_SNAPSHOT_DIR` (+ `AOTP_SNAPSHOT_MS`, default 1000) saves presented

@@ -27,8 +27,10 @@ Rules:
   `aotpport/build_<module>` (not `build/`), and edit only your module's files.
 - Keep the build clean (`-Wall`, no warnings) and the headless chain running:
   `PATH=/c/msys64/mingw64/bin:$PATH`, build in `aotpport/build`, run with
-  `SDL_VIDEO_DRIVER=dummy SDL_AUDIO_DRIVER=dummy` (always mute), `--game-dir ../Game` (see
-  PORTING.md). Don't run the game with sound.
+  `SDL_VIDEO_DRIVER=dummy SDL_AUDIO_DRIVER=dummy` (always mute), **`--game-dir ../work/game`** (see
+  PORTING.md). **Never run the port on `Game/`**: that is the user's real install, and the programs
+  write CONTROL.PRF, ROSTER.DAT, TOPACE/TOPMISS.DAT, *.PRF, SIM.IN/OUT, SCRIPT.DAT into the game folder.
+  `work/game` is a disposable copy (re-copy from `Game/` to reset it). Don't run the game with sound.
 - Write test harnesses as developer aids inside the port (env vars like `AOTP_TEST=...`) rather than
   separate programs; compare against the Python reference tools in `tools/` where they exist
   (`dynimg.py` pictures, `dynchunk.py` decompression, `aotpsnd.py` DRO renders, `dynshape.py`).
