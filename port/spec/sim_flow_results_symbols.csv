@@ -1,0 +1,95 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,1889:0002,rng_seed,far void(RngState *st),sim_flow,,56 words from far 3A60:0000; j=55 k=24
+ap,func,1889:0044,rng_skip,far void(RngState *st long n),sim_flow,,
+ap,func,1889:005f,rng_next,far u16(RngState *st),sim_flow,,lagged Fibonacci (55 24)
+ap,func,1889:00b4,rng_mod,far int(RngState *st int n),sim_flow,,(next & 7FFFh) % n
+ap,func,1889:00db,rng_chance,far int(RngState *st int pct),sim_flow,,(next & 0FFFh) < 41*pct
+ap,func,14b8:000d,rand_table_init,far void(void),sim_flow,,256 words at far 3A0D:0000
+ap,func,14b8:0057,xor_bytes,far u8(u8 *p int n),sim_flow,,
+ap,func,14b8:0072,rand_table_pair,far u32(void),sim_flow,,DS:5822 += 13 twice
+ap,func,1899:000d,goal_init,far void(void),sim_flow,,empty
+ap,func,1899:0012,goal_update,far void(void),sim_flow,,per-frame goal tracking; 4 phases
+ap,func,1899:0cf0,kill_credit,far void(Object *killer Object *victim int wclass ... u8 destroyed),sim_flow,,called from 088a:054f
+ap,func,1899:102f,target_credit,far void(Object *o far Target *t ... int wclass ... u8 destroyed),sim_flow,,called through a pointer
+ap,func,1899:10f8,targets,far u8(Flight *f void *x),sim_flow,,x among the flight's references
+ap,func,1899:11aa,objective_done,far u8(Object *o),sim_flow,,by flight role
+ap,func,1899:139f,crash_imminent,far int(Object *o),sim_flow,,alt<=1200 pitch<-1820 speed>1200
+ap,func,1899:13c9,near_targets,far u8(Object *o u32 r),sim_flow,,
+ap,func,1899:152e,goal_fraction,far int(Flight *f),sim_flow,,0..400h; index lists it as near
+ap,func,5254:0000,results_init,far void(void),sim_flow,,object side lists and result globals
+ap,func,5254:0161,fate_record,far u16 *(u16 out[5]),sim_flow,,fate word + names; sets SIM.OUT fate bits
+ap,func,5254:04f1,results_write,far void(void),sim_flow,,merit score SIM.OUT
+ap,func,5254:065e,results_cleanup,far void(void),sim_flow,,empty
+ap,func,5254:0663,captured,far u8(void),sim_flow,,nearest object enemy (enemy distance doubled)
+ap,func,5254:081e,reached_area,far u8(void),sim_flow,,any member of the player's flight 1D&80h
+ap,func,5254:0859,sim_out_write,far void(void *buf),sim_flow,,results.c
+ap,func,5254:08d9,mission_result,far void(int *code int *frac),sim_flow,,per mission type (11 cases)
+ap,func,5254:1301,quartile,far int(int f),sim_flow,,0..4
+ap,func,5254:1332,flight_size,far int(Flight *g),sim_flow,,
+ap,func,5254:1348,flight_active,far int(Flight *g),sim_flow,,
+ap,func,5254:1473,flight_lost,far int(Flight *g),sim_flow,,
+ap,func,5254:149c,aircraft_lost,far int(void),sim_flow,,SIM.OUT +04
+ap,global,DS:4454,rng_sim,RngState,sim_flow,,sim RNG
+ap,global,DS:43DE,rng_aux,RngState,sim_flow,,second RNG
+ap,global,DS:5CA3,sim_out,u8[36],sim_flow,,SIM.OUT image
+ap,global,DS:5CA1,score_player,s16,sim_flow,,
+ap,global,DS:5C9F,score_flight,s16,sim_flow,,
+ap,global,DS:5CC7,goal_phase,u16,sim_flow,,
+ap,global,DS:5CC9,mission_over,u8,sim_flow,,
+ap,global,DS:5C8E,results_final,u8,sim_flow,,
+ap,global,DS:5C8F,player_bailed,u8,sim_flow,,
+ap,global,DS:5C93,combat_active,u8,sim_flow,,ground detail switch
+ap,global,DS:5C97,carrier_landing,u8,sim_flow,,1/2 landed 3 ditched
+ap,global,DS:5C98,landed_base,u8,sim_flow,,
+ap,global,DS:5C9E,player_shot_down,u8,sim_flow,,
+ap,global,DS:4783,mission_merit,u16,sim_flow,,SCRIPT header +08
+ap,func,496a:0000,autopilot_init,far void(void),sim_flow,,empty
+ap,func,496a:0005,three_quarters,far long(long x),sim_flow,,x - (x >> 2)
+ap,func,496a:0022,nearest,far Object *(long *d lvec *p Object **l int n),sim_flow,,
+ap,func,496a:008a,charge_in_danger,far u8(Object *o),sim_flow,,
+ap,func,496a:0106,clear_danger_marks,far void(void),sim_flow,,planes 1F&8
+ap,func,496a:011d,mark_charges,far void(void),sim_flow,,escort role
+ap,func,496a:0169,friends_in_danger,far u8(void),sim_flow,,autopilot reason 2
+ap,func,496a:01cf,burn_fuel,far void(Object *o long dist),sim_flow,,fuel used by a jump
+ap,func,496a:02c9,mark_cluster,far void(lvec *p Object **l int n int bit u32 r),sim_flow,,
+ap,func,496a:0400,save_positions,far void(u8 *buf),sim_flow,,
+ap,func,496a:05ca,finish_positions,far void(u8 *buf),sim_flow,,
+ap,func,496a:06b8,jump_flight_ok,far u8(Flight *f),sim_flow,,mode DS:3F04
+ap,func,496a:070e,nearest_enemy,far Object *(Object *o long *d),sim_flow,,
+ap,func,496a:07b5,approach_hit,far Object *(lvec *hit Object *o lvec *to long r u8 ships),sim_flow,,
+ap,func,496a:093c,advance_point,far long(lvec *out lvec *from lvec *to long d),sim_flow,,
+ap,func,496a:09a8,move_dist_air,far long(Object *o /*BX*/),sim_flow,,flight+30 * DS:3F02
+ap,func,496a:09c6,move_dist_ship,far long(Object *s /*BX*/),sim_flow,,SDAT+4A * DS:3F02
+ap,func,496a:09f8,set_level,far void(Object *o /*BX*/ u16 hdg /*AX*/),sim_flow,,
+ap,func,496a:0a0a,ship_advance,far void(Object *s /*BX*/ lvec *to /*AX*/ u16 hdg /*DX*/),sim_flow,,
+ap,func,496a:0a8e,place_object,far void(Object *o /*BX*/ lvec *p /*AX*/),sim_flow,,burns fuel; o+36 = old pos
+ap,func,496a:0ae8,fly_toward,far void(Object *o /*BX*/ lvec *to /*AX*/ u16 *ang /*DX*/),sim_flow,,
+ap,func,496a:0b63,near_old_or_new,far int(lvec *p Object *o u32 r),sim_flow,,
+ap,func,496a:0bbe,free_to_move,far u8(Object *o /*BX*/),sim_flow,,
+ap,func,496a:0be3,stop_flight,far void(Object *o /*BX*/),sim_flow,,
+ap,func,496a:0c14,engage_scan,far long(long r),sim_flow,,
+ap,func,496a:0d4c,bits_clear,far int(Object **l int n int bit),sim_flow,,
+ap,func,496a:0da9,destination,far lvec *(void),sim_flow,,map target or current waypoint
+ap,func,496a:0dc7,low_fuel,far int(void),sim_flow,,range left < 40000
+ap,func,496a:0ded,dogfight_mission,far int(void),sim_flow,,mission type 0 or 1
+ap,func,496a:0e07,autopilot_check,far int(void),sim_flow,skip_check,reason 0..8
+ap,func,496a:0eb4,field,far char *(char *s int n),sim_flow,,'|' separated
+ap,func,496a:0ef5,waypoint_text,far void(int n),sim_flow,,
+ap,func,496a:0f65,autopilot_announce,far void(void),sim_flow,,
+ap,func,496a:0f9b,autopilot_msg,far void(int r int stopped),sim_flow,,STR(1 28h+r)
+ap,func,496a:1020,regroup,far void(Flight *f),sim_flow,,
+ap,func,496a:1096,regroup_player_flight,far void(void),sim_flow,,
+ap,func,496a:112e,place_relative,far void(Flight *a Flight *b i16 *off),sim_flow,,
+ap,func,496a:118f,jump_air_flight,far void(Flight *f),sim_flow,,
+ap,func,496a:1487,jump_ship_group,far void(Flight *f),sim_flow,,
+ap,func,496a:153f,jump_flights,far void(int mode int t),sim_flow,,
+ap,func,496a:15a8,limit_time,far int(i16 *t long *dist long d i16 spd),sim_flow,,
+ap,func,496a:160c,dest_is_target,far u8(lvec *dest),sim_flow,,
+ap,func,496a:170e,autopilot_jump,far void(void),sim_flow,skip_jump,
+ap,func,082a:0007,bisect_radius,far lvec *(lvec *out lvec *c long r lvec *a lvec *b),sim_flow,,
+ap,func,082a:010e,segment_circle,far lvec *(lvec *out lvec *c long r lvec *a lvec *b),sim_flow,,
+ap,global,DS:069C,autopilot_state,u8,sim_flow,,0 off 1 waiting 2 jump
+ap,global,DS:4382,autopilot_timer,s16,sim_flow,,3000 dt units
+ap,global,DS:3EFE,autopilot_to_map_target,u8,sim_flow,,
+ap,global,DS:3F02,jump_time,s16,sim_flow,,
+ap,global,DS:3F04,jump_mode,u8,sim_flow,,1 friendly 2 enemy

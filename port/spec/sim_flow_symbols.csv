@@ -8,15 +8,15 @@ ap,func,362b:005c,dt_from_ticks_body,near,sim_flow,,part of 005b
 ap,func,362b:008f,timebase_frame,far void(int ticks),sim_flow,,
 ap,func,362b:00be,dt_scale,far int(int),sim_flow,,x*dt>>8 sat
 ap,func,362b:0106,dt_scale_real,far int(int),sim_flow,,
-ap,func,362b:0146,timebase_nop,far void(void),sim_flow,,
-ap,func,362b:0165,timer16_dec,far int(int*),sim_flow,,
+ap,func,362b:0146,steps_to_frames,far int(int n),sim_flow,,(n<<8)/DS:711E (was listed as empty)
+ap,func,362b:0165,timer16_dec,far int(int*),sim_flow,,*t<dt ? 0 : *t-dt
 ap,func,362b:017c,timer32_dec,far int(long*),sim_flow,,
-ap,func,362b:01a0,timer16_dec2,far int(int*),sim_flow,,
+ap,func,362b:01a0,timer16_dec_far,far int(int far*),sim_flow,timer16_dec2,far pointer variant
 ap,func,362b:01bb,timer16_inc,far int(int*),sim_flow,,
 ap,func,362b:01cc,timer32_inc,far int(long*),sim_flow,,
-ap,func,362b:01e7,timer16_inc2,far int(int*),sim_flow,,
+ap,func,362b:01e7,timer16_inc_far,far int(int far*),sim_flow,timer16_inc2,far pointer variant
 ap,func,362b:01f8,timer32_expired,far int(long*),sim_flow,,
-ap,func,362b:021c,timer16_expired,far int(int*),sim_flow,,
+ap,func,362b:021c,timer16_expired_far,far int(int far*),sim_flow,timer16_expired,far pointer variant
 ap,func,362b:023b,timer32_inc2,far int(long*),sim_flow,,
 ap,func,362b:0256,dt_scale_frac,"far void(int*,int*)",sim_flow,,
 ap,func,362b:02e3,dt_mul,far int(int),sim_flow,,
@@ -32,7 +32,7 @@ ap,func,4b9f:012c,sliders_apply,far void(void),sim_flow,,
 ap,func,4b9f:0159,detail_table_init,far void(void),sim_flow,,
 ap,func,4ca7:0000,clock_reset,far void(void),sim_flow,,
 ap,func,4ca7:0014,clock_tick,far void(void),sim_flow,,
-ap,func,4ca7:0045,clock_get,far long(void),sim_flow,,
+ap,func,4ca7:0045,clock_get,far long(void),sim_flow,,game seconds
 ap,func,4e0d:0000,sim_init,far void(void),sim_flow,,once per AP run
 ap,func,4e0d:035c,sim_shutdown,far void(void),sim_flow,,"end picture, free"
 ap,func,4e0d:038e,mission_load,"far void(char far*script,u16 len)",sim_flow,,snario load

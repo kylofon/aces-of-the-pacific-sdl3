@@ -1,0 +1,251 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,0de8:0000,far_text_draw,far void(char far *s),sim_flow,,sim_flow_ui §2.3
+ap,func,0de8:0020,far_text_width,far int(char far *s),sim_flow,,sim_flow_ui §2.3
+ap,func,46de:0000,item_iter,far Item far *(int i),sim_flow,,sim_flow_ui §6 (2b4f equivalent)
+ap,func,46de:0057,point_in_item,far int(Item far *it int x int y),sim_flow,,sim_flow_ui §6
+ap,func,46de:00cd,item_rect,far void(Item far *it),sim_flow,,sim_flow_ui §6 DS:3BC9..3BC3
+ap,func,46de:00ee,dlg_hit_dispatch,far int(int x int y int buttons),sim_flow,,sim_flow_ui §6 = PS hs_dispatch 2b4f:0426
+ap,func,46de:02f3,dlg_redraw_dirty,far void(void),sim_flow,,sim_flow_ui §6
+ap,func,46de:04a4,mouse_hide_over,far void(void),sim_flow,,sim_flow_ui §6
+ap,func,46de:04bc,mouse_show_over,far void(void),sim_flow,,sim_flow_ui §6
+ap,func,46de:04de,mouse_over_panel,far int(void),sim_flow,,sim_flow_ui §6 VCR panel
+ap,func,472f:0000,frame_corners,far void(int x int y int w int h),sim_flow,,sim_flow_ui §6 large dialog frame parts
+ap,func,472f:00cb,frame_edges,far void(int x int y int w int h),sim_flow,,sim_flow_ui §6
+ap,func,472f:0165,frame_part_a,far void(...),sim_flow,,sim_flow_ui §6 = 2c11:0c8e
+ap,func,472f:01c4,frame_part_b,far void(...),sim_flow,,sim_flow_ui §6 = 2c11:0d96
+ap,func,472f:0302,frame_panel,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,472f:0782,dlg_frame,far void(Item far *it),sim_flow,,sim_flow_ui §6 = 2c11:136a; prefs/realism frame
+ap,func,47a8:0000,savebuf_alloc,far void(void),sim_flow,,sim_flow_ui §6 10x10 buffer
+ap,func,47a8:0031,savebuf_free,far void(void),sim_flow,,sim_flow_ui §6
+ap,func,47a8:0043,rect_grow,far void(int *r int d),sim_flow,,sim_flow_ui §6 = 2c11:0042
+ap,func,47a8:005d,rect_shrink,far void(int *r int d),sim_flow,,sim_flow_ui §6 = 2c11:005c
+ap,func,47a8:0077,rect_save,far void(int *r),sim_flow,,sim_flow_ui §6 = 2c11:006c
+ap,func,47a8:0094,rect_restore,far void(int *r),sim_flow,,sim_flow_ui §6 = 2c11:0089
+ap,func,47a8:00b1,rect_copy,far void(int *d int *s),sim_flow,,sim_flow_ui §6 = 2c11:00a6
+ap,func,47a8:00ce,bevel_box,far void(int x int y int w int h ...),sim_flow,,sim_flow_ui §6 = 2c11:042c forms
+ap,func,47a8:0232,item_frame_bitmap,far void(Item far *it far Bitmaps *b),sim_flow,,sim_flow_ui §6
+ap,func,47a8:026c,groove_box,far void(...),sim_flow,,sim_flow_ui §6 = 2c11:05cf
+ap,func,47a8:0335,inset_box,far void(...),sim_flow,,sim_flow_ui §6 = 2c11:069a forms
+ap,func,47a8:0477,inset_box_item,far void(Item far *it),sim_flow,,sim_flow_ui §6 = 2c11:07de
+ap,func,47a8:0480,text_center_x,far int(char far *s int x int w),sim_flow,,sim_flow_ui §6 = 2c11:07e7
+ap,func,47a8:04c7,tile_fill,far void(...),sim_flow,,sim_flow_ui §6
+ap,func,47a8:0549,fill_item,far void(Item far *it int c),sim_flow,,sim_flow_ui §6 = 2c11:08b4
+ap,func,47a8:0565,fill_rect,far void(...),sim_flow,,sim_flow_ui §6
+ap,func,47a8:0593,fill_c1,far void(...),sim_flow,,sim_flow_ui §6 = 2c11:091c
+ap,func,47a8:05bd,fill_rect2,far void(...),sim_flow,,sim_flow_ui §6
+ap,func,47a8:05eb,frame_lines,far void(...),sim_flow,,sim_flow_ui §6 = 2c11:0b65
+ap,func,47a8:06ca,frame_lines_item,far void(Item far *it),sim_flow,,sim_flow_ui §6 = 2c11:0c46
+ap,func,47a8:0712,button_up_a,far void(Item far *it),sim_flow,,sim_flow_ui §6 button style
+ap,func,47a8:076e,button_down_a,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,47a8:07ca,button_draw,far void(Item far *it),sim_flow,,sim_flow_ui §6 = 2c11:142b engraved label
+ap,func,47a8:0912,button_up_b,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,47a8:0971,button_down_b,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,47a8:09d0,framed_panel,far void(Item far *it),sim_flow,,sim_flow_ui §6 = 2c11:1633
+ap,func,47a8:0ae1,window_frame_title,far void(Item far *it char far *title),sim_flow,,sim_flow_ui §6
+ap,func,47a8:0ba3,item_draw_dispatch,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,47a8:0bf2,button_up_c,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,47a8:0c51,button_down_c,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,47a8:0cb0,button_press,far int(Item far *it),sim_flow,,sim_flow_ui §6 click sound 5a75:0eea(10h)
+ap,func,47a8:0d92,toggle_press,far int(Item far *it),sim_flow,,sim_flow_ui §6 1 when released inside
+ap,func,47a8:0dc7,button_bitmap,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,48a2:0000,text_emboss,far void(char far *s int x int y ...),sim_flow,,sim_flow_ui §6 = 2c11:00c3
+ap,func,48af:0000,bxl_table,far void(int n),sim_flow,,sim_flow_ui §7.2 DS:1160
+ap,func,48af:0017,bxl_load_slot,far void(int slot char *name),sim_flow,,sim_flow_ui §7.2
+ap,func,48af:00a8,bxl_load,far void far *(char *name),sim_flow,,sim_flow_ui §7.2 boxlist.c
+ap,func,48af:015a,bxl_get,far void(int slot void far **out),sim_flow,,sim_flow_ui §7.2
+ap,func,4bcd:01df,file_exists,far int(char *path),sim_flow,,sim_flow_ui §7.4
+ap,func,5119:0000,textbox_init,far void(...),sim_flow,,sim_flow_ui §6
+ap,func,5119:0037,textbox_draw,far void(Item far *it),sim_flow,,sim_flow_ui §6 frame+inset+embossed text
+ap,func,5119:01ad,textbox_cb,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,522c:0000,min16,near void(u8 *out u8 *a u8 *b),sim_flow,,sim_flow_ui §3
+ap,func,522c:0038,realism_percent,far int(void),sim_flow,,sim_flow_ui §3
+ap,func,522c:006f,realism_pct,near int(u8 *r),sim_flow,,sim_flow_ui §3 weights DS:0636
+ap,func,522c:0100,realism_weight_sum,near int(void),sim_flow,,sim_flow_ui §3 =150
+ap,func,522c:011c,realism_init,far void(void),sim_flow,,sim_flow_ui §3 grace timer DS:4294=9858h
+ap,func,522c:0162,realism_changed,far void(void),sim_flow,,sim_flow_ui §3
+ap,func,522c:0186,realism_uncredited,far int(int i),sim_flow,,sim_flow_ui §3
+ap,func,5247:0000,dlg_title_text,far void(char far *s ...),sim_flow,,sim_flow_ui §6
+ap,func,5247:0070,dlg_title_shadow,far void(char far *s ...),sim_flow,,sim_flow_ui §6
+ap,func,53a6:0000,dlg_items,far Item far *(void),sim_flow,,sim_flow_ui §6 = 2b4f:0019
+ap,func,53a6:000b,dlg_count,far int(void),sim_flow,,sim_flow_ui §6
+ap,func,53a6:0016,pointer_buf_alloc,far void(void),sim_flow,,sim_flow_ui §6
+ap,func,53a6:0077,focus_prev,near void(void),sim_flow,,sim_flow_ui §6 inc bp prologue; body 0078
+ap,func,53a6:0078,focus_prev_body,near,sim_flow,,sim_flow_ui index artefact
+ap,func,53a6:00c1,focus_next,far void(void),sim_flow,,sim_flow_ui §6
+ap,func,53a6:0107,focus_move,near void(int d),sim_flow,,sim_flow_ui §6 inc bp prologue; body 0108
+ap,func,53a6:0108,focus_move_body,near,sim_flow,,sim_flow_ui index artefact
+ap,func,53a6:0202,focus_draw,near void(void),sim_flow,,sim_flow_ui §6 inc bp prologue; body 0203
+ap,func,53a6:0203,focus_draw_body,near,sim_flow,,sim_flow_ui index artefact
+ap,func,53a6:0255,dlg_click,far int(int x int y),sim_flow,,sim_flow_ui §6 606e:0018
+ap,func,53a6:02cf,dlg_activate,far void(int kind far Item *items int n),sim_flow,,sim_flow_ui §6 DS:00D6/00DC hot list DS:42E0
+ap,func,53a6:0360,dlg_select,far void(int i),sim_flow,,sim_flow_ui §6
+ap,func,53a6:038b,dlg_item_count,far int(void),sim_flow,,sim_flow_ui §6
+ap,func,53a6:0393,dlg_key_filter,far int(int key),sim_flow,,sim_flow_ui §6
+ap,func,53a6:044d,dlg_redraw_all,far void(void),sim_flow,,sim_flow_ui §6 = 16e3:3e05; 5b93:084e
+ap,func,53ec:0000,text_edge_pass,far void(...),sim_flow,,sim_flow_ui §6
+ap,func,53ec:013f,text_shadow,far void(char far *s int x int y),sim_flow,,sim_flow_ui §6 = 2c11:027c
+ap,func,53ec:0174,text_title,far void(char far *s int x int y),sim_flow,,sim_flow_ui §6 = 2c11:0362
+ap,func,53ec:01e6,text_engrave,far void(char far *s int x int y),sim_flow,,sim_flow_ui §6 = 2c11:03d4 label style
+ap,func,5613:0000,slider_alloc,far void(int i),sim_flow,,sim_flow_ui §1 slider.c
+ap,func,5613:0068,sliders_load,far void(char *name),sim_flow,,sim_flow_ui §1 lo(0)=80 hi(0)=20
+ap,func,5613:00bc,slider_map,far int(int v int a0 int a1 int b0 int b1),sim_flow,,sim_flow_ui §1
+ap,func,5613:0155,slider_bitmaps,far void far *(void),sim_flow,,sim_flow_ui §1
+ap,func,5613:0161,slider_value,far int(int i),sim_flow,,sim_flow_ui §1 TIME SCALE = DS:7118
+ap,func,5613:0196,slider_drawn_value,far int(int i),sim_flow,,sim_flow_ui §1
+ap,func,5613:01cb,slider_lo,far int(int i),sim_flow,,sim_flow_ui §1
+ap,func,5613:01da,slider_hi,far int(int i),sim_flow,,sim_flow_ui §1
+ap,func,5613:01e9,slider_set,far int(int i int v),sim_flow,,sim_flow_ui §1 returns changed
+ap,func,5613:0247,slider_settled,far int(int i),sim_flow,,sim_flow_ui §1
+ap,func,5613:026a,slider_range,far void(int i int lo int hi),sim_flow,,sim_flow_ui §1
+ap,func,5613:028a,slider_frame,near void(Slider *s),sim_flow,,sim_flow_ui §1
+ap,func,5613:034a,slider_knob,near int(Slider *s),sim_flow,,sim_flow_ui §1
+ap,func,5613:0489,slider_draw,far void(Item far *it),sim_flow,,sim_flow_ui §1 dialog callback
+ap,func,565f:0000,be_write,near void(FILE *f long v int n),sim_flow,,sim_flow_ui §7.1
+ap,func,565f:008a,iff_write,far void(char *name),sim_flow,,sim_flow_ui §7.1 FORM ILBM
+ap,func,565f:022a,iff_cmap,near void(FILE *f),sim_flow,,sim_flow_ui §7.1
+ap,func,565f:030d,byterun1,near int(u8 *src int n u8 *dst),sim_flow,,sim_flow_ui §7.1
+ap,func,565f:0377,iff_body,near void(FILE *f),sim_flow,,sim_flow_ui §7.1
+ap,func,5a01:0000,alert_btn_cb,far void(Item far *it),sim_flow,,sim_flow_ui §2.3
+ap,func,5a01:0027,alert_text_cb,far void(Item far *it),sim_flow,,sim_flow_ui §2.3
+ap,func,5a01:0037,alert_btn_press,far int(Item far *it),sim_flow,,sim_flow_ui §2.3 47a8:0cb0
+ap,func,5a01:005d,quit_box_draw,near void(...),sim_flow,,sim_flow_ui §2.3
+ap,func,5a01:00e9,alert_build,far int(char far **texts char far **buttons u16 *codes),sim_flow,,sim_flow_ui §2.3 far 38BF items
+ap,func,5a01:0395,quit_box,far int(...),sim_flow,,sim_flow_ui §2.3 STR0 5Eh
+ap,func,5a01:05d5,quit_box_close,far void(int h),sim_flow,,sim_flow_ui §2.3
+ap,func,5da1:0000,end_request,far void(u8 code),sim_flow,,sim_flow_ui §2.1 DS:4E74 first wins
+ap,func,5da1:0012,end_alert,near int(char far **t char far **b u16 *codes),sim_flow,,sim_flow_ui §2.1
+ap,func,5da1:0092,str_list,near void(char far **out u16 *ids),sim_flow,,sim_flow_ui §2.1
+ap,func,5da1:00cb,plane_in_trouble,far int(Plane *p),sim_flow,,sim_flow_ui §2.1 reads P.A4 quirk
+ap,func,5da1:0165,object_lost,far int(Obj *o),sim_flow,,sim_flow_ui §2.1 no callers
+ap,func,5da1:0196,in_contact,far int(Plane *p),sim_flow,,sim_flow_ui §2.1
+ap,func,5da1:01a8,low_and_diving,far int(Plane *p),sim_flow,,sim_flow_ui §2.1
+ap,func,5da1:01cb,end_danger,near u16 *(Plane *p),sim_flow,,sim_flow_ui §2.1
+ap,func,5da1:022e,end_prompt,far int(void),sim_flow,,sim_flow_ui §2.1
+ap,func,5da1:02da,end_reset,far void(void),sim_flow,,sim_flow_ui §2.1
+ap,func,5da1:02e4,end_init,far void(void),sim_flow,,sim_flow_ui §2.1 empty
+ap,func,6210:0000,summary_text,far void(char *buf u16 fate[5]),sim_flow,,sim_flow_ui §2.2 STR group 8
+ap,func,6210:05e0,results_text,far void(u16 *ids char *buf),sim_flow,,sim_flow_ui §2.2
+ap,func,6210:0675,alert_ids,far int(far u16 *texts far u16 *buttons u16 *codes),sim_flow,,sim_flow_ui §2.2
+ap,func,6210:07a8,alert_modal,far int(...),sim_flow,,sim_flow_ui §2.2
+ap,func,6396:0000,box_load,far void(far Item *items char *name int n),sim_flow,,sim_flow_ui §6 alrtlib2.c
+ap,func,6396:00ff,clear_26c3,far void(void),sim_flow,,sim_flow_ui §6 DS:26C3=0
+ap,func,6396:0109,hline,far void(...),sim_flow,,sim_flow_ui §6
+ap,func,6396:0127,vline,far void(...),sim_flow,,sim_flow_ui §6
+ap,func,6396:0140,fill_c1_item,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,6396:0159,item_center,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,6396:016c,arrow_button,far void(Item far *it int dir),sim_flow,,sim_flow_ui §6 list box
+ap,func,6396:0261,radio_button,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,6396:02cb,check_button,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,6396:0335,button_style_a,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,6396:036a,button_style_b,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,6396:03a1,lib2_1a40,far void(...),sim_flow,,sim_flow_ui §6 = 2c11:1a40
+ap,func,6396:03d7,lib2_1a76,far void(...),sim_flow,,sim_flow_ui §6 = 2c11:1a76
+ap,func,6396:045e,lib2_frame,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,6396:04fa,lib2_cb_a,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,6396:0521,lib2_cb_b,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,6396:0548,lib2_cb_c,far void(Item far *it),sim_flow,,sim_flow_ui §6
+ap,func,6b3d:0000,cockpit_leave,far void(void),sim_flow,,sim_flow_ui §7.3
+ap,func,6b3d:00ac,cockpit_unload,far void(void),sim_flow,,sim_flow_ui §7.3
+ap,func,6b4d:0000,calib_center,near int(void),sim_flow,,sim_flow_ui §5 calibration
+ap,func,6b4d:00a0,calib_corners,near int(void),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0158,calib_msg,near void(int id),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0174,prefs_cb_labels,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:01e2,prefs_cb_devices,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0257,prefs_cb_button,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0295,prefs_slider0,far void(Item far *it),sim_flow,,sim_flow_ui §5 slider_draw(0)
+ap,func,6b4d:02a4,prefs_slider1,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:02b3,prefs_slider2,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:02c2,prefs_cb_a,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:02d6,prefs_cb_b,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0308,prefs_init,far void(void),sim_flow,,sim_flow_ui §5 prefsim.BOX far 3974
+ap,func,6b4d:03b0,toggle,near void(int a int b int base),sim_flow,,sim_flow_ui §5 inc bp prologue; body 03b1
+ap,func,6b4d:03b1,toggle_body,near,sim_flow,,sim_flow_ui §5 index artefact
+ap,func,6b4d:0408,toggle_joystick,far void(void),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0431,toggle_joystick_cb,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0443,toggle_mouse,far void(void),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:046e,toggle_mouse_cb,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0480,toggle_sound,far void(void),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:04a8,toggle_sound_cb,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:04c0,toggle_ground,far void(void),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:04e2,prefs_cb_c,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:04fb,prefs_cb_d,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0514,prefs_cb_e,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:052d,prefs_cb_f,far void(Item far *it),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0546,calib_slider,near int(void),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:05c1,device_check,near int(void),sim_flow,,sim_flow_ui §5 alerts STR0 26h-2Bh
+ap,func,6b4d:0751,controls_apply,far void(void),sim_flow,,sim_flow_ui §5 CONTROL.PRF +0A..0C
+ap,func,6b4d:085f,device_label,near void(int item),sim_flow,,sim_flow_ui §5 inc bp prologue; body 0860
+ap,func,6b4d:0860,device_label_body,near,sim_flow,,sim_flow_ui §5 index artefact
+ap,func,6b4d:089b,device_select,near int(int kind),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0a41,calibrate,near int(int kind),sim_flow,,sim_flow_ui §5 60a9:08e3
+ap,func,6b4d:0c74,devices_dialog,near int(void),sim_flow,,sim_flow_ui §5
+ap,func,6b4d:0f95,prefs_dialog,far int(void),sim_flow,,sim_flow_ui §5 F10
+ap,func,6c5f:0000,tl_init,far void(...),sim_flow,,sim_flow_ui §6 text layout (2dd0 drawtext)
+ap,func,6c5f:0017,tl_reset,far void(void),sim_flow,,sim_flow_ui §6
+ap,func,6c5f:001f,tl_measure,near int(char far *s),sim_flow,,sim_flow_ui §6
+ap,func,6c5f:0124,tl_wrap,near int(...),sim_flow,,sim_flow_ui §6
+ap,func,6c5f:0202,tl_line_width,near int(...),sim_flow,,sim_flow_ui §6
+ap,func,6c5f:0225,tl_align,near void(...),sim_flow,,sim_flow_ui §6
+ap,func,6c5f:02d1,tl_format,far void(char *d char far *fmt ...),sim_flow,,sim_flow_ui §6 %d substitution
+ap,func,6c5f:0443,tl_draw,far void(...),sim_flow,,sim_flow_ui §6 map info boxes
+ap,func,6cdc:0000,fltmap_cb_a,far void(Item far *it),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:003e,fltmap_cb_b,far void(Item far *it),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:006a,world_to_map,near void(long x long y int *mx int *my),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:00db,map_to_world,near void(int sx int sy long *x long *y),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:014c,dir8,near int(u8 h),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:0161,map_icons,near int(Icon *out),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:0408,map_icons_draw,near void(Icon *ic int n),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:04fd,route_points,near int(long *pts),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:06cb,bearing_deg,near int(long *a long *b),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:072f,miles,near int(long *a long *b),sim_flow,,sim_flow_ui §4 /21128
+ap,func,6cdc:0761,feet,near int(long z),sim_flow,,sim_flow_ui §4 z/4
+ap,func,6cdc:077a,input_abort,near int(void),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:07da,route_segment,near int(...),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:098e,route_info_box,near int(...),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:0c11,map_route,near int(void),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:0ce7,fltmap_background,near void(void),sim_flow,,sim_flow_ui §4 fltmap.SCR PILOT W%d
+ap,func,6cdc:0da7,map_reset,far void(void),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:0db1,map_target,far long *(void),sim_flow,,sim_flow_ui §4 DS:521C
+ap,func,6cdc:0de1,map_set_target,far void(long *p),sim_flow,,sim_flow_ui §4
+ap,func,6cdc:0e0b,fltmap,far void(void),sim_flow,,sim_flow_ui §4 fltmap.c
+ap,func,6de0:0000,cockpit_leave_stub,far void(void),sim_flow,,sim_flow_ui §7.3 empty
+ap,func,6de0:0005,gauges_free,far void(void),sim_flow,,sim_flow_ui §7.3 DS:3F4A DS:3F4E
+ap,func,6e9b:0000,realism_timer,far void(void),sim_flow,,sim_flow_ui §3
+ap,func,6e9f:0000,realism_dlg_init,far void(void),sim_flow,,sim_flow_ui §3 simreal.BOX far 39A4
+ap,func,6e9f:0024,realism_labels,far void(void),sim_flow,,sim_flow_ui §3
+ap,func,6e9f:0064,realism_label_cb,near void(Item far *it),sim_flow,,sim_flow_ui §3 inc bp prologue; body 0065
+ap,func,6e9f:0065,realism_label_cb_body,near,sim_flow,,sim_flow_ui §3 index artefact
+ap,func,6e9f:00ba,realism_preset,far void(Item far *it),sim_flow,,sim_flow_ui §3 DS:120E
+ap,func,6e9f:0112,realism_preset_cb,near void(Item far *it),sim_flow,,sim_flow_ui §3 inc bp prologue; body 0113
+ap,func,6e9f:0113,realism_preset_cb_body,near,sim_flow,,sim_flow_ui §3 index artefact
+ap,func,6e9f:0141,realism_toggle,far void(Item far *it),sim_flow,,sim_flow_ui §3
+ap,func,6e9f:01b5,realism_cb,near void(Item far *it),sim_flow,,sim_flow_ui §3 inc bp prologue; body 01b6
+ap,func,6e9f:01b6,realism_cb_body,near,sim_flow,,sim_flow_ui §3 index artefact
+ap,func,6e9f:01c6,realism_cycle_fm,far void(Item far *it),sim_flow,,sim_flow_ui §3 r[11]
+ap,func,6e9f:01f2,realism_cycle_combat,far void(Item far *it),sim_flow,,sim_flow_ui §3 r[10]
+ap,func,6e9f:021e,realism_accept,far void(Item far *it),sim_flow,,sim_flow_ui §3 result 9
+ap,func,6e9f:0232,realism_bind,far void(u8 *r),sim_flow,,sim_flow_ui §3 DS:5488
+ap,func,6e9f:023d,realism_restore,far void(Item far *it),sim_flow,,sim_flow_ui §3 DS:5478
+ap,func,6e9f:026f,realism_cb_frame,far void(Item far *it),sim_flow,,sim_flow_ui §3
+ap,func,6e9f:02ab,realism_title,far void(Item far *it),sim_flow,,sim_flow_ui §3 percent
+ap,func,6e9f:02d5,realism_open,far void(void),sim_flow,,sim_flow_ui §3
+ap,func,6e9f:033c,realism_cb_panel,far void(Item far *it),sim_flow,,sim_flow_ui §3
+ap,func,6e9f:0394,realism_cb_a,far void(Item far *it),sim_flow,,sim_flow_ui §3
+ap,func,6e9f:03c0,realism_cb_b,far void(Item far *it),sim_flow,,sim_flow_ui §3
+ap,func,6e9f:03ec,realism_cb_c,far void(Item far *it),sim_flow,,sim_flow_ui §3
+ap,func,6e9f:0418,realism_bar,far void(Item far *it),sim_flow,,sim_flow_ui §3 percentage bar
+ap,func,6e9f:078a,realism_cb_d,far void(Item far *it),sim_flow,,sim_flow_ui §3
+ap,global,DS:073C,sliders,Slider[4],sim_flow,,sim_flow_ui
+ap,global,DS:4E74,end_request_code,u8,sim_flow,,sim_flow_ui
+ap,global,DS:42C8,realism,u8[16],sim_flow,,sim_flow_ui
+ap,global,DS:4298,realism_credit,u8[16],sim_flow,,sim_flow_ui
+ap,global,DS:42B8,realism_locked,u8[16],sim_flow,,sim_flow_ui
+ap,global,DS:42A8,realism_credited,u8[16],sim_flow,,sim_flow_ui
+ap,global,DS:4294,realism_grace,u32,sim_flow,,sim_flow_ui
+ap,global,DS:0636,realism_weights,u8[16],sim_flow,,sim_flow_ui
+ap,global,DS:120E,realism_presets,u8[3][16],sim_flow,,sim_flow_ui
+ap,global,DS:521C,map_target_pos,s32[3],sim_flow,,sim_flow_ui
+ap,global,DS:5228,map_target_set,u8,sim_flow,,sim_flow_ui
+ap,global,DS:1160,bxl_slots,far ptr[],sim_flow,,sim_flow_ui
+ap,global,DS:5488,realism_edit,u8 *,sim_flow,,sim_flow_ui
+ap,global,DS:5478,realism_copy,u8[16],sim_flow,,sim_flow_ui

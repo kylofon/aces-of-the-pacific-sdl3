@@ -1,0 +1,260 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,1c0f:000a,vcr_panel_poll_on,far void(void),sim_flow,,DS:19EE = 1
+ap,func,1c0f:0014,vcr_panel_poll_off,far void(void),sim_flow,,DS:19EE = 0
+ap,func,1c0f:001e,vcr_panel_force,far void(void),sim_flow,,DS:19EF = 1
+ap,func,1c0f:0028,vcr_panel_first,far void(void),sim_flow,,DS:5E04 = 1
+ap,func,1c0f:0032,vcr_panel_reset_snap,far void(void),sim_flow,,fill DS:5E0D/DS:5E05 with FFh
+ap,func,1c0f:0053,vcr_poll_panel,near void(void) (far-called),sim_flow,,panel event pump; called from sim step and 5440:0269
+ap,func,36ee:0003,disk_free,far long(int drive),sim_flow,,16-bit product overflow quirk
+ap,func,48c7:0000,bs_file_fill,far int(BSTREAM *s far void *cache),sim_flow,,
+ap,func,48c7:0127,bs_fill_cache,far void(BSTREAM *s),sim_flow,,
+ap,func,48c7:0161,bs_debug_log,far void(char *s),sim_flow,,no callers; not ported
+ap,func,48c7:0190,bs_open,far BSTREAM *(char *name u16 mode far void *buf u32 size),sim_flow,,
+ap,func,48c7:02dd,bs_close,far int(BSTREAM *s),sim_flow,,
+ap,func,48c7:0329,bs_rewind,far void(BSTREAM *s),sim_flow,,
+ap,func,48c7:035e,bs_abort,far int(BSTREAM *s),sim_flow,,
+ap,func,4bcd:0000,write_name_rec,far void(FILE *f char *filename),sim_flow,,32-byte _files_.out record
+ap,func,4bcd:0077,files_out_name,far char *(void),sim_flow,,"""_files_.out"""
+ap,func,4bcd:007f,list_files,far int(char *pattern char *exclude),sim_flow,,
+ap,func,4bcd:01ce,list_files_all,far int(char *pattern),sim_flow,,list_files(pattern 0)
+ap,func,4bcd:020c,reserved_dos_name,far int(char *s),sim_flow,,CON AUX PRN / NUL PRT COM + digit
+ap,func,4bcd:02c0,findfile_init,far void(void),sim_flow,,DS:3F28 = 1 DS:3F26 = 4
+ap,func,4d15:0000,huff_depth,near int(tab i),sim_flow,,steps from node i to the root
+ap,func,4d15:0036,huff_load,far HuffTab *(char *path),sim_flow,,
+ap,func,4d15:0112,huff_save,far int(HuffTab *t char *path),sim_flow,,no callers
+ap,func,4d15:01ca,huff_alloc,near HuffTab *(int n),sim_flow,,
+ap,func,4d15:02d8,huff_free,far void(HuffTab *t),sim_flow,,
+ap,func,4d15:02f6,huff_add,near int(HuffTab *t s16 sym s32 freq),sim_flow,,
+ap,func,4d15:03e4,huff_build,near void(HuffTab *t),sim_flow,,tie-breaking matters
+ap,func,5155:0000,module_block,far void(u8 *block u16 mask),sim_flow,,film module block 364 bytes
+ap,func,5155:0082,is_marked,far int(char *rec),sim_flow,,rec[0]=='*'
+ap,func,5155:0098,unmarked_name,far char *(char *dst char *rec),sim_flow,,
+ap,func,5155:00fa,tape_version,far int(u8 *block char *name),sim_flow,,header +02
+ap,func,5155:0207,validate_tape_list,far int(void),sim_flow,,marks bad versions with '*'
+ap,func,5155:0369,text_ids,far void(far char **list int from u32 group_id),sim_flow,,STR_POOL list builder
+ap,func,5155:03a4,explain_tape,far void(char *name),sim_flow,,add-on explanation dialog
+ap,func,51e7:0000,q_push,far int(QUEUE *q void *src),sim_flow,,
+ap,func,51e7:0052,q_peek,near void *(QUEUE *q),sim_flow,,0 if empty else slot[+2]
+ap,func,51e7:0076,q_pop,far void *(QUEUE *q),sim_flow,,
+ap,func,51e7:009e,q_full,near int(QUEUE *q),sim_flow,,full-state quirk
+ap,func,51e7:00e2,q_slot,near void *(QUEUE *q int i),sim_flow,,inc bp prologue; body 51e7:00e3
+ap,func,51e7:00e3,q_slot_body,near,sim_flow,,index artefact: body of 51e7:00e2
+ap,func,51e7:0109,q_dec_wrap,near void(QUEUE *q int off),sim_flow,,inc bp prologue; body 51e7:010a
+ap,func,51e7:010a,q_dec_wrap_body,near,sim_flow,,index artefact: body of 51e7:0109
+ap,func,5b93:0000,vcr_world_reset,far void(void),sim_flow,,from mission_start 4e0d:03e9
+ap,func,5b93:0032,vcr_queue_reset,far void(void),sim_flow,,
+ap,func,5b93:003f,vcr_clip_full,far void(void),sim_flow,,
+ap,func,5b93:0063,vcr_panel_show,far void(void),sim_flow,,
+ap,func,5b93:00f1,vcr_panel_hide,far void(void),sim_flow,,
+ap,func,5b93:010d,vcr_panel_region,far void(void),sim_flow,,DS:0B16..0B1C cursor box
+ap,func,5b93:0130,vcr_panel_region0,far void(void),sim_flow,,
+ap,func,5b93:0153,vcr_is_playing,far int(void),sim_flow,,DS:4E20 == 2
+ap,func,5b93:0166,vcr_view,far int(VIEWREC *v),sim_flow,,
+ap,func,5b93:01e2,vcr_redraw_all,far void(void),sim_flow,,DS:4DFF = DS:4090
+ap,func,5b93:01ed,vcr_step_recorded,near void(int no_sim int rerecord),sim_flow,,sim step with the recorded control record; 362b:008f(ticks<<2)
+ap,func,5b93:0231,vcr_play_frame,far int(int ignore_views int unused int no_sim int rerecord),sim_flow,,
+ap,func,5b93:0406,vcr_draw,far void(void),sim_flow,,
+ap,func,5b93:0424,vcr_draw_pending,far void(void),sim_flow,,
+ap,func,5b93:0436,vcr_play,far int(void),sim_flow,,
+ap,func,5b93:045a,vcr_apply_director_request,far void(void),sim_flow,,
+ap,func,5b93:0475,vcr_prime,far void(void),sim_flow,,
+ap,func,5b93:04dd,vcr_finish_recording,far int(void),sim_flow,,
+ap,func,5b93:04fa,vcr_set_name,far char *(char *n),sim_flow,,
+ap,func,5b93:0528,vcr_rewind,far int(int reopen),sim_flow,,
+ap,func,5b93:05b2,vcr_mark_edited,far void(void),sim_flow,,
+ap,func,5b93:05c1,vcr_view_button,far void(EVENT *e),sim_flow,,
+ap,func,5b93:074b,vcr_track_views,far int(int *redraw u8 flag),sim_flow,,
+ap,func,5b93:07ee,vcr_track_views_draw,far void(void),sim_flow,,
+ap,func,5b93:082f,vcr_track_views_quiet,far void(void),sim_flow,,
+ap,func,5b93:084e,vcr_refresh_screen,far void(int full),sim_flow,,
+ap,func,5b93:08c8,vcr_fullscreen,far int(u8 playing),sim_flow,,returns 8
+ap,func,5b93:08d6,vcr_view_is_edit,far u8(VIEWREC *v),sim_flow,,
+ap,func,5b93:096c,vcr_mode_fullscreen,far int(void),sim_flow,,
+ap,func,5b93:0aaf,vcr_eject,far int(void),sim_flow,,
+ap,func,5b93:0ace,vcr_mode_play,far int(u8 continuous),sim_flow,,no frame-rate wait
+ap,func,5b93:0be9,vcr_mode,far int(void),sim_flow,,DS:4DE6
+ap,func,5b93:0bf1,vcr_ui,far int(int mode),sim_flow,,0 exit / 1 enter simulation
+ap,func,5c5f:0000,vcr_read_simin,far void(void),sim_flow,,
+ap,func,5c5f:002a,vcr_write_simin,far void(void),sim_flow,,
+ap,func,5c5f:0083,vcr_world_init_hook,far void(void),sim_flow,,
+ap,func,5c5f:00bd,vcr_gfx_init,far void(void),sim_flow,,loads VCR.BOX
+ap,func,5c5f:00f5,vcr_choose_tape,far char *(void),sim_flow,,
+ap,func,5c5f:0165,vcr_offer_save,far char *(void),sim_flow,,
+ap,func,5c5f:0238,vcr_exit_gfx,far void(void),sim_flow,,
+ap,func,5c5f:0242,vcr_reopen,far int(char *name),sim_flow,,
+ap,func,5c5f:0298,vcr_load,far int(char *name),sim_flow,,
+ap,func,5c5f:0378,vcr_unload,far int(int close),sim_flow,,
+ap,func,5c5f:03a0,vcr_switch,far int(char *name int close),sim_flow,,
+ap,func,5c9b:0000,vcr_session,far int(int sim_mode),sim_flow,,vcr3.c session driver; called from main
+ap,func,5d3c:0000,vcr_panel_mouse_show,far int(void),sim_flow,,returns the page to show; from page_flip 5440:07e1
+ap,func,5d3c:0023,vcr_panel_mouse_hide,far void(void),sim_flow,,46de:04de
+ap,func,5d3c:003a,vcr_sound_frame,far void(int on),sim_flow,,5a75:095e listener
+ap,func,5d3c:0064,vcr_frame,far u32(void),sim_flow,,DS:4E3B while playing else DS:0887
+ap,func,5d3c:0084,vcr_set_director,far void(u8 on),sim_flow,,
+ap,func,5d46:0000,panel_stub,far void(void),sim_flow,,inc bp of 5d46:0001 (stub)
+ap,func,5d46:0001,panel_set_bits,near void(u8 *ids u16 bits int set),sim_flow,,
+ap,func,5d46:004b,panel_item_enabled,far int(int id),sim_flow,,
+ap,func,5d46:006c,panel_item_dirty,far void(int id),sim_flow,,
+ap,func,5d46:0086,panel_disable,far void(u8 *ids u16 bits),sim_flow,,
+ap,func,5d56:0000,demo_fade_once,far void(void),sim_flow,,
+ap,func,5d56:004b,demo_play,far int(char *name),sim_flow,,
+ap,func,5d56:00c2,demo_title,far int(void),sim_flow,,
+ap,func,5d56:01b5,demo_loop,far void(void),sim_flow,,
+ap,func,5dd0:0000,vcr_seek_setup,far int(void),sim_flow,,
+ap,func,5dd0:005e,seek_progress,far int(void),sim_flow,,
+ap,func,5dd0:008a,seek_draw_bar,far void(int n),sim_flow,,
+ap,func,5dd0:00d2,vcr_mode_seek,far int(void),sim_flow,,
+ap,func,5dd0:01bb,vcr_mode_ff,far int(void),sim_flow,,
+ap,func,5dd0:02b3,vcr_mode_ff_blank,far int(void),sim_flow,,
+ap,func,5e06:0000,tape_rename,far void(char *from char *to),sim_flow,,
+ap,func,5e06:00ba,tape_unlink,far void(char *name),sim_flow,,
+ap,func,5e06:0120,modal_depth,far void(int d),sim_flow,,
+ap,func,5e06:0175,modal_enter,far void(void),sim_flow,,
+ap,func,5e06:0183,modal_leave,far void(void),sim_flow,,
+ap,func,5e06:0191,tape_pick,far char *(int title1 int title2),sim_flow,,
+ap,func,5e06:02d9,director_mode,far int(int set),sim_flow,,
+ap,func,5e06:0304,tape_commit_copy,far int(void),sim_flow,,
+ap,func,5e06:03a2,tape_save_changes,far int(void),sim_flow,,0 cancel / 2 discarded / 3 saved
+ap,func,5e06:044f,tape_menu_load,far int(void),sim_flow,,
+ap,func,5e06:04f4,tape_ask_name,far char *(void),sim_flow,,
+ap,func,5e06:06a2,tape_menu_save,far char *(void),sim_flow,,
+ap,func,5e06:0755,list_other_tapes,far int(char *pat),sim_flow,,
+ap,func,5e06:0768,tape_menu_delete,far void(void),sim_flow,,
+ap,func,5e06:08e8,tape_menu_backdrop,far void(void),sim_flow,,
+ap,func,5e06:090a,tape_menu,far u8(void),sim_flow,,
+ap,func,5ea5:0000,panel_cb_0000,far void(void),sim_flow,,*(DS:3BCF)+0Ch = 74h
+ap,func,5ea5:0020,panel_cb_0020,far void(void),sim_flow,,47a8:00ce
+ap,func,5ea5:002a,panel_cb_slider,far void(void),sim_flow,,5613:0489(3)
+ap,func,5ea5:0039,panel_slider_enable,far void(int on),sim_flow,,
+ap,func,5ea5:005c,panel_cb_click1,far void(void),sim_flow,,DS:3BC1 = DS:3BCD on click
+ap,func,5ea5:0079,panel_cb_click2,far void(void),sim_flow,,
+ap,func,5ea5:009b,panel_cb_click3,far void(void),sim_flow,,
+ap,func,5ea5:00ca,hms,far void(int out[3] long secs),sim_flow,,
+ap,func,5ea5:0123,panel_draw_time,far void(void),sim_flow,,
+ap,func,5ea5:017f,panel_draw_lamp,far void(void),sim_flow,,
+ap,func,5ea5:027e,blink_timer,far void(void),sim_flow,,
+ap,func,5ea5:0291,put_2digits,far void(int v char *dst),sim_flow,,
+ap,func,5ea5:02ca,panel_time,far long(void),sim_flow,,
+ap,func,5ea5:02f7,panel_update,far int(void),sim_flow,,
+ap,func,5ea5:047a,panel_draw_frame,far void(void),sim_flow,,
+ap,func,5ea5:04b0,panel_view_labels,far void(void),sim_flow,,
+ap,func,5ea5:04ff,panel_end_label,far void(int ended),sim_flow,,
+ap,func,5ea5:052f,view_name_cpy,near void(char *s),sim_flow,,inc bp prologue; body 5ea5:0530
+ap,func,5ea5:0530,view_name_cpy_body,near,sim_flow,,index artefact: body of 5ea5:052f
+ap,func,5ea5:055f,view_name_cat,near void(char *s),sim_flow,,inc bp prologue; body 5ea5:0560
+ap,func,5ea5:0560,view_name_cat_body,near,sim_flow,,index artefact: body of 5ea5:055f
+ap,func,5ea5:0597,panel_view_name,far char *(void),sim_flow,,
+ap,func,5ea5:0784,panel_set_title,far void(char *name),sim_flow,,
+ap,func,5ea5:07df,panel_draw_title,far void(void),sim_flow,,
+ap,func,5ea5:0839,panel_cb_click4,far void(void),sim_flow,,
+ap,func,5ea5:085b,panel_init_lamp,far void(void),sim_flow,,
+ap,func,5fef:0000,list_cb_scroll,far void(void),sim_flow,,
+ap,func,5fef:001e,list_scroll_arrows,far void(void),sim_flow,,
+ap,func,5fef:00cd,list_row_at_mouse,near int(void),sim_flow,,
+ap,func,5fef:0105,list_draw_rows,far void(void),sim_flow,,
+ap,func,5fef:029f,list_edit_text,far char *(void),sim_flow,,DS:4EF0
+ap,func,5fef:02a7,list_read_selected,near void(void),sim_flow,,inc bp prologue; body 5fef:02a8
+ap,func,5fef:02a8,list_read_selected_body,near,sim_flow,,index artefact: body of 5fef:02a7
+ap,func,5fef:03a5,list_set_edit,far int(char *s),sim_flow,,
+ap,func,5fef:0405,is_name_char,near int(int c),sim_flow,,inc bp prologue; body 5fef:0406
+ap,func,5fef:0406,is_name_char_body,near,sim_flow,,index artefact
+ap,func,5fef:0424,edit_key,near void(int scan int ch),sim_flow,,inc bp prologue; body 5fef:0425
+ap,func,5fef:0425,edit_key_body,near,sim_flow,,index artefact
+ap,func,5fef:058b,list_draw_edit,far void(void),sim_flow,,
+ap,func,5fef:0655,list_edit_poll,far void(int scan int ch),sim_flow,,
+ap,func,5fef:06d5,list_edit_cb,far void(void),sim_flow,,
+ap,func,5fef:06e9,list_clear_cb,far void(void),sim_flow,,
+ap,func,5fef:0710,list_boxes_load,far void(void),sim_flow,,lbox.BOX tapes.BOX
+ap,func,5fef:0757,list_init,far void(int n),sim_flow,,
+ap,func,5fef:07ad,list_reinit,far void(void),sim_flow,,
+ap,func,5fef:07c2,list_open,far void(... int n),sim_flow,,
+ap,func,606e:0000,tape_tmp_name,far char *(void),sim_flow,,"""_tape_.tmp"""
+ap,func,606e:0008,dlg_stub,far void(void),sim_flow,,
+ap,func,606e:000d,dlg_force_redraw,far void(void),sim_flow,,DS:4F08 = 1
+ap,func,606e:0018,panel_click,far void(MOUSE *m),sim_flow,,
+ap,func,606e:0057,dlg_redraw_all,far void(void),sim_flow,,
+ap,func,606e:007a,dlg_poll,far int(void),sim_flow,,
+ap,func,606e:012d,realism_changed,far void(void),sim_flow,,522c:0162
+ap,func,606e:0137,realism_dialog_in_flight,far int(void),sim_flow,,
+ap,func,606e:01e6,flight_message,far void(char *s),sim_flow,,see sim_flow_cockpit §6 (one-shot message + redraw)
+ap,func,606e:0208,key_or_click,far int(void),sim_flow,,
+ap,func,606e:0243,wait_key_release,far void(void),sim_flow,,
+ap,func,606e:025f,banner_text,far void(char *s),sim_flow,,
+ap,func,606e:0396,banner_w,far void(char *s),sim_flow,,
+ap,func,6163:0000,vcr_rewind_prompt,far int(void),sim_flow,,
+ap,func,6163:003c,vcr_sound_idle,far void(void),sim_flow,,
+ap,func,6163:0050,vcr_mode_paused,far int(void),sim_flow,,
+ap,func,6163:0187,vcr_mode_end,far int(void),sim_flow,,
+ap,func,618d:0000,tape_path_to,far char *(char *dst char *name),sim_flow,,
+ap,func,618d:0043,tape_path,far char *(char *name),sim_flow,,
+ap,func,618d:0067,load_script_file,far int(char *file far void **ptr int *len),sim_flow,,
+ap,func,618d:00fb,free_script,far int(void),sim_flow,,
+ap,func,618d:011f,tape_read_script,far int(char *name far void **ptr int *len),sim_flow,,
+ap,func,618d:0210,free_script2,far int(void),sim_flow,,
+ap,func,618d:021c,alloc_bit_buffers,far int(void),sim_flow,,
+ap,func,618d:0281,free_bit_buffers,far void(void),sim_flow,,no callers
+ap,func,618d:02c4,alloc_decode_buffer,far void(int size),sim_flow,,
+ap,func,618d:0300,tape_wopen,far int(char *name),sim_flow,,
+ap,func,618d:0358,tape_wclose,far int(int commit),sim_flow,,
+ap,func,618d:0393,tape_ropen,far int(char *name),sim_flow,,
+ap,func,618d:03c8,tape_rclose,far void(void),sim_flow,,
+ap,func,618d:03e5,put_bytes,far int(far void *p int n BSTREAM *s),sim_flow,,
+ap,func,618d:0430,rec_begin,far int(char *name),sim_flow,,
+ap,func,618d:04e4,module_flags,far u16(u16 bits),sim_flow,,does not store (quirk)
+ap,func,618d:0502,rec_finish,far int(void),sim_flow,,
+ap,func,618d:0629,rec_abort,far int(void),sim_flow,,
+ap,func,618d:0653,play_read_header,near int(void),sim_flow,,inc bp prologue; body 618d:0654
+ap,func,618d:0654,play_read_header_body,near,sim_flow,,index artefact: body of 618d:0653
+ap,func,618d:0726,play_open,far int(char *name),sim_flow,,
+ap,func,618d:0742,play_rewind,far int(void),sim_flow,,
+ap,func,618d:0759,play_close,far void(void),sim_flow,,
+ap,func,618d:0768,huff_table,far HuffTab *(char *name),sim_flow,,
+ap,func,618d:07b3,load_huff_tables,far void(void),sim_flow,,
+ap,func,618d:0820,vcr_tape_exit,far void(void),sim_flow,,empty
+ap,func,63ed:0000,bs_write_bits,far int(void *src int nbits BSTREAM *s),sim_flow,,
+ap,func,63ed:00e7,bs_read_bits,far int(void *dst int nbits BSTREAM *s),sim_flow,,
+ap,func,63ed:01c3,bs_file_append,far int(BSTREAM *s far void *buf int n),sim_flow,,
+ap,func,63ed:02b1,bs_cache_put,far void(far void *src int n BSTREAM *s int final),sim_flow,,
+ap,func,63ed:0395,bs_flush,far int(BSTREAM *s int final),sim_flow,,
+ap,func,63ed:0405,bs_cache_get,far int(far void *dst int n BSTREAM *s),sim_flow,,
+ap,func,63ed:04f8,bs_refill,far int(BSTREAM *s),sim_flow,,
+ap,func,63ed:0570,bs_compact,far void(BSTREAM *s),sim_flow,,
+ap,func,6922:0000,huff_code,far u8 *(HuffTab *t int sym int *nbits),sim_flow,,
+ap,func,6922:00dd,huff_dec_begin,far void(HuffTab *t),sim_flow,,
+ap,func,6922:0105,huff_dec_bit,far int(int b),sim_flow,,
+ap,func,6922:0155,huff_dec_end,far int(void),sim_flow,,
+ap,func,6a63:0000,addon1_flag,far int(void),sim_flow,,DS:51EC
+ap,func,6a63:0008,huff_get,far int(HuffTab *t),sim_flow,,
+ap,func,6a63:0046,huff_put,far int(HuffTab *t int sym),sim_flow,,
+ap,func,6a63:0084,sext,far int(int v int bits),sim_flow,,
+ap,func,6a63:00a5,view_encode,near int(VIEWREC *v),sim_flow,,inc bp prologue; body 6a63:00a6
+ap,func,6a63:00a6,view_encode_body,near,sim_flow,,index artefact
+ap,func,6a63:0159,view_decode,near void(VIEWREC *v),sim_flow,,inc bp prologue; body 6a63:015a
+ap,func,6a63:015a,view_decode_body,near,sim_flow,,index artefact
+ap,func,6a63:01df,throttle_encode,near int(CTRL *rec),sim_flow,,
+ap,func,6a63:0256,ctrl_encode,near int(CTRL *rec),sim_flow,,inc bp prologue; body 6a63:0257
+ap,func,6a63:0257,ctrl_encode_body,near,sim_flow,,index artefact
+ap,func,6a63:036a,ctrl_decode,near void(CTRL *rec),sim_flow,,inc bp prologue; body 6a63:036b
+ap,func,6a63:036b,ctrl_decode_body,near,sim_flow,,index artefact
+ap,func,6a63:04a3,put_type,near int(int type),sim_flow,,inc bp prologue; SOUT huff_put
+ap,func,6a63:04a4,put_type_body,near,sim_flow,,index artefact
+ap,func,6a63:04b8,get_type,near int(void),sim_flow,,inc bp prologue; SOUT huff_get
+ap,func,6a63:04b9,get_type_body,near,sim_flow,,index artefact
+ap,func,6a63:04d0,vcr_put,far int(int type void *ptr),sim_flow,,
+ap,func,6a63:0515,vcr_put_data,far int(int sub int len void *ptr),sim_flow,,
+ap,func,6a63:0576,vcr_take,far int(void *dst int len),sim_flow,,
+ap,func,6a63:05aa,vcr_get,far int(u16 *sub u16 *len),sim_flow,,
+ap,func,6de4:0000,huff_find,far int(HuffTab *t int sym int *idx),sim_flow,,
+ap,global,DS:0886,vcr_recording,u8,sim_flow,,sim_flow_vcr §14
+ap,global,DS:0887,vcr_frames_flown,u32,sim_flow,,sim_flow_vcr §14
+ap,global,DS:088B,vcr_director,u8,sim_flow,,sim_flow_vcr §14
+ap,global,DS:088F,vcr_events,QUEUE,sim_flow,,sim_flow_vcr §14
+ap,global,DS:4DE9,vcr_ctrl,CTRL,sim_flow,,sim_flow_vcr §14
+ap,global,DS:4DFF,vcr_redraw,u16,sim_flow,,sim_flow_vcr §14
+ap,global,DS:4E20,vcr_session_mode,u8,sim_flow,,sim_flow_vcr §14
+ap,global,DS:4E3B,vcr_frames_played,u32,sim_flow,,sim_flow_vcr §14
+ap,global,DS:504A,rec_header,HEADER,sim_flow,,sim_flow_vcr §14
+ap,global,DS:508C,play_header,HEADER,sim_flow,,sim_flow_vcr §14
+ap,global,DS:5000,huf_tables,HuffTab*[8],sim_flow,,sim_flow_vcr §14
+ap,global,DS:3CDA,bstreams,BSTREAM[2],sim_flow,,sim_flow_vcr §14
+ap,global,DS:51EC,addon1,u16,sim_flow,,sim_flow_vcr §14

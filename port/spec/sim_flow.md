@@ -1,7 +1,7 @@
 # sim_flow — AP.EXE game flow: main, init, flight loop and time base, input and controls, commands (+ parts)
 
 Target: `work/AP_flat.exe` (DGROUP `3EA4`), addresses as in `port/RE_GUIDE.md`. Phase 3 spec,
-2026-09-26. Symbols: `port/spec/sim_flow_symbols.csv`.
+2026-09-26. Symbols: `port/spec/sim_flow_symbols.csv` (+ `sim_flow_{vcr,cockpit,results,ui}_symbols.csv` for the parts). Finished 2026-09-26: all sim_flow-owned AP functions have symbol rows.
 
 Index:
 * §0 AP segment ownership map (for all AP spec writers)
@@ -12,7 +12,7 @@ Index:
   §10 Hand-offs · §11 Open questions
 * Parts: `sim_flow_vcr.md` (VCR films), `sim_flow_cockpit.md` (views, cockpit, gauges, HUD,
   messages), `sim_flow_ui.md` (map, dialogs, sliders, preferences, realism),
-  `sim_flow_results.md` (scoring, SIM.OUT, skip-ahead, RNG).
+  `sim_flow_results.md` (scoring, SIM.OUT, autopilot ("skip-ahead"), RNG).
 
 ## 0. AP segment ownership map
 
@@ -45,7 +45,7 @@ Notes for the other owners:
 | `0769` | sim_world | H | 9 | 2382 | guns: firing, bullet objects 0805h, hit test, tracers, ammo messages |
 | `07fe` | sim_world | H | 1 | 53 | ces.c |
 | `0802` | render3d | M | 3 | 625 | visibility culling before drawing (cloud layer, range, line of sight) |
-| `082a` | **sim_flow** | L | 2 | 777 | segment/sphere closest-point geometry used only by the skip-ahead code 496a |
+| `082a` | **sim_flow** | L | 2 | 777 | segment/sphere closest-point geometry used only by the autopilot code 496a (results part §8) |
 | `085b` | sim_world | H | 6 | 745 | aircraft proximity: collision avoidance flags, mid-air collisions |
 | `088a` | sim_world | H | 6 | 2218 | ground/ship impact, crash handling, kill messages |
 | `0916` | sim_world | M | 7 | 1202 | parachutes (para_*.BMD) and debris pieces |
@@ -141,12 +141,12 @@ Notes for the other owners:
 | `488e` | sim_world | H | 3 | 176 | weapon class registry |
 | `4899` | **sim_flow** | M | 4 | 131 | cockpit panel top line DS:3CD8, full-screen flag DS:00F8 |
 | `48a2` | **sim_flow** | H | 1 | 197 | embossed text for forms |
-| `48af` | **sim_flow** | H | 4 | 371 | boxlist.c |
+| `48af` | **sim_flow** | H | 4 | 371 | boxlist.c: `.BXL` hit-box list loader (ui part §7.2; box semantics sim_world) |
 | `48c7` | **sim_flow** | H | 7 | 890 | bstream.c (VCR bit stream file I/O) |
 | `48ff` | sim_world | H | 2 | 165 | bulletso.c |
 | `490a` | sim_world | H | 14 | 1417 | hit boxes (.BXL), line of sight |
 | `4963` | **sim_flow** | M | 2 | 112 | gauge/cockpit state reset |
-| `496a` | **sim_flow** | M | 43 | 7267 | skip-ahead ("A" key): reason codes, moving the flights along their routes |
+| `496a` | **sim_flow** | M | 43 | 7267 | Autopilot ("A" key, called "skip-ahead" in earlier notes): reason codes, time compression by moving the flights along their routes (results part §8) |
 | `4b31` | **sim_flow** | H | 3 | 132 | tick timeouts on the DS:18D2 counter |
 | `4b3a` | sim_world | H | 8 | 1380 | damage.c |
 | `4b91` | render3d | M | 2 | 203 | date -> moon phase (sky) |
@@ -230,7 +230,7 @@ Notes for the other owners:
 | `69fe` | sim_world | H | 8 | 1603 | AI state machine executor |
 | `6a63` | **sim_flow** | H | 21 | 1589 | VCR frame encoder/decoder |
 | `6ac7` | sim_world | H | 5 | 1879 | segment vs hit-box collision |
-| `6b3d` | **sim_flow** | M | 2 | 242 | mission music + ACES.PAL |
+| `6b3d` | **sim_flow** | H | 2 | 242 | cockpit leave / unload (TTM tags, ACES.PAL back after a gunner view, EMS caches; ui part §7.3) — corrected, not mission music |
 | `6b4d` | **sim_flow** | H | 34 | 4328 | control/sim preferences dialog (prefsim.box), CONTROL.PRF |
 | `6c5f` | **sim_flow** | H | 8 | 1569 | dialog text layout |
 | `6cc2` | sim_world | H | 2 | 405 | drop tank jettison |
@@ -293,7 +293,7 @@ Parts of this spec:
 | `sim_flow_vcr.md` | VCR: session driver `5c9b`, recording/playback, film format, Huffman streams, demos, VCR panel |
 | `sim_flow_cockpit.md` | views and cameras, cockpit build (`<plane>.TTM`, `.EDG`, `CPVW.BUF`), gauges (`.GAU`), HUD overlays, messages, radio menus, STR_POOL strings |
 | `sim_flow_ui.md` | in-flight map (`fltmap`), dialog library, stdalert (end-of-mission questions), sliders, preferences / control calibration dialogs, realism |
-| `sim_flow_results.md` | scoring and mission goals (`1899`), results → `SIM.OUT` (`5254`), skip-ahead (`496a`), the RNG (`1889`) |
+| `sim_flow_results.md` | scoring and mission goals (`1899`), results → `SIM.OUT` (`5254`), autopilot (`496a`, `082a`), the RNG (`1889`) |
 
 Notation: `DS:xxxx` = DGROUP `3EA4` offsets; `P` = the player's aircraft object (`DS:3B09`, near
 pointer); `P+ACh` = the player's control block (`CB`). Tick = one PIT interrupt at 236.69 Hz
@@ -409,7 +409,9 @@ CONTROL.PRF (`DS:43B1`, 37 bytes; `data.md` §3.1 refined) — **likely** from t
 | 07 | 43B8 | u8 mouse on (`DS:0B1E`) |
 | 08 | 43B9 | u8 sound on (`5a75:0d66`) |
 | 09 | 43BA | u8 — |
-| 0A–0C | 43BB–43BD | u8 ×3: prefsim dialog items (flight / rudder / throttle device choices, ui part) |
+| 0A | 43BB | u8 flight control device: 0 keyboard, 1 joystick 1, 2 yoke, 3 Thrustmaster FCS, 4 mouse (verified, `6b4d:0751`, ui part §5) |
+| 0B | 43BC | u8 rudder: 0 keyboard, 1 joystick 2, 2 rudder pedals |
+| 0C | 43BD | u8 throttle: 0 keyboard, 1 joystick 2, 2 throttle slider (absolute), 3 Thrustmaster WCS |
 | 0D | 43BE | joystick 1 calibration: s16 X min, centre, max, Y min, centre, max → `DS:4F60` |
 | 19 | 43CA | joystick 2 (rudder / throttle axes) calibration, same layout → `DS:4F6C` |
 
@@ -518,12 +520,27 @@ from `DS:0B80`, §5.4). The port replaces `exit` with a return to the chain loop
 * A frame lasts **at least 8 ticks** (8/236.69 s = 33.8 ms → at most **29.6 fps**); the loop busy-
   waits on the PIT down-counter `DS:31E5`. Slower frames just take longer.
 * The measured frame length, rounded **down to a multiple of 4 ticks** (`ticks = elapsed & ~3`,
-  elapsed ≥ 8), becomes the **next** frame's time step: `dt = clamp((ticks << 8) / div, 40h,
-  1C2h)` in `DS:711E`, where `div` = the time-scale slider value (14h..50h, default from
-  SIMPREFS/benchmark). With `div = 20`, 20 ticks (84.5 ms, 11.8 fps) = `dt 100h` = one nominal
-  step. dt saturates at 1C2h (1.76 steps): below ~6.7 fps (div 20) the simulation slows down;
-  it never takes more than one step per frame. `DS:711A` is the same computation with the fixed
-  divisor `DS:3712 = 20` (real-time dt, used for UI countdowns).
+  elapsed ≥ 8, at most 1FFh because the down-counter starts at 1FFh), becomes the **next**
+  frame's time step: `dt = clamp((ticks << 8) / div, 40h, 1C2h)` in `DS:711E`, where `div` = the
+  TIME SCALE slider value (`DS:7118`, 20..80, installed default 50 from SIMPREFS / the benchmark;
+  ui part §1). With `div = 20`, 20 ticks (84.5 ms, 11.8 fps) = `dt 100h` = one nominal step. dt
+  saturates at 1C2h (1.76 steps): below ~6.7 fps (div 20) the simulation slows down; it never
+  takes more than one step per frame. `DS:711A` is the same computation with the fixed divisor
+  `DS:3712 = 20`.
+* The measured window: the counter `DS:31E5 = 1FFh` is set in `flight_loop` *after* `flight_keys`
+  and before `controls_map` (§4.4), so a frame's tick count covers control mapping, the sim step,
+  drawing and the wait, not `input_poll`/`flight_keys`/VCR recording of the next frame (those
+  add real time that is not simulated; a few ms on the original).
+* **Real-time scale (verified via the mission clock, ui part §1.1):** the clock `4ca7` counts
+  **game seconds** (the VCR panel prints it as HH:MM:SS); 1 game second = 1310.72 dt units =
+  5.12 nominal steps, i.e. one nominal step = 0.1953 game s. Unclamped, the world runs at
+  **`46.23 / div` × real time**: div 50 (default) 0.92×, div 46 ≈ 1.0×, div 20 2.31×, div 80
+  0.58×. The clamp at the 8-tick minimum frame gives dt = 64 for every div ≥ 32 → **1.445× real
+  time on any machine that reaches 29.6 fps**, independent of the slider (12-tick frames: 0.96× at
+  div 50; the slider only acts fully at ≥ 16 ticks per frame, ≤ 14.8 fps). The shipped demos
+  (div 50, 20..96 ticks per frame) play at ≈ 0.92× real time.
+* `DS:711A` (divisor 20) is therefore **not** "real time" but 2.31× — it is simply dt at the
+  fastest slider setting; it drives UI/blink countdowns that must not depend on the slider.
 * Every world quantity that changes over time is scaled by dt: `x·dt >> 8` (`362b:00be`) or the
   timer helpers `362b:0165..02e3`. The whole world state is therefore a deterministic function of
   (mission, RNG seeds, per-frame control records, per-frame tick counts) — which is exactly what
@@ -532,10 +549,15 @@ from `DS:0B80`, §5.4). The port replaces `exit` with a return to the chain loop
   virtual PIT have elapsed since the frame start" (SDL high-resolution counter), and feed
   `362b:008f` the same `elapsed & ~3` in *virtual ticks*. Because the original clamps dt and the
   tick count comes from the host clock, a faster host just runs at the 29.6 fps cap with dt =
-  8·256/div. A later "Enhanced" 60 fps mode would need `ticks = 4` (dt 51 at div 20 → clamped to
-  40h at div > 32 — i.e. the clamp would slow the sim; the minimum of 8 ticks is part of the
-  tuning). For deterministic film playback the tick count must be taken from the film, not the
-  clock (vcr part).
+  max(8·256/div, 64) — i.e. 1.445× real time for div ≥ 32, as the original on a fast 486 did.
+  Decision options for the lead: (a) faithful: 8-tick frames, the clamp as is (recommended
+  default; films recorded by the port stay compatible); (b) "true speed" option: frame length
+  = 16 ticks (14.8 fps) so that div acts as designed (div 46 ≈ real time) — changes the feel,
+  films still consistent because the ticks are recorded. A 60 fps mode would need `ticks = 4`
+  (dt 51 at div 20 → clamped to 40h at div > 16 — the clamp would speed the sim up to 2.9×), so
+  it needs render interpolation between 8-tick sim frames rather than shorter sim frames.
+  For deterministic film playback the tick count must be taken from the film, not the clock
+  (vcr part).
 
 ### 4.2 Timer globals used by sim_flow (platform owns the ISR) — verified
 
@@ -571,23 +593,23 @@ real-time dt, `DS:7118` time divisor (time-scale slider value), `DS:7116` ticks 
 | `362b:008f` | `timebase_frame(int ticks)` | `dt_set(dt_from_ticks(DS:7118, ticks)); DS:711A = dt_from_ticks(DS:3712, ticks); DS:7116 = ticks` |
 | `362b:00be` | `dt_scale(int x)` | `clamp(((long)x · DS:711E) >> 8, −7FFFh, 7FFFh)` |
 | `362b:0106` | `dt_scale_real(int x)` | same with `DS:711A`; clamps to 8001h/7FFFh |
-| `362b:0146` | — | empty |
-| `362b:0165` | `timer16_dec(int *t)` | `*t −= DS:711E`; on signed overflow `*t = 0`; returns `*t` (callers treat ≤ 0 as expired). NB: a negative result without overflow is kept |
-| `362b:017c` | `timer32_dec(long *t)` | same on a long, overflow → 0; returns the low word |
-| `362b:01a0` | `timer16_dec2(int *t)` | identical to `0165` |
-| `362b:01bb`, `01e7` | `timer16_inc(int *t)` | `*t += DS:711E`, returns it |
+| `362b:0146` | `steps_to_frames(int n)` | `((long)n << 8) / DS:711E` (signed `idiv`): how many frames of the current dt make n nominal steps (corrected: was listed as empty) |
+| `362b:0165` | `timer16_dec(int *t)` | `*t = (*t < dt) ? 0 : *t − dt` (signed compare: `sub` then `jge`), returns `*t` — never negative (corrected: an earlier reading said "overflow only") |
+| `362b:017c` | `timer32_dec(long *t)` | same on a long (`*t < dt` → 0); returns the low word |
+| `362b:01a0` | `timer16_dec_far(int far *t)` | `0165` on a far pointer |
+| `362b:01bb`, `01e7` | `timer16_inc(int *t)` | `*t += DS:711E`, returns it (`01e7`: far-pointer variant) |
 | `362b:01cc`, `023b` | `timer32_inc(long *t)` | `*t += (long)DS:711E`, returns the low word |
-| `362b:01f8` | `timer32_expired(long *t)` | `*t −= dt`; if the result is 0 or overflowed → `*t = 0`, return 1; else 0 (note: a negative non-overflowed result returns 0 — the decompile's test is `result != 0 && no overflow → 0`) |
-| `362b:021c` | `timer16_expired(int *t)` | 16-bit version of `01f8` |
+| `362b:01f8` | `timer32_expired(long *t)` | `*t ≤ dt` → `*t = 0`, return 1; else `*t −= dt`, return 0 (signed; corrected from an earlier "0 or overflow" reading) |
+| `362b:021c` | `timer16_expired_far(int far *t)` | 16-bit far-pointer version of `01f8` |
 | `362b:0256` | `dt_scale_frac(int *x, int *frac)` | `p = (long)*x · dt`; `*frac = 3FFh`; `q = p >> 8`; if `q ≥ 8000h` → `q = 7FFFh`; else if `q < −7FFFh` → `q = −7FFFh`; else `*frac = (|p| & FFh) << 2`; if `q < 0` → `*frac = −*frac`; `*x = q` |
 | `362b:02e3` | `dt_mul(int x)` | `x · DS:711E` (16-bit, wraps) |
 
 Mission clock (`4ca7`, verified): `DS:3F36` (u32) and fraction `DS:3F34` (s16).
 `clock_reset 4ca7:0000`: both 0. `clock_tick 4ca7:0014` (from the frame step): `DS:3F34 +=
 dt_scale(200)`; if `DS:3F34 ≥ 400h`: `DS:3F36 += DS:3F34 >> 10; DS:3F34 &= 3FFh`.
-`clock_get 4ca7:0045` → `DS:3F36` (DX:AX). Unit: 1 = 1024/200 nominal steps (5.12 steps,
-102.4 ticks at div 20 ≈ 0.43 s real time; **what it counts is unclear**, maybe a "game second"
-of accelerated time — guess). It is written to the film trailer (`DS:5064`).
+`clock_get 4ca7:0045` → `DS:3F36` (DX:AX). Unit: **game seconds** (verified: the VCR panel
+formats it as HH:MM:SS, vcr part §10) = 1024/200 nominal steps (5.12 steps = 1310.72 dt units;
+real-time equivalence §4.1). It is written to the film trailer (`DS:5064`).
 
 Frame counter `DS:0887` (u32, +1 per frame, `DS:5060` copy at the end); mission time `DS:4086`
 (u32, `+= dt` per frame by `5440:12e3` = `timer32_inc(DS:4086)`; `DS:4082` = its companion,
@@ -597,7 +619,7 @@ The slider effects (`4b9f`, control.c) — verified:
 
 | Address | Name | Behaviour |
 |---|---|---|
-| `4b9f:0000` | `time_scale_apply()` | `timebase_set_div(slider_value(0))` — slider 0 "TIME SCALE": position 0..72 → value 80..20 (`5613:0161`, ui part); dt = ticks·256/value, so 20 = real time (dt equals `DS:711A`), 80 = quarter speed |
+| `4b9f:0000` | `time_scale_apply()` | `timebase_set_div(slider_value(0))` — slider 0 "TIME SCALE": position 0..72 → value 80..20 (`5613:0161`, ui part); dt = ticks·256/value, so the world runs at 46.23/value × real time while dt is not clamped (20 → 2.31×, 50 → 0.92×, 80 → 0.58×; §4.1, ui part §1.1) |
 | `4b9f:0018` | `aircraft_detail_apply(int v)` | slider 2 "AIRCRAFT" (0..255): `w = v + 1`; for shape-bank entries `DS:3F0E..DS:3F0C` (12-byte records in `DS:647C`): `+6 = (w >> 2) + BFh`, `+8 = word DS:0222[(w >> 5)]`; for `DS:3F0A..DS:3F08`: `+6 = (w >> 1) + 7Fh`, `+8 = DS:0234[w >> 5]` (LOD thresholds, render3d); `1a8b:001e(33a1:0008(DS:3F10, v))` (shadow detail: `DS:5CDE = n`, `DS:5CDA = n·300` altitude limit, `DS:5CE0 = n > 13 ? 3 : 0`); `DS:515A = 2000` |
 | `4b9f:00d0` | `world_detail_apply(int v)` | slider 1 "WORLD" (0..255): `333b:0158(DS:5C93 && !3974:0209 ? 0 : v)` — `DS:5C93` = combat in progress, `3974:0209` = "ON IN COMBAT" (ground detail kept in combat); `33d1:04dc()`; `4d6e:0000(v)` (horizon bands); `04c4:000b(v)` (flak range); `DS:51C4 = v ≥ 55h` |
 | `4b9f:012c` | `sliders_apply()` | `aircraft_detail_apply(slider_value(2)); world_detail_apply(slider_value(1)); time_scale_apply()` |
@@ -828,7 +850,7 @@ Key binding table `3923:0000` (verified dump; `fn 3DB3:0089` = `5f2c:055b` sets 
 | S (1Fh) | cmd 9 (radio message menu) |
 | U (16h) | cmd 2 (unjam guns) |
 | R (13h) | cmd 0Ch (release bombs/torpedo) |
-| A (1Eh) | cmd 3 (skip ahead) |
+| A (1Eh) | cmd 3 (Autopilot on/off) |
 | Esc (01h) | cmd 1Fh |
 | 1–9 (02h–0Ah) | absolute throttle 0, 7, 0Fh, 17h, 1Eh, 25h, 2Dh, 35h, 3Ch |
 | keypad `*` (37h) | absolute throttle 40h (full) |
@@ -878,9 +900,9 @@ The view commands are interpreted by `1c30:09d9`/`0ad5` (cockpit part).
 ### 6.1 `sim_step` `5440:1317(ctl)` → 0 / 2 — verified
 
 The one simulation step per frame; returns 2 when the player's aircraft has ended (`P+1Ah` bit
-0: crashed, shot down, landed and stopped, bailed out). Globals: skip-ahead state `DS:069C`
+0: crashed, shot down, landed and stopped, bailed out). Globals: autopilot state `DS:069C`
 (0 off, 1 running, 2 jump), `DS:069D`, `DS:069E`, `DS:06A9` (frames to wait), `DS:4382`,
-`DS:4346` (map target pointer) — details in `sim_flow_results.md` (skip-ahead); `DS:44C5` bit 7 =
+`DS:4346` (map target pointer) — details in `sim_flow_results.md` (Autopilot, §8); `DS:44C5` bit 7 =
 "step finished" (cleared while stepping, read by the VCR); `DS:06A5` (s32) = steps done
 (−1 = mission not running).
 
@@ -888,7 +910,7 @@ The one simulation step per frame; returns 2 when the player's aircraft has ende
 1c0f:0053()                              // VCR per-frame hook (vcr part), called 4 times
 mission_time_tick 5440:12e3()            // timer32_inc(DS:4086)
 DS:44C5 &= 7Fh
-if DS:069C (skip-ahead active) and the map target changed (6cdc:0db1() vs DS:4346, or the
+if DS:069C (autopilot active) and the map target changed (6cdc:0db1() vs DS:4346, or the
    12-byte target differs, 5440:12f3): skip_cancel 5440:12b9(); message STR(1, 34h) with the
    target; DS:069D = 2
 if DS:069C == 2: 496a:170e() (perform the jump); skip_cancel()
@@ -897,7 +919,7 @@ else:
    5a75:0a0a()                           // sound update
    if DS:069C == 0:
       if DS:069D and --DS:069D == 0: 1c30:0ab4()
-      if ctl.10 == 3 (skip ahead key A) and DS:06A9 == 0: start the skip-ahead (results part):
+      if ctl.10 == 3 (Autopilot key A) and DS:06A9 == 0: start the autopilot (results part):
          r = 496a:0e07(); r == 8 but the next waypoint is > 50000 away → r = 0;
          r == 0 → 1c30:0ab4(); 1c30:0aca(); DS:069C = 1; 496a:0f65(); DS:069D = 1; DS:069E = 2;
                   DS:4382 = 3000; 085b:02e5(); DS:4346 = 6cdc:0db1(), copy its 12 bytes to DS:433A
@@ -1132,8 +1154,8 @@ bit 3 wheel brakes, bit 4 gear down; `+0C` ground height under the aircraft). Re
   (cleared each step when `DS:42CF == 0`); gun firing entry `0769:009a(0, P, P+10h, {P,0Fh,1})`,
   ordnance `0deb:1500/0221/1490/000a`, weapon station `0ff4:0001(P+5Eh)`, drop tank `6cc2:0000`,
   carrier bookkeeping `10bf:013a`; world per-frame calls and their order in `sim_step` (§6.1);
-  every world timer uses `362b` (§4.3): dt `DS:711E` is 100h per nominal step of 20 ticks at
-  time scale 20. `5440:0375` (range helper) is called only by `583c`.
+  every world timer uses `362b` (§4.3): dt `DS:711E` is 100h per nominal step = 0.1953 game
+  seconds (1 game s = 1310.72 dt, §4.1); `362b:0165/017c/01a0` never go negative (§4.3). `5440:0375` (range helper) is called only by `583c`.
 * **platform**: `timer_isr` must keep `DS:31E5` saturating at 0 (the flight loop depends on it);
   `0000:02db` tick callback `DS:18D2`; key ring buffer `1d32:0939`, key-down table `1d32:0978`,
   keypad direction `1d32:095e`, scancode→ASCII `1d32:098c`, joystick reads `1d32:04e5/055e/063f`,
@@ -1150,13 +1172,11 @@ bit 3 wheel brakes, bit 4 gear down; `+0C` ground height under the aircraft). Re
 
 ## 11. Open questions
 
-* Unit of the mission clock `DS:3F36` (1 = 5.12 nominal steps) and why the benchmark picks a
-  slower time scale (divisor 50) on faster machines (§3.2) — is div 20 really "real time", or is
-  the nominal step shorter than 20 ticks in the flight-model tuning? (sim_world may settle it
-  from the physics constants.)
+* Settled: the mission clock counts game seconds; div ≈ 46 is real time (§4.1). Still open: why
+  the benchmark picks divisor 50 (0.92×) for fast machines — probably so that the sim, once
+  clamped at 29.6 fps, is not further accelerated; the port's choice is a lead decision (§4.1).
 * `5f2c:08fd`: the outside-view throttle-notch state machine (decompile broken, cockpit part).
 * CONTROL.PRF `+04`, `+09`; SIMPREFS `+08` (`DS:43AF`).
 * `60a9:017c` looks like a mis-seeded code fragment (jump table) — confirm it is not a function.
-* `DS:42D1` (suppresses the cockpit messages) and `DS:42CF`/`DS:42D3` — realism bytes of
-  `DS:42C8` (`?REAL.PRF`, ui part).
+* Settled: realism bytes `DS:42C8..42D3` are listed in the ui part §3.
 

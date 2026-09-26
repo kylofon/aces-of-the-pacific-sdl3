@@ -1,0 +1,211 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,1c30:0007,views_save,far void(FILE *fp),sim_flow,,"fwrite DS:1AB8 60 bytes (SIMPREFS.PRF +0Ah); cockpit §2.4"
+ap,func,1c30:0020,views_load,far void(FILE *fp),sim_flow,,fread DS:1AB8 60 bytes
+ap,func,1c30:0039,trail_record,far void(Object *pl),sim_flow,,history ring of player pos/angles for view 17h
+ap,func,1c30:00d0,trail_set_lag,far void(void),sim_flow,,DS:5E32 = min(362b:0146(18h)) 62h)
+ap,func,1c30:00ee,orbit_min_dist,far int(Object *o),sim_flow,,max(r*1.5 400)
+ap,func,1c30:0117,orbit_pan_begin,near void(void),sim_flow,,
+ap,func,1c30:0143,orbit_pan,near void(ViewRec *r),sim_flow,,inc bp prologue; body indexed at 1c30:0144
+ap,func,1c30:0144,orbit_pan_body,near,sim_flow,orbit_pan,index artefact: body of 1c30:0143
+ap,func,1c30:01fc,orbit_pan_frame,far void(void),sim_flow,,per-frame fn in orbit-pan mode
+ap,func,1c30:02ad,view_save_slot,far void(int n),sim_flow,,
+ap,func,1c30:02d9,view_preset,near void(int v),sim_flow,,inc bp prologue; body 1c30:02da
+ap,func,1c30:02da,view_preset_body,near,sim_flow,view_preset,index artefact: body of 1c30:02d9
+ap,func,1c30:0425,servo_snap,near void(Servo *s),sim_flow,,inc bp prologue; body 1c30:0426
+ap,func,1c30:0426,servo_snap_body,near,sim_flow,servo_snap,index artefact: body of 1c30:0425
+ap,func,1c30:0441,servos_snap,near void(void),sim_flow,,
+ap,func,1c30:0466,orbit_servo_place,near void(void),sim_flow,,
+ap,func,1c30:04c2,view_attached,near int(void),sim_flow,,view==18h||view==17h||view_inside
+ap,func,1c30:04df,orbit_store,near void(void),sim_flow,,
+ap,func,1c30:050a,cam_min_alt,near void(long pos[3]),sim_flow,,inc bp prologue; body 1c30:050b
+ap,func,1c30:050b,cam_min_alt_body,near,sim_flow,cam_min_alt,index artefact: body of 1c30:050a
+ap,func,1c30:0525,orbit_ground_clamp,near int(int pitch int dist),sim_flow,,inc bp prologue; body 1c30:0526
+ap,func,1c30:0526,orbit_ground_clamp_body,near,sim_flow,orbit_ground_clamp,index artefact: body of 1c30:0525
+ap,func,1c30:05c1,orbit_frame_rel,far void(void),sim_flow,,views 6/7
+ap,func,1c30:05fc,orbit_frame_abs,far void(void),sim_flow,,views 8..16h 19h
+ap,func,1c30:0638,cam_attach_target,far void(void),sim_flow,,cockpit views 1-5
+ap,func,1c30:0668,trail_frame,far void(void),sim_flow,,view 17h
+ap,func,1c30:06a3,freecam_frame,far void(void),sim_flow,,view 18h
+ap,func,1c30:06c3,view_stub0,far int(void),sim_flow,,returns 0; no callers
+ap,func,1c30:06ca,freecam_pan,near void(ViewRec *r),sim_flow,,inc bp prologue; body 1c30:06cb
+ap,func,1c30:06cb,freecam_pan_body,near,sim_flow,freecam_pan,index artefact: body of 1c30:06ca
+ap,func,1c30:0780,view_get,far int(void),sim_flow,,returns DS:5EBB
+ap,func,1c30:0788,view_set,near int(int v RRec *rr Object *tgt),sim_flow,,inc bp prologue; body 1c30:0789
+ap,func,1c30:0789,view_set_body,near,sim_flow,view_set,index artefact: body of 1c30:0788
+ap,func,1c30:0986,view_restore_rrec,far void(void),sim_flow,,
+ap,func,1c30:099e,view_request_reset,far void(void),sim_flow,,DS:1B2A = 1
+ap,func,1c30:09a9,view_outside_target,far Object *(void),sim_flow,,0 when inside else DS:5E4B
+ap,func,1c30:09bc,view_new_frame,near int(void),sim_flow,,
+ap,func,1c30:09d9,view_input_pending,far int(ViewRec *r),sim_flow,view_keys,called from flight_loop
+ap,func,1c30:0a73,view_set_head,far void(RRec *rr),sim_flow,,
+ap,func,1c30:0ab4,view_override_set,far void(int on),sim_flow,,
+ap,func,1c30:0aca,view_force_cmd,far void(int cmd),sim_flow,,
+ap,func,1c30:0ad5,view_update,far int(ViewRec *r),sim_flow,view_apply,bit0 view changed bit2 camera moved
+ap,func,1c30:0f68,views_init,far void(void),sim_flow,,
+ap,func,1c30:1021,wcam_is_active,far u8(void),sim_flow,,returns DS:5E3C
+ap,func,05d6:036c,wcam_note_weapon,far void(Object far *w),sim_flow,,split from sim_world 05d6
+ap,func,05d6:0381,wcam_object,far Object *(void),sim_flow,,split from sim_world 05d6
+ap,func,05d6:03fc,wcam_release,far void(void),sim_flow,,split from sim_world 05d6
+ap,func,637f:00af,next_view_object,far Object *(void),sim_flow,,split from sim_world 637f
+ap,func,0590:0002,approach,far int(int *v int target int step),sim_flow,,
+ap,func,0590:004b,approach_dt,far int(int *v int target int step),sim_flow,,step scaled by 362b:00be
+ap,func,0590:0069,servo_step,far int(Servo *s),sim_flow,,
+ap,func,0590:015b,servo_init,far void(Servo *s),sim_flow,,
+ap,global,DS:5EBB,view,i16,sim_flow,,current view 0..19h
+ap,global,DS:5E4B,view_target,Object *,sim_flow,,
+ap,global,DS:19F2,view_inside,i16,sim_flow,,1 = cockpit views 0-5
+ap,global,DS:19F6,view_class,i16,sim_flow,,0 front 1 side 2 rear 3 external
+ap,global,DS:1AF4,view_frame_fn,far fn,sim_flow,,
+ap,global,DS:5E4F,cam,struct,sim_flow,,camera placement (object+02 layout)
+ap,global,DS:5E65,orbit_dist,i16,sim_flow,,
+ap,global,DS:5E67,orbit_heading,i16,sim_flow,,
+ap,global,DS:5E6B,orbit_pitch,i16,sim_flow,,
+ap,global,DS:1AB8,saved_views,6*10 bytes,sim_flow,,{pitch heading dist} x10
+ap,global,DS:1B20,view_set_sel,i16,sim_flow,,0 cockpit set 1 external set
+ap,global,DS:1AFC,view_forced_cmd,i16,sim_flow,,
+ap,global,DS:1AFF,deathcam_req,u8,sim_flow,,
+ap,global,DS:5E3C,wcam_active,u8,sim_flow,,
+ap,func,0962:0009,edge_arena_init,far void(int size),sim_flow,,
+ap,func,0962:005a,edge_arena_free,far void(void),sim_flow,,
+ap,func,0962:0095,edge_alloc,far void far *(int n),sim_flow,,bump allocator
+ap,func,0962:00cb,edge_mark,far void(void),sim_flow,,
+ap,func,0962:00de,edge_release,far void(void),sim_flow,,
+ap,func,0962:00f1,edge_load,far void(char *name),sim_flow,,.EDG
+ap,func,0962:038d,edge_unload,far void(void),sim_flow,,
+ap,func,0962:0396,file_size,far int(char *name),sim_flow,,
+ap,func,0962:0502,span_intersect_w,far void far *(...),sim_flow,,wrapper of 0a7b:000c
+ap,func,0962:0520,span_in_rows,far int(far Span *s),sim_flow,,A ranges
+ap,func,0962:0655,glass_overlay,far void(void),sim_flow,,C polygons after the panel
+ap,func,0962:079a,span_through_windows,far void(void),sim_flow,,B polygons
+ap,func,0962:0819,pixel_rows,far void(...),sim_flow,,
+ap,func,0962:08de,masked_span_fill,far (driver vector),sim_flow,,installed by mask_on
+ap,func,0962:0bf1,mask_on,far void(void),sim_flow,,patch 6 video vectors
+ap,func,0962:0c7f,mask_off,far void(void),sim_flow,,
+ap,func,0962:0cc6,masked_vec2,far (driver vector),sim_flow,,
+ap,func,0962:0e47,masked_vec3,far (driver vector),sim_flow,,
+ap,func,0962:1023,masked_vec4,near (driver vector),sim_flow,,
+ap,func,0a7b:000c,span_intersect,far void far *(far a far b far out),sim_flow,,asm
+ap,func,0ab0:000b,str,far char far *(int group int id),sim_flow,,STR_POOL
+ap,func,0ab0:0066,str0,far char far *(int id),sim_flow,,
+ap,func,0ab0:0080,word_wrap,near int(char *s int width),sim_flow,,english.c
+ap,func,10e5:0005,advice_init,far void(void),sim_flow,,
+ap,func,10e5:00ac,advice_step,near void(void),sim_flow,,advisory messages
+ap,func,1614:000e,msg_init,far void(void),sim_flow,,
+ap,func,1614:0023,msg_tick,far void(void),sim_flow,,
+ap,func,1614:005b,msg_draw,far void(int redraw),sim_flow,,
+ap,func,1614:019a,msg_erase,far void(void),sim_flow,,
+ap,func,1614:024e,msg_show,far void(char far *s int prio char far *speaker),sim_flow,,message.c
+ap,func,1614:02c3,msg_clear_top,far void(void),sim_flow,,
+ap,func,1614:02ce,msg_clear_all,far void(void),sim_flow,,
+ap,func,1815:0004,clock_pos,far int(int bearing),sim_flow,,1..12
+ap,func,1815:0019,itoa10,far char *(char *d long v),sim_flow,,
+ap,func,1815:002f,pluralize,far char *(char *s),sim_flow,,
+ap,func,1815:0068,number_word,far char *(char *d long n int max),sim_flow,,
+ap,func,1815:00ad,units_text,far char *(char *d long v),sim_flow,,
+ap,func,1815:00dc,radio_expand,far int(char *buf RadioCtx *c),sim_flow,,% templates
+ap,func,1815:0546,radio_show,far void(int group int id RadioCtx *c),sim_flow,,
+ap,func,1815:0593,radio_tick,far void(void),sim_flow,,
+ap,func,1815:05e0,radio_queue,far void(int group int id RadioCtx *c int delay),sim_flow,,
+ap,func,1815:06d0,radio_queue5,far void(int id RadioCtx *c int delay),sim_flow,,
+ap,func,1815:06e7,radio_queue7,far void(int id RadioCtx *c int delay),sim_flow,,
+ap,func,1815:070e,radio_init,near void(void),sim_flow,,
+ap,func,1ba4:0003,warn_init,far void(W *w int group int id int prio),sim_flow,,
+ap,func,1ba4:0026,warn_tick,near void(W *w),sim_flow,,every 6400h dt
+ap,func,465c:04ee,screenshot_name,far char *(void),sim_flow,,split from sim_world 465c
+ap,func,4899:0000,fullscreen_view,far int(void),sim_flow,,DS:00F8
+ap,func,4899:0009,set_panel_top,far void(int y),sim_flow,,DS:3CD8
+ap,func,4899:0027,clip_to_view,far int(void),sim_flow,,
+ap,func,4899:005c,limit_window,far void(Camera *c),sim_flow,,
+ap,func,4963:0000,gauges_init_stub,far void(void),sim_flow,,-> 678a:0000
+ap,func,4963:000a,cockpit_reset,far void(void),sim_flow,,
+ap,func,4bb7:0000,fread_far,far long(far void *dst long size long count FILE *f),sim_flow,,20-byte chunks
+ap,func,4bb7:007f,str_pool_load,far void(void),sim_flow,,english.c
+ap,func,4cad:0000,gauges_reset,far void(void),sim_flow,,servos
+ap,func,4cad:00ab,gau_load,far void(char *code),sim_flow,,.GAU
+ap,func,50c0:0000,lso_load,far void(void),sim_flow,,sig_a/sig_j
+ap,func,50c0:004a,lso_free,far void(void),sim_flow,,
+ap,func,50c0:0068,lso_reset,far void(void),sim_flow,,
+ap,func,644a:0000,cockpit_load,far void(char *code),sim_flow,,cockpit.c
+ap,func,644a:0271,cockpit_frame_bg,far void(int redraw),sim_flow,,
+ap,func,644a:0584,cockpit_frame_fg,far void(int redraw),sim_flow,,
+ap,func,644a:088f,cockpit_force_rebuild,far void(void),sim_flow,,
+ap,func,644a:089f,cockpit_view_window,far int(int r[4]),sim_flow,,
+ap,func,644a:0912,palette_aces,near void(void),sim_flow,,inc bp prologue; body 644a:0913
+ap,func,644a:0913,palette_aces_body,near,sim_flow,,index artefact
+ap,func,644a:0961,palette_gunner,near void(void),sim_flow,,inc bp prologue; body 644a:0962
+ap,func,644a:0962,palette_gunner_body,near,sim_flow,,index artefact
+ap,func,644a:09b0,cockpit_prebuild,near void(void),sim_flow,,
+ap,func,644a:09db,cockpit_view_background,near void(int v),sim_flow,,inc bp prologue; body 09dc
+ap,func,644a:09dc,cockpit_view_background_body,near,sim_flow,,index artefact
+ap,func,644a:0a35,cockpit_render_view,near void(int v),sim_flow,,inc bp prologue; body 0a36
+ap,func,644a:0a36,cockpit_render_view_body,near,sim_flow,,index artefact
+ap,func,644a:0ad9,damage_cracks,near void(void),sim_flow,,
+ap,func,644a:0b0b,engine_puffs,near void(void),sim_flow,,inc bp prologue; body 0b0c; uses rand()
+ap,func,644a:0b0c,engine_puffs_body,near,sim_flow,,index artefact
+ap,func,644a:0d94,cache_to_ems,near void(void),sim_flow,,inc bp prologue; body 0d95
+ap,func,644a:0d95,cache_to_ems_body,near,sim_flow,,index artefact
+ap,func,644a:0e5e,ems_to_screen,near void(int v),sim_flow,,inc bp prologue; body 0e5f
+ap,func,644a:0e5f,ems_to_screen_body,near,sim_flow,,index artefact
+ap,func,644a:0f2a,cache_to_file,near void(char *code),sim_flow,,inc bp; CPVW.BUF
+ap,func,644a:0f2b,cache_to_file_body,near,sim_flow,,index artefact
+ap,func,644a:101f,file_to_screen,near void(int v),sim_flow,,inc bp; body 1020
+ap,func,644a:1020,file_to_screen_body,near,sim_flow,,index artefact
+ap,func,644a:1095,screen_to_file,near void(FILE *f),sim_flow,,inc bp; body 1096
+ap,func,644a:1096,screen_to_file_body,near,sim_flow,,index artefact
+ap,func,644a:10e1,file_rows_to_screen,near void(FILE *f),sim_flow,,inc bp; body 10e2
+ap,func,644a:10e2,file_rows_to_screen_body,near,sim_flow,,index artefact
+ap,func,678a:0000,gauges_stub,far void(void),sim_flow,,empty
+ap,func,678a:0005,panel_tiles,far void(void),sim_flow,,rand() tiles
+ap,func,678a:0088,gauge_faces,far void(void),sim_flow,,
+ap,func,678a:010b,gauges_update,far void(void),sim_flow,,per sim step
+ap,func,678a:033b,gauges_dirty,far void(int y0 int y1),sim_flow,,args ignored
+ap,func,678a:0345,gauges_freeze,far void(void),sim_flow,,DS:3FCD = 1
+ap,func,678a:034f,gauges_draw,far void(int redraw),sim_flow,,
+ap,func,678a:03ad,set_rect,far void(int a int b int c int d far int *r),sim_flow,,
+ap,func,678a:03d0,rect_from_line,far void(int x0 int y0 int x1 int y1 far int *r),sim_flow,,
+ap,func,678a:041d,rect_union,far void(int *a int *b far int *r),sim_flow,,
+ap,func,678a:047e,needle,far void(int x int y int len u16 angle far int *r),sim_flow,,
+ap,func,678a:04db,restore_rect,far void(far int *r int redraw),sim_flow,,
+ap,func,678a:0563,gauge_altimeter,far void(Gauge far *g int redraw),sim_flow,,kind 0
+ap,func,678a:0704,gauge_airspeed,far void(Gauge far *g int redraw),sim_flow,,kind 1
+ap,func,678a:07e6,gauge_vsi,far void(Gauge far *g int redraw),sim_flow,,kind 2
+ap,func,678a:090c,gauge_bank,far void(Gauge far *g int redraw),sim_flow,,kind 3
+ap,func,678a:0a37,gauge_compass,far void(Gauge far *g int redraw),sim_flow,,kind 4
+ap,func,678a:0b98,gauge_rpm1,far void(Gauge far *g int redraw),sim_flow,,kind 5
+ap,func,678a:0c59,gauge_rpm2,far void(Gauge far *g int redraw),sim_flow,,kind 6
+ap,func,678a:0d1a,gauge_ammo1,far void(Gauge far *g int redraw),sim_flow,,kind 7
+ap,func,678a:0e6d,gauge_ammo2,far void(Gauge far *g int redraw),sim_flow,,kind 8
+ap,func,678a:0fc0,gauge_rockets,far void(Gauge far *g int redraw),sim_flow,,kind 9
+ap,func,678a:109b,gauge_fuel,far void(Gauge far *g int redraw),sim_flow,,kind 10
+ap,func,678a:1258,gauge_k11,far void(Gauge far *g int redraw),sim_flow,,kind 11 (P+B0h)
+ap,func,678a:1365,gauge_lamp0,far void(Gauge far *g int redraw),sim_flow,,kind 12
+ap,func,678a:1419,gauge_lamp1,far void(Gauge far *g int redraw),sim_flow,,kind 13
+ap,func,678a:14d5,gauge_lamp2,far void(Gauge far *g int redraw),sim_flow,,kind 14
+ap,func,678a:1595,gauge_lamp3,far void(Gauge far *g int redraw),sim_flow,,kind 15
+ap,func,678a:1655,gauge_lamp4,far void(Gauge far *g int redraw),sim_flow,,kind 16
+ap,func,678a:1715,gauge_divebrake,far void(Gauge far *g int redraw),sim_flow,,kind 17
+ap,func,678a:17c9,gauge_flaps,far void(Gauge far *g int redraw),sim_flow,,kind 18
+ap,func,678a:18bc,gauge_gear,far void(Gauge far *g int redraw),sim_flow,,kind 19
+ap,func,6939:0000,msg_box,far void(MsgSlot *s),sim_flow,,
+ap,func,6939:020f,msg_unbox,far int(MsgSlot *s),sim_flow,,
+ap,func,6dfc:0497,lso_erase,far void(void),sim_flow,,split from sim_world 6dfc
+ap,func,6dfc:04ce,lso_draw,far void(void),sim_flow,,split from sim_world 6dfc
+ap,func,6e5a:0000,radio_menu_build,far void(int n u16 *items),sim_flow,,
+ap,func,6e5a:01a0,radio_menu_draw,far void(int redraw),sim_flow,,
+ap,func,6e5a:038b,radio_menu_reset,far void(void),sim_flow,,DS:523E = 0
+ap,func,6e5a:0396,radio_menu_rebuild,far void(void),sim_flow,,DS:523E = 1
+ap,func,6e5a:03a1,radio_menu_key,far int(int cmd),sim_flow,,
+ap,func,1660:0f5f,orders_title,far int(void),sim_flow,,split from 1660
+ap,func,1660:0f6e,orders_reset,far void(void),sim_flow,,split from 1660
+ap,func,1660:0f85,order_send,far int(int code int index),sim_flow,,split from 1660
+ap,func,1660:110f,orders_items,near int(u16 *items int max),sim_flow,,split from 1660
+ap,func,1660:0685,order_text,far char *(int code int index char *dst),sim_flow,,split from 1660
+ap,global,DS:3ECC,cockpit_code,char[8],sim_flow,,sim_flow_cockpit
+ap,global,DS:3ED6,cockpit_view_shown,i16,sim_flow,,sim_flow_cockpit
+ap,global,DS:3F4E,gauges,far Gauge[],sim_flow,,sim_flow_cockpit
+ap,global,DS:3F4C,gauge_count,u16,sim_flow,,sim_flow_cockpit
+ap,global,DS:5B1A,msg_slots,MsgSlot[2],sim_flow,,sim_flow_cockpit
+ap,global,DS:5C26,radio_queue,RadioSlot[2],sim_flow,,sim_flow_cockpit
+ap,global,DS:1206,radio_menu_open,u8,sim_flow,,sim_flow_cockpit
+ap,global,DS:3F20,str_pool,handle,sim_flow,,sim_flow_cockpit
+ap,global,DS:57E8,lso_call,s16,sim_flow,,sim_flow_cockpit
