@@ -21,6 +21,12 @@ foreach(m ${AOTP_MODULES})
     file(GLOB m_sources CONFIGURE_DEPENDS src/${m}/*.c)
     list(APPEND AOTP_SOURCES ${m_sources})
 endforeach()
+# Developer aid for parallel implementers: leave out unfinished files of other modules, e.g.
+# -DAOTP_EXCLUDE_REGEX="sim_world/ai_[a-z]+\\.c$|sim_flow/(cockpit|init)\\.c$" (empty = build everything).
+set(AOTP_EXCLUDE_REGEX "" CACHE STRING "regex of source files left out of the build")
+if(AOTP_EXCLUDE_REGEX)
+    list(FILTER AOTP_SOURCES EXCLUDE REGEX "${AOTP_EXCLUDE_REGEX}")
+endif()
 
 add_executable(aotp ${AOTP_SOURCES})
 target_include_directories(aotp PRIVATE src)

@@ -376,7 +376,7 @@ void damage_nop(void);
 /* AP 4b3a:02aa — sim_world_dmg.md §2 */
 void damage_reset(void);
 /* AP 655d:009b — sim_world_dmg.md §4.4 */
-void state_going_down(u16 p0_ds);
+u16 state_going_down(u16 p0_ds);
 /* AP 655d:0322 — sim_world_dmg.md §4.4 */
 void damage_tables_load(void);
 /* AP 655d:0bd9 — sim_world_dmg.md §4.1 */
@@ -448,7 +448,7 @@ void plane_engine_sound(u16 p_ds);
 /* AP 4bf9:0257 — sim_world_fm.md §4; [file] */
 void plane_fly(u16 p_ds);
 /* AP 4bf9:03ce — sim_world_fm.md §4; [file] */
-u16 steer_roll_to(u16 a0);
+u16 steer_roll_to(u16 p, s16 roll, s16 tol);   /* (part A fix: three words, from the frame) */
 /* AP 4bf9:0401 — sim_world_fm.md §4; [file] */
 u16 steer_pitch_to(u16 a0, u16 a1, u16 a2);
 /* AP 4bf9:061b — sim_world_fm.md §4; [file] */
@@ -578,11 +578,11 @@ u16 ship_is_real(u16 a0);
 
 /* ==== sim_world/ships.c =========================================================================== */
 /* AP 5410:016e — sim_world_dmg.md §8 */
-void ship_stop(u16 s);
+u16 ship_stop(u16 s);
 /* AP 5410:018c — sim_world_dmg.md §8 */
-void ship_follow_waypoints(u16 s);
+u16 ship_follow_waypoints(u16 s);
 /* AP 5410:01e7 — sim_world_dmg.md §8 */
-void ship_keep_station(u16 s);
+u16 ship_keep_station(u16 s);
 /* AP 5410:02ed — sim_world_dmg.md §8 */
 void ship_classes_register(void);
 /* AP 5410:02c0 — sim_world_dmg.md §8; [file] */
@@ -606,7 +606,7 @@ void scenario_unload(void);
 /* AP 56ac:089e — sim_world_dmg.md §1.3 */
 void scenario_build(void);
 /* AP 56ac:0f26 — sim_world_dmg.md §1.3.4 */
-void flight_cmp(u16 a0, u16 a1);
+s16 flight_cmp(u16 a0, u16 a1);
 /* AP 56ac:18e5 — sim_world_dmg.md §1.3.4 */
 void scenario_free(void);
 /* AP 1641:0172 — sim_world_dmg.md §1.9; [file] */
@@ -668,13 +668,13 @@ void gunlist_loadout_free(void);
 /* AP 6cc2:0000 — sim_world_wpn.md §7 */
 void drop_tank_release(u16 a0);
 /* AP 6cc2:00cb — sim_world_wpn.md §7 */
-void drop_tank_update(FarPtr o);
+u16 drop_tank_update(FarPtr o);   /* (part A: effect callback, returns the low word of z) */
 /* AP 04c4:0c53 — sim_world_ai.md §4; [file] */
 void plane_avoid_collision(u16 a0);
 /* AP 05d6:0419 — sim_world_wpn.md §2; [file] */
 u16 dmg_event_alloc(void);
 /* AP 0688:009d — sim_world_wpn.md §4.1; [file]; last 1 word(s) unused by the original */
-u16 bomb_release(u16 stick_ds, u16 p1_ds, FarPtr a2, u16 src_ds);
+u16 bomb_release(u16 stick_ds, u16 pos_ds, u16 mblk_ds, u16 src_ds);   /* (part A: 3rd = matrix block, near) */
 /* AP 0769:0002 — sim_world_wpn.md §3.5; [file] */
 u16 gun_type_speed(u16 type_ds);
 /* AP 0ff4:0186 — sim_world_wpn.md §7; [file] */
@@ -686,7 +686,7 @@ u16 station_loaded_count(u16 p0_ds);
 /* AP 0ff4:02ea — sim_world_wpn.md §7; [file] */
 u16 station_first(u16 p0_ds);
 /* AP 1a32:00a7 — sim_world_wpn.md RNG call sites (state `DS:4454`); [file] */
-void rocket_fire(u16 a0, u16 a1, u16 a2, u16 a3);
+u16 rocket_fire(u16 rack_ds, u16 pos_ds, u16 mblk_ds, u16 src_ds);   /* (part A: returns AL) */
 /* AP 1baa:0005 — sim_world_wpn.md §3.5; [file] */
 u16 torp_speed_limit(s16 side);
 /* AP 1baa:00ba — sim_world_wpn.md §6; [file] */
@@ -694,6 +694,6 @@ u16 torp_drop(u16 a0, u16 a1, u16 a2, u16 a3);
 /* AP 4cda:0021 — sim_world_wpn.md §3.5; [file] */
 void gunlists_alloc(s16 n);
 /* AP 4cda:0037 — sim_world_dmg.md §1.5; [file] */
-void gunlist_load(u16 a0, u16 a1, u16 a2);
+u16 gunlist_load(u16 slot, u16 name_ds, u16 is_ship);   /* (part A: returns the image) */
 /* AP 4cda:00f8 — sim_world_dmg.md §1.8; [file] */
-void gunlist_attach(u16 a0, u16 a1, u16 a2, u16 a3);
+u16 gunlist_attach(u16 slot, u16 gl_out_ds, u16 st_out_ds, u16 obj);   /* (part A: returns the state array) */
