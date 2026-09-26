@@ -42,7 +42,7 @@ void ai_was_hit(u16 p);
 /* AP 1284:004d — sim_world_ai.md §7.2; [file] */
 u16 on_tail(u16 p, u16 t, u16 p2_ds);
 /* AP 1284:00f4 — sim_world_ai.md §7.2; [file] */
-void nearest_in_list(u16 a0, u16 a1, u16 a2);
+u16 nearest_in_list(u16 pos_ds, u16 side, u16 d_ds);   /* (part B: returns the plane) */
 /* AP 1284:01a3 — sim_world_ai.md §7.2; [file] */
 void player_threat_update(u16 pl);
 /* AP 1284:0271 — sim_world_ai.md §7.2; [file] */
@@ -50,7 +50,7 @@ u16 shot_quality(u16 aim, s16 base, s16 thr);
 /* AP 1284:02fb — sim_world_ai.md §7.2; [file] */
 u16 gun_solution(u16 p);
 /* AP 1284:0353 — sim_world_ai.md §7.2; [file] */
-void ai_fire(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4, u16 a5);
+void ai_fire(u16 p, u16 sel, u16 ang_ds, s32 range, u16 spray);   /* (part B: range is a dword) */
 /* AP 1284:041c — sim_world_ai.md §7.2; [file] */
 u16 turret_count(u16 p);
 /* AP 1284:0435 — sim_world_ai.md §7.2; [file] */
@@ -136,63 +136,63 @@ void ai_break_toward(u16 p_ds);
 
 /* ==== sim_world/ai_flight.c ======================================================================= */
 /* AP 4edf:0000 — sim_world_ai.md §12 */
-void st_path_act(u16 a0);
+u16 st_path_act(u16 p);
 /* AP 4edf:01c7 — sim_world_ai.md §12 */
-void fm_reinit(u16 p, u16 _);
+u16 fm_reinit(u16 p, u16 x);   /* (part B: returns p; x is passed on to fm_init) */
 /* AP 4edf:0252 — sim_world_ai.md §12 */
-void st_runway_takeoff_act(u16 a0);
+u16 st_runway_takeoff_act(u16 p);
 /* AP 4edf:0370 — sim_world_ai.md §12 */
-void st_carrier_takeoff_act(u16 p);
+u16 st_carrier_takeoff_act(u16 p);
 /* AP 4edf:057f — sim_world_ai.md §12 */
 void park_on_carrier(u16 p, s16 spot);
 /* AP 4edf:0619 — sim_world_ai.md §12; register input BX */
 u16 plane_gone(u16 bx);
 /* AP 4edf:06fc — sim_world_ai.md §12 */
-void st_parked_carrier_act(u16 a0);
+u16 st_parked_carrier_act(u16 p);
 /* AP 4edf:0870 — sim_world_ai.md §12 */
-void st_parked_airfield_act(u16 a0);
+u16 st_parked_airfield_act(u16 p);
 /* AP 4edf:0c45 — sim_world_ai.md §12 */
 u16 flight_next_task(u16 p, u16 flag);
 /* AP 4edf:0edb — sim_world_ai.md §12 */
 void ai_leave_combat(u16 p);
 /* AP 4edf:11f8 — sim_world_ai.md §12 */
-void st_act_fly(u16 p);
+u16 st_act_fly(u16 p);
 /* AP 4edf:120a — sim_world_ai.md §12 */
-void st_waypoints_steer(u16 a0);
+u16 st_waypoints_steer(u16 p);
 /* AP 4edf:1294 — sim_world_ai.md §12 */
 u16 my_formation_offset(u16 p);
 /* AP 4edf:12b3 — sim_world_ai.md §12 */
-void formation_point(u16 out_ds, u16 L_ds, u16 p2_ds);
+u16 formation_point(u16 out_ds, u16 L, u16 off_ds);
 /* AP 4edf:12fa — sim_world_ai.md §12 */
-void st_join_steer(u16 a0);
+u16 st_join_steer(u16 p);
 /* AP 4edf:135a — sim_world_ai.md §12 */
-void st_keep_formation_steer(u16 a0);
+u16 st_keep_formation_steer(u16 p);
 /* AP 4edf:13bd — sim_world_ai.md §12 */
-void st_orbit_home_steer(u16 a0);
+u16 st_orbit_home_steer(u16 p);
 /* AP 4edf:1413 — sim_world_ai.md §12 */
-void st_goto_target_steer(u16 a0);
+u16 st_goto_target_steer(u16 p);
 /* AP 4edf:1463 — sim_world_ai.md §12 */
-void st_orbit_waypoint_steer(u16 a0);
+u16 st_orbit_waypoint_steer(u16 p);
 /* AP 4edf:14a6 — sim_world_ai.md §12 */
-void st_return_steer(u16 a0);
+u16 st_return_steer(u16 p);
 /* AP 4edf:153e — sim_world_ai.md §12 */
-void st_escort_join_steer(u16 a0);
+u16 st_escort_join_steer(u16 p);
 /* AP 4edf:15da — sim_world_ai.md §12 */
-void st_escort_fly_steer(u16 a0);
+u16 st_escort_fly_steer(u16 p);
 /* AP 4edf:16ea — sim_world_ai.md §12 */
-void st_think_combat(u16 p);
+u16 st_think_combat(u16 p);
 /* AP 4edf:1711 — sim_world_ai.md §12 */
 u16 pure_fighters_of_side(u16 p0_ds, u16 side);
 /* AP 4edf:1774 — sim_world_ai.md §12 */
 void flight_states_register(void);
 /* AP 4edf:005e — sim_world_ai.md §12; [file] */
-void path_enter(u16 p, u16 p1_ds, u16 p2_ds, u16 next);
+void path_enter(u16 p, u16 pos_ds, u16 ang_ds, u16 next);
 /* AP 4edf:0780 — sim_world_ai.md §12; [file] */
 void park_on_airfield(u16 p, s16 spot);
 /* AP 4edf:0e58 — sim_world_ai.md §12; [file] */
 void st_next_task(u16 p);
 /* AP 4edf:102e — sim_world_ai.md §12; [file] */
-u16 fly_formation_slot(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4, u16 a5);
+u16 fly_formation_slot(u16 p, u16 off_ds, u16 L, u16 tolp, u16 tolh, u16 dist);
 /* AP 4edf:123f — sim_world_ai.md §12; [file] */
 u16 formation_offset(u16 form, u16 slot);
 /* AP 4edf:1278 — sim_world_ai.md §12; [file] */
@@ -204,13 +204,13 @@ void manoeuvres_init(void);
 /* AP 1ad2:002e — sim_world_ai.md §10; [file]; register inputs AX/BX */
 u16 manoeuvre_allowed(u16 ax, u16 bx);
 /* AP 1ad2:0082 — sim_world_ai.md §10; [file]; register input BX */
-void steer_level(u16 bx);
+u16 steer_level(u16 bx);   /* (part B: returns both reached) */
 /* AP 1ad2:0acc — sim_world_ai.md §10; [file]; register input BX */
 u16 manoeuvre_step(u16 bx);
 /* AP 1ad2:0b20 — sim_world_ai.md §10; [file]; register inputs AX/BX */
 u16 manoeuvre_start(u16 ax, u16 bx);
 /* AP 1ad2:0b82 — sim_world_ai.md §10; [file]; register inputs AX/DX/BX */
-void manoeuvre_enter(u16 ax, u16 dx, u16 bx);
+u16 manoeuvre_enter(u16 ax, u16 dx, u16 bx);   /* (part B: returns allowed) */
 /* AP 1ad2:0bcb — sim_world_ai.md §10; [file]; register inputs AX/BX/DX */
 u16 manoeuvre_pick(u16 ax, u16 bx, u16 dx);
 
@@ -228,7 +228,7 @@ u16 mates_have_bombers(u16 p, u16 mode, u16 torp_ds);
 /* AP 1660:0110 — sim_world_ai.md §15; [file] */
 u16 aspect_to(u16 a, u16 b);
 /* AP 1660:01b4 — sim_world_ai.md §15; [file] */
-void player_orders_active(void);
+u16 player_orders_active(void);   /* (part B: returns DS:5BD4) */
 /* AP 1660:0787 — sim_world_ai.md §15; [file] */
 u16 ship_priority(u16 s);
 
@@ -314,9 +314,9 @@ void spawn_nop(void);
 /* AP 69d0:007d — sim_world_ai.md §13 */
 u16 flight_home(u16 f);
 /* AP 69d0:00c4 — sim_world_ai.md §13 */
-void message_text(u16 i);
+u32 message_text(u16 i);   /* (part B: DX:AX far text) */
 /* AP 69d0:00de — sim_world_ai.md §13 */
-void flight_wp_pos(u16 f);
+u16 flight_wp_pos(u16 f);
 /* AP 69d0:00f2 — sim_world_ai.md §13 */
 u32 waypoint_message(u16 f);
 /* AP 69d0:0129 — sim_world_ai.md §13 */
@@ -332,11 +332,11 @@ void lso_request(void);
 /* AP 6dfc:0413 — sim_world_ai.md §14 */
 u16 lso_can_request(void);
 /* AP 17fe:000b — sim_world_ai.md §13; [file] */
-u16 waypoint_pos(u16 a0);
+u16 waypoint_pos(u16 wp_ds);
 /* AP 51fb:0199 — sim_world_ai.md §13; [file] */
 void launch_intercept(u16 f, u16 tgt_ds);
 /* AP 69d0:0000 — sim_world_ai.md §13; [file] */
-u16 helpers_nop(u16 a0);
+u16 helpers_nop(u16 i);   /* (part B: DS:4601[i], not empty) */
 /* AP 69d0:000e — sim_world_ai.md §13; [file] */
 u16 ship_shape_of_type(u16 t);
 /* AP 69d0:001c — sim_world_ai.md §13; [file] */
@@ -484,7 +484,7 @@ u16 rockets_left(u16 p);
 /* AP 0deb:1718 — sim_world_ai.md §11 */
 void ships_land_check(void);
 /* AP 0deb:1afc — sim_world_ai.md §11; spec: (rec) */
-u16 target_value(u32 a0, u32 a1);
+u16 target_value(u32 rec, u32 grp);   /* (part B: two far pointers) */
 /* AP 0deb:1daf — sim_world_ai.md §11 */
 u16 place_damage_ratio(u16 place);
 /* AP 0deb:1e83 — sim_world_ai.md §11 */
@@ -502,7 +502,7 @@ u16 ship_attack_setup(u16 p, u16 ship);
 /* AP 0deb:18e6 — sim_world_ai.md §11; [file] */
 void g_attack_area_load(u16 area);
 /* AP 0deb:1b1f — sim_world_ai.md §11; [file]; spec: (rec) */
-u32 target_name(u32 a0, u32 a1);
+u32 target_name(u32 rec, u32 grp);
 /* AP 0deb:1cae — sim_world_ai.md §11; [file] */
 u16 place_attack_setup(u16 p, u16 place);
 

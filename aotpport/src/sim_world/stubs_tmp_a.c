@@ -85,16 +85,8 @@ WEAK s16 rng_mod(u16 st, s16 n)
     return (s16)((s32)(ap_rng_next(st) & 0x7FFF) % n);
 }
 
-/* ---- link stubs for functions of sim_world part B / sim_flow that are not built yet ------------------ */
-WEAK void ai_forget_plane(u16 p) {}
-WEAK void ai_was_hit(u16 p) {}
-WEAK u16 shot_quality(u16 aim, s16 base, s16 thr) { return 0; }
-WEAK u16 brain_set_state(u16 bx, u16 ax) { return 0; }
-WEAK u16 helpers_nop(u16 a0) { return 0; }
-WEAK u16 ship_shape_of_type(u16 t) { return 0; }
-WEAK u16 wp_current_pos(u16 cur) { return 0; }
-WEAK void park_on_carrier(u16 p, s16 spot) {}
-WEAK u32 target_name(u32 a0, u32 a1) { return 0; }
+/* ---- link stubs for functions of sim_flow that are not built yet (part B's AI stubs were removed when
+ * the AI landed) ---------------------------------------------------------------------------------------- */
 WEAK s16 approach_dt(u16 v_ds, s16 target, s16 step) { return DSS(v_ds); }
 WEAK s16 orbit_min_dist(u16 o_ds) { return 0; }
 WEAK void wcam_note_weapon(FarPtr w) {}
@@ -120,13 +112,6 @@ WEAK void cockpit_reset(void) {}
 WEAK void cockpit_leave(void) {}
 WEAK void lso_load(void) {}
 WEAK void lso_free(void) {}
-WEAK void g_attack_area_load(u16 area) {}
-WEAK u16 effect_frames_sum(u16 a, u16 b) { return 0; }
-WEAK void launch_intercept(u16 f, u16 tgt_ds) {}
-WEAK u16 waypoint_pos(u16 a0) { return a0; }
-WEAK u16 flight_home(u16 f) { return f; }
-WEAK u16 formation_offset_of(u16 p, u16 slot) { return 0x3716; }
-WEAK void park_on_airfield(u16 p, s16 spot) {}
 WEAK u16 res_load_set(u16 a0, u16 a1, u16 a2, u16 a3) { return 0; }
 WEAK void res_free(u16 p0_ds) {}
 
