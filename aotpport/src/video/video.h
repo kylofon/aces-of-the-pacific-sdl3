@@ -21,8 +21,12 @@ void floppy_off(void);
 s16 dec_floor(u16 p_ds);
 /* AP 368f:00b7 — video_misc.md §2 */
 s16 countdown_get(void);
+/* AP 368f:00ca — video_misc.md §2 */
+s16 countdown_wait(void);
 /* AP 368f:00e6 — video_misc.md §2 */
 void delay18(s16 n);
+/* AP 368f:00ff — video_misc.md §2 */
+void wipe(s16 x, s16 y, s16 w, s16 h, s16 ticks, s16 copy);
 /* AP 368f:017f — video_misc.md §2 */
 void wipe_in(s16 ticks);
 /* AP 368f:01a3 — video_misc.md §2 */
@@ -35,6 +39,8 @@ void copy_screen(void);
 void write_back(void);
 /* AP 368f:03c1 — video_misc.md §1 */
 void read_back(void);
+/* AP 368f:03cc — video_misc.md §1 */
+void write_bg(void);
 /* AP 368f:03d7 — video_misc.md §1 */
 void read_bg(void);
 /* AP 368f:03e2 — video_misc.md §1 */
@@ -46,7 +52,7 @@ s16 ap_fonts_load(void);
 
 /* ==== video/dac.c ================================================================================= */
 /* PS 0000:1692 / AP 0000:18fc — video_pictures.md Index; register inputs BH/CH/DH */
-void c2p_row(u16 a0, u16 a1, u8 bh, u8 ch, u8 dh);
+void c2p_row(u16 src_ds, u16 dst_ds);                /* (changed: the register inputs were junk) */
 /* AP 0000:185e — video_palette.md §8.2 */
 void dac_read(u16 dst, s16 first, s16 count);
 /* AP 0000:1a4e — no spec */
@@ -67,26 +73,27 @@ void gfx_poly_spans(FarPtr spans);
 void gfx_span_copy(FarPtr spans);
 /* INTRO 05da:1e21 / PS 16e3:2435 / AP 1d32:426f — video_ttm.md §12.1 */
 s16 gfx_cache_upload(u16 list_ds);
-/* INTRO 05da:24eb / PS 16e3:2aff / AP 1d32:4939 — platform.md §7.5; spec: (...) */
-void gfx_nib_put(u16 a0, u16 a1);
-/* INTRO 05da:24ef / PS 16e3:2b03 / AP 1d32:493d — platform.md §7.5; spec: (...) */
-void gfx_nib_or_hi(u16 a0, u16 a1);
+/* INTRO 05da:24eb / PS 16e3:2aff / AP 1d32:4939 — platform.md §7.5; entry 17's arguments (changed from (u16, u16)) */
+void gfx_nib_put(FarPtr src, u16 xb, u16 y, u16 w, u16 rows);
+/* INTRO 05da:24ef / PS 16e3:2b03 / AP 1d32:493d — platform.md §7.5; entry 18's arguments (changed) */
+void gfx_nib_or_hi(FarPtr src, u16 xb, u16 y, u16 w, u16 rows);
 /* INTRO 05da:2fb0 / PS 16e3:35c4 / AP 1d32:53fe — video_palette.md §5 */
 void gfx_copy_rect(s16 x, s16 y, s16 w, s16 h);
 /* INTRO 05da:2fbd / PS 16e3:35d1 / AP 1d32:540b — video.md §4.1 */
-void gfx_flip(s16 a0);
-/* INTRO 05da:35d8 / PS 16e3:3bec / AP 1d32:5a26 — video_ttm.md §15; last 2 word(s) unused by the original */
+void gfx_flip(s16 wait);
+/* INTRO 05da:35d8 / PS 16e3:3bec / AP 1d32:5a26 — video_ttm.md §15 */
 void gfx_get_rect(FarPtr dst, s16 x, s16 y, s16 w, s16 h);
-/* INTRO 05da:35dc / PS 16e3:3bf0 / AP 1d32:5a2a — shell_ui_toolkit.md §0.1; spec: (int w, int h) */
-s32 gfx_rect_size(u16 a0, u16 a1, u16 a2, u16 a3);
-/* INTRO 05da:3cfd / PS 16e3:4021 / AP 1d32:5e5b — video_rotate.md video — the rotated sprite (part of `vid; spec: (...) */
-void gfx_sprite_rotated_ind(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4, u16 a5, u16 a6, u16 a7, u16 a8);
-/* INTRO 05da:492f / PS 16e3:4c53 / AP 1d32:6a8d — video_ttm.md §7; last 4 word(s) unused by the original */
+/* INTRO 05da:35dc / PS 16e3:3bf0 / AP 1d32:5a2a — shell_ui_toolkit.md §0.1; entry 6 (changed from 4 words) */
+u32 gfx_rect_size(u16 w, u16 h);
+/* INTRO 05da:3cfd / PS 16e3:4021 / AP 1d32:5e5b — video_rotate.md; ljmp [rot_fn] with gfx_sprite_rotated's
+ * arguments (changed from 9 words) */
+void gfx_sprite_rotated_ind(u16 f_ds, s16 x, s16 y, u16 angle, s16 w, s16 h, s16 px, s16 py);
+/* INTRO 05da:492f / PS 16e3:4c53 / AP 1d32:6a8d — video_ttm.md §7 */
 void gfx_put_rect(FarPtr src, s16 x, s16 y, s16 w, s16 h);
-/* INTRO 05da:1e1d / PS 16e3:2431 / AP 1d32:426b — video_ttm.md §12.1; [file]; last 2 word(s) unused by the original */
+/* INTRO 05da:1e1d / PS 16e3:2431 / AP 1d32:426b — video_ttm.md §12.1; [file] */
 void gfx_cache_blit(u16 f_ds, s16 x, s16 y);
-/* INTRO 05da:1e38 / PS 16e3:244c / AP 1d32:4286 — video.md §2.4; [file]; spec: (frame* f, int x, int y, int flags) */
-void gfx_sprite_scn_ind(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4);
+/* INTRO 05da:1e38 / PS 16e3:244c / AP 1d32:4286 — video.md §2.4; ljmp [DS:15BA] (frame*, x, y, flags) */
+void gfx_sprite_scn_ind(u16 f_ds, s16 x, s16 y, s16 flags);
 /* INTRO 05da:2fb5 / PS 16e3:35c9 — video_ttm.md §6; [file] */
 void gfx_entry25(u16 a0);
 
@@ -122,7 +129,7 @@ void gfx_circle(s16 r, s16 xc, s16 yc);
 /* INTRO 05da:0b91 / PS 16e3:11a5 / AP 1d32:09ce — video_ttm.md §7 */
 s16 gfx_polygon(s16 n, u16 xs_ds, u16 ys_ds);
 /* INTRO 05da:3957 / PS 16e3:3c7b / AP 1d32:5ab5 — video_ttm.md §7 */
-void gfx_line(s16 x1, s16 a1, s16 x2, s16 y2);
+void gfx_line(s16 x1, s16 y1, s16 x2, s16 y2);
 /* INTRO 05da:48cb / PS 16e3:4bef / AP 1d32:6a29 — video_pictures.md §7 */
 s16 gfx_get_pixel(s16 x, s16 y);
 /* INTRO 05da:48fd / PS 16e3:4c21 / AP 1d32:6a5b — video_pictures.md §8; last 1 word(s) unused by the original */
@@ -135,10 +142,10 @@ void clip_hooks_install(FarPtr list);
 void clip_hooks_install_multi(FarPtr array);
 /* AP 1d32:1e9d — video_library.md §9.7 */
 void clip_hooks_remove(void);
-/* INTRO 05da:2893 / PS 16e3:2ea7 / AP 1d32:4ce1 — video_ttm.md §7; [file]; varargs: stack words as unsigned */
-void gfx_flood(s16 x, s16 y, s16 c, ...);
-/* INTRO 05da:45d3 / PS 16e3:48f7 / AP 1d32:6731 — video_library.md §9.2; [file]; last 3 word(s) unused by the original; varargs: stack words as unsigned */
-void gfx_last_bbox(u16 x1_ds, u16 y1_ds, u16 x2_ds, u16 y2_ds, ...);
+/* INTRO 05da:2893 / PS 16e3:2ea7 / AP 1d32:4ce1 — video_library.md §6; (x, y, c) (changed from varargs) */
+void gfx_flood(s16 x, s16 y, s16 c);
+/* INTRO 05da:45d3 / PS 16e3:48f7 / AP 1d32:6731 — video_library.md §9.2; four near int pointers (changed from varargs) */
+void gfx_last_bbox(u16 x1_ds, u16 y1_ds, u16 x2_ds, u16 y2_ds);
 
 /* ==== video/palette.c ============================================================================= */
 /* INTRO 05da:090e / PS 16e3:0f22 / AP 1d32:400e — video_palette.md §4.2 */
@@ -203,12 +210,27 @@ void pages_back_to_bg(void);
 void copy_bg_to_back(void);
 /* PS 22ce:00bc — shell_ui_options.md §4 */
 void copy_back_to_bg(void);
+/* PS 22ce:00d1 — video.md */
+void copy_bg_to_front(void);
 /* PS 22ce:00e6 — video.md §4.2 */
 void copy_back_to_front(void);
 /* PS 22ce:00fb — shell_ui.md §3.3 */
 void copy_front_to_back(void);
 
 /* ==== video/ps_ts.c =============================================================================== */
+/* PS 4818:0006 / 0011 / 093a — video_ts.md §4 */
+void bm_set_cap(u16 n);
+void bm_reset_cap(void);
+void bm_stub(void);
+/* PS 4915:0173 / AP 70b4:0000, PS 4915:02fb / AP 70b4:0188 — video_ts.md §6.1 */
+void curve4_draw(u16 xs_ds, u16 ys_ds);
+void bezier2_draw(s16 k, s32 x0, s32 x1, s32 x2, s32 y0, s32 y1, s32 y2);
+/* PS 4960:0001 / 003c / 00f6 / 0133 / 0213 — video_ts.md §6.2 */
+u16 str_rotbuf(FarPtr s);
+u16 src_name(FarPtr path);
+u16 stack_free(void);
+void stack_overflow(FarPtr file, s16 line);
+void stack_report(void);
 /* PS 4818:001c — video_ts.md §4 */
 void bm_draw_item_flat(FarPtr a0);
 /* PS 48ac:013a — video_ts.md §4 */
@@ -248,6 +270,27 @@ void ttm_shutdown(void);
 /* INTRO 1125:096a / PS 3b02:096b — video_palette.md §7; [file] */
 void ttm_update_rect(u16 x, u16 y, u16 w, u16 h);
 
+/* INTRO 1125:0006/02b7/02f8/0380/060e/065c/0685 (PS +1, AP 24fc) — video_ttm.md §4 */
+u16 ttm_peek(FarPtr p);
+s16 ttm_find(s16 id);
+void ttm_new_ctx(s16 frame, u16 id, u16 tag);
+FarPtr ttm_skip_str(FarPtr p);
+s16 ttm_run_frame_checked(s16 frame);
+void ttm_apply_pal(void);
+void ttm_free_all(void);
+/* INTRO 11d2:0148/01a6/053f/1546/15b3/1607/1630/165f/1688/19c4/19ea (PS +1, AP 2595) — video_ttm.md §5, §7, §11 */
+void ttm_sprite_col(u16 fr_ds, s16 x, s16 y, s16 flip, u8 col);
+s16 ttm_draw_op(s16 x, s16 y, s16 a2, s16 a3, s16 a4, s16 a5, s16 a6, u16 str_ds);
+s16 ttm_run_frame(s16 frame);
+s16 ttm_find_tag(u16 tag);
+u16 ttm_copy_arg(s16 count, FarPtr src);
+FarPtr ttm_cur_font_ptr(void);
+void ttm_cycle_add(s16 i, s16 dir);
+u16 ttm_page_by_index(s16 v);
+void ttm_wipe(s16 x, s16 y, s16 w, s16 h, s16 a4, u16 op);
+void ttm_wipe_delay(void);
+void ttm_wipe_copy(s16 x, s16 y, s16 w, s16 h);
+
 /* ==== video/ttm_update.c ========================================================================== */
 /* INTRO 0f48:023d / PS 39bd:023d / AP 26db:023a — video_ttm.md §12.1 */
 void mtx_free_row(s16 r);
@@ -281,6 +324,10 @@ void upd_free_all(void);
 void upd_discard(u16 src, u16 dst, u16 key);
 /* INTRO 10f5:0009 / PS 3ae6:000c — video_ttm.md §12.4; [file] */
 u16 ttm_rand(void);
+/* INTRO 10f5:006b / PS 3ae6:006e; 0fca:049b / 3a73:04a7; 0fca:06b9 / 3a73:06c5 (no callers) */
+void rnd_randomize(void);
+s16 upd_query(s16 x, s16 y, s16 w, s16 h, u16 dst, u16 key);
+void upd_move_list(u16 src, u16 dst, u16 key, u16 src2, u16 dst2, u16 key2);
 /* INTRO 1111:0001 / PS 3aee:0002 — video_ttm.md §11.2; [file] */
 void ttm_dissolve_timed(u16 x, u16 y, u16 w, u16 h, u16 dur);
 
@@ -303,11 +350,15 @@ void vqt_draw(u16 fr_ds, s16 x, s16 y, s16 flip);
  * §2.3, §3. gfx_init (video/gfx_init.c) "loads" it into the DOS block it allocates, fills the jump
  * table (INTRO DS:1938 / PS DS:3174 / AP DS:351A) with far pointers into that block and registers them
  * with codeptr_register_abs(); the library's one-instruction thunks (video/drv_thunks.c) and AP's
- * patched vectors (sim_flow, HANDOFFS C6) call through codeptr_lookup(). "C" entries take the words
- * of their far cdecl frame; "R" entries model their registers (parameter prefix = register). Pages:
- * write page drv[18], read page drv[16] (segments A000/A400/A800, cache AC00), platform/vga.h.
+ * patched vectors (sim_flow, HANDOFFS C6) call through codeptr_lookup() — use drv_entry(n) and the
+ * Drv*Fn types below. "C" entries take the words of their far cdecl frame; "R" entries model their
+ * registers (parameter prefix = register). Pages: write page drv[18], read page drv[16] (segments
+ * A000/A400/A800, cache AC00), platform/vga.h.
  * Open X5 decided: 13 writes 0 to a near int (out_ds); 9, 12, 16, 25, 26, 28, 39-48 are one no-op
- * function (retf); 19 and 24 have no known caller but are implemented as specified. */
+ * function (retf); 19 and 24 have no known caller but are implemented as specified.
+ * Signature changes (video owner): entries 36/37/38 take one more register each (SI = 2*row, BX = row,
+ * DX = row) that the driver ignores but AP's clip-list hooks (video_library.md §9.7) read; callers pass
+ * what the original has in that register. */
 FarPtr drv_init(u16 base, FarPtr callbacks);     /* 0/49 0000: sets drv[], row table; returns cs:00DA */
 void drv_glyph1(s16 bp_y, s16 dx_x, u16 cx_rows, FarPtr es_si_glyph);    /* 1 R 0E72 */
 void drv_line(s16 bx_x1, s16 cx_y1, s16 dx_x2, s16 si_y2);             /* 2 R 0753, colour drv[0E] */
@@ -339,6 +390,39 @@ void drv_cache_reset(void);                                              /* 32 C
 void drv_sprite_opaque(u16 frame_ds, s16 x, s16 y);                      /* 33 C 2128 */
 void drv_fade_step(u16 first, u16 count, u16 c, u16 l);                  /* 34 C 0C58 */
 void drv_dac_upload(u16 src_ds, u16 first, u16 count);                   /* 35 C 0BC2 */
-void drv_span_tex(u16 base_pair_ds, u16 extra, u16 table_ds, s16 dx_x, s16 cx_count, u16 es_page, u16 di_row); /* 36 R 0334 */
-void drv_span_cols(u16 es_page, u16 di_row, s16 dx_x, s16 cx_count, FarPtr ds_si_src, u16 bp_table_ds); /* 37 R 0438 */
-void drv_row_copy(u16 es_page, u16 di_row, s16 bx_x, s16 cx_count, FarPtr ds_si_src, bool cf_backwards); /* 38 R 064E */
+void drv_span_tex(u16 base_pair_ds, u16 extra, u16 table_ds, s16 dx_x, s16 cx_count, u16 es_page, u16 di_row, u16 si_row2); /* 36 R 0334 */
+void drv_span_cols(u16 es_page, u16 di_row, s16 dx_x, s16 cx_count, FarPtr ds_si_src, u16 bp_table_ds, u16 bx_row); /* 37 R 0438 */
+void drv_row_copy(u16 es_page, u16 di_row, s16 bx_x, s16 cx_count, FarPtr ds_si_src, bool cf_backwards, u16 dx_row); /* 38 R 064E */
+
+/* Calling a jump-table entry of the current program (the pointer stored in DS:tab + 4n, which AP code
+ * may have patched): ((DrvLineFn)drv_entry(2))(x1, y1, x2, y2). */
+CodeFn drv_entry(int n);
+typedef void (*DrvGlyphFn)(s16, s16, u16, FarPtr);                       /* 1 */
+typedef void (*DrvLineFn)(s16, s16, s16, s16);                           /* 2 */
+typedef void (*DrvSpriteFn)(u16, s16, s16);                              /* 3, 30, 33 */
+typedef void (*DrvRect4Fn)(s16, s16, s16, s16);                          /* 4 */
+typedef void (*DrvRectBufFn)(FarPtr, s16, s16, s16, s16);                /* 5, 7 */
+typedef u32  (*DrvRectSizeFn)(u16, u16);                                 /* 6 */
+typedef void (*DrvWord1Fn)(u16);                                         /* 8, 25, 28, 32 (arg ignored) */
+typedef void (*DrvHspanFn)(u16, u16, s16, s16, u8, u8, u16);             /* 10, 11 */
+typedef u32  (*DrvBmSizeFn)(u16, u16);                                   /* 13 */
+typedef void (*DrvBmLayoutFn)(u16, FarPtr, u32);                         /* 14 */
+typedef void (*DrvBmMergeFn)(FarPtr, FarPtr, u32);                       /* 15 */
+typedef void (*DrvNibFn)(FarPtr, u16, u16, u16, u16);                    /* 17, 18 */
+typedef void (*DrvColsXlatFn)(u16, u16, s16, s16, FarPtr, u16);          /* 19 */
+typedef void (*DrvFarFn)(FarPtr);                                        /* 20, 23, 27 */
+typedef u16  (*DrvGetPixelFn)(s16, s16);                                 /* 21 */
+typedef void (*DrvPutPixelFn)(s16, s16, u16);                            /* 22 */
+typedef void (*DrvXYFn)(s16, s16);                                       /* 24 */
+typedef void (*DrvSpriteFlipFn)(u16, s16, s16, u16);                     /* 29 */
+typedef u16  (*DrvCacheUploadFn)(u16);                                   /* 31 */
+typedef void (*DrvFadeFn)(u16, u16, u16, u16);                           /* 34 */
+typedef void (*DrvDacFn)(u16, u16, u16);                                 /* 35 */
+typedef void (*DrvSpanTexFn)(u16, u16, u16, s16, s16, u16, u16, u16);    /* 36 */
+typedef void (*DrvSpanColsFn)(u16, u16, s16, s16, FarPtr, u16, u16);     /* 37 */
+typedef void (*DrvRowCopyFn)(u16, u16, s16, s16, FarPtr, bool, u16);     /* 38 */
+
+/* ==== video/vid_test.c (developer aid) ============================================================ */
+/* AOTP_TEST=pictures | ttm; returns the exit code, or -1 when AOTP_TEST names neither. Needs a program
+ * context (call it where platform_dev_test runs). */
+int video_dev_test(void);
