@@ -26,3 +26,19 @@ report. The lead appends new requests from each report.
 - [ ] MinGW: a stub file whose weak functions are the only globals fails to link ("multiple definition
       of .weak.f."). Give every `stubs_tmp.c` one plain global anchor, e.g. `int <module>_stubs_anchor;`.
       (`video/stubs_tmp.c` needs it.)
+
+## lead (from platform, 2026-09-26)
+- [ ] Delete `game/placeholder.c` once the real mains link (platform's mains are weak until then).
+- [ ] symbols.csv lacks the RTL globals (private table `rtl_layouts` in `platform/rtl_dos.c`), AP `mtx_*`
+      globals and PS SCN-encoder state (hard-coded fallbacks in `loaders.c`, `scn_encode.c`); INTRO
+      `pal_slots`/`font_ptr` are not in the layout table under `pal_slot`/`font_glyphs`.
+
+## sim_flow (from platform)
+- [ ] AP loaders call `ap_fread_far_4bb7`, which must behave like `my_hread`.
+
+## video (from platform)
+- [ ] Driver entry 14 receives 5 arguments and entry 15 a 16-bit count; the current function types
+      are narrower (works for the loaders).
+
+## render3d / video (from platform's link of shell_data)
+- [ ] shell_data needs `mul32`, `lmid`, `atan2_32`, `ldist2` (PS 3d50 math library, owned by render3d).
