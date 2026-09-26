@@ -1281,17 +1281,19 @@ priority and volume, and drives the 7 pool nodes directly through the player stu
 | 32b8:0003 | — | **`sng_load(name)`** | yes |
 | 3312:000a | — | `sng_free(table)` | yes |
 | 32d5:0007 / 005a / 0093 | 16d5:0001 / 0054 / 008d | `snd_driver_close`, wait, wait tick (`DS:65EC`) | yes |
-| 2fca:0004, 2fdc:0000, 3048:0006, 3056:000b/007a, 3280:0009, 3299:0003, 32de:0008, 32e7:0005, 3303:0000, 3305:000c, 3308:000c, 330d:0001, 3318:0005 | 159b, 1617, 15ac, 1672, 164d, 16b6, 16de, 16e6, 1702, 1705, 1708, 170c, 1715 (by structure) | iterator, pool find, node new, unload, disable, play, enable, stop, … | **no**: their entry points (`3056:000b`, `3280:0009`, `32de:0008`) have no callers |
+| 2fca:0004, 2fdc:0000, 3048:0006, 3056:000b/007a, 3280:0009, 3299:0003, 32de:0008, 32e7:0005, 3303:0000, 3305:000c, 3308:000c, 330d:0001, 3318:0005 | 159b, 1617, 15ac, 1672, 164d, 16b6, 16de, 16e6, 1702, 1705, 1708, 170c, 1715 (by structure) | iterator, pool find, node new, unload, disable, play, enable, stop, … | **effectively no**: `3056:000b` has no caller; `snd_disable` `3280:0009` and `snd_enable` `32de:0008` are called only from `2466:0118` (`disable(−2)`, `disable(−1)` at `0138`/`0142`, `enable(−2)`, `enable(−1)` at `0157`/`0161`), the Windows task-switch wrapper `win_task_switch` (platform; `247d:0005` INT 2Fh 1600h/4680h, `247d:004b` INT 2Fh 1701h) that has **no caller and no stored far pointer** (likely dead); even if run it would only stop the pool (below) |
 
 AP DGROUP: `DS:2692` active, `DS:2693` patch no, `DS:262A` `"SSM:"` buffer (`262E` name part),
-`DS:2634[10]` driver codes, `DS:269D` driver number (FFFE failed), `DS:26A1` service timer handle
+`DS:2634[10]` driver codes, `DS:269D` driver number (FFFE failed), `DS:2699/269B` record-list head
+(**never written in AP** — only read by the iterator `2fca:0004` and by `3299:0003`; every
+record-API function therefore works on an empty list and only the pool `DS:65EE` is live), `DS:26A1` service timer handle
 (never set by AP: `sx_init` registers the client itself and discards the handle), `DS:26A3` SNG
 `INF:` table (near, class 8), `DS:26A5` driver block, `DS:26AD` disable state (unused path),
 `DS:65EE[7]` pool nodes (far), `DS:65EC` close-wait counter.
 
 `sng_load(name)` (32b8:0003): open the volume file if needed; find `SSM:` (`DS:267A`); every `SNG:`
-chunk (`DS:267F`) → `snd_res_read(f, size, class 7)` (RLE, whole resource, **not** device-filtered)
-into a local list (≤ 204); allocate `(n+1)·4` bytes class 6 (near) and copy the far pointers, 0
+chunk (`DS:267F`) → `snd_res_read(f, size, class 7)` (RLE, **device-filtered**, see below) into a
+local list (≤ 204); allocate `(n+1)·4` bytes class 6 (near) and copy the far pointers, 0
 terminated → return value (`sx_sim` keeps it in `DS:48A3`); then `INF:` (`DS:2688`) → `(n+1)·4`
 bytes class 8 at `DS:26A3`, `fread(2, n)`. The `INF:` bytes (loop, priority) are read only by the
 unused `snd_pool_play` path; `sx_sim` takes loop/priority from `SND1.DAT` (§12.3). Failure frees
@@ -1299,15 +1301,23 @@ everything, returns 0.
 
 Files: AP hard-codes `"sx1"` + `.OVL` (`DS:0372`, via `55a4:0000(name, "OVL")`), `"simsnds1.sng"`
 (`DS:0376`) and `"snd1"` + `.DAT` (`DS:036D`, `DS:05BC`), all in `M1SIM.DYN`. **`SX.OVL` and
-`SIMSNDS.SNG` (SIM2) are never loaded** by this AP build. Since `snd_res_read` is called with class
-7 but AP's version keeps whole resources, the player's `prepare` selects the AdLib track (§5.6).
+`SIMSNDS.SNG` (SIM2) are never loaded** by this AP build. AP's `snd_res_read` (`2fe4:0005`) is the INTRO/PS routine **without** the `DS:1F5D`
+"whole resource" test: classes 4 and 7 always keep only the track whose device byte equals the
+play id of `DS:269D` (switch `cs:2fe4:01ED`: 0 → 12h, 1 → 13h, 2 → 00h, 3 → 0Ch, 4 and 7 → 00h,
+5 and 6 → 13h, 7Eh → `DS:26AB`; **any other number, e.g. 88h (NLD) or FFFEh, returns NULL** = the
+load fails); other classes go unfiltered to `snd_read_all` `332f:000d`. `sx_init` calls `sng_load`
+after `snd_load_driver` has set `DS:269D`, so the SNG effects hold only the current driver's track
+(**corrected**: an earlier version of this section said AP keeps whole resources).
 
 ### 12.2 Start-up, switches, shutdown — V
 
 `sim_init` `4e0d:0000`: `DS:43B3` (sound driver, CONTROL.PRF word +2 read into `DS:43B1`, platform)
-is replaced by `DS:052E` when that is not −1. `main` `50c8:0008`: `-s` / `/s` is honoured only when
-`50c0:0080` returns non-zero (the standalone/debug start check, sim_flow): `-s` alone → `DS:0532 = 1`
-(**no sound**); `-s<n>` → `DS:0532 = 0`, `DS:052E = atol(n)`. Then:
+is replaced by `DS:052E` when that is not −1. `main` `50c8:0008`: `-s` / `/s` (lower case only) is honoured
+only in **debug mode**: `50c8:0000` (the same code as `50c0:0080`) returns `DS:053F`, which `main`
+sets to 1 only when `argv[1]` equals `"nlkle"` (`DS:0578`). Then `-s` alone → `DS:0532 = 1` (**no
+sound**); `-s<n>` → `DS:0532 = 0`, `DS:052E = atol(n)`. `-S` is **not** a sound switch (it shares
+the `-x` handler at `50c8:02dc`). `DS:0530` is never written (always 0). Outside debug mode
+`DS:052E` stays −1, the driver is `DS:43B3`, and driver 88h hits the error at `4e0d:0200`. Then:
 * `DS:0532 = 0`: `sx_init(ovl = "sx1.ovl", "snd1.dat", "simsnds1.sng", DS:43B3, DS:0530)` (`4e0d:01db`);
   if the driver is 88h (NLD) and `50c8:0000` returns 0 → error message (`2494:0127`, string `DS:386B`
   +E4h). `sx_enable(DS:43B9)` at `4e0d:0227` (CONTROL.PRF byte +8 = effects on), and `sx_enable(-1)`
@@ -1394,7 +1404,7 @@ set to 40; 1 (TAN) → delays 8/8, bend channel 0; **2 (ADL) and 4 → delays 8/
 | 0034 | `sx_release(type)` | `tok_hold(489F, T[type].7, T[type].6); tok_hold(489D, T[type].7, T[type].5)` |
 | 008A | `tok_busy(list)` | count tokens whose timer has not expired, free the expired ones |
 | 00FB | `sx_age_oneshots()` (near) | for each one-shot i: if `age < 086C` and not started → keep, `age++`; not started (waited too long) → drop; started and its node's signal = FF (ended) → drop, `timer_set(0874, 087C)`, `sx_release(type)`; else keep. Compacts `4C3F`, updates `48C3` |
-| 01DE | `sx_volume(src, dist)` (near) | if `src.4 == 0`: `vol = maxdist[type] ? 7Fh − sdiv32(dist << 7, maxdist[type]) : 7Fh`, capped at 7Fh → `src.4` |
+| 01DE | `sx_volume(src, s16 dist)` (near) | if `src.4 == 0`: `vol = maxdist[type] ? 7Fh − div32((s32)dist << 7, maxdist[type]) : 7Fh` (`dist` sign-extended from 16 bits; divide `277a:3dc1`), capped at 7Fh → `src.4`. A one-shot's volume is therefore frozen at its first audible frame |
 | 0244 | `sx_collect(dst, src[], n)` (near) | for each source: `d = pos ? dist3(48B1, *pos) : 0` (`277a:3b3c`, render3d math); if `d < 200000`: `d >>= 3`; if `!maxdist[type] || maxdist[type] > d`: append to `dst`, `sx_volume(src, d)`; returns count |
 | 02DF | `sx_collect_all()` | one-shots then continuous → `48E3`, count `48BF` |
 | 030B | `sx_substitute(flag)` | if flag: every audible source with `T[type].3 ≠ 0` takes that type |
@@ -1409,7 +1419,7 @@ set to 40; 1 (TAN) → delays 8/8, bend channel 0; **2 (ADL) and 4 → delays 8/
 | 05D8 | `sx_trim()` | usage = 0; for the sorted sources i: playing and (`i ≥ 7` or not fitting) → queue its node for stop, `C = FF`; every playing source and every waiting one with `i < 7` is reserved (Quirk: stopped ones too) |
 | 066F | `sx_free_node()` | first pool index with signal FF, else −1 |
 | 0698 | `node_clear(node)` | `memset(node, 0, 17Ah)` |
-| 06B3 | `sx_doppler(src, node)` | if `src.2`: `p = *pos + *vel`; `d = dist3(p, 48A5) − dist3(*pos, 48B1)`; `d = clamp(d, −1000, 1000)`; else d = 0; `bend = clamp(src.6 + d, 100, 16000)`; `snd_node_pitch_bend(node, bend, 087E)` |
+| 06B3 | `sx_doppler(src, node)` | if `src.2` (velocity): `p` = copy of `*pos`, `p += *vel` (`277a:530c`); `d = dist3(48A5 = previous listener, *pos) − dist3(48B1 = current listener, p)` (s32); `d = clamp((s16)d, −1000, 1000)` (`35ff:0009` applied to the **low 16 bits** of the 32-bit difference, result sign-extended); else `d = 0`; `bend = clamp((s16)(src.6 + d), 100, 16000)`; `snd_node_pitch_bend(node, bend, DS:087E)` (`3060:00f2`). (**Corrected**: listener/position pairing and the 16-bit clamp.) |
 | 0778 | `sx_eff_vol(src)` | bit 1 ? 0 : `src.4` |
 | 0798 | `sx_apply()` | `n = min(48BF, 7)`; stop the queued nodes (`sx_node_stop`); `sx_budget_start()`; for i < n, `prio = n − i`: not playing → if `sx_can_start`: `k = sx_free_node()` (none: skip); `src.C = k`; `sx_reserve`; `node_clear`; `15D = 1` if bit 0; `16E = src.0`; `170 = type`; `166 = sng[type]`, `16A = res_skip_header`; `15E = sx_eff_vol`; `15C = prio`; `158 = FF`; `8 = &node[16A]`; **play(node, 0)**; `sx_doppler`. Playing → `snd_node_volume(node, sx_eff_vol)`, `snd_node_set_priority(node, prio)`, `sx_doppler` |
 | 095E | **`sx_update(listener, flag)`** (far, per frame) | if active: clear the stop list; `sx_age_oneshots`; `sx_collect_all`; `sx_substitute(flag)`; `sx_match_nodes`; `sx_sort`; `sx_trim`; `sx_apply`; `48A5 = 48B1; 48B1 = *listener` |
@@ -1451,15 +1461,15 @@ ticks after release.
 | 655d:1869 | same | `sx_play` | 1 | player hit (with message `1614:02ce`) |
 | 085b:013c | proximity/collision | `sx_play` (bend 1F40h) | 1 | mid-air collision / hit at the player |
 | 088a:02a2 / 02c4, 02fc, 0400 | ground/ship impact, crash | `sx_play` | 17h (23) / 12h (18) | crash explosion / impact (splash or ground) |
-| 088a:0543 | same | `sx_play` | `si` (variable) | object-dependent impact |
+| 088a:0543 | explosion / hit sound selector `088a:045f(w, by)` (sim_world_dmg) | `sx_play(t, &DS:5604[k], 0, by == player)` | variable | the weapon position is copied into a 6-entry ring `DS:5604` (index `DS:1398`); weapon class `w+18h & 0Fh`: bombs (`DS:1344`) by MEC index `(w+18h & 3F0h) >> 4`: ≤ 3 → 4, 4 → 5, else 6; torpedo (`DS:19EC`) → 6; rockets (`DS:193A`) → 4; bullets (`DS:1348`) only when `DS:19F2 ≠ 0` (cockpit view): `by == player` → 14h (20), else `w+16h == player` → 18h (24), else none; flak (`DS:54B5`) → 8 |
 | 1560:020b | weapon impacts | `sx_play` | 17h | explosion |
-| 0688:0642 | bombs.c | `sx_play` (player) | 2 | bomb falling (continuous) |
+| 0688:0642 | bombs.c | `sx_play` (player) | 2 | bomb falling (continuous). Quirk: passes pos/vel pointers **into its own stack frame**; `sx_update` dereferences them later (stale stack data; port: keep copies of the values in the source) |
 | 0deb:0089 | g_attack.c | `sx_play` (player, if `DS:19F2`) | 0 | (G) |
 | 5440:09f2 | sim input/step `5440:096a` | `sx_play` | 15h (21) | when `0deb:1500(player)` (G: warning, e.g. stall) |
 | 5440:1211, 123a, 1262, 128e | `5440:0aee` (sim input) | `sx_play` | 0Eh, 0Dh ×3 | cockpit events gated by `DS:19F2` (G: gear/flaps/hook) |
 | 47a8:0d81, 0db6, 0e49; 6396:0359, 0390; 6b4d:0102 | forms, alrtlib2.c, control.c dialogs | `sx_play` | 0Fh (15) | UI click, when `DS:3BCB & 10h` |
 | 606e:003c | rlsmgfx.c | `sx_play` | 10h (16) | (G) |
-| 5d3c:005a | VCR glue | `sx_update(camera pos, DS:19F2 == 0)` | | the per-frame update; the flag selects the substitute types (§12.3) |
+| 5d3c:005a | VCR glue | `sx_update(camera pos, DS:19F2 == 0)` | | the per-frame update. `DS:19F2` = view inside the cockpit: the substitute types (§12.3) apply only outside the cockpit; types 0, 13, 14, 20, 24 are only started from cockpit-gated call sites |
 | 5440:13aa, 6163:003f | | `sx_clear_continuous` | | |
 | 5c5f:016e, 5cde:000e/01b8/024d/0265/02b9/037b, 5d56:00a3, 5e06:01a4/0920 | vcr2.c, VCR, vcr_gfx.c | `sx_stop_all` | | film playback / view changes |
 | 5cde:03c4 | VCR | `sx_is_on` | | |
@@ -1495,7 +1505,7 @@ the individual SIMSNDS1 sounds beyond this table stay open.
   (the API and the game address nodes by far pointer; the overlapping per-channel tables need the
   byte layout). The driver model keeps its state in a copy of the 8070-byte image (as
   `aotpsnd.AdlibDriver`), or named arrays of the same sizes.
-* **Resources**: INTRO/PS keep only the device track (§6.3). The port can do the same (faithful,
+* **Resources**: INTRO/PS/AP keep only the device track (§6.3, AP §12.1). The port can do the same (faithful,
   saves nothing that matters) or keep the whole resource — equivalent for playback since `prepare`
   selects the same track, but the header rewrite (§5.6) needs ≥ 0x24 writable bytes at the start.
 * **Reference**: `tools/aotpsnd.py dro` renders every sound through a line-by-line Python model of
@@ -1548,9 +1558,20 @@ the individual SIMSNDS1 sounds beyond this table stay open.
 * **sim_flow / sim_world**: AP sound goes only through `sx_sim` (§12): per-frame `sx_update` from
   `5d3c:005a` (camera position, flag `DS:19F2 == 0`), the play calls and types in §12.5 (engine
   tables `DS:02D4`/`DS:02DA`, gun sound `+1362h`), `sx_stop_all` from the VCR modules, `sx_on/off`
-  from the prefs dialog `6b4d:0480`, `-s`/`-s<n>` (`DS:0532`/`DS:052E`) in `main`, `sx_init` /
-  `sx_enable(DS:43B9)` in `sim_init`, `sx_shutdown` in `sim_exit`. Still to name: `DS:19F2`, the
-  gates at `5440:0aee` (types 0Dh/0Eh/15h) and `50c0:0080`. Token lists `3546` and the timer objects
+  from the prefs dialog `6b4d:0480`, `-s`/`-s<n>` (`DS:0532`/`DS:052E`; debug mode only: `DS:053F`
+  is set when `argv[1] == "nlkle"` and read by `50c8:0000` = `50c0:0080`) in `main`, `sx_init` /
+  `sx_enable(DS:43B9)` in `sim_init`, `sx_shutdown` in `sim_exit`. `DS:19F2` = inside-cockpit view.
+  Still to name: the gates at `5440:0aee` (types 0Dh/0Eh/15h).
+* **sim_world_fm** (§4.2, engine sound): the pitch bend of the player-engine call `4bf9:00e3` comes
+  from the jump table `cs:4bf9:024B` = {6Eh, 84h, 9Ah, C6h, C6h, B0h} on the engine type `DAT+75h`:
+  type 0 `(rpm·13B0h >> 10) + 28A0h`, type 1 `(rpm·0DFAh >> 10) + 28A0h`, type 2 `(rpm·578h >> 10) +
+  3908h`, type 5 `(rpm·0DFAh >> 10) + 28A0h` (32-bit imul of the sign-extended rpm, `sar 10`, 16-bit
+  add); types 3, 4 and > 5 leave `CX` as the caller had it (quirk; the port uses 2000h).
+  `rpm = DS:3FDE`, or `(DS:3FDE + DS:3FE0) sar 1` when `FMD+90h > 1` (more than one engine). The
+  "type 5 → 2 when the driver is 0 (STD)" remap is done by acedata `45cc:04f8` on `DAT+75h`, not by
+  the sound code.
+* **sim_world_wpn**: the rockets class global is `DS:193A` (written by `1a32:000b`, compared by the
+  sound selector `088a:045f`), not `DS:1939` (sim_world_wpn.md already carries this correction). Token lists `3546` and the timer objects
   `4b31` (`DS:31E4`, `DS:31E5`) belong to sim_flow; `277a:3b3c` to render3d.
 
 ## 16. Open questions

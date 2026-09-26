@@ -1,0 +1,216 @@
+exe,kind,address,name,type,owner,other_names,notes
+ps,func,2777:0000,air_open,void far(),shell_data,,load AIR<n>.DAT (table_load air/dat 0x18 stride 15)
+ps,func,2777:0077,ac_exists,int far(int id),shell_data,,table_rec != NULL
+ps,func,2777:0097,ac_count,int far(),shell_data,,DS:5EC8
+ps,func,2777:00a1,ac_name,char far* far(int id),shell_data,,tail text
+ps,func,2777:0101,ac_plural,char far* far(int id),shell_data,,string after the name
+ps,func,2777:012f,ac_has_service,"char far(int id, char s)",shell_data,,mask +02 & DS:1E08[s]
+ps,func,2777:0193,ac_side,char far(int id),shell_data,,side group of first service in mask
+ps,func,2777:0204,ac_class,char far(int id),shell_data,,+04 class/role 0..3
+ps,func,2777:0252,ac_selfid,char far(int id),shell_data,,+05
+ps,func,2777:02a0,ac_date,u16 far(int id),shell_data,,date_make(+06); uncalled
+ps,func,2777:02f8,ac_alt_band,char far(int id),shell_data,,+09 TABLES 652E index
+ps,func,2777:0346,ac_multiseat,char far(int id),shell_data,,+0A; uncalled
+ps,func,2777:0394,ac_b0b,char far(int id),shell_data,,+0B; uncalled
+ps,func,2777:03e2,ac_range,long far(int id),shell_data,,u32 +0C
+ps,func,2777:0434,ac_range_ext,long far(int id),shell_data,,u32 +10 drop tank range
+ps,func,2777:0486,ac_cruise_alt,long far(int id),shell_data,,u32 +14 << 2
+ps,func,2777:04df,air_close,void far(),shell_data,,
+ps,func,2777:04fa,acl_build,"void far(char service, u8 flags, char slot, u8 need_tanks)",shell_data,,aircraft choice list DS:5AFC
+ps,func,2777:05c0,acl_next,char far(char id),shell_data,,first acceptable id >= id
+ps,func,2777:06fd,acl_select,"void far(char slot, char plural)",shell_data,,
+ps,func,2777:070e,acl_count,int far(),shell_data,,
+ps,func,2777:0724,acl_id,int far(int i),shell_data,,
+ps,func,2777:0741,acl_name,char* far(int i),shell_data,,strpool copy of (plural) name
+ps,func,27f0:0004,medals_open,void far(),shell_data,,MEDALS.DAT
+ps,func,27f0:00f5,medal_name,char* far(char m),shell_data,,
+ps,func,27f0:010d,medal_for_service,"char far(char m, char s)",shell_data,,DS:1E2C
+ps,func,27f0:013c,medal_is_wound,int far(char m),shell_data,,m == 0 || m == 11
+ps,func,27f0:0155,medal_req,"void far(char m, s16 *out4)",shell_data,,
+ps,func,27f0:0191,medals_close,void far(),shell_data,,
+ps,func,280a:000a,flight_read_cb,void far(void far *el),shell_data,,list callback: u8 + 2 dated lists
+ps,func,280a:006b,flight_free_cb,void far(void far *el),shell_data,,
+ps,func,280a:00af,flight_open,void far(),shell_data,,FLIGHT<module>.DAT into DS:5ED2; DS:5EDC end date
+ps,func,280a:0110,flight_planes,"u8 far(char service, char role, u16 date)",shell_data,,keyed lookup list A
+ps,func,280a:021b,flight_formation,"u8 far(char service, char role, u16 date)",shell_data,,keyed lookup list B
+ps,func,280a:032c,flight_formations,"char far(char service, char role, u16 date, s8 *out)",shell_data,,formation chooser list
+ps,func,280a:0431,flight_close,void far(),shell_data,,
+ps,func,284f:0007,date_make,u16 far(s8 far *mdy),shell_data,,days since 1 Jan 1900
+ps,func,284f:0109,date_weekday,int far(u16 date),shell_data,,uncalled
+ps,func,284f:0131,date_split,"u8 far* far(u16 date, u8 far *out)",shell_data,,"{month, day, year-1900}"
+ps,func,284f:021c,date_text,"char* far(u16 date, char *buf)",shell_data,,"""%s %d, %d"" upper"
+ps,func,284f:026b,date_text_short,"char* far(u16 date, char *buf)",shell_data,,"""%s %d, '%d"" upper"
+ps,func,284f:02b7,date_vj_day,u16 far(),shell_data,,15 Aug 1945; uncalled
+ps,func,287b:0009,campaign_read_cb,void far(void far *rec),shell_data,,CMP record reader
+ps,func,287b:00e1,campaign_free_cb,void far(void far *rec),shell_data,,frees squadron list
+ps,func,287b:0104,campaign_load,void far(char set),shell_data,,"CMP<n>.DAT, FF = all"
+ps,func,287b:024c,campaign_loaded,char far(),shell_data,,DS:1F3C
+ps,func,287b:0256,campaign_count,int far(),shell_data,,
+ps,func,287b:026e,campaign_name,char* far(int id),shell_data,,strpool copy
+ps,func,287b:02d7,campaign_b02,char far(int id),shell_data,,uncalled
+ps,func,287b:0325,campaign_has_service,"char far(int id, char s)",shell_data,,
+ps,func,287b:0389,campaign_start,u16 far(int id),shell_data,,
+ps,func,287b:03e1,campaign_end,u16 far(int id),shell_data,,
+ps,func,287b:0439,campaign_has_squad,"char far(int id, int sq)",shell_data,,
+ps,func,287b:04b5,campaign_available_after,"int far(u16 date, char s)",shell_data,,
+ps,func,287b:051f,campaign_exists,int far(int id),shell_data,,
+ps,func,287b:053f,campaign_first,int far(),shell_data,,
+ps,func,287b:0556,campaign_close,void far(),shell_data,,
+ps,func,287b:056a,cmptext_open,int far(),shell_data,,CMPTEXT<n>.DAT
+ps,func,287b:05ec,cmptext_intro,char far* far(int id),shell_data,,
+ps,func,287b:062a,cmptext_end,char far* far(int id),shell_data,,second string
+ps,func,287b:0686,cmptext_close,void far(),shell_data,,
+ps,func,28e4:000b,missinf_read_cb,void far(void far *rec),shell_data,,u8 area + 5 dated lists
+ps,func,28e4:00c6,missinf_free_cb,void far(void far *rec),shell_data,,
+ps,func,28e4:0152,missinf_area,char far(int i),shell_data,,
+ps,func,28e4:019f,missinf_open,void far(),shell_data,,MISSINF<n>.DAT; DS:5F12 end date
+ps,func,28e4:0222,missinf_count,int far(),shell_data,,
+ps,func,28e4:0237,missinf_find,int far(char area),shell_data,,-1 if none
+ps,func,28e4:0270,mi_target_kind,"char far(int i, char service, u16 date)",shell_data,,"RNG pick 2 (0 ships, 1 land)"
+ps,func,28e4:03a2,mi_role_land,"char far(int i, char service, u16 date)",shell_data,,RNG pick 4
+ps,func,28e4:04da,mi_role_ships,"char far(int i, char service, u16 date)",shell_data,,RNG pick 4
+ps,func,28e4:0612,mi_enemy_service,"char far(int i, char side, u16 date)",shell_data,,RNG pick 11
+ps,func,28e4:074a,mi_ground_weights,"void far(int i, u16 date, u8 *out4)",shell_data,,no RNG
+ps,func,28e4:0820,missinf_close,void far(),shell_data,,
+ps,func,2968:0006,wldfgen_read_cb,void far(void far *rec),shell_data,,
+ps,func,2968:0049,wldfgen_free_cb,void far(void far *rec),shell_data,,
+ps,func,2968:0075,wldfgen_open,void far(),shell_data,,WLDFGEN<n>.DAT; DS:5F22 end date
+ps,func,2968:00f9,wf_count,int far(),shell_data,,
+ps,func,2968:010e,wf_area,char far(int i),shell_data,,
+ps,func,2968:015b,wf_aircraft,"char far(int i, char service, char role, u16 date)",shell_data,,RNG pick 3/2
+ps,func,2968:0313,wf_quality,"char far(int i, char service, u16 date)",shell_data,,pilot quality class
+ps,func,2968:0446,wldfgen_close,void far(),shell_data,,
+ps,func,29ae:0001,convoy_open,void far(),shell_data,,CONVOY<n>.DAT
+ps,func,29ae:0078,convoy_count,int far(),shell_data,,uncalled
+ps,func,29ae:0082,convoy_get,"void far* far(void far *dst, int id)",shell_data,,13-byte copy
+ps,func,29ae:00e3,convoy_weight,u8 far(int id),shell_data,,
+ps,func,29ae:0131,convoy_close,void far(),shell_data,,
+ps,func,29c2:000c,ship_read_cb,void far(void far *rec),shell_data,,2 bytes + 6 dated lists
+ps,func,29c2:00fc,ship_free_cb,void far(void far *rec),shell_data,,
+ps,func,29c2:01a2,ship_class_w0,"char far(void far *rec, u16 date)",shell_data,,RNG pick 3
+ps,func,29c2:01f8,ship_class_w1,"char far(void far *rec, u16 date)",shell_data,,RNG pick 3
+ps,func,29c2:024e,ship_class_w2,"char far(void far *rec, u16 date)",shell_data,,RNG pick 3
+ps,func,29c2:02a4,ship_convoys_s0,"char far(void far *rec, char side, u16 date, u8 *out3)",shell_data,,
+ps,func,29c2:03cc,ship_convoys_s1,"char far(void far *rec, char side, u16 date, u8 *out3)",shell_data,,
+ps,func,29c2:04f4,ship_convoys_s2,"char far(void far *rec, char side, u16 date, u8 *out3)",shell_data,,
+ps,func,29c2:061c,ship_open,void far(),shell_data,,SHIP<n>.DAT; DS:5F34 end date (force 0)
+ps,func,29c2:06a0,ship_count,int far(),shell_data,,
+ps,func,29c2:06b5,ship_area,char far(int i),shell_data,,
+ps,func,29c2:0704,ship_kind,char far(int i),shell_data,,
+ps,func,29c2:0752,ship_pick_class,"char far(int i, char q, u16 date)",shell_data,,
+ps,func,29c2:080c,ship_convoys,"char far(int i, char cls, char side, u16 date, u8 *out3)",shell_data,,falls back to untried classes
+ps,func,29c2:092b,ship_close,void far(),shell_data,,
+ps,func,2a56:0006,form_pos_read_cb,void far(void far *b),shell_data,,1 byte
+ps,func,2a56:002d,form_el_read_cb,void far(void far *el),shell_data,,
+ps,func,2a56:0070,form_read_cb,void far(void far *rec),shell_data,,
+ps,func,2a56:00b8,form_el_free_cb,void far(void far *el),shell_data,,
+ps,func,2a56:00e4,form_free_cb,void far(void far *rec),shell_data,,
+ps,func,2a56:0114,form_open,int far(),shell_data,,FORM<n>.DAT
+ps,func,2a56:0185,form_count,int far(),shell_data,,
+ps,func,2a56:019a,form_name,char far* far(int id),shell_data,,
+ps,func,2a56:01fa,form_layout,"void far(int id, char planes, u8 *pos, char *n)",shell_data,,
+ps,func,2a56:02db,form_close,void far(),shell_data,,
+ps,func,2a85:0006,station_open,void far(),shell_data,,STAT<n>.DAT
+ps,func,2a85:007d,station_count,int far(),shell_data,,uncalled
+ps,func,2a85:0087,station_count_area,int far(u8 area),shell_data,,uncalled
+ps,func,2a85:00f1,station_get,"void far(int st, u16 *rec, u16 *area)",shell_data,,
+ps,func,2a85:0127,station_area,u8 far(int st),shell_data,,
+ps,func,2a85:014d,station_in_area,"int far(int st, u8 area)",shell_data,,uncalled
+ps,func,2a85:0180,station_is_carrier,u8 far(int st),shell_data,,
+ps,func,2a85:01a7,station_find,"int far(u16 rec, u8 area, char carrier)",shell_data,,
+ps,func,2a85:0216,station_close,void far(),shell_data,,
+ps,func,2a85:0231,stattxt_open,void far(),shell_data,,text_load stattxt stride 100
+ps,func,2a85:027c,station_name,char far* far(int st),shell_data,,
+ps,func,2a85:02c1,stattxt_close,void far(),shell_data,,
+ps,func,2ab3:0001,ord_read_cb,void far(void far *rec),shell_data,,11 loadouts
+ps,func,2ab3:0101,ord_free_cb,void far(void far *rec),shell_data,,
+ps,func,2ab3:013b,ord_open,void far(),shell_data,,ORDNCE<n>.DAT
+ps,func,2ab3:01bd,ord_count_ids,int far(),shell_data,,uncalled
+ps,func,2ab3:01c7,ord_n,"int far(int type, char L)",shell_data,,
+ps,func,2ab3:021d,ord_items,"void far(int type, char L, s16 *cnt, s16 *code)",shell_data,,
+ps,func,2ab3:02d1,ord_gun_rounds,"int far(int type, s16 *out)",shell_data,,loadout 0 extra word
+ps,func,2ab3:0348,ord_mode,"u8 far(char mtype, char side)",shell_data,,DS:1FB9 table
+ps,func,2ab3:03a7,ord_pick,"char far(char mtype, char type, char longrange, char side)",shell_data,,"RNG pick 3 {50,30,20}"
+ps,func,2ab3:0504,ord_has_droptank,"char far(int type, char L)",shell_data,,
+ps,func,2ab3:0557,ord_any_droptank,char far(int type),shell_data,,
+ps,func,2ab3:057f,ord_close,void far(),shell_data,,
+ps,func,2ab3:059a,ordtxt_open,int far(),shell_data,,ORDTXT<n>.DAT
+ps,func,2ab3:061c,ordtxt_name,char far* far(int code),shell_data,,
+ps,func,2ab3:065a,ordtxt_plural,char far* far(int code),shell_data,,
+ps,func,2ab3:06b7,ordtxt_close,void far(),shell_data,,
+ps,func,2b1f:000c,ang_to_deg,int far(u16 a),shell_data,,a*90>>14
+ps,func,2b1f:0029,deg_to_ang,u16 far(int d),shell_data,,uncalled
+ps,func,2b1f:0049,deg_norm,int far(int d),shell_data,,uncalled
+ps,func,2b1f:0069,pitch,"s16 far(pos far *a, pos far *b)",shell_data,,
+ps,func,2b1f:00b4,heading,"u16 far(pos far *a, pos far *b)",shell_data,,3d50:225a - 0x4000
+ps,func,2b1f:00f9,heading_deg,"int far(pos far *a, pos far *b)",shell_data,,
+ps,func,2b1f:0121,project,"void far(pos far *a, u16 ang, long d, pos *out)",shell_data,,x/z only
+ps,func,2b1f:0189,rotate2,"s16* far(s16 *v, u16 ang)",shell_data,,uncalled
+ps,func,2b1f:021d,dist,"long far(pos far *a, pos far *b)",shell_data,,3d50:01e6
+ps,func,2b42:0002,imul32x32,"near 64-bit(long a, long b)",shell_data,,result DX:AX:CX:BX
+ps,func,2b42:00ae,fixmul14,"long far(long a, int b)",shell_data,,(a*b)>>14
+ps,global,DS:1E08,ac_service_bits,u16[11],shell_data,,1 << (service+1)
+ps,global,DS:1E1E,air_loaded,u8,shell_data,,
+ps,global,DS:1E1F,acl_class_bits,u8[4],shell_data,,"{04,08,10,20}"
+ps,global,DS:5AFC,acl,struct[3] x 0x143,shell_data,,"+0 service, +2 flags, +3 u16 id[160], +141 count"
+ps,global,DS:5EC5,acl_slot,s8,shell_data,,
+ps,global,DS:5EC6,acl_need_tanks,u8,shell_data,,
+ps,global,DS:5EC7,acl_plural,u8,shell_data,,
+ps,global,DS:5EC8,ac_id_count,u16,shell_data,,
+ps,global,DS:5ECA,air_table,u16,shell_data,,extens slot
+ps,global,DS:5ECC,medal_text,char*,shell_data,,
+ps,global,DS:5ECE,medal_recs,near ptr,shell_data,,11-byte records
+ps,global,DS:5ED0,medal_count,u16,shell_data,,
+ps,global,DS:1E2C,medal_service_bits,u8[11],shell_data,,"{02,04,08,10,20,0..}"
+ps,global,DS:1E46,flight_loaded,u8,shell_data,,
+ps,global,DS:5ED2,flight_list,list(10),shell_data,,per service 21-byte elements
+ps,global,DS:5EDC,flight_enddate,u16,shell_data,,
+ps,global,DS:1E52,date_epoch,u32,shell_data,,2415033
+ps,global,DS:1E59,date_vj,u8[3],shell_data,,"{7,15,45}"
+ps,global,DS:1E5C,month_len,u8[12],shell_data,,Feb at 1E5D rewritten
+ps,global,DS:1E68,month_name_long,char*[12],shell_data,,
+ps,global,DS:1E80,month_name_short,char*[12],shell_data,,
+ps,global,DS:1F3C,campaign_loaded_flag,u8,shell_data,,
+ps,global,DS:1F3D,cmptext_table,u16,shell_data,,extens slot
+ps,global,DS:1F26,campaign_service_bits,u16[11],shell_data,,
+ps,global,DS:5EDE,campaign_file_counts,u16[9],shell_data,,
+ps,global,DS:5EF0,campaign_items,far ptr,shell_data,,items of the resident set
+ps,global,DS:5EF4,campaign_list,list(10),shell_data,,
+ps,global,DS:5EFE,campaign_all,u8,shell_data,,set == FF
+ps,global,DS:5EFF,campaign_table,u16,shell_data,,extens slot
+ps,global,DS:5F01,campaign_first_id,u16,shell_data,,
+ps,global,DS:5F03,campaign_set_count,u16,shell_data,,
+ps,global,DS:5F05,campaign_total_ids,u16,shell_data,,
+ps,global,DS:1F54,missinf_loaded,u8,shell_data,,
+ps,global,DS:5F08,missinf_list,list(10),shell_data,,
+ps,global,DS:5F12,missinf_enddate,u16,shell_data,,
+ps,global,DS:5F14,missinf_table,u16,shell_data,,extens slot
+ps,global,DS:1F62,wldfgen_loaded,u8,shell_data,,
+ps,global,DS:1F63,wf_zero_w,s16[3],shell_data,,zeros
+ps,global,DS:1F69,wf_role_index,u8[5],shell_data,,"{0,3,5,7,9}"
+ps,global,DS:5F16,wldfgen_list,list(10),shell_data,,
+ps,global,DS:5F20,wldfgen_table,u16,shell_data,,extens slot
+ps,global,DS:5F22,wldfgen_enddate,u16,shell_data,,
+ps,global,DS:1F7A,convoy_loaded,u8,shell_data,,
+ps,global,DS:5F24,convoy_table,u16,shell_data,,extens slot
+ps,global,DS:5F26,convoy_count_ids,u16,shell_data,,
+ps,global,DS:1F86,ship_loaded,u8,shell_data,,
+ps,global,DS:1F87,ship_tried_init,u8[3],shell_data,,zeros
+ps,global,DS:5F28,ship_list,list(10),shell_data,,
+ps,global,DS:5F32,ship_table,u16,shell_data,,extens slot
+ps,global,DS:5F34,ship_enddate,u16,shell_data,,
+ps,global,DS:1F94,form_loaded,u8,shell_data,,
+ps,global,DS:5F36,form_list,list(10),shell_data,,
+ps,global,DS:5F40,form_table,u16,shell_data,,extens slot
+ps,global,DS:1F9E,station_loaded,u8,shell_data,,
+ps,global,DS:1F9F,stattxt,far ptr,shell_data,,text_load block
+ps,global,DS:5F42,station_count_ids,u16,shell_data,,
+ps,global,DS:5F44,station_table,u16,shell_data,,extens slot
+ps,global,DS:1FB8,ord_loaded,u8,shell_data,,
+ps,global,DS:1FB9,ord_mode_table,u8[11][3],shell_data,,per mission type and side
+ps,global,DS:1FDA,ord_k_weights,s16[3],shell_data,,"{50,30,20}"
+ps,global,DS:1FE0,ord_tried_init,u8[3],shell_data,,zeros
+ps,global,DS:5F46,ordtxt_table,u16,shell_data,,extens slot
+ps,global,DS:5F48,ord_list,list(10),shell_data,,
+ps,global,DS:5F52,ord_table,u16,shell_data,,extens slot
+ps,global,DS:5F54,ord_count_ids_v,u16,shell_data,,

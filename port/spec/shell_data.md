@@ -13,7 +13,7 @@ Confidence tags: **verified** (read in the disassembly), **likely**, **guess**.
 | missions | `shell_data_missions.md` | the mission-type modules `miss\s_*.c` (`3570`–`37fc`) |
 | sys | `shell_data_sys.md` | `sys\*.c` + neighbours `1ed0`–`2316` (except `227c`): snario (mission file reader), historic, extens (table loader), ranks, helper (allocators), queue, threed, text tables |
 | emd1 | `shell_data_emd1.md` | `emd\*.c` `2322`–`273b`: world database (TARGET/CARRIER/SHIPPATH), strings, aces, squadrons, lists |
-| emd2 | `shell_data_emd2.md` | `emd\*.c` `2777`–`2b42`: aircraft, medals, flight, dates, campaign, missinfo, wldfgen, convoy, ship, formations, stations, ordnance |
+| emd2 | `shell_data_emd2.md` | `emd\*.c` `2777`–`2b42`: aircraft (+ choice lists), medals, flight sizes/formations, dates, campaigns, missinfo, wldfgen, convoy, ship, formations, stations, ordnance (loadout pick), 2-D geometry helpers `2b1f`/`2b42`; the common dated keyed-list lookup |
 
 Segments owned: `1193` (file.c), `1155` (fltplan messages, untagged, only used for mission texts),
 `1ed0`–`2316` except `227c` (sys part), `2322`–`2b42` (emd parts, `24b7` RNG is specced here),
@@ -112,7 +112,7 @@ developers' per-extension directories). Files written to the work directory are 
 | Address | Name | Signature | Behaviour | Conf. |
 |---|---|---|---|---|
 | 1193:0006 | enddate_get | far int(char campaign, char force) | if `DS:0B6C`==0 or force: read u16 from `enddate<campaign>.dat` into `DS:0B6C` (fatal if missing); return it | verified |
-| 1193:0084 | service_load | far void() | `memset(DS:49CE, FF, 0x16)`; table `service.dat` via `2008:0aec("service","dat",2,0,0x11,1,…)`; for i < count: `DS:49CE[i] = *(u16*)2008:12eb(t,i)`; `2008:0bbd(t)` | verified |
+| 1193:0084 | service_load | far void() | fills the **available-services list `DS:49CE` u16[11]** read by shell_ui `0f67:033b/036b`: `memset(DS:49CE, FF, 0x16)`; table `service.dat` via `2008:0aec("service","dat",2,0,0x11,1,…)`; for i < count: `DS:49CE[i] = *(u16*)2008:12eb(t,i)`; `2008:0bbd(t)` | verified |
 | 1193:0115 | file_name | far char*(char *base, int n, char *ext) | `strcpy(DS:4B72, base)`; if n ≥ 0 `strcat(itoa(n))`; `strcpy(DS:4B72, file_ext(DS:4B72, ext))`; return `DS:4B72` | verified |
 | 125a:000f | file_ext (shell_ui seg, listed here for the rule) | char*(char *name, char *ext) | `strcat(name,"."); strcat(name,ext)`; if `DS:0DFF`==0: `strcpy(DS:4B94,ext); strcat(DS:4B94,"\\"); strcat(DS:4B94,name)`, return 4B94; else return name | verified |
 | 1193:0176 | file_read_n | far int(void *buf, int size, int n, char *name) | `vol_fopen(name,"rb")`; 0 → return 0; `fread(buf,size,n)`; close; return items | verified |
@@ -220,7 +220,7 @@ In memory: roster far array `4b4c:000e + i*0x7A` (count `DS:4A18`, max 13: `0ed9
 | Off | DS | Type | Meaning |
 |---|---|---|---|
 | 00 | 4754 | char[16] | pilot name (entered with max 15 chars, `2f7f:0143(0,4754,15,…)`) |
-| 10 | 4764 | char[16] | second text: shown while active instead of the status text (`13be:0161`); set by `0f67:00f9` (pilot transfer/copy) — likely assignment / unit name |
+| 10 | 4764 | char[16] | backup-career label typed in BACKUP CAREER (`0f67:00f9`); shown in the roster instead of the status text while active (`13be:0161`) (corrected, per shell_ui_career) |
 | 20 | 4774 | u8 | roster index (checked == position, fatal 0x79) |
 | 21 | 4775 | u8 | side group = `0f67:02ed(service)` |
 | 22 | 4776 | u8 | service code (0..10) |
@@ -234,11 +234,11 @@ In memory: roster far array `4b4c:000e + i*0x7A` (count `DS:4A18`, max 13: `0ed9
 | 2D | 4781 | 3 bytes | unknown |
 | 30 | 4784 | u16 | missions flown |
 | 32 | 4786 | u16 | successful missions |
-| 34 | 4788 | u16 | counter incremented by `0874:1113` (days/turns passed) — likely |
+| 34 | 4788 | u16 | **campaigns completed** (`0874:1113 career_tour_end` increments it; label "CAMPAIGNS COMPLETED:" `135d:01bb`) (corrected) |
 | 36 | 478A | u16 | aircraft type of the squadron (`2624:0219`) |
 | 38 | 478C | u16 | station (`2624:0256`; name `2a85:027c`) |
 | 3A | 478E | u16 | squadron id (FFFF none) |
-| 3C | 4790 | u16 | campaign event/progress index (`287b:03e1/0389/0439/062a`) |
+| 3C | 4790 | u16 | campaign id (CMP record id; `287b:03e1/0389/0439/062a`, emd2 §6) |
 | 3E | 4792 | u16 | victories (air + ships sunk) used by medal thresholds |
 | 40 | 4794 | u8 | friendly-fire incidents |
 | 41 | 4795 | u8[20] | medals awarded (1 = awarded), `050c:0035` |
@@ -283,7 +283,7 @@ u8 toggles (default 1), +0D..+18 s16 joystick X min/centre/max, Y min/centre/max
 | `DS:66BE` | 12 × s16[4] | per month wind weights (still, light, strong, stormy): Jan/Feb/Dec `10 30 30 30`; Mar–May, Sep–Nov `20 40 40 0`; Jun–Aug `40 40 20 0` | `3164:0b49` |
 | `DS:6646` | 5 × s16[4] | per pilot-quality class, AI skill 0..3 weights: `50 40 10 0`, `40 50 20 0`, `20 50 30 0`, `10 40 40 10`, `0 30 40 30` | `3164:0c89` |
 | `DS:65CE` | 10 × s16[6] | per mission type "new aircraft type" pools per slot (0..2 side 0, 3..5 side 1): `2 0 0 3 0 0`, `2 0 0 3 0 0`, `2 0 1 2 2 1`, `2 0 0 3 1 1`, `2 0 0 2 3 0`, `2 2 0 3 0 0`, `2 2 0 3 0 0`, `2 0 0 3 2 0`, `2 1 0 3 0 1`, `2 1 0 3 0 1` | copied to `DS:61D5` by `3164:09bd` (11 rows: row 10 = `50 40 10 0 40 50` from 6646) |
-| `DS:6556` | 5 × s16[12] | per aircraft class (`2777:0204`), 4 × 3 ordnance choices: `0 0 0 4 5 5 4 5 5 4 4 4` / `0 0 0 1 4 1 4 5 5 4 4 4` / `0 0 0 2 4 2 2 4 5 2 2 2` / `0 0 0 3 3 1 3 3 3 3 3 3` / `7 7 7 8 9 9 8 9 9 8 8 8` | `2ab3:03a7` (emd2) |
+| `DS:6556` | 5 × s16[12] | per aircraft class (`2777:0204`), index `mode*3 + k` (mode = `ord_mode` 0..2, k = pick of {50,30,20}; entries 9..11 unused), value + 1 = ORDNCE loadout: `0 0 0 4 5 5 4 5 5 4 4 4` / `0 0 0 1 4 1 4 5 5 4 4 4` / `0 0 0 2 4 2 2 4 5 2 2 2` / `0 0 0 3 3 1 3 3 3 3 3 3` / `7 7 7 8 9 9 8 9 9 8 8 8` | `2ab3:03a7` (emd2) |
 | `DS:652E` | 5 × s32[2] | per aircraft class (`2777:02f8`) altitude band: (8000,16000) (28000,36000) (56000,64000) (88000,96000) (108000,116000) (world units; the sim's altitude unit — likely ¼ ft) | mission modules |
 | `DS:651E` | s32[4] | per flight role category (flight +02): 40000, 24000, 60000, 48000 (altitudes) | missions part |
 
@@ -653,8 +653,8 @@ copy (`22ce:022a`/`026e`) in `DS:4B49[i]`. `1155:03a2` frees them, `1155:03d2`/`
 `1155:01a5 expand(dst, src)` copies src, replacing `%x` by `1155:0042(x)` (table `CS:0197`, x = 'a'..'g'):
 `%a` objective name: player flight +08 == 1 → place kind string (table 0x16, place[+20].+01), else convoy
 string (table 0x17, convoy[+20].+02) (`1155:0002`); `%b` home base: `2a85:027c(2a85:01a7(area, home record,
-carrier))`, printed `"%Fs%Fs"` with `DS:4B45` prefix when carrier else "" ; `%c` side-2 flight-0 aircraft name
-`2777:0101`; `%d` waypoint number `DS:4B40`; `%e` ace name `2550:0043(side-1 flight 0 ace[0])`; `%f`
+carrier))`, printed `"%Fs%Fs"` with `DS:4B45` prefix when carrier else "" ; `%c` side-2 flight-0 aircraft name, plural
+form (`2777:0101`); `%d` waypoint number `DS:4B40`; `%e` ace name `2550:0043(side-1 flight 0 ace[0])`; `%f`
 enemy aircraft plural `"%Fss"` of `2777:00a1(side-1 type)`; `%g` bearing `06c7:0125(side-1 wp, side-0 wp)`
 (unsigned decimal).
 
@@ -682,6 +682,11 @@ enemy aircraft plural `"%Fss"` of `2777:00a1(side-1 type)`; `%g` bearing `06c7:0
   the volume scanner; `16e3:49c1` = far memcpy.
 * **render3d / video**: PS `3d50` is an asm math library (`3d50:16b0` midpoint of two s32 positions →
   static `DS:3889`); no owner in README.
+  The mission builder also uses `3d50:225a` (atan2), `3d50:1f7c/1f87` (sin/cos ×16384), `3d50:01e6`
+  (distance), `3d50:027a` (16×16 multiply) through the `2b1f` helpers (emd2 §14).
+* **shell_ui** (answers to shell_ui.md §8): pilot +34h = campaigns completed and +10h = backup label
+  (§4 corrected); `DS:49CE` is filled by `1193:0084 service_load` from `SERVICE<n>.DAT`; `2b1f:0069` pitch,
+  `2b1f:00b4` heading, `2b1f:0121` projection: emd2 §14.
 
 ## Open questions
 

@@ -331,7 +331,7 @@ ps,data,DS:7674,ttm_sound_bank,,sound,,
 ap,func,326c:000d,snd_free,far,sound,,= INTRO 1634:000d
 ap,func,3326:000d,snd_alloc,far,sound,,= INTRO 1724:0000
 ap,func,304e:0000,ovl_load_chunk,far,sound,,= INTRO 1620:000e
-ap,func,2fe4:0005,snd_res_read,far,sound,,= INTRO 15b5:0001 (whole resource in AP use)
+ap,func,2fe4:0005,snd_res_read,far,sound,,no DS:1F5D test: classes 4/7 always keep only the device track of DS:269D (switch cs:01ED); unknown driver -> NULL
 ap,func,332f:000d,snd_read_all,far,sound,,= INTRO 172c:000e
 ap,func,326f:000a,snd_load_patch,far,sound,,= INTRO 163c:0006
 ap,func,3290:0000,snd_load_driver,far,sound,,= INTRO 16ac:000b
@@ -340,12 +340,12 @@ ap,func,2fd8:0003,snd_pool_free,far,sound,,
 ap,func,328c:000e,snd_pool_stop_all,far,sound,,unused path
 ap,func,3301:0005,res_skip_header,far,sound,,
 ap,func,303f:0000,snd_node_stop_far,far,sound,,player stop stub wrapper
-ap,func,32b8:0003,sng_load,far,sound,,SSM:{SNG:* INF:} -> near table of far resource ptrs
+ap,func,32b8:0003,sng_load,far,sound,,SSM:{SNG:* INF:} -> near table of far resource ptrs; SNG loaded class 7 = device-filtered
 ap,func,3312:000a,sng_free,far,sound,,
 ap,func,32d5:0007,snd_driver_close,far,sound,,
 ap,func,32d5:005a,snd_wait_5,far,sound,,
-ap,func,3280:0009,snd_disable,far,sound,,no callers in AP
-ap,func,32de:0008,snd_enable,far,sound,,no callers in AP
+ap,func,3280:0009,snd_disable,far,sound,,"called only from 2466:0118 (Windows-only routine, no caller: likely dead); would only stop the pool"
+ap,func,32de:0008,snd_enable,far,sound,,"called only from 2466:0118 (Windows-only routine, no caller: likely dead)"
 ap,func,3299:0003,snd_play,far,sound,,reached only from 32de
 ap,func,32e7:0005,snd_stop,far,sound,,reached only from unused API
 ap,func,3318:0005,snd_pool_play,far,sound,,uses SNG INF; unused
@@ -355,7 +355,7 @@ ap,func,5a75:0000,tok_hold,near-far,sound,,"sx_sim.c take n tokens, start their 
 ap,func,5a75:0034,sx_release,far,sound,,sx_sim.c release channel/voice tokens of a type
 ap,func,5a75:008a,tok_busy,far,sound,,sx_sim.c count cooling tokens
 ap,func,5a75:00fb,sx_age_oneshots,near,sound,,sx_sim.c 
-ap,func,5a75:01de,sx_volume,near,sound,,sx_sim.c 7F - dist*128/maxdist
+ap,func,5a75:01de,sx_volume,near,sound,,"sx_sim.c 7F - ((s32)(s16)dist<<7)/maxdist, capped 7F; only when src.4 == 0 (one-shot volume frozen)"
 ap,func,5a75:0244,sx_collect,near,sound,,sx_sim.c 
 ap,func,5a75:02df,sx_collect_all,near,sound,,sx_sim.c 
 ap,func,5a75:030b,sx_substitute,near,sound,,sx_sim.c type table +3
@@ -370,7 +370,7 @@ ap,func,5a75:05a3,sx_can_start,far,sound,,sx_sim.c
 ap,func,5a75:05d8,sx_trim,near,sound,,sx_sim.c 
 ap,func,5a75:066f,sx_free_node,near,sound,,sx_sim.c 
 ap,func,5a75:0698,node_clear,near,sound,,sx_sim.c 
-ap,func,5a75:06b3,sx_doppler,near,sound,,"sx_sim.c pitch bend from distance change, channel DS:087E"
+ap,func,5a75:06b3,sx_doppler,near,sound,,"sx_sim.c d = dist3(prev listener 48A5, pos) - dist3(cur listener 48B1, pos+vel); clamp low 16 bits to +-1000; bend clamp 100..16000 on channel DS:087E"
 ap,func,5a75:0778,sx_eff_vol,near,sound,,sx_sim.c 
 ap,func,5a75:0798,sx_apply,near,sound,,"sx_sim.c start/update up to 7 nodes, play(node,0)"
 ap,func,5a75:095e,sx_update,far,sound,,"sx_sim.c per frame (listener pos, substitute flag)"
@@ -405,8 +405,8 @@ ap,data,DS:65EE,snd_pool,,sound,,7 far node ptrs
 ap,data,DS:65EC,snd_wait_count,,sound,,
 ap,data,DS:43B3,cfg_sound_drv,,sound,,CONTROL.PRF +2
 ap,data,DS:43B9,cfg_sfx_on,,sound,,CONTROL.PRF +8
-ap,data,DS:052E,opt_sound_drv,,sound,,-s<n>
-ap,data,DS:0532,opt_no_sound,,sound,,-s
+ap,data,DS:052E,opt_sound_drv,,sound,,"-s<n> (debug mode only, DS:053F)"
+ap,data,DS:0532,opt_no_sound,,sound,,"-s (debug mode only, DS:053F)"
 ap,data,DS:086C,sx_oneshot_wait,,sound,,
 ap,data,DS:086E,sx_max_channels,,sound,,
 ap,data,DS:0870,sx_max_voices,,sound,,
@@ -438,3 +438,5 @@ ap,data,DS:4983,sx_continuous,,sound,,50 x 14
 ap,data,DS:4C3F,sx_oneshots,,sound,,30 x 14
 ap,data,DS:02D4,sx_player_engine_type,,sound,,6 bytes
 ap,data,DS:02DA,sx_ai_engine_type,,sound,,6 bytes
+ap,data,DS:2699,snd_rec_head,far ptr,sound,,"record-list head; never written in AP (read by 2fca:0004, 3299:0003)"
+ap,data,DS:0530,sx_init_off,u16,sound,,passed as sx_init off argument; never written (0)
