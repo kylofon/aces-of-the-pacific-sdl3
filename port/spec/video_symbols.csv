@@ -1,0 +1,365 @@
+exe,kind,address,name,type,owner,other_names,notes
+intro,func,05da:4933,gfx_load_driver,"far void far*(int code, const char* file)",video,,reads OVL:<tag> chunk (tag table DS:187D) into a DOS block
+ps,func,16e3:4c57,gfx_load_driver,"far void far*(int code, const char* file)",video,,reads OVL:<tag> chunk (tag table DS:187D) into a DOS block
+ap,func,70ff:0000,gfx_load_driver,"far void far*(int code, const char* file)",video,,reads OVL:<tag> chunk (tag table DS:187D) into a DOS block
+intro,func,05da:5c93,gfx_init,"far int(int code, int unused, const char* file)",video,,"calls drv_init(base, callbacks), copies 50 (AP 40) far ptrs to the jump table"
+ps,func,16e3:59ed,gfx_init,"far int(int code, int unused, const char* file)",video,,"calls drv_init(base, callbacks), copies 50 (AP 40) far ptrs to the jump table"
+ap,func,1d32:000a,gfx_init,"far int(int code, int unused, const char* file)",video,,"calls drv_init(base, callbacks), copies 50 (AP 40) far ptrs to the jump table"
+intro,func,05da:5de1,gfx_detect_adapter,near int(void),video,,returns 8 for VGA; returns the requested code if drv[AB4]==0
+ps,func,16e3:5b3b,gfx_detect_adapter,near int(void),video,,returns 8 for VGA; returns the requested code if drv[AB4]==0
+ap,func,1d32:0157,gfx_detect_adapter,near int(void),video,,returns 8 for VGA; returns the requested code if drv[AB4]==0
+intro,func,05da:5dc9,gfx_restore_text,far int(void),video,,
+ps,func,16e3:5b23,gfx_restore_text,far int(void),video,,
+ap,func,1d32:013f,gfx_restore_text,far int(void),video,,
+intro,func,05da:06e5,gfx_sprite_flip,"far void(frame* f, int x, int y, int flags)",video,,thunk to driver entry 29
+ps,func,16e3:0637,gfx_sprite_flip,"far void(frame* f, int x, int y, int flags)",video,,thunk to driver entry 29
+ap,func,1d32:3de5,gfx_sprite_flip,"far void(frame* f, int x, int y, int flags)",video,,thunk to driver entry 29
+intro,func,05da:06e9,gfx_sprite_opaque,"far void(frame* f, int x, int y)",video,,thunk to driver entry 33
+ps,func,16e3:063b,gfx_sprite_opaque,"far void(frame* f, int x, int y)",video,,thunk to driver entry 33
+ap,func,1d32:3de9,gfx_sprite_opaque,"far void(frame* f, int x, int y)",video,,thunk to driver entry 33
+ap,func,1d32:3de1,gfx_sprite,"far void(frame* f, int x, int y)",video,,thunk to driver entry 3
+intro,func,05da:06f1,gfx_ega_restore,far void(void),video,,no-op unless drv[21]==10h
+ps,func,16e3:0643,gfx_ega_restore,far void(void),video,,no-op unless drv[21]==10h
+ap,func,1d32:3df1,gfx_ega_restore,far void(void),video,,no-op unless drv[21]==10h
+intro,func,05da:1e1d,gfx_cache_blit,"far void(frame* f, int x, int y)",video,,thunk entry 30
+ps,func,16e3:2431,gfx_cache_blit,"far void(frame* f, int x, int y)",video,,thunk entry 30
+ap,func,1d32:426b,gfx_cache_blit,"far void(frame* f, int x, int y)",video,,thunk entry 30
+intro,func,05da:1e21,gfx_cache_upload,far int(frame** list),video,,thunk entry 31
+ps,func,16e3:2435,gfx_cache_upload,far int(frame** list),video,,thunk entry 31
+ap,func,1d32:426f,gfx_cache_upload,far int(frame** list),video,,thunk entry 31
+intro,func,05da:1e25,gfx_cache_reset,far void(frame** list),video,,entry 32 + 05da:539d
+ps,func,16e3:2439,gfx_cache_reset,far void(frame** list),video,,entry 32 + 05da:539d
+ap,func,1d32:4273,gfx_cache_reset,far void(frame** list),video,,entry 32 + 05da:539d
+intro,func,05da:1e38,gfx_sprite_scn_ind,"far void(frame* f, int x, int y, int flags)",video,,ljmp [scn_draw_fn]
+ps,func,16e3:244c,gfx_sprite_scn_ind,"far void(frame* f, int x, int y, int flags)",video,,ljmp [scn_draw_fn]
+ap,func,1d32:4286,gfx_sprite_scn_ind,"far void(frame* f, int x, int y, int flags)",video,,ljmp [scn_draw_fn]
+intro,func,05da:1e3c,gfx_sprite_scn,"far void(frame* f, int x, int y, int flags)",video,,SCN run-length sprite
+ps,func,16e3:2450,gfx_sprite_scn,"far void(frame* f, int x, int y, int flags)",video,,SCN run-length sprite
+ap,func,1d32:428a,gfx_sprite_scn,"far void(frame* f, int x, int y, int flags)",video,,SCN run-length sprite
+intro,func,05da:24eb,gfx_nib_put,far void(...),video,,thunk entry 17
+ps,func,16e3:2aff,gfx_nib_put,far void(...),video,,thunk entry 17
+ap,func,1d32:4939,gfx_nib_put,far void(...),video,,thunk entry 17
+intro,func,05da:24ef,gfx_nib_or_hi,far void(...),video,,thunk entry 18
+ps,func,16e3:2b03,gfx_nib_or_hi,far void(...),video,,thunk entry 18
+ap,func,1d32:493d,gfx_nib_or_hi,far void(...),video,,thunk entry 18
+intro,func,05da:24f3,gfx_dda_init,"far int(dda* s, int n)",video,,16.16 DDA with initial bias
+ps,func,16e3:2b07,gfx_dda_init,"far int(dda* s, int n)",video,,16.16 DDA with initial bias
+ap,func,1d32:4941,gfx_dda_init,"far int(dda* s, int n)",video,,16.16 DDA with initial bias
+intro,func,05da:25a6,gfx_sprite_scaled,"far void(frame* f, int x, int y, int flags, int w, int h)",video,,
+ps,func,16e3:2bba,gfx_sprite_scaled,"far void(frame* f, int x, int y, int flags, int w, int h)",video,,
+ap,func,1d32:49f4,gfx_sprite_scaled,"far void(frame* f, int x, int y, int flags, int w, int h)",video,,
+intro,func,05da:2827,gfx_sprite_scaled_centered,"far void(frame* f, int xc, int yc, int flags, int scale)",video,,scale/1024
+ps,func,16e3:2e3b,gfx_sprite_scaled_centered,"far void(frame* f, int xc, int yc, int flags, int scale)",video,,scale/1024
+ap,func,1d32:4c75,gfx_sprite_scaled_centered,"far void(frame* f, int xc, int yc, int flags, int scale)",video,,scale/1024
+intro,func,05da:2893,gfx_flood,"far void(int x, int y, int c)",video,,
+ps,func,16e3:2ea7,gfx_flood,"far void(int x, int y, int c)",video,,
+ap,func,1d32:4ce1,gfx_flood,"far void(int x, int y, int c)",video,,
+intro,func,05da:2aba,flood_push,"near void(int x, int y)",video,,
+ps,func,16e3:30ce,flood_push,"near void(int x, int y)",video,,
+ap,func,1d32:4f08,flood_push,"near void(int x, int y)",video,,
+intro,func,05da:2add,flood_pop,"near void(int* x, int* y)",video,,
+ps,func,16e3:30f1,flood_pop,"near void(int* x, int* y)",video,,
+ap,func,1d32:4f2b,flood_pop,"near void(int* x, int* y)",video,,
+intro,func,05da:2b2f,gfx_poly_clip,far void(void),video,,Sutherland-Hodgman on poly_x/poly_y
+ps,func,16e3:3143,gfx_poly_clip,far void(void),video,,Sutherland-Hodgman on poly_x/poly_y
+ap,func,1d32:4f7d,gfx_poly_clip,far void(void),video,,Sutherland-Hodgman on poly_x/poly_y
+intro,func,05da:2fb0,gfx_copy_rect,"far void(int x, int y, int w, int h)",video,,thunk entry 4
+ps,func,16e3:35c4,gfx_copy_rect,"far void(int x, int y, int w, int h)",video,,thunk entry 4
+ap,func,1d32:53fe,gfx_copy_rect,"far void(int x, int y, int w, int h)",video,,thunk entry 4
+intro,func,05da:2fb5,gfx_entry25,far void(void),video,,thunk entry 25 (no-op)
+ps,func,16e3:35c9,gfx_entry25,far void(void),video,,thunk entry 25 (no-op)
+intro,func,05da:2fbd,gfx_flip,far void(int wait),video,,thunk entry 8
+ps,func,16e3:35d1,gfx_flip,far void(int wait),video,,thunk entry 8
+ap,func,1d32:540b,gfx_flip,far void(int wait),video,,thunk entry 8
+intro,func,05da:2fc1,gfx_font_select,far int(int slot),video,,
+ps,func,16e3:35d5,gfx_font_select,far int(int slot),video,,
+ap,func,1d32:540f,gfx_font_select,far int(int slot),video,,
+intro,func,05da:3098,gfx_font_width,far int(int slot),video,,
+ps,func,16e3:36dc,gfx_font_width,far int(int slot),video,,
+intro,func,05da:30c8,gfx_font_height,far int(int slot),video,,
+intro,func,05da:30f8,gfx_font_valid,far int(int slot),video,,
+ps,func,16e3:370c,gfx_font_valid,far int(int slot),video,,
+ap,func,1d32:5546,gfx_font_valid,far int(int slot),video,,
+intro,func,05da:3122,gfx_text_width,far int(const char* s),video,,
+ps,func,16e3:3736,gfx_text_width,far int(const char* s),video,,
+ap,func,1d32:5570,gfx_text_width,far int(const char* s),video,,
+intro,func,05da:3133,gfx_text_width_far,far int(const char far* s),video,,
+ps,func,16e3:3747,gfx_text_width_far,far int(const char far* s),video,,
+ap,func,1d32:5581,gfx_text_width_far,far int(const char far* s),video,,
+intro,func,05da:3193,gfx_char_slow,"near int(int c, int x, int y)",video,,per-pixel text char with styles
+ps,func,16e3:37a7,gfx_char_slow,"near int(int c, int x, int y)",video,,per-pixel text char with styles
+ap,func,1d32:55e1,gfx_char_slow,"near int(int c, int x, int y)",video,,per-pixel text char with styles
+intro,func,05da:33f7,gfx_text,"far void(const char* s, int x, int y)",video,,
+ps,func,16e3:3a0b,gfx_text,"far void(const char* s, int x, int y)",video,,
+ap,func,1d32:5845,gfx_text,"far void(const char* s, int x, int y)",video,,
+intro,func,05da:340e,gfx_text_far,"far void(const char far* s, int x, int y)",video,,fast path = driver entry 1
+ps,func,16e3:3a22,gfx_text_far,"far void(const char far* s, int x, int y)",video,,fast path = driver entry 1
+ap,func,1d32:585c,gfx_text_far,"far void(const char far* s, int x, int y)",video,,fast path = driver entry 1
+intro,func,05da:3573,gfx_char_metrics,"far int(int c, int* w, int* h)",video,,
+ps,func,16e3:3b87,gfx_char_metrics,"far int(int c, int* w, int* h)",video,,
+ap,func,1d32:59c1,gfx_char_metrics,"far int(int c, int* w, int* h)",video,,
+intro,func,05da:35d8,gfx_get_rect,"far void(void far* dst, int x, int y, int w, int h)",video,,thunk entry 5
+ps,func,16e3:3bec,gfx_get_rect,"far void(void far* dst, int x, int y, int w, int h)",video,,thunk entry 5
+ap,func,1d32:5a26,gfx_get_rect,"far void(void far* dst, int x, int y, int w, int h)",video,,thunk entry 5
+intro,func,05da:35dc,gfx_rect_size,"far long(int w, int h)",video,,thunk entry 6
+ps,func,16e3:3bf0,gfx_rect_size,"far long(int w, int h)",video,,thunk entry 6
+ap,func,1d32:5a2a,gfx_rect_size,"far long(int w, int h)",video,,thunk entry 6
+intro,func,05da:3957,gfx_line,"far void(int x1, int y1, int x2, int y2)",video,,
+ps,func,16e3:3c7b,gfx_line,"far void(int x1, int y1, int x2, int y2)",video,,
+ap,func,1d32:5ab5,gfx_line,"far void(int x1, int y1, int x2, int y2)",video,,
+intro,func,05da:3c84,rot_edge_dda,"near void(int* out, int x0, int y0, int x1, int y1)",video,,rotated sprite helper
+ps,func,16e3:3fa8,rot_edge_dda,"near void(int* out, int x0, int y0, int x1, int y1)",video,,rotated sprite helper
+ap,func,1d32:5de2,rot_edge_dda,"near void(int* out, int x0, int y0, int x1, int y1)",video,,rotated sprite helper
+intro,func,05da:3cfd,gfx_sprite_rotated_ind,far void(...),video,,ljmp [DS:182C]
+ps,func,16e3:4021,gfx_sprite_rotated_ind,far void(...),video,,ljmp [DS:182C]
+ap,func,1d32:5e5b,gfx_sprite_rotated_ind,far void(...),video,,ljmp [DS:182C]
+intro,func,05da:3d01,gfx_sprite_rotated,"far void(frame* f, int x, int y, u16 angle, int w, int h, int px, int py)",video,,see video_rotate.md
+ps,func,16e3:4025,gfx_sprite_rotated,"far void(frame* f, int x, int y, u16 angle, int w, int h, int px, int py)",video,,see video_rotate.md
+ap,func,1d32:5e5f,gfx_sprite_rotated,"far void(frame* f, int x, int y, u16 angle, int w, int h, int px, int py)",video,,see video_rotate.md
+intro,func,05da:48cb,gfx_get_pixel,"far int(int x, int y)",video,,"clipped, -1 outside"
+ps,func,16e3:4bef,gfx_get_pixel,"far int(int x, int y)",video,,"clipped, -1 outside"
+ap,func,1d32:6a29,gfx_get_pixel,"far int(int x, int y)",video,,"clipped, -1 outside"
+intro,func,05da:48fd,gfx_put_pixel,"far void(int x, int y, int c)",video,,clipped
+ps,func,16e3:4c21,gfx_put_pixel,"far void(int x, int y, int c)",video,,clipped
+ap,func,1d32:6a5b,gfx_put_pixel,"far void(int x, int y, int c)",video,,clipped
+intro,func,05da:492f,gfx_put_rect,"far void(void far* src, int x, int y, int w, int h)",video,,thunk entry 7
+ps,func,16e3:4c53,gfx_put_rect,"far void(void far* src, int x, int y, int w, int h)",video,,thunk entry 7
+ap,func,1d32:6a8d,gfx_put_rect,"far void(void far* src, int x, int y, int w, int h)",video,,thunk entry 7
+intro,func,05da:4a8f,gfx_font_load,far int(const char* name),video,,"FNT: loader, returns slot"
+ps,func,16e3:4db3,gfx_font_load,far int(const char* name),video,,"FNT: loader, returns slot"
+ap,func,7115:0000,gfx_font_load,far int(const char* name),video,,"FNT: loader, returns slot"
+intro,func,05da:4e01,gfx_font_free,far void(int slot),video,,
+ps,func,16e3:5125,gfx_font_free,far void(int slot),video,,
+ap,func,7115:0372,gfx_font_free,far void(int slot),video,,
+intro,func,05da:645b,gfx_rect,"far void(int x, int y, int w, int h)",video,,filled/outlined rectangle
+ps,func,16e3:61b5,gfx_rect,"far void(int x, int y, int w, int h)",video,,filled/outlined rectangle
+ap,func,1d32:6ab0,gfx_rect,"far void(int x, int y, int w, int h)",video,,filled/outlined rectangle
+intro,func,05da:0408,gfx_circle,"far void(int r, int xc, int yc)",video,,aspect 9/8
+ps,func,16e3:035a,gfx_circle,"far void(int r, int xc, int yc)",video,,aspect 9/8
+ap,func,1d32:6bbc,gfx_circle,"far void(int r, int xc, int yc)",video,,aspect 9/8
+intro,func,05da:046e,circle_walk,"near long(int r, int xc, int yc)",video,,
+ps,func,16e3:03c0,circle_walk,"near long(int r, int xc, int yc)",video,,
+ap,func,1d32:6c22,circle_walk,"near long(int r, int xc, int yc)",video,,
+intro,func,05da:05a1,circle_span_plot,"near void(int a, int b)",video,,
+ps,func,16e3:04f3,circle_span_plot,"near void(int a, int b)",video,,
+intro,func,05da:0638,circle_outline_plot,"near void(int a, int b)",video,,
+ps,func,16e3:058a,circle_outline_plot,"near void(int a, int b)",video,,
+ap,func,1d32:6dfc,circle_outline_plot,"near void(int a, int b)",video,,
+intro,func,05da:0b6b,gfx_poly_spans,far void(void far* spans),video,,entry 27
+ps,func,16e3:117f,gfx_poly_spans,far void(void far* spans),video,,entry 27
+ap,func,1d32:09a8,gfx_poly_spans,far void(void far* spans),video,,entry 27
+intro,func,05da:0b7e,gfx_span_copy,far void(void far* spans),video,,entry 23
+ps,func,16e3:1192,gfx_span_copy,far void(void far* spans),video,,entry 23
+ap,func,1d32:09bb,gfx_span_copy,far void(void far* spans),video,,entry 23
+intro,func,05da:0b91,gfx_polygon,"far int(int n, int* xs, int* ys)",video,,
+ps,func,16e3:11a5,gfx_polygon,"far int(int n, int* xs, int* ys)",video,,
+ap,func,1d32:09ce,gfx_polygon,"far int(int n, int* xs, int* ys)",video,,
+intro,func,05da:0fbd,poly_outline_lines,"near void(SI=xs, DI=ys, BP=n)",video,,
+ps,func,16e3:15d1,poly_outline_lines,"near void(SI=xs, DI=ys, BP=n)",video,,
+ap,func,1d32:0dfe,poly_outline_lines,"near void(SI=xs, DI=ys, BP=n)",video,,
+intro,func,05da:1009,poly_edge_vertical,near,video,,
+ps,func,16e3:161d,poly_edge_vertical,near,video,,
+ap,func,1d32:0e4a,poly_edge_vertical,near,video,,
+intro,func,05da:1025,poly_edge_steep,near,video,,
+ps,func,16e3:1639,poly_edge_steep,near,video,,
+ap,func,1d32:0e66,poly_edge_steep,near,video,,
+intro,func,05da:1163,poly_edge_diag,near,video,,
+ps,func,16e3:1777,poly_edge_diag,near,video,,
+ap,func,1d32:0fa4,poly_edge_diag,near,video,,
+intro,func,05da:118a,poly_edge_right,near,video,,x-major right slot
+ps,func,16e3:179e,poly_edge_right,near,video,,x-major right slot
+ap,func,1d32:0fcb,poly_edge_right,near,video,,x-major right slot
+intro,func,05da:1245,poly_edge_left,near,video,,x-major left slot
+ps,func,16e3:1859,poly_edge_left,near,video,,x-major left slot
+ap,func,1d32:1087,poly_edge_left,near,video,,x-major left slot
+intro,data,DS:0a80,drv_text_fg,u8,video,,driver shared block drv[00]
+ps,data,DS:2300,drv_text_fg,u8,video,,driver shared block drv[00]
+ap,data,DS:26c0,drv_text_fg,u8,video,,driver shared block drv[00]
+intro,data,DS:0a81,drv_text_bg,u8,video,,drv[01]
+ps,data,DS:2301,drv_text_bg,u8,video,,drv[01]
+ap,data,DS:26c1,drv_text_bg,u8,video,,drv[01]
+intro,data,DS:0a82,drv_text_flags,u8,video,,drv[02] 1 transp 2 bold 4 italic 8 underline 10h halftone
+ps,data,DS:2302,drv_text_flags,u8,video,,drv[02] 1 transp 2 bold 4 italic 8 underline 10h halftone
+ap,data,DS:26c2,drv_text_flags,u8,video,,drv[02] 1 transp 2 bold 4 italic 8 underline 10h halftone
+intro,data,DS:0a83,drv_clip_on,u8,video,,drv[03]
+ps,data,DS:2303,drv_clip_on,u8,video,,drv[03]
+ap,data,DS:26c3,drv_clip_on,u8,video,,drv[03]
+intro,data,DS:0a84,drv_clip_x1,i16,video,,drv[04]
+ps,data,DS:2304,drv_clip_x1,i16,video,,drv[04]
+ap,data,DS:26c4,drv_clip_x1,i16,video,,drv[04]
+intro,data,DS:0a86,drv_clip_x2,i16,video,,drv[06]
+ps,data,DS:2306,drv_clip_x2,i16,video,,drv[06]
+ap,data,DS:26c6,drv_clip_x2,i16,video,,drv[06]
+intro,data,DS:0a88,drv_clip_y1,i16,video,,drv[08]
+ps,data,DS:2308,drv_clip_y1,i16,video,,drv[08]
+ap,data,DS:26c8,drv_clip_y1,i16,video,,drv[08]
+intro,data,DS:0a8a,drv_clip_y2,i16,video,,drv[0A]
+ps,data,DS:230a,drv_clip_y2,i16,video,,drv[0A]
+ap,data,DS:26ca,drv_clip_y2,i16,video,,drv[0A]
+intro,data,DS:0a8c,drv_fill_on,u8,video,,drv[0C]
+ps,data,DS:230c,drv_fill_on,u8,video,,drv[0C]
+ap,data,DS:26cc,drv_fill_on,u8,video,,drv[0C]
+intro,data,DS:0a8d,drv_fill_col,u8,video,,drv[0D]
+ps,data,DS:230d,drv_fill_col,u8,video,,drv[0D]
+ap,data,DS:26cd,drv_fill_col,u8,video,,drv[0D]
+intro,data,DS:0a8e,drv_draw_col,u8,video,,drv[0E]
+ps,data,DS:230e,drv_draw_col,u8,video,,drv[0E]
+ap,data,DS:26ce,drv_draw_col,u8,video,,drv[0E]
+intro,data,DS:0a8f,drv_fill_col2,u8,video,,drv[0F] dither colour
+ps,data,DS:230f,drv_fill_col2,u8,video,,drv[0F] dither colour
+ap,data,DS:26cf,drv_fill_col2,u8,video,,drv[0F] dither colour
+intro,data,DS:0a90,drv_page_bg,u16,video,,A800
+ps,data,DS:2310,drv_page_bg,u16,video,,A800
+ap,data,DS:26d0,drv_page_bg,u16,video,,A800
+intro,data,DS:0a92,drv_page_back,u16,video,,A400
+ps,data,DS:2312,drv_page_back,u16,video,,A400
+ap,data,DS:26d2,drv_page_back,u16,video,,A400
+intro,data,DS:0a94,drv_page_front,u16,video,,A000 displayed
+ps,data,DS:2314,drv_page_front,u16,video,,A000 displayed
+ap,data,DS:26d4,drv_page_front,u16,video,,A000 displayed
+intro,data,DS:0a96,drv_page_read,u16,video,,
+ps,data,DS:2316,drv_page_read,u16,video,,
+ap,data,DS:26d6,drv_page_read,u16,video,,
+intro,data,DS:0a98,drv_page_write,u16,video,,
+ps,data,DS:2318,drv_page_write,u16,video,,
+ap,data,DS:26d8,drv_page_write,u16,video,,
+intro,data,DS:0a9d,drv_adapter,u8,video,,8 = VGA
+ps,data,DS:231d,drv_adapter,u8,video,,8 = VGA
+ap,data,DS:26dd,drv_adapter,u8,video,,8 = VGA
+intro,data,DS:0a9f,drv_inits,u8,video,,
+ps,data,DS:231f,drv_inits,u8,video,,
+ap,data,DS:26df,drv_inits,u8,video,,
+intro,data,DS:0aa1,drv_ega_mode,u8,video,,FFh on VGA
+ps,data,DS:2321,drv_ega_mode,u8,video,,FFh on VGA
+ap,data,DS:26e1,drv_ega_mode,u8,video,,FFh on VGA
+intro,data,DS:0ab4,font_w,u8[20],video,,
+ps,data,DS:2334,font_w,u8[20],video,,
+ap,data,DS:26f4,font_w,u8[20],video,,
+intro,data,DS:0ac8,font_h,u8[20],video,,
+ps,data,DS:2348,font_h,u8[20],video,,
+ap,data,DS:2708,font_h,u8[20],video,,
+intro,data,DS:0adc,font_first,u8[20],video,,
+ps,data,DS:235c,font_first,u8[20],video,,
+ap,data,DS:271c,font_first,u8[20],video,,
+intro,data,DS:0af0,font_count,u8[20],video,,
+ps,data,DS:2370,font_count,u8[20],video,,
+ap,data,DS:2730,font_count,u8[20],video,,
+intro,data,DS:0b2c,poly_x,i16[20],video,,
+ps,data,DS:23ac,poly_x,i16[20],video,,
+ap,data,DS:276c,poly_x,i16[20],video,,
+intro,data,DS:0b54,poly_y,i16[20],video,,
+ps,data,DS:23d4,poly_y,i16[20],video,,
+ap,data,DS:2794,poly_y,i16[20],video,,
+intro,data,DS:0b7c,poly_x2,i16[20],video,,
+ps,data,DS:23fc,poly_x2,i16[20],video,,
+ap,data,DS:27bc,poly_x2,i16[20],video,,
+intro,data,DS:0ba4,poly_y2,i16[20],video,,
+ps,data,DS:2424,poly_y2,i16[20],video,,
+ap,data,DS:27e4,poly_y2,i16[20],video,,
+intro,data,DS:0bcc,poly_ox,i16[20],video,,
+ps,data,DS:244c,poly_ox,i16[20],video,,
+ap,data,DS:280c,poly_ox,i16[20],video,,
+intro,data,DS:0bf4,poly_oy,i16[20],video,,
+ps,data,DS:2474,poly_oy,i16[20],video,,
+ap,data,DS:2834,poly_oy,i16[20],video,,
+intro,data,DS:0c1c,poly_n,u16,video,,
+ps,data,DS:249c,poly_n,u16,video,,
+ap,data,DS:285c,poly_n,u16,video,,
+intro,data,DS:0c1e,drv_pal_buf,far u8*,video,,"1536 bytes: +0 current, +300h target"
+ps,data,DS:249e,drv_pal_buf,far u8*,video,,"1536 bytes: +0 current, +300h target"
+ap,data,DS:285e,drv_pal_buf,far u8*,video,,"1536 bytes: +0 current, +300h target"
+intro,data,DS:113c,drv_xlat_tab,u16,video,,drv[6BC]
+ps,data,DS:29bc,drv_xlat_tab,u16,video,,drv[6BC]
+ap,data,DS:2d7c,drv_xlat_tab,u16,video,,drv[6BC]
+intro,data,DS:1162,drv_use_entry28,u16,video,,
+ps,data,DS:29e2,drv_use_entry28,u16,video,,
+ap,data,DS:2da2,drv_use_entry28,u16,video,,
+intro,data,DS:1168,drv_yshift,u8,video,,
+ps,data,DS:29e8,drv_yshift,u8,video,,
+ap,data,DS:2da8,drv_yshift,u8,video,,
+intro,data,DS:116a,drv_scr_w,u16,video,,320
+ps,data,DS:29ea,drv_scr_w,u16,video,,320
+ap,data,DS:2daa,drv_scr_w,u16,video,,320
+intro,data,DS:116c,drv_scr_h,u16,video,,200
+ps,data,DS:29ec,drv_scr_h,u16,video,,200
+ap,data,DS:2dac,drv_scr_h,u16,video,,200
+intro,data,DS:1172,drv_row_ofs,u16[200],video,,y*80
+ps,data,DS:29f2,drv_row_ofs,u16[200],video,,y*80
+ap,data,DS:2db2,drv_row_ofs,u16[200],video,,y*80
+intro,data,DS:1532,drv_span_seg,u16,video,,span buffer segment +1
+ps,data,DS:2db2,drv_span_seg,u16,video,,span buffer segment +1
+ap,data,DS:3172,drv_span_seg,u16,video,,span buffer segment +1
+intro,data,DS:1534,drv_hw_present,u8,video,,0 = do not set mode (AP)
+ps,data,DS:2db4,drv_hw_present,u8,video,,0 = do not set mode (AP)
+ap,data,DS:3174,drv_hw_present,u8,video,,0 = do not set mode (AP)
+intro,data,DS:15a0,poly_scratch,u16[13],video,,polygon scratch 15A0..15B9
+ps,data,DS:2e20,poly_scratch,u16[13],video,,polygon scratch 15A0..15B9
+ap,data,DS:1cf8,poly_scratch,u16[13],video,,polygon scratch 15A0..15B9
+intro,data,DS:15ba,scn_draw_fn,far fn,video,,-> gfx_sprite_scn
+ps,data,DS:2e3a,scn_draw_fn,far fn,video,,-> gfx_sprite_scn
+ap,data,DS:31e0,scn_draw_fn,far fn,video,,-> gfx_sprite_scn
+intro,data,DS:164a,adapter_pix_shift,u8[13],video,,
+ps,data,DS:2eca,adapter_pix_shift,u8[13],video,,
+ap,data,DS:3270,adapter_pix_shift,u8[13],video,,
+intro,data,DS:165e,font_aa_map,u8[8],video,,
+ps,data,DS:2ede,font_aa_map,u8[8],video,,
+ap,data,DS:3284,font_aa_map,u8[8],video,,
+intro,data,DS:182c,rot_fn,far fn,video,,-> gfx_sprite_rotated
+ps,data,DS:3090,rot_fn,far fn,video,,-> gfx_sprite_rotated
+ap,data,DS:3436,rot_fn,far fn,video,,-> gfx_sprite_rotated
+intro,data,DS:1938,drv_jump_table,far fn[50],video,,AP 40 entries
+ps,data,DS:3174,drv_jump_table,far fn[50],video,,AP 40 entries
+ap,data,DS:351a,drv_jump_table,far fn[50],video,,AP 40 entries
+intro,data,DS:1a04,drv_callbacks,far fn[19],video,,passed to drv_init
+ps,data,DS:3240,drv_callbacks,far fn[19],video,,passed to drv_init
+ap,data,DS:35e6,drv_callbacks,far fn[19],video,,passed to drv_init
+intro,data,DS:1a50,gfx_bios_mode,u8,video,,
+ps,data,DS:328c,gfx_bios_mode,u8,video,,
+ap,data,DS:1b44,gfx_bios_mode,u8,video,,
+intro,data,DS:1a51,gfx_req_adapter,u8,video,,
+ps,data,DS:328d,gfx_req_adapter,u8,video,,
+ap,data,DS:1b45,gfx_req_adapter,u8,video,,
+intro,data,DS:1a52,gfx_driver_ptr,far,video,,
+ps,data,DS:328e,gfx_driver_ptr,far,video,,
+ap,data,DS:1b46,gfx_driver_ptr,far,video,,
+intro,data,DS:187d,gfx_ovl_tags,char*[13],video,,adapter code -> OVL tag
+ps,data,DS:30e1,gfx_ovl_tags,char*[13],video,,adapter code -> OVL tag
+intro,data,DS:1876,gfx_driver_block,far,video,,
+ps,data,DS:30da,gfx_driver_block,far,video,,
+intro,data,DS:264c,circle_state,i16[8],video,,"xc, top, yc-top, far ptr, y1-top, plotter, y2-top"
+ps,data,DS:6930,circle_state,i16[8],video,,"xc, top, yc-top, far ptr, y1-top, plotter, y2-top"
+ap,data,DS:70ea,circle_state,i16[8],video,,"xc, top, yc-top, far ptr, y1-top, plotter, y2-top"
+intro,data,DS:2698,scale_cols,i16[641],video,,
+ps,data,DS:697c,scale_cols,i16[641],video,,
+ap,data,DS:6646,scale_cols,i16[641],video,,
+intro,data,DS:2b98,scale_rows,i16[401],video,,
+ps,data,DS:6e7c,scale_rows,i16[401],video,,
+ap,data,DS:6b46,scale_rows,i16[401],video,,
+intro,data,DS:2eb8,flood_stack,far[2],video,,"base, top"
+ps,data,DS:719c,flood_stack,far[2],video,,"base, top"
+ap,data,DS:6e66,flood_stack,far[2],video,,"base, top"
+intro,data,DS:2ec0,font_kind,u8[20],video,,
+ps,data,DS:71a4,font_kind,u8[20],video,,
+ap,data,DS:6e6e,font_kind,u8[20],video,,
+intro,data,DS:2ed4,font_glyphs,far[20],video,,
+ps,data,DS:71b8,font_glyphs,far[20],video,,
+ap,data,DS:6e82,font_glyphs,far[20],video,,
+intro,data,DS:2f24,font_ofs,far[20],video,,
+ps,data,DS:7208,font_ofs,far[20],video,,
+ap,data,DS:6ed2,font_ofs,far[20],video,,
+intro,data,DS:2f74,font_wid,far[20],video,,
+ps,data,DS:7258,font_wid,far[20],video,,
+ap,data,DS:6f22,font_wid,far[20],video,,
+intro,data,DS:2fc4,font_uline,u8[20],video,,
+ps,data,DS:72a8,font_uline,u8[20],video,,
+ap,data,DS:6f72,font_uline,u8[20],video,,
+ps,func,22ce:004a,page_copy_full,far void(void),video,,"sys\helper.c page helper (read page <- first, write page <- second); proposed name, owner shell"
+ps,func,22ce:0063,pages_bg_to_back,far void(void),video,,"sys\helper.c page helper (read page <- first, write page <- second); proposed name, owner shell"
+ps,func,22ce:0074,pages_front_to_back,far void(void),video,,"sys\helper.c page helper (read page <- first, write page <- second); proposed name, owner shell"
+ps,func,22ce:0085,pages_back_to_front,far void(void),video,,"sys\helper.c page helper (read page <- first, write page <- second); proposed name, owner shell"
+ps,func,22ce:0096,pages_back_to_bg,far void(void),video,,"sys\helper.c page helper (read page <- first, write page <- second); proposed name, owner shell"
+ps,func,22ce:00a7,copy_bg_to_back,far void(void),video,,"sys\helper.c page helper (read page <- first, write page <- second); proposed name, owner shell"
+ps,func,22ce:00bc,copy_back_to_bg,far void(void),video,,"sys\helper.c page helper (read page <- first, write page <- second); proposed name, owner shell"
+ps,func,22ce:00d1,copy_bg_to_front,far void(void),video,,"sys\helper.c page helper (read page <- first, write page <- second); proposed name, owner shell"
+ps,func,22ce:00e6,copy_back_to_front,far void(void),video,,"sys\helper.c page helper (read page <- first, write page <- second); proposed name, owner shell"
+ps,func,22ce:00fb,copy_front_to_back,far void(void),video,,"sys\helper.c page helper (read page <- first, write page <- second); proposed name, owner shell"

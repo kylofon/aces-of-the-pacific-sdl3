@@ -1,0 +1,225 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,362b:000d,dt_set,far void(int),sim_flow,,
+ap,func,362b:002d,timebase_reset,far void(void),sim_flow,,
+ap,func,362b:0048,timebase_set_div,far void(int),sim_flow,,
+ap,func,362b:0053,timebase_ticks,far int(void),sim_flow,,
+ap,func,362b:005b,dt_from_ticks,"near int(int div,int ticks)",sim_flow,,clamp 40h..1C2h
+ap,func,362b:005c,dt_from_ticks_body,near,sim_flow,,part of 005b
+ap,func,362b:008f,timebase_frame,far void(int ticks),sim_flow,,
+ap,func,362b:00be,dt_scale,far int(int),sim_flow,,x*dt>>8 sat
+ap,func,362b:0106,dt_scale_real,far int(int),sim_flow,,
+ap,func,362b:0146,timebase_nop,far void(void),sim_flow,,
+ap,func,362b:0165,timer16_dec,far int(int*),sim_flow,,
+ap,func,362b:017c,timer32_dec,far int(long*),sim_flow,,
+ap,func,362b:01a0,timer16_dec2,far int(int*),sim_flow,,
+ap,func,362b:01bb,timer16_inc,far int(int*),sim_flow,,
+ap,func,362b:01cc,timer32_inc,far int(long*),sim_flow,,
+ap,func,362b:01e7,timer16_inc2,far int(int*),sim_flow,,
+ap,func,362b:01f8,timer32_expired,far int(long*),sim_flow,,
+ap,func,362b:021c,timer16_expired,far int(int*),sim_flow,,
+ap,func,362b:023b,timer32_inc2,far int(long*),sim_flow,,
+ap,func,362b:0256,dt_scale_frac,"far void(int*,int*)",sim_flow,,
+ap,func,362b:02e3,dt_mul,far int(int),sim_flow,,
+ap,func,4b31:0000,timeout_expired,far int(timeout*),sim_flow,,
+ap,func,4b31:0041,timeout_start,"far void(timeout*,u16)",sim_flow,,
+ap,func,4b31:0062,timeout_expire,far void(timeout*),sim_flow,,
+ap,func,4b9e:0000,debug_hook0,far void(void),sim_flow,,empty
+ap,func,4b9e:0005,debug_hook1,far void(void),sim_flow,,empty
+ap,func,4b9f:0000,time_scale_apply,far void(void),sim_flow,,
+ap,func,4b9f:0018,aircraft_detail_apply,far void(int),sim_flow,,
+ap,func,4b9f:00d0,world_detail_apply,far void(int),sim_flow,,
+ap,func,4b9f:012c,sliders_apply,far void(void),sim_flow,,
+ap,func,4b9f:0159,detail_table_init,far void(void),sim_flow,,
+ap,func,4ca7:0000,clock_reset,far void(void),sim_flow,,
+ap,func,4ca7:0014,clock_tick,far void(void),sim_flow,,
+ap,func,4ca7:0045,clock_get,far long(void),sim_flow,,
+ap,func,4e0d:0000,sim_init,far void(void),sim_flow,,once per AP run
+ap,func,4e0d:035c,sim_shutdown,far void(void),sim_flow,,"end picture, free"
+ap,func,4e0d:038e,mission_load,"far void(char far*script,u16 len)",sim_flow,,snario load
+ap,func,4e0d:03b4,mission_unload,far void(void),sim_flow,,
+ap,func,4e0d:03d9,mission_request_dissolve,far void(void),sim_flow,,DS:032C=1
+ap,func,4e0d:03e4,rng_hook_nop,far void(void),sim_flow,,empty; RNG state hook 3CD3:0061
+ap,func,4e0d:03e9,mission_start,far void(void),sim_flow,,build world for a flight
+ap,func,4e0d:058e,mission_end,far void(void),sim_flow,,
+ap,func,4e0d:05e0,realprf_name,near char*(void),sim_flow,,mreal.prf / creal.prf
+ap,func,4e0d:05f5,prefs_load,far void(void),sim_flow,,"?REAL.PRF -> DS:42C8, CONTROL.PRF -> DS:43B1"
+ap,func,4e0d:06fd,prefs_save,far int(void),sim_flow,,
+ap,func,4e0d:0835,cpu_benchmark,far int(void),sim_flow,,ticks for 2048 matrix rounds
+ap,func,4e0d:09d0,simprefs_load,far void(void),sim_flow,sim_write_results,"was sim_write_results (wrong): reads SIMPREFS.PRF, benchmark defaults if no SIM.OUT"
+ap,func,4e0d:0b3e,simprefs_save,far void(void),sim_flow,,
+ap,func,4e0d:0bb0,sim_exit,"far void(u16 code,int textmode)",sim_flow,,"marker 3E7h, exit"
+ap,func,4e0d:0c29,ui_load,far int(void),sim_flow,,alerts/sliders bitmaps
+ap,func,50c8:0000,sim_nop,far void(void),sim_flow,,empty callback
+ap,func,50c8:0008,main,"void(int argc,char**argv)",sim_flow,,"AP main: options, EMS check, SIM.IN, sim_init, vcr_session, sim_shutdown, sim_exit(2)"
+ap,func,519d:0000,file_load,"far void(void*buf,int size,int count,char*name)",sim_flow,,
+ap,func,519d:008a,ovl_init_nop,far void(void),sim_flow,,
+ap,func,5440:0000,camera_follow,far void(obj*),sim_flow,,camera pos/angles DS:436A..437A
+ap,func,5440:008d,camera_obj_ref,far int(void),sim_flow,,
+ap,func,5440:009c,view_setup,far void(void),sim_flow,,camera object DS:437E
+ap,func,5440:012c,view_free,far void(void),sim_flow,,
+ap,func,5440:013d,frame_reset,far void(void),sim_flow,,
+ap,func,5440:017e,frames_stop,far void(void),sim_flow,,DS:06A5=-1
+ap,func,5440:018c,draw_frame,"far int(int redraw,int flip)",sim_flow,,
+ap,func,5440:0269,object_draw_cb,void(obj far*),render3d,,split from 5440; call order in sim_flow.md 6.2
+ap,func,5440:0375,range_helper,far int(int),sim_flow,,"max(100000,(x+40)<<8), used by 583c"
+ap,func,5440:03aa,world_draw,far void(void),render3d,,split from 5440; call order in sim_flow.md 6.2
+ap,func,5440:07bd,palette_queue,"far int(p,a,b)",sim_flow,,DS:069F..
+ap,func,5440:07e1,page_flip,far void(int flip),sim_flow,,
+ap,func,5440:083a,end_screen,far void(void),sim_flow,,
+ap,func,5440:08d1,throttle_add,near void(int),sim_flow,,CB+06 clamp 0..FF
+ap,func,5440:08d2,throttle_add_body,near,sim_flow,,part of 08d1
+ap,func,5440:0904,throttle_apply,far void(ctl*),sim_flow,,
+ap,func,5440:0944,player_ended,far int(void),sim_flow,,P+1Ah&1
+ap,func,5440:0955,player_flight_flag,far int(void),sim_flow,,
+ap,func,5440:0969,guns_and_ordnance,near void(ctl*),sim_flow,,inc bp stub + body at 096a
+ap,func,5440:096a,guns_and_ordnance_body,near,sim_flow,,part of 0969
+ap,func,5440:0a8d,guns_jammed,far void(void),sim_flow,,
+ap,func,5440:0abb,stick_curve,far int(int),sim_flow,,v*v/240 signed
+ap,func,5440:0aee,commands,far int(ctl*),sim_flow,,gear/flaps/brakes/bail-out/radio/-t
+ap,func,5440:12b9,skip_cancel,far void(void),sim_flow,,
+ap,func,5440:12e3,mission_time_tick,far void(void),sim_flow,,DS:4086+=dt
+ap,func,5440:12f3,long_eq,near int,sim_flow,,"compare longs [BX],[AX]"
+ap,func,5440:1317,sim_step,far int(ctl*),sim_flow,,one simulation step per frame
+ap,func,55a4:0000,res_name,"far char*(char*,char*)",sim_flow,,
+ap,func,55a4:007f,res_chdir,far int(char*),sim_flow,,
+ap,func,55a4:00a2,res_chdir_up,far void(void),sim_flow,,
+ap,func,55a4:00b1,res_chain,"far int(void far*,long*)",sim_flow,,likely
+ap,func,55a4:0108,fread_far,"far int(void far*,long,FILE*)",sim_flow,,
+ap,func,55a4:0167,res_exists,far int(char*),sim_flow,,
+ap,func,55a4:01b5,res_patch_module,"far void(char*,int)",sim_flow,,likely
+ap,func,55a4:01f0,res_load_set,void*(...),sim_flow,,likely: name lists
+ap,func,55a4:03a7,res_free,far void(void far**),sim_flow,,
+ap,func,55a4:03d9,modules_detect,far void(void),sim_flow,,M#SHL.DYN
+ap,func,55a4:0429,modules_mask,far u8(void),sim_flow,,
+ap,func,5cde:0000,redraw_all,far void(void),sim_flow,,DS:4E71=DS:4090
+ap,func,5cde:000b,flight_pause,far void(void),sim_flow,,P key
+ap,func,5cde:0057,alert_to_loopcode,far int(int),sim_flow,,"5->3, 8->2, else 4"
+ap,func,5cde:0076,end_prompt_reset,far void(void),sim_flow,,DS:4E6E=0
+ap,func,5cde:0080,flight_keys,far int(u8*in),sim_flow,,"end prompt, map, pause, quit, dialogs; 2/3/4"
+ap,func,5cde:03fd,pit_countdown,far int(void),sim_flow,,returns DS:31E5
+ap,func,5cde:0405,flight_loop,far int(void),sim_flow,,per-frame loop; frame pacing >=8 ticks
+ap,func,5f2c:0000,cursor_box_init,void(void),sim_flow,,
+ap,func,5f2c:001d,dialog_list_flag,near int(void),sim_flow,,DS:3BD3+0Dh&4
+ap,func,5f2c:0036,map_mode_on,far void(void),sim_flow,,
+ap,func,5f2c:0043,map_mode_off,far void(void),sim_flow,,
+ap,func,5f2c:004d,joy_flight_set,far void(int),sim_flow,,DS:0B20
+ap,func,5f2c:0058,joy_flight_toggle,far int(void),sim_flow,,
+ap,func,5f2c:006c,joy_flight_get,far int(void),sim_flow,,
+ap,func,5f2c:0074,mouse_flag_set,far void(int),sim_flow,,DS:0B1E
+ap,func,5f2c:007f,mouse_flag_toggle,far int(void),sim_flow,,
+ap,func,5f2c:00ae,mouse_flag_get,far int(void),sim_flow,,
+ap,func,5f2c:00b6,pointer_store,"far void(int,int)",sim_flow,,
+ap,func,5f2c:00dc,pointer_get,"far void(u8*,int*,int*,int*)",sim_flow,,
+ap,func,5f2c:0137,device_enable_set,"far void(int,int)",sim_flow,,DS:0B26+2i
+ap,func,5f2c:0148,mouse_flight_set,far void(int),sim_flow,,DS:0B2C
+ap,func,5f2c:0153,hat_views_set,far void(int),sim_flow,,DS:0B30
+ap,func,5f2c:015e,hat_views_get,far int(void),sim_flow,,
+ap,func,5f2c:0166,abs_throttle_set,far void(int),sim_flow,,DS:0B2E
+ap,func,5f2c:0171,abs_throttle_get,far int(void),sim_flow,,
+ap,func,5f2c:0179,pointer_clamp,"far int(int*,int*)",sim_flow,,
+ap,func,5f2c:01d8,pointer_input,"far int*(int*ptr,u8*in)",sim_flow,,dialog/map cursor
+ap,func,5f2c:055b,bind_throttle_abs,"far void(int,ctl*)",sim_flow,,ctl.08=v
+ap,func,5f2c:056b,bind_throttle_rel,"far void(int,ctl*)",sim_flow,,ctl.09=v
+ap,func,5f2c:057b,binding_lookup,"far int(int flags,int sc,far*tbl,ctl*)",sim_flow,,table 3923:0000
+ap,func,5f2c:05d1,controls_map,"far int*(ctl*,u8*in)",sim_flow,,0x14-byte control record
+ap,func,5f2c:08fd,view_input,"far int*(vw*,u8*in,int)",sim_flow,,8-byte view record
+ap,func,5f2c:0ba3,axis_shape,"near int(int v,int k)",sim_flow,,dead zone 8
+ap,func,5f2c:0ba4,axis_shape_body,near,sim_flow,,part of 0ba3
+ap,func,5f2c:0bda,axis_shape16,"near int(int v,int k)",sim_flow,,dead zone 16
+ap,func,5f2c:0bdb,axis_shape16_body,near,sim_flow,,part of 0bda
+ap,func,5f2c:0c11,controls_reset,far void(void),sim_flow,,
+ap,func,60a9:0000,buttons_poll,far void(void),sim_flow,,
+ap,func,60a9:017c,input_frag_017c,?,sim_flow,,mis-seeded jump-table fragment? to check
+ap,func,60a9:01b2,buttons_to_record,far void(u8*in),sim_flow,,
+ap,func,60a9:02c4,input_poll,far u8*(u8*in),sim_flow,,0x25-byte input record
+ap,func,60a9:07d2,mouse_enable_set,far void(int),sim_flow,,
+ap,func,60a9:07ee,mouse_enable_toggle,far int(void),sim_flow,,
+ap,func,60a9:0804,mouse_present,far int(void),sim_flow,,
+ap,func,60a9:0817,mouse_active,far int(void),sim_flow,,
+ap,func,60a9:0832,mouse_init_w,far int(void),sim_flow,,
+ap,func,60a9:0847,mouse_shutdown_w,far int(void),sim_flow,,
+ap,func,60a9:085d,mouse_pos,"far int(int*,int*)",sim_flow,,
+ap,func,60a9:087c,mouse_button,far int(int),sim_flow,,
+ap,func,60a9:0898,mouse_warp,"far int(int,int,int)",sim_flow,,
+ap,func,60a9:08e3,calib_set,"far void(int,u16,int*)",sim_flow,,
+ap,func,60a9:096d,calib_ptr,far int*(int),sim_flow,,
+ap,func,60a9:097d,axis_scale,"far int(int,int,int,int)",sim_flow,,
+ap,func,60a9:09d8,quit_pending,far int(void),sim_flow,,
+ap,func,60a9:0a04,quit_prompt,far void(void),sim_flow,,
+ap,func,60a9:0aa7,quit_block,far void(void),sim_flow,,
+ap,func,60a9:0ab2,quit_unblock,far void(void),sim_flow,,
+ap,func,60a9:0abd,quit_check,far void(void),sim_flow,,
+ap,func,60a9:0ad5,joy_detect,far void(void),sim_flow,,
+ap,func,60a9:0b35,input_init,far void(void),sim_flow,,
+ap,func,60a9:0b51,input_reset,far void(void),sim_flow,,
+ap,data,DS:053F,debug_flag,u8,sim_flow,,
+ap,data,DS:43DC,sim_mode,u16,sim_flow,,SIM.IN+1: 0 single 1 career 2 recorder 3 demo
+ap,data,DS:439A,sim_in,u8[13],sim_flow,,
+ap,data,DS:4032,work_dir,char[],sim_flow,,
+ap,data,DS:4030,ems_spare_pages,u16,sim_flow,,
+ap,data,DS:0539,ems_class,u16,sim_flow,,
+ap,data,DS:0532,no_sound,u16,sim_flow,,
+ap,data,DS:052E,sound_drv_override,u16,sim_flow,,
+ap,data,DS:0534,script_name,char*,sim_flow,,
+ap,data,DS:0536,area_override,u16,sim_flow,,
+ap,data,DS:053A,timed_run,u16,sim_flow,,
+ap,data,DS:053C,timed_run_units,u16,sim_flow,,
+ap,data,DS:43B1,control_prf,u8[37],sim_flow,,
+ap,data,DS:42C8,real_prf,u8[16],sim_flow,,
+ap,data,DS:43A7,simprefs,u16[5],sim_flow,,
+ap,data,DS:06E9,simprefs_default,u16[5],sim_flow,,
+ap,data,DS:06C4,control_prf_default,u8[37],sim_flow,,
+ap,data,DS:31E5,pit_countdown,s16,sim_flow,,"saturating, -1 per tick"
+ap,data,DS:18D2,tick_count,u32,sim_flow,,
+ap,data,DS:711E,dt,s16,sim_flow,,1/256 nominal step
+ap,data,DS:711C,dt_log,s16,sim_flow,,
+ap,data,DS:711A,dt_real,s16,sim_flow,,
+ap,data,DS:7118,time_div,s16,sim_flow,,
+ap,data,DS:7116,frame_ticks,s16,sim_flow,,
+ap,data,DS:3712,time_div_real,s16,sim_flow,,20
+ap,data,DS:3F36,mission_clock,u32,sim_flow,,
+ap,data,DS:3F34,mission_clock_frac,s16,sim_flow,,
+ap,data,DS:4086,mission_time,u32,sim_flow,,+=dt per frame
+ap,data,DS:4082,mission_time2,u32,sim_flow,,
+ap,data,DS:0887,frame_count,u32,sim_flow,,
+ap,data,DS:4090,redraw_pages,u16,sim_flow,,2
+ap,data,DS:4E71,redraw_pending,s16,sim_flow,,
+ap,data,DS:06A5,steps_done,s32,sim_flow,,-1 = no mission
+ap,data,DS:44C5,step_flags,u8,sim_flow,,bit7 step done
+ap,data,DS:3B09,player,obj*,sim_flow,,
+ap,data,DS:437E,camera_obj,obj*,sim_flow,,
+ap,data,DS:436A,camera_pos,s32[3],sim_flow,,
+ap,data,DS:4376,camera_ang,s16[3],sim_flow,,
+ap,data,DS:0148,flip_timeout,timeout,sim_flow,,
+ap,data,DS:0B85,input_timeout,timeout,sim_flow,,
+ap,data,DS:4334,timed_run_timeout,timeout,sim_flow,,
+ap,data,DS:4E74,end_alert_state,u8,sim_flow,,
+ap,data,DS:4E6E,end_prompt_shown,u8,sim_flow,,
+ap,data,DS:4E1C,end_prompt_delay,s32,sim_flow,,
+ap,data,DS:4E6F,end_timer,s16,sim_flow,,
+ap,data,DS:088C,end_delay_started,u8,sim_flow,,
+ap,data,DS:0886,vcr_recording,u8,sim_flow,,
+ap,data,DS:0B80,quit_request,u8,sim_flow,,
+ap,data,DS:4EEC,kbd_rudder,s16,sim_flow,,
+ap,data,DS:4EEE,last_abs_throttle,s16,sim_flow,,
+ap,data,DS:0B20,joy_flight,u16,sim_flow,,
+ap,data,DS:0B1E,mouse_on,u16,sim_flow,,
+ap,data,DS:0B26,dev_enable,u16[4],sim_flow,,
+ap,data,DS:0B2E,abs_throttle_mode,u16,sim_flow,,
+ap,data,DS:0B30,hat_views,u16,sim_flow,,
+ap,data,DS:4F5B,joy1_present,u8,sim_flow,,
+ap,data,DS:4F5C,rudder_axis,u8,sim_flow,,
+ap,data,DS:4F5D,throttle_axis,u8,sim_flow,,
+ap,data,DS:4F60,joy_calib,s16[12],sim_flow,,
+ap,data,DS:4FA7,fire_down_bits,u8,sim_flow,,
+ap,data,DS:06B5,gear_anim,s16,sim_flow,,
+ap,data,DS:4360,unjam_chance,s16,sim_flow,,
+ap,data,DS:4362,unjam_timer,s16,sim_flow,,
+ap,data,DS:4364,gun_jam1,s16,sim_flow,,
+ap,data,DS:4366,gun_jam2,s16,sim_flow,,
+ap,data,DS:069C,skip_state,u8,sim_flow,,
+ap,data,DS:069F,pal_queue,u16[3],sim_flow,,
+ap,data,3923:0000,key_bindings,rec10[],sim_flow,,"{flags,scan,value,far fn}"
+ap,data,DS:073C,sliders,rec20[4],sim_flow,,slider.c
+ap,data,DS:0B8B,keypad_x,s16[11],sim_flow,,
+ap,data,DS:0BA1,keypad_y,s16[11],sim_flow,,
