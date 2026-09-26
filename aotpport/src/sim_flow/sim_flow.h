@@ -228,7 +228,7 @@ s16 dt_mul(s16 a0);
 /* AP 4b31:0000 — sim_flow.md §4.2 */
 s16 timeout_expired(u16 p0_ds);
 /* AP 4b31:0041 — sim_flow.md §4.2 */
-void timeout_start(u16 p0_ds, u16 a1);
+void timeout_start(u16 t_ds, s32 n);                 /* (changed: REQUESTS.md, callers push a long; only the low word is stored) */
 /* AP 4b31:0062 — sim_flow.md §4.2 */
 void timeout_expire(u16 p0_ds);
 /* AP 0000:02db — sim_flow.md §0; [file]; no BP frame: register interface or no arguments, see the spec */
@@ -506,7 +506,7 @@ void file_load(u16 buf_ds, s16 size, s16 count, u16 name_ds);
 /* AP 55a4:0000 — sim_flow.md §8 */
 u16 res_name(u16 p0_ds, u16 p1_ds);
 /* AP 55a4:0108 fread_far — sim_flow.md §8 */
-s16 ap_fread_far_55a4(FarPtr a0, s32 a1, u16 p2_ds);
+s32 ap_fread_far_55a4(FarPtr a0, s32 a1, u16 p2_ds);            /* (changed: returns DX:AX) */
 /* AP 55a4:01f0 — sim_flow.md §8; spec: (...) */
 u16 res_load_set(u16 a0, u16 a1, u16 a2, u16 a3);
 /* AP 55a4:03a7 — sim_flow.md §8 */
@@ -645,6 +645,8 @@ u16 ap_rng_next(u16 st_ds);
 s16 rng_mod(u16 st_ds, s16 n);
 /* AP 1899:0cf0 — sim_flow_results.md §5.1; spec: (Object * killer Object * victim, int wclass ..., u8 destroyed) */
 void kill_credit(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4, u16 a5);
+/* AP 1899:102f � sim_flow_results.md �5.2 (added: called by sim_world's weapon impacts) */
+void target_credit(u16 o, FarPtr t, FarPtr ref, u16 wclass, u16 type, u16 delta, u16 destroyed);
 /* AP 14b8:000d — sim_flow_results.md §2; [file] */
 void rand_table_init(void);
 /* AP 1889:0002 rng_seed — sim_flow_results.md §2; [file] */
@@ -704,7 +706,7 @@ void end_request(u8 code);
 /* AP 5a01:00e9 — sim_flow_ui.md §2.1; [file] */
 s16 alert_build(u16 texts_ds, u16 buttons_ds, u16 codes_ds);
 /* AP 5a01:0395 — sim_flow.md §5.1; [file]; spec: (...); callers also read DX */
-s16 quit_box(u16 a0);
+u32 quit_box(u16 a0);                                 /* (changed: returns the far handle DX:AX, used by 60a9:0a04) */
 /* AP 5a01:05d5 — sim_flow.md §5.1; [file]; types from the frame */
 void quit_box_close(u32 h);
 /* AP 5da1:00cb — sim_flow_ui.md §2.1; [file] */

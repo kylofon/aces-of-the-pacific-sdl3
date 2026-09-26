@@ -32,20 +32,7 @@ WEAK u16 view_outside_target(void) { return 0; }
 WEAK s16 timer16_dec(u16 p) { return (s16)DSW(p); }
 WEAK u16 ap_rng_next(u16 st_ds) { (void)st_ds; return 0; }
 WEAK u8 xor_bytes(u16 p, s16 n) { u8 x = 0; while (--n >= 0) x ^= DSB(p++); return x; }
-WEAK s16 ap_fread_far_55a4(FarPtr dst, s32 n, u16 fp)
-{
-    u16 mk = stk_mark(), buf = stk_alloc(512);
-    s32 done = 0;
-    while (done < n) {
-        s16 k = (s16)(n - done > 512 ? 512 : n - done);
-        s16 r = my_fread(buf, 1, k, fp);
-        if (r <= 0) break;
-        huge_memcpy_fp(far_norm(far_lin(dst) + (u32)done), ds_ptr(buf), (u16)r);
-        done += r;
-    }
-    stk_release(mk);
-    return (s16)done;
-}
+/* ap_fread_far_55a4: implemented by sim_flow (misc.c) */
 
 /* sim_world (objects, clouds, spotting, special draws) */
 WEAK u16 obj_alive(u16 o) { (void)o; return 1; }

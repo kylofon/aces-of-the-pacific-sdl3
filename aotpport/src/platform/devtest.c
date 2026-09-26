@@ -285,10 +285,21 @@ static int test_loaders(void)
 
 int shell_data_dev_test(void);
 
+int sim_world_a_dev_test(void);   /* sim_world/swa_test.c: fm, ballistics */
+int sim_world_b_dev_test(void);   /* sim_world/swb_test.c: ai */
+int render3d_dev_test(void);      /* render3d/r3d_test.c: shapes */
+
 int platform_dev_test(void)
 {
     const char *t = getenv("AOTP_TEST");
     if (!t || !*t) return -1;
+    if (!strcmp(t, "fm") || !strcmp(t, "ballistics") || !strcmp(t, "ai") || !strcmp(t, "shapes")) {
+        /* AP module tests (run with --start 3) */
+        int v = !strcmp(t, "ai") ? sim_world_b_dev_test()
+              : !strcmp(t, "shapes") ? render3d_dev_test() : sim_world_a_dev_test();
+        fflush(stdout);
+        exit(v < 0 ? 1 : v);
+    }
     if (!strcmp(t, "missions")) {                     /* shell_data (run with --start 2) */
         int v = shell_data_dev_test();
         fflush(stdout);

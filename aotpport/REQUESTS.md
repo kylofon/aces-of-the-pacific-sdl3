@@ -23,7 +23,7 @@ report. The lead appends new requests from each report.
       call in `sx_sim.c` together.)
 
 ## sim_flow
-- [ ] `timeout_start` takes a 32-bit tick count (`s32`), not `u16` (used by `sound/sx_sim.c`).
+- [x] `timeout_start` takes a 32-bit tick count (`s32`), not `u16` (used by `sound/sx_sim.c`).
 
 ## all modules
 - [x] MinGW: a stub file whose weak functions are the only globals fails to link ("multiple definition
@@ -31,7 +31,7 @@ report. The lead appends new requests from each report.
       (`video/stubs_tmp.c` needs it.)
 
 ## lead (from platform, 2026-09-26)
-- [ ] Delete `game/placeholder.c` once the real mains link (platform's mains are weak until then). Not yet: PS's real main needs shell_ui/shell_data, and the headless chain test relies on the placeholders.
+- [x] Delete `game/placeholder.c` once the real mains link (platform's mains are weak until then). Not yet: PS's real main needs shell_ui/shell_data, and the headless chain test relies on the placeholders.
 - [x] symbols.csv lacks the RTL globals (private table `rtl_layouts` in `platform/rtl_dos.c`), AP `mtx_*`
       globals and PS SCN-encoder state (hard-coded fallbacks in `loaders.c`, `scn_encode.c`); INTRO
       `pal_slots`/`font_ptr` are not in the layout table under `pal_slot`/`font_glyphs`. (`platform_extra2_symbols.csv` / `video_extra2_symbols.csv`; `rtl_layouts`, the loaders/scn fallbacks and video's INTRO special cases removed.)
@@ -71,7 +71,7 @@ report. The lead appends new requests from each report.
 - [ ] `platform/stubs_tmp.c` carries weak link stubs for your functions the shared build references (math library, `service_side`, `fltplan_*`, `fm_bearing`, and a generated block at the end of the file). Delete a stub's line (or leave it: the weak stub loses to your definition) — tell platform if one collides.
 
 ## from render3d (2026-09-26)
-- [ ] platform: call `render3d_dev_test()` from `platform_dev_test` (AOTP_TEST=shapes, run with --start 3).
+- [x] platform: call `render3d_dev_test()` from `platform_dev_test` (AOTP_TEST=shapes, run with --start 3).
 - [ ] video: `video.h` uses `CodeFn` without including `codeptr.h`; its static `pal_fx_build_delta`
       duplicates `palfx_delta_table_body` (1792:038b) — harmless, dedupe later.
 - [ ] shell_data: use `ts_load_table_far` (far table in DX:AX) and the new `mul_cos`/`mul_sin` signatures.
@@ -79,7 +79,7 @@ report. The lead appends new requests from each report.
 - [ ] sound + render3d: switch `ldist3` to `(u16 a_ds, u16 b_ds)` together (semantics already match).
 
 ## from sim_world A (2026-09-26)
-- [ ] platform: call `sim_world_a_dev_test()` (AOTP_TEST=fm / ballistics) from `platform_dev_test` so build_sim_world_a's `--wrap` flags can go.
-- [ ] sim_flow: implement `misc.c` (`res_name`, `file_load`, `res_load_set`, `res_free`, `ap_fread_far_55a4`) — only no-op stubs exist; snario.c/acedata.c need them to run.
+- [x] platform: call `sim_world_a_dev_test()` (AOTP_TEST=fm / ballistics) from `platform_dev_test` so build_sim_world_a's `--wrap` flags can go.
+- [x] sim_flow: implement `misc.c` (`res_name`, `file_load`, `res_load_set`, `res_free`, `ap_fread_far_55a4`) — only no-op stubs exist; snario.c/acedata.c need them to run.
 - [x] sim_world B (AI): fix the `ai_*.c` compile errors (conflicting prototypes, missing `PROG_AP`/`stdarg.h`); they break the shared build. (sim_world B: fixed; all 11 AI files build warning-free with part A.)
 - [x] 655d:1bb7 gun-smoke callback registered (damage.c).

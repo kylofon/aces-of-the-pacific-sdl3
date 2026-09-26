@@ -108,8 +108,8 @@ void sim_exit(s16 code, s16 text_mode)
     prog_exit(code);
 }
 
-/* AP 50c8:0008 main. PORT: weak until game/placeholder.c (a strong ap_main) is removed. */
-__attribute__((weak)) int ap_main(int argc, u16 argv_ds)
+/* AP 50c8:0008 main */
+int ap_main(int argc, u16 argv_ds)
 {
     u16 m = stk_mark();
     s16 mode = 0, skip_mem = 0;

@@ -61,5 +61,4 @@ WEAK s16 clamp(s16 v, s16 lo, s16 hi) { return v < lo ? lo : v > hi ? hi : v; }
 
 /* sim_flow: timeouts (4b31) */
 WEAK s16 timeout_expired(u16 t_ds) { return 1; }
-WEAK void timeout_start(u16 t_ds, u16 n) {}
 WEAK void timeout_expire(u16 t_ds) {}
