@@ -142,7 +142,7 @@ extra empty `SCL:`):
 
 ### 4a. Nibble planes `BIN:` + `VGA:` (70)
 
-Both packed; each holds 4 bits per pixel, two pixels per byte, first pixel in the **low** nibble.
+Both packed; each holds 4 bits per pixel, two pixels per byte, first pixel in the **high** nibble (corrected in phase 3: driver entry 14 and all 77 nibble-plane files agree, `port/spec/video_pictures.md`).
 `BIN:` = low nibbles, `VGA:` = high nibbles of the 8-bit colour. The frames are concatenated
 pixel-wise (frame k starts at pixel Σ w·h of the previous frames, row-major). `ACE2.BMP`: 7 frames
 72×60/72×59 → 30168 px → 15084 bytes per plane. (A BMP with only `BIN:` — one of the 71 —

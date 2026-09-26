@@ -1,0 +1,104 @@
+exe,kind,address,name,type,owner,other_names,notes
+intro,func,0dc5:000a,vqt_begin,far void *(void far *stream),video,,busy flag; static ctx; returns ctx or 0
+ps,func,383a:000a,vqt_begin,far void *(void far *stream),video,,busy flag; static ctx; returns ctx or 0
+ap,func,6f1c:0000,vqt_begin,far void *(void far *stream),video,,busy flag; static ctx; returns ctx or 0
+intro,func,0dc5:003e,vqt_end,far void(void),video,,clears busy
+ps,func,383a:003e,vqt_end,far void(void),video,,clears busy
+ap,func,6f1c:0034,vqt_end,far void(void),video,,clears busy
+intro,func,0dc5:0049,vqt_draw,"far void(frame *fr, int x, int y, int flip)",video,,"kind -1 bitmap: decode VQT at draw time, transparent 0, clipped, flips"
+ps,func,383a:0049,vqt_draw,"far void(frame *fr, int x, int y, int flip)",video,,"kind -1 bitmap: decode VQT at draw time, transparent 0, clipped, flips"
+ap,func,6f1c:003f,vqt_draw,"far void(frame *fr, int x, int y, int flip)",video,,"kind -1 bitmap: decode VQT at draw time, transparent 0, clipped, flips"
+intro,func,0dc5:0130,vqt_tab_read,far u8(int n),video,,vqt_tab[vqt_bits_fn(n)]
+ps,func,383a:0130,vqt_tab_read,far u8(int n),video,,vqt_tab[vqt_bits_fn(n)]
+ap,func,6f1c:0126,vqt_tab_read,far u8(int n),video,,vqt_tab[vqt_bits_fn(n)]
+intro,func,0dc5:0149,vqt_root,"far void(x, y, w, h)",video,,"flip setup, drv[0C]=1, vqt_node"
+ps,func,383a:0149,vqt_root,"far void(x, y, w, h)",video,,"flip setup, drv[0C]=1, vqt_node"
+ap,func,6f1c:013f,vqt_root,"far void(x, y, w, h)",video,,"flip setup, drv[0C]=1, vqt_node"
+intro,func,0dc5:01ef,vqt_node,"far void(x, y, w, h)",video,,sprite quadtree node with flips; returns if w==0||h==0
+ps,func,383a:01ef,vqt_node,"far void(x, y, w, h)",video,,sprite quadtree node with flips; returns if w==0||h==0
+ap,func,6f1c:01e5,vqt_node,"far void(x, y, w, h)",video,,sprite quadtree node with flips; returns if w==0||h==0
+intro,func,0dc5:035e,vqt_fill_h,"far void(x0, y0, x1, y1)",video,,"mirrored leaf fill, columns right-to-left"
+ps,func,383a:035e,vqt_fill_h,"far void(x0, y0, x1, y1)",video,,"mirrored leaf fill, columns right-to-left"
+ap,func,6f1c:0354,vqt_fill_h,"far void(x0, y0, x1, y1)",video,,"mirrored leaf fill, columns right-to-left"
+intro,func,0dc5:03aa,vqt_fill_v,"far void(x0, y0, x1, y1)",video,,"mirrored leaf fill, rows bottom-up"
+ps,func,383a:03aa,vqt_fill_v,"far void(x0, y0, x1, y1)",video,,"mirrored leaf fill, rows bottom-up"
+ap,func,6f1c:03a0,vqt_fill_v,"far void(x0, y0, x1, y1)",video,,"mirrored leaf fill, rows bottom-up"
+intro,func,0dc5:03f6,vqt_fill_hv,"far void(x0, y0, x1, y1)",video,,"mirrored leaf fill, both"
+ps,func,383a:03f6,vqt_fill_hv,"far void(x0, y0, x1, y1)",video,,"mirrored leaf fill, both"
+ap,func,6f1c:03ec,vqt_fill_hv,"far void(x0, y0, x1, y1)",video,,"mirrored leaf fill, both"
+intro,func,0dc5:0445,vqt_leaf,"near void(x, y, w, h)",video,,"sprite leaf: raw/fill/table, 32-bit raw test"
+ps,func,383a:0445,vqt_leaf,"near void(x, y, w, h)",video,,"sprite leaf: raw/fill/table, 32-bit raw test"
+ap,func,6f1c:043b,vqt_leaf,"near void(x, y, w, h)",video,,"sprite leaf: raw/fill/table, 32-bit raw test"
+intro,func,0e2c:0007,vqt_bits,far u16(int n),video,,LSB-first bit reader via vqt_ctx
+ps,func,38a1:0007,vqt_bits,far u16(int n),video,,LSB-first bit reader via vqt_ctx
+ap,func,2651:0006,vqt_bits,far u16(int n),video,,LSB-first bit reader via vqt_ctx
+intro,func,0e2c:004e,vqt_mem_node,"far void(x, y, w, h)",video,,"quadtree node, to-memory decoder (vqt_predecode)"
+ps,func,38a1:004e,vqt_mem_node,"far void(x, y, w, h)",video,,"quadtree node, to-memory decoder (vqt_predecode)"
+ap,func,2651:004d,vqt_mem_node,"far void(x, y, w, h)",video,,"quadtree node, to-memory decoder (vqt_predecode)"
+intro,func,0e2c:0155,vqt_mem_leaf,"far void(x, y, w, h)",video,,"leaf into ctx.dst0[rowtab[y]+x], 16-bit raw test"
+ps,func,38a1:0155,vqt_mem_leaf,"far void(x, y, w, h)",video,,"leaf into ctx.dst0[rowtab[y]+x], 16-bit raw test"
+ap,func,2651:0154,vqt_mem_leaf,"far void(x, y, w, h)",video,,"leaf into ctx.dst0[rowtab[y]+x], 16-bit raw test"
+intro,func,0e2c:0446,far_copy,"far void(void far *dst, void far *src, u16 n)",video,,"rep movsw, not overlap-safe"
+ps,func,38a1:0446,far_copy,"far void(void far *dst, void far *src, u16 n)",video,,"rep movsw, not overlap-safe"
+ap,func,2651:0445,far_copy,"far void(void far *dst, void far *src, u16 n)",video,,"rep movsw, not overlap-safe"
+intro,func,0e2c:0461,vqt_scr_node,"far void(x, y, w, h)",video,,"quadtree node, SCR:VQT: decoder"
+ps,func,38a1:0461,vqt_scr_node,"far void(x, y, w, h)",video,,"quadtree node, SCR:VQT: decoder"
+ap,func,2651:0460,vqt_scr_node,"far void(x, y, w, h)",video,,"quadtree node, SCR:VQT: decoder"
+intro,func,0e2c:056b,vqt_scr_leaf,"far void(x, y, w, h)",video,,"leaf to write page via entry 22 / entry 10, opaque"
+ps,func,38a1:056b,vqt_scr_leaf,"far void(x, y, w, h)",video,,"leaf to write page via entry 22 / entry 10, opaque"
+ap,func,2651:056a,vqt_scr_leaf,"far void(x, y, w, h)",video,,"leaf to write page via entry 22 / entry 10, opaque"
+intro,func,0f2c:0002,bmp_free_w,far void(bmp),video,,calls bmp_free
+ps,func,39a1:0002,bmp_free_w,far void(bmp),video,,calls bmp_free
+ap,func,26d2:0001,bmp_free_w,far void(bmp),video,,calls bmp_free
+intro,func,0f2c:0032,bmp_draw,"far void(frame *fr, int x, int y, int flip)",video,,"dispatch on kind: -3 opaque, -2 SCN, -1 VQT, else entry 29"
+ps,func,39a1:0032,bmp_draw,"far void(frame *fr, int x, int y, int flip)",video,,"dispatch on kind: -3 opaque, -2 SCN, -1 VQT, else entry 29"
+ap,func,26d2:0031,bmp_draw,"far void(frame *fr, int x, int y, int flip)",video,,"dispatch on kind: -3 opaque, -2 SCN, -1 VQT, else entry 29"
+ps,func,3a13:0000,put_be,"far void(void *p, int n, int size, FILE *f)",video,,big-endian fwrite (snapshot)
+ps,func,3a13:0078,ilbm_cmap,far void(FILE *f),video,,CMAP from hardware DAC <<2
+ps,func,3a13:00fa,ilbm_body,far void(FILE *f),video,,200 rows gfx_get_pixel -> c2p_row -> fwrite
+ps,func,3a13:01af,ilbm_write,far void(char *name),video,,FORM ILBM 320x200x8 uncompressed
+ps,func,3a13:031e,snap_save,void(char *name),video,,"drv[03]=0, drv[18]=drv[16], ilbm_write"
+intro,data,DS:3286,vqt_draw_zero,u8,video,,always 0: pixel value 0 transparent
+ps,data,DS:756A,vqt_draw_zero,u8,video,,always 0: pixel value 0 transparent
+ap,data,DS:645A,vqt_draw_zero,u8,video,,always 0: pixel value 0 transparent
+intro,data,DS:3288,vqt_nbits,u16,video,,index bits of the current leaf
+ps,data,DS:756C,vqt_nbits,u16,video,,index bits of the current leaf
+ap,data,DS:645C,vqt_nbits,u16,video,,index bits of the current leaf
+intro,data,DS:328A,vqt_fill_fn,far fn,video,,flipped leaf filler or null
+ps,data,DS:756E,vqt_fill_fn,far fn,video,,flipped leaf filler or null
+ap,data,DS:645E,vqt_fill_fn,far fn,video,,flipped leaf filler or null
+intro,data,DS:328E,vqt_ctx,near ptr,video,,decoder context
+ps,data,DS:7572,vqt_ctx,near ptr,video,,decoder context
+ap,data,DS:6462,vqt_ctx,near ptr,video,,decoder context
+intro,data,DS:3290,vqt_ctx0,struct[8],video,,"u32 bitpos, far src"
+ps,data,DS:7574,vqt_ctx0,struct[8],video,,"u32 bitpos, far src"
+ap,data,DS:6464,vqt_ctx0,struct[8],video,,"u32 bitpos, far src"
+intro,data,DS:329A,vqt_hflip,u16,video,,
+ps,data,DS:757E,vqt_hflip,u16,video,,
+ap,data,DS:646E,vqt_hflip,u16,video,,
+intro,data,DS:329C,vqt_vflip,u16,video,,
+ps,data,DS:7580,vqt_vflip,u16,video,,
+ap,data,DS:6470,vqt_vflip,u16,video,,
+intro,data,DS:329E,vqt_src_fn,far fn,video,,value source for flipped fillers
+ps,data,DS:7582,vqt_src_fn,far fn,video,,value source for flipped fillers
+ap,data,DS:6472,vqt_src_fn,far fn,video,,value source for flipped fillers
+intro,data,DS:32A2,vqt_flip,u16,video,,
+ps,data,DS:7586,vqt_flip,u16,video,,
+ap,data,DS:6476,vqt_flip,u16,video,,
+intro,data,DS:32A4,vqt_busy,u16,video,,
+ps,data,DS:7588,vqt_busy,u16,video,,
+ap,data,DS:6478,vqt_busy,u16,video,,
+intro,data,DS:32A6,vqt_tab,near ptr,video,,leaf colour table
+ps,data,DS:758A,vqt_tab,near ptr,video,,leaf colour table
+ap,data,DS:647A,vqt_tab,near ptr,video,,leaf colour table
+intro,data,DS:1AD2,vqt_rect_fn,far fn,video,,= gfx_rect
+ps,data,DS:349E,vqt_rect_fn,far fn,video,,= gfx_rect
+ap,data,DS:223C,vqt_rect_fn,far fn,video,,= gfx_rect
+intro,data,DS:1AD6,vqt_putpix,far fn,video,,gfx_pixel or driver entry 22
+ps,data,DS:34A2,vqt_putpix,far fn,video,,gfx_pixel or driver entry 22
+ap,data,DS:2240,vqt_putpix,far fn,video,,gfx_pixel or driver entry 22
+intro,data,DS:1ADA,vqt_bits_fn,far fn,video,,= vqt_bits
+ps,data,DS:34A6,vqt_bits_fn,far fn,video,,= vqt_bits
+ap,data,DS:2244,vqt_bits_fn,far fn,video,,= vqt_bits
+ps,data,DS:2188,snap_name,char[],video,,"""SNAPSHOT.LBM"""
+ps,data,DS:358C,ilbm_tags,char[],video,,FORM ILBM BMHD CMAP BODY wb

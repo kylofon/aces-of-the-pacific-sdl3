@@ -1,0 +1,64 @@
+exe,kind,address,name,type,owner,other_names,notes
+intro,func,1739:0802,sin16,far int(u16 a),video,,"INTRO copy; = PS 3d50:1f7c, AP 277a:5e66; video_rotate.md"
+intro,func,1739:080d,cos16,far int(u16 a),video,,"INTRO copy; = PS 3d50:1f87, AP 277a:5e71"
+intro,func,05da:45d3,gfx_last_bbox,"far void(int *x1, int *y1, int *x2, int *y2)",video,,bbox of the last rotated sprite
+ps,func,16e3:48f7,gfx_last_bbox,"far void(int *x1, int *y1, int *x2, int *y2)",video,,bbox of the last rotated sprite
+ap,func,1d32:6731,gfx_last_bbox,"far void(int *x1, int *y1, int *x2, int *y2)",video,,bbox of the last rotated sprite
+intro,func,05da:5f2e,crtc_probe,near CF(DX = CRTC index port),video,,writes 66h to CRTC reg 0Fh and reads back
+ps,func,16e3:5c88,crtc_probe,near CF(DX = CRTC index port),video,,writes 66h to CRTC reg 0Fh and reads back
+ap,func,1d32:02a4,crtc_probe,near CF(DX = CRTC index port),video,,writes 66h to CRTC reg 0Fh and reads back
+intro,func,05da:5f6b,bios_get_video_bits,near int(void),video,,(40:10 & 30h) >> 4
+ps,func,16e3:5cc5,bios_get_video_bits,near int(void),video,,(40:10 & 30h) >> 4
+ap,func,1d32:02e1,bios_get_video_bits,near int(void),video,,(40:10 & 30h) >> 4
+intro,func,05da:5f83,bios_set_colour_text,near void(void) (ES=40h),video,,"40:10 |= 20h, INT 10h AX=3"
+ps,func,16e3:5cdd,bios_set_colour_text,near void(void) (ES=40h),video,,"40:10 |= 20h, INT 10h AX=3"
+ap,func,1d32:02f9,bios_set_colour_text,near void(void) (ES=40h),video,,"40:10 |= 20h, INT 10h AX=3"
+ps,func,16e3:065d,gfx_bitmap_quad,"far void(frame *fr, int xs[4], int ys[4])",video,,PS only; 4-point bitmap mapper via entry 36; dead with the data
+ps,func,16e3:0b5e,quad_corner_uv,"near void(int a, int b, frame *fr, int *us, int *ue, int *vs, int *ve)",video,,texture corners of a quad edge
+ps,func,16e3:0c58,quad_orient,"near int(xp, yp, xt, yt, xn, yn)",video,,+1/-1 slope comparison
+ps,func,16e3:36ac,gfx_font_width,far int(int slot),video,,font_w[slot]
+ap,func,1d32:54e6,gfx_font_width,far int(int slot),video,,font_w[slot]
+ap,func,1d32:5516,gfx_font_height,far int(int slot),video,,font_h[slot]
+ap,func,1d32:6d55,circle_span_plot,"near void(int a, int b)",video,,= INTRO 05da:05a1 span_plot
+ap,func,1d32:1c60,clip_hook_cols,far R (entry 37 hook),video,,clip-list hook; not indexed as a function
+ap,func,1d32:1cac,clip_hook_tex,far R+C (entry 36 hook),video,,clip against every list in DS:1D12[]
+ap,func,1d32:1d3b,clip_hook_hspan,far R (entry 10 hook),video,,not indexed as a function
+ap,func,1d32:1d81,clip_hook_row,far R (entry 38 hook),video,,not indexed as a function
+ap,func,1d32:1e17,clip_hooks_install,far void(far list),video,,replace entries 10/36/37/38
+ap,func,1d32:1e7a,clip_hooks_install_multi,far void(far list far *array),video,,
+ap,func,1d32:1e9d,clip_hooks_remove,far void(void),video,,
+ap,func,1d32:1eca,rot_rect_setup,"far void(frame*, x, y, angle, W, H, hx, hy, int out[4])",video,,rotated rectangle corners DS:1D54/1D5C + bbox
+ap,func,244d:000b,gfx_state_save,far void(gfxstate *st),video,,28-byte record
+ap,func,244d:0087,gfx_state_restore,far void(gfxstate *st),video,,
+ap,func,244d:0101,drv_set_record,far void(void),video,,entries 27/2/10/22 -> DS:5EDA..5ECE
+ap,func,244d:0126,drv_set_select,far void(void),video,,"DS:1D74=1, swap in the recorded entries"
+ap,func,244d:0170,drv_set_unselect,far void(void),video,,no caller
+intro,data,DS:1830,rot_cx,i16[4],video,,rotated sprite corner x
+ps,data,DS:3094,rot_cx,i16[4],video,,rotated sprite corner x
+ap,data,DS:343A,rot_cx,i16[4],video,,rotated sprite corner x
+intro,data,DS:1838,rot_cy,i16[4],video,,rotated sprite corner y
+ps,data,DS:309C,rot_cy,i16[4],video,,rotated sprite corner y
+ap,data,DS:3442,rot_cy,i16[4],video,,rotated sprite corner y
+intro,data,DS:1840,rot_iT,u16,video,,byte index of the top corner
+ps,data,DS:30A4,rot_iT,u16,video,,byte index of the top corner
+ap,data,DS:344A,rot_iT,u16,video,,byte index of the top corner
+intro,data,DS:1842,rot_iB,u16,video,,
+ps,data,DS:30A6,rot_iB,u16,video,,
+ap,data,DS:344C,rot_iB,u16,video,,
+intro,data,DS:1844,rot_iL,u16,video,,
+ps,data,DS:30A8,rot_iL,u16,video,,
+ap,data,DS:344E,rot_iL,u16,video,,
+intro,data,DS:1846,rot_iR,u16,video,,
+ps,data,DS:30AA,rot_iR,u16,video,,
+ap,data,DS:3450,rot_iR,u16,video,,
+ap,data,DS:1D12,clip_lists,far ptr[],video,,"clip-span list pointer(s), 0:0 terminated"
+ap,data,DS:1D42,clip_list_it,u16,video,,
+ap,data,DS:1D44,clip_saved_e10,far ptr,video,,
+ap,data,DS:1D48,clip_saved_e37,far ptr,video,,
+ap,data,DS:1D4C,clip_saved_e36,far ptr,video,,
+ap,data,DS:1D50,clip_saved_e38,far ptr,video,,
+ap,data,DS:1D54,rot_rect_xs,i16[4],video,,
+ap,data,DS:1D5C,rot_rect_ys,i16[4],video,,
+ap,data,DS:1D74,drv_set_active,u8,video,,written only by 244d
+ap,data,DS:5ECE,drv_set_rec,far ptr[4],video,,"recorded entries 22,10,2,27 (5ECE..5EDD)"
+ap,data,DS:5EBE,drv_set_save,far ptr[4],video,,"saved entries 22,10,2,27 (5EBE..5ECD)"

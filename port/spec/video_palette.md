@@ -394,7 +394,13 @@ platform spec; likely). `timer_on` = INTRO `DS:15BE` / PS `DS:2E3E`. **Verified.
 * `ttm_timer_start(t, long dur)` (INTRO `10fc:0114`, PS `22a0:018e`): `t.start = ticks`;
   `t.duration = (u16)dur`.
 * `ttm_timer_done(t)` (INTRO `10fc:000f`, PS `22a0:0089`): if `!timer_on` return 1; `e = ticks −
-  t.start` (u32); return `e >= t.duration`.
+  t.start` (u32); return `e >= t.duration`. **Correction (finisher): the PS TTM does not call
+  `22a0:0089`** (it has no caller) — `3baf:0e38` (FADE_PART) and `3aee:00f0` (`A0B5` dissolve) call
+  the shell timer `22a0:0009`, which reads the **236.7 Hz** clock `DS:1CC8` (`229e:001f`) and
+  returns `e > t.duration` (strict), while `start` was taken from the 59.17 Hz `DS:52AA`. Since
+  `DS:1CC8` counts 4× faster since PS start and `DS:52AA` is zeroed at every TTM sequence start,
+  `e` is huge and the test is true at once: in PS, `4136` only applies its final level and the
+  `A0B5` batches do not wait (see `video_ttm.md` §12.5).
 * `ttm_timer_value(t, a, b)` (INTRO `10fc:0058`, PS `22a0:00d2`): if `!timer_on` return `a`.
   `e = ticks − t.start`; if `e >= duration` or `duration == 0` return `b`. If `a > b`: swap so
   `lo = b, hi = a` and `e = duration − e`; else `lo = a, hi = b`. `r = lo + (u32)((s32)(hi − lo) *

@@ -75,7 +75,7 @@ intro,func,05da:2fc1,gfx_font_select,far int(int slot),video,,
 ps,func,16e3:35d5,gfx_font_select,far int(int slot),video,,
 ap,func,1d32:540f,gfx_font_select,far int(int slot),video,,
 intro,func,05da:3098,gfx_font_width,far int(int slot),video,,
-ps,func,16e3:36dc,gfx_font_width,far int(int slot),video,,
+ps,func,16e3:36dc,gfx_font_height,far int(int slot),video,,corrected: reads font_h DS:2348
 intro,func,05da:30c8,gfx_font_height,far int(int slot),video,,
 intro,func,05da:30f8,gfx_font_valid,far int(int slot),video,,
 ps,func,16e3:370c,gfx_font_valid,far int(int slot),video,,

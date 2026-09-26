@@ -670,7 +670,10 @@ ap,func,1d32:000a,gfx_init,"far int(int code, int unused, const char* file)",vid
 ap,func,1d32:012a,sys_shutdown,far void(void),platform,,
 ap,func,1d32:013f,gfx_restore_text,far int(void),video,,
 ap,func,1d32:0157,gfx_detect_adapter,near int(void),video,,returns 8 for VGA; returns the requested code if drv[AB4]==0
+ap,func,1d32:02a4,crtc_probe,near CF(DX = CRTC index port),video,,writes 66h to CRTC reg 0Fh and reads back
 ap,func,1d32:02be,bios_set_text_mode,near,match:intro,,= intro 05da:5f48
+ap,func,1d32:02e1,bios_get_video_bits,near int(void),video,,(40:10 & 30h) >> 4
+ap,func,1d32:02f9,bios_set_colour_text,near void(void) (ES=40h),video,,"40:10 |= 20h, INT 10h AX=3"
 ap,func,1d32:030d,joy_read_axes,"near, in BL=axis mask, out SI,DI",platform,,raw one-shot counts from port 201h
 ap,func,1d32:0374,joy_scale,"near, in AX=raw BX=centre CX=scale, out AX",platform,,"raw → −127..127, dead zone"
 ap,func,1d32:03ac,joy_calibrate,far int joy_calibrate(void),platform,,"loop-speed calibration, presence, centre, scale; returns present mask"
@@ -697,6 +700,14 @@ ap,func,1d32:0e66,poly_edge_steep,near,video,,
 ap,func,1d32:0fa4,poly_edge_diag,near,video,,
 ap,func,1d32:0fcb,poly_edge_right,near,video,,x-major right slot
 ap,func,1d32:1087,poly_edge_left,near,video,,x-major left slot
+ap,func,1d32:1c60,clip_hook_cols,far R (entry 37 hook),video,,clip-list hook; not indexed as a function
+ap,func,1d32:1cac,clip_hook_tex,far R+C (entry 36 hook),video,,clip against every list in DS:1D12[]
+ap,func,1d32:1d3b,clip_hook_hspan,far R (entry 10 hook),video,,not indexed as a function
+ap,func,1d32:1d81,clip_hook_row,far R (entry 38 hook),video,,not indexed as a function
+ap,func,1d32:1e17,clip_hooks_install,far void(far list),video,,replace entries 10/36/37/38
+ap,func,1d32:1e7a,clip_hooks_install_multi,far void(far list far *array),video,,
+ap,func,1d32:1e9d,clip_hooks_remove,far void(void),video,,
+ap,func,1d32:1eca,rot_rect_setup,"far void(frame*, x, y, angle, W, H, hx, hy, int out[4])",video,,rotated rectangle corners DS:1D54/1D5C + bbox
 ap,func,1d32:2050,bmp_to_ems,far bmp_t*(bmp_t*),platform,,move a bitmap pixel block into its own EMS handle; frame seg := handle (<50h)
 ap,func,1d32:214e,bmp_load_ems,far bmp_t*(void* x),platform,,bmp_load_planes + bmp_to_ems
 ap,func,1d32:2170,bmp_free_ems,far void(bmp_t*),platform,,"ems_free + dummy 16-byte dos block, bmp_free"
@@ -784,6 +795,8 @@ ap,func,1d32:4f7d,gfx_poly_clip,far void(void),video,,Sutherland-Hodgman on poly
 ap,func,1d32:53fe,gfx_copy_rect,"far void(int x, int y, int w, int h)",video,,thunk entry 4
 ap,func,1d32:540b,gfx_flip,far void(int wait),video,,thunk entry 8
 ap,func,1d32:540f,gfx_font_select,far int(int slot),video,,
+ap,func,1d32:54e6,gfx_font_width,far int(int slot),video,,font_w[slot]
+ap,func,1d32:5516,gfx_font_height,far int(int slot),video,,font_h[slot]
 ap,func,1d32:5546,gfx_font_valid,far int(int slot),video,,
 ap,func,1d32:5570,gfx_text_width,far int(const char* s),video,,
 ap,func,1d32:5581,gfx_text_width_far,far int(const char far* s),video,,
@@ -809,6 +822,7 @@ ap,func,1d32:5dbf,mouse_button,far int mouse_button(int right),platform,,"0 = le
 ap,func,1d32:5de2,rot_edge_dda,"near void(int* out, int x0, int y0, int x1, int y1)",video,,rotated sprite helper
 ap,func,1d32:5e5b,gfx_sprite_rotated_ind,far void(...),video,,ljmp [DS:182C]
 ap,func,1d32:5e5f,gfx_sprite_rotated,"far void(frame* f, int x, int y, u16 angle, int w, int h, int px, int py)",video,,see video_rotate.md
+ap,func,1d32:6731,gfx_last_bbox,"far void(int *x1, int *y1, int *x2, int *y2)",video,,bbox of the last rotated sprite
 ap,func,1d32:676f,huge_norm,far,platform,far_normalize,
 ap,func,1d32:6781,huge_norm_top,near regs,platform,,normalise to largest offset; for backward copies (PS/AP addresses verified)
 ap,func,1d32:679e,huge_add,far,platform,far_add_long,
@@ -829,6 +843,7 @@ ap,func,1d32:6aaf,sys_exit_tail,-,platform,,"retf tail of sys_exit 1d32:6a91, no
 ap,func,1d32:6ab0,gfx_rect,"far void(int x, int y, int w, int h)",video,,filled/outlined rectangle
 ap,func,1d32:6bbc,gfx_circle,"far void(int r, int xc, int yc)",video,,aspect 9/8
 ap,func,1d32:6c22,circle_walk,"near long(int r, int xc, int yc)",video,,
+ap,func,1d32:6d55,circle_span_plot,"near void(int a, int b)",video,,= INTRO 05da:05a1 span_plot
 ap,func,1d32:6dfc,circle_outline_plot,"near void(int a, int b)",video,,
 ap,func,241c:0005,bmd_load,"far void*(int id,int set,char*name)",render3d,,
 ap,func,241c:01f6,bmd_free,near void(int),render3d,,
@@ -836,6 +851,11 @@ ap,func,243d:0009,sprite_set_load,far,render3d,,
 ap,func,243d:004c,sprite_set_load2,far,render3d,,
 ap,func,243d:008f,sprite_set_free,far,render3d,,
 ap,func,243d:00cd,sprite_set_free2,near,render3d,,
+ap,func,244d:000b,gfx_state_save,far void(gfxstate *st),video,,28-byte record
+ap,func,244d:0087,gfx_state_restore,far void(gfxstate *st),video,,
+ap,func,244d:0101,drv_set_record,far void(void),video,,entries 27/2/10/22 -> DS:5EDA..5ECE
+ap,func,244d:0126,drv_set_select,far void(void),video,,"DS:1D74=1, swap in the recorded entries"
+ap,func,244d:0170,drv_set_unselect,far void(void),video,,no caller
 ap,func,2466:000a,far_dot_alloc,far,render3d,,render3d_world.md
 ap,func,2466:0023,far_dot_draw,far,render3d,,render3d_world.md
 ap,func,2466:0118,win_task_switch,far void (void),platform,,"caller-side wrapper: suspend sound, win_switch_out, resume (hand-off)"
@@ -2469,6 +2489,8 @@ ap,func,7074:012d,ts_done,far,render3d,,
 ap,func,7074:0154,ts_load_table,far,render3d,,
 ap,func,7074:022b,ts_free_table,far,render3d,,
 ap,func,7074:02d8,ts_load_table_h,far,render3d,,
+ap,func,70b4:0000,curve4_draw,"far void(int xs[4], int ys[4])",video,,no callers; 4 quadratic Beziers through edge midpoints
+ap,func,70b4:0188,bezier2_draw,"near void(int k, i32 x0,x1,x2, i32 y0,y1,y2)",video,,"forward differencing, gfx_line"
 ap,func,70e8:0000,disc_draw,far void(far var*),render3d,,
 ap,func,70ff:0000,gfx_load_driver,"far void far*(int code, const char* file)",video,,reads OVL:<tag> chunk (tag table DS:187D) into a DOS block
 ap,func,7115:0000,font_load,far,platform,gfx_font_load,
@@ -2669,6 +2691,15 @@ ap,global,DS:1CE0,tandy_remap_from,u8[11],platform,,59 5A 55 54 29 58 2B 4A 4E 5
 ap,global,DS:1CEB,tandy_remap_to,u8[11],platform,,57 58 52 46 48 47 4B 50 4D 53 1C
 ap,global,DS:1CF6,kbd_enhanced,u8,platform,,1 = Tandy with enhanced (101-key) keyboard
 ap,global,DS:1CF8,poly_scratch,u16[13],video,,polygon scratch 15A0..15B9
+ap,global,DS:1D12,clip_lists,far ptr[],video,,"clip-span list pointer(s), 0:0 terminated"
+ap,global,DS:1D42,clip_list_it,u16,video,,
+ap,global,DS:1D44,clip_saved_e10,far ptr,video,,
+ap,global,DS:1D48,clip_saved_e37,far ptr,video,,
+ap,global,DS:1D4C,clip_saved_e36,far ptr,video,,
+ap,global,DS:1D50,clip_saved_e38,far ptr,video,,
+ap,global,DS:1D54,rot_rect_xs,i16[4],video,,
+ap,global,DS:1D5C,rot_rect_ys,i16[4],video,,
+ap,global,DS:1D74,drv_set_active,u8,video,,written only by 244d
 ap,global,DS:1D7C,str_ring_pos,u16,platform,,
 ap,global,DS:1EBA,vol_log,FILE*,platform,,debug log
 ap,global,DS:1EBC,vol_exclude,char*,platform,,"AP: skip volumes containing it; = ""SH"""
@@ -2783,6 +2814,12 @@ ap,global,DS:3422,mouse_stack_top,–,platform,,private stack used inside the ev
 ap,global,DS:3434,mouse_present,u8,platform,,
 ap,global,DS:3435,mouse_buttons,u8,platform,,"BL of last event (bit0 left, bit1 right)"
 ap,global,DS:3436,rot_fn,far fn,video,,-> gfx_sprite_rotated
+ap,global,DS:343A,rot_cx,i16[4],video,,rotated sprite corner x
+ap,global,DS:3442,rot_cy,i16[4],video,,rotated sprite corner y
+ap,global,DS:344A,rot_iT,u16,video,,byte index of the top corner
+ap,global,DS:344C,rot_iB,u16,video,,
+ap,global,DS:344E,rot_iL,u16,video,,
+ap,global,DS:3450,rot_iR,u16,video,,
 ap,global,DS:347A,divz_installed,u8,platform,,
 ap,global,DS:347B,divz_old_seg,u16,platform,,
 ap,global,DS:347D,divz_old_off,u16,platform,,
@@ -2964,6 +3001,8 @@ ap,global,DS:5E65,orbit_dist,i16,sim_flow,,
 ap,global,DS:5E67,orbit_heading,i16,sim_flow,,
 ap,global,DS:5E6B,orbit_pitch,i16,sim_flow,,
 ap,global,DS:5EBB,view,i16,sim_flow,,current view 0..19h
+ap,global,DS:5EBE,drv_set_save,far ptr[4],video,,"saved entries 22,10,2,27 (5EBE..5ECD)"
+ap,global,DS:5ECE,drv_set_rec,far ptr[4],video,,"recorded entries 22,10,2,27 (5ECE..5EDD)"
 ap,global,DS:5EDE,far_dot_proxies,,render3d,,
 ap,global,DS:5EE2,str_ring,char[512],platform,,
 ap,global,DS:60E2,vol_subdir_buf,char[],platform,,
@@ -3349,6 +3388,7 @@ intro,func,05da:3c61,mouse_button,far int mouse_button(int right),platform,,"0 =
 intro,func,05da:3c84,rot_edge_dda,"near void(int* out, int x0, int y0, int x1, int y1)",video,,rotated sprite helper
 intro,func,05da:3cfd,gfx_sprite_rotated_ind,far void(...),video,,ljmp [DS:182C]
 intro,func,05da:3d01,gfx_sprite_rotated,"far void(frame* f, int x, int y, u16 angle, int w, int h, int px, int py)",video,,see video_rotate.md
+intro,func,05da:45d3,gfx_last_bbox,"far void(int *x1, int *y1, int *x2, int *y2)",video,,bbox of the last rotated sprite
 intro,func,05da:4611,huge_norm,far,platform,far_normalize,
 intro,func,05da:4623,huge_norm_top,near regs,platform,,normalise to largest offset; for backward copies (PS/AP addresses verified)
 intro,func,05da:4640,huge_add,far,platform,far_add_long,
@@ -3390,7 +3430,10 @@ intro,func,05da:5c93,gfx_init,"far int(int code, int unused, const char* file)",
 intro,func,05da:5db4,sys_shutdown,far void(void),platform,,
 intro,func,05da:5dc9,gfx_restore_text,far int(void),video,,
 intro,func,05da:5de1,gfx_detect_adapter,near int(void),video,,returns 8 for VGA; returns the requested code if drv[AB4]==0
+intro,func,05da:5f2e,crtc_probe,near CF(DX = CRTC index port),video,,writes 66h to CRTC reg 0Fh and reads back
 intro,func,05da:5f48,bios_set_text_mode,near,seed,,equipment byte + INT 10h mode 3
+intro,func,05da:5f6b,bios_get_video_bits,near int(void),video,,(40:10 & 30h) >> 4
+intro,func,05da:5f83,bios_set_colour_text,near void(void) (ES=40h),video,,"40:10 |= 20h, INT 10h AX=3"
 intro,func,05da:5f97,bmp_to_scn,far,platform,,symbols.csv had dos_setblock (wrong)
 intro,func,05da:607c,scn_emit_skip,far,platform,,
 intro,func,05da:6116,scn_lit_out,far,platform,,
@@ -3637,6 +3680,8 @@ intro,func,1712:0002,snd_pitch_bend,"far int(int sel,int value,int chan)",sound,
 intro,func,1715:000e,snd_pool_play,"far Node far*(void far *res,int vol,u8 loop)",sound,,"play(node,0), prio 1"
 intro,func,1724:0000,snd_alloc,"far void far*(u32,int cls)",sound,,
 intro,func,172c:000e,snd_read_all,far,sound,,
+intro,func,1739:0802,sin16,far int(u16 a),video,,"INTRO copy; = PS 3d50:1f7c, AP 277a:5e66; video_rotate.md"
+intro,func,1739:080d,cos16,far int(u16 a),video,,"INTRO copy; = PS 3d50:1f87, AP 277a:5e71"
 intro,func,17bd:0000,ems_detect,far int(void),platform,,"""EMMXXXX0"" at INT 67h vector seg:000A; AP also stores page frame"
 intro,func,17bd:002a,ems_free_pages,far u16(void),platform,,INT 67h/42h BX
 intro,func,17bd:003a,ems_alloc,far u16(u32 bytes),platform,,INT 67h/43h; handle table of 32
@@ -3744,6 +3789,12 @@ intro,global,DS:1818,mouse_stack_top,–,platform,,private stack used inside the
 intro,global,DS:182A,mouse_present,u8,platform,,
 intro,global,DS:182B,mouse_buttons,u8,platform,,"BL of last event (bit0 left, bit1 right)"
 intro,global,DS:182C,rot_fn,far fn,video,,-> gfx_sprite_rotated
+intro,global,DS:1830,rot_cx,i16[4],video,,rotated sprite corner x
+intro,global,DS:1838,rot_cy,i16[4],video,,rotated sprite corner y
+intro,global,DS:1840,rot_iT,u16,video,,byte index of the top corner
+intro,global,DS:1842,rot_iB,u16,video,,
+intro,global,DS:1844,rot_iL,u16,video,,
+intro,global,DS:1846,rot_iR,u16,video,,
 intro,global,DS:1870,divz_installed,u8,platform,,
 intro,global,DS:1871,divz_old_seg,u16,platform,,
 intro,global,DS:1873,divz_old_off,u16,platform,,
@@ -4589,6 +4640,9 @@ ps,func,16e3:058a,circle_outline_plot,"near void(int a, int b)",video,,
 ps,func,16e3:0637,gfx_sprite_flip,"far void(frame* f, int x, int y, int flags)",video,,thunk to driver entry 29
 ps,func,16e3:063b,gfx_sprite_opaque,"far void(frame* f, int x, int y)",video,,thunk to driver entry 33
 ps,func,16e3:0643,gfx_ega_restore,far void(void),video,,no-op unless drv[21]==10h
+ps,func,16e3:065d,gfx_bitmap_quad,"far void(frame *fr, int xs[4], int ys[4])",video,,PS only; 4-point bitmap mapper via entry 36; dead with the data
+ps,func,16e3:0b5e,quad_corner_uv,"near void(int a, int b, frame *fr, int *us, int *ue, int *vs, int *ve)",video,,texture corners of a quad edge
+ps,func,16e3:0c58,quad_orient,"near int(xp, yp, xt, yt, xn, yn)",video,,+1/-1 slope comparison
 ps,func,16e3:0d1f,pal_load,far,platform,,
 ps,func,16e3:0f22,pal_set,void far *(void far *pal),video,,
 ps,func,16e3:0f94,pal_free,far,platform,,
@@ -4629,7 +4683,8 @@ ps,func,16e3:35c4,gfx_copy_rect,"far void(int x, int y, int w, int h)",video,,th
 ps,func,16e3:35c9,gfx_entry25,far void(void),video,,thunk entry 25 (no-op)
 ps,func,16e3:35d1,gfx_flip,far void(int wait),video,,thunk entry 8
 ps,func,16e3:35d5,gfx_font_select,far int(int slot),video,,
-ps,func,16e3:36dc,gfx_font_width,far int(int slot),video,,
+ps,func,16e3:36ac,gfx_font_width,far int(int slot),video,,font_w[slot]
+ps,func,16e3:36dc,gfx_font_height,far int(int slot),video,,corrected: reads font_h DS:2348
 ps,func,16e3:370c,gfx_font_valid,far int(int slot),video,,
 ps,func,16e3:3736,gfx_text_width,far int(const char* s),video,,
 ps,func,16e3:3747,gfx_text_width_far,far int(const char far* s),video,,
@@ -4655,6 +4710,7 @@ ps,func,16e3:3f85,mouse_button,far int mouse_button(int right),platform,,"0 = le
 ps,func,16e3:3fa8,rot_edge_dda,"near void(int* out, int x0, int y0, int x1, int y1)",video,,rotated sprite helper
 ps,func,16e3:4021,gfx_sprite_rotated_ind,far void(...),video,,ljmp [DS:182C]
 ps,func,16e3:4025,gfx_sprite_rotated,"far void(frame* f, int x, int y, u16 angle, int w, int h, int px, int py)",video,,see video_rotate.md
+ps,func,16e3:48f7,gfx_last_bbox,"far void(int *x1, int *y1, int *x2, int *y2)",video,,bbox of the last rotated sprite
 ps,func,16e3:4935,huge_norm,far,platform,far_normalize,
 ps,func,16e3:4947,huge_norm_top,near regs,platform,,normalise to largest offset; for backward copies (PS/AP addresses verified)
 ps,func,16e3:4964,huge_add,far,platform,far_add_long,
@@ -4690,7 +4746,10 @@ ps,func,16e3:59ed,gfx_init,"far int(int code, int unused, const char* file)",vid
 ps,func,16e3:5b0e,sys_shutdown,far void(void),platform,,
 ps,func,16e3:5b23,gfx_restore_text,far int(void),video,,
 ps,func,16e3:5b3b,gfx_detect_adapter,near int(void),video,,returns 8 for VGA; returns the requested code if drv[AB4]==0
+ps,func,16e3:5c88,crtc_probe,near CF(DX = CRTC index port),video,,writes 66h to CRTC reg 0Fh and reads back
 ps,func,16e3:5ca2,bios_set_text_mode,near,match:intro,,= intro 05da:5f48
+ps,func,16e3:5cc5,bios_get_video_bits,near int(void),video,,(40:10 & 30h) >> 4
+ps,func,16e3:5cdd,bios_set_colour_text,near void(void) (ES=40h),video,,"40:10 |= 20h, INT 10h AX=3"
 ps,func,16e3:5cf1,bmp_to_scn,far,platform,,symbols.csv had dos_setblock (wrong)
 ps,func,16e3:5dd6,scn_emit_skip,far,platform,,
 ps,func,16e3:5e70,scn_lit_out,far,platform,,
@@ -5584,6 +5643,77 @@ ps,func,3baf:1660,ttm_page_by_index,u16 (int i),video,,"0 front, 2 bg, else back
 ps,func,3baf:1689,ttm_wipe,"void (x, y, w, h, a4, op)",video,,A014-A094/A0B5 transitions back->front
 ps,func,3baf:19c5,ttm_wipe_delay,void (void),video,,100 empty copy calls
 ps,func,3baf:19eb,ttm_wipe_copy,"void (x, y, w, h)",video,,copy_rect if w>=3 && h>=3
+ps,func,3d50:0012,mul_shr8,far/near (see video_ts.md),video,,= AP 277a:3968 (render3d); identical
+ps,func,3d50:0022,mul_shr10,far/near (see video_ts.md),video,,= AP 277a:3978 (render3d); identical
+ps,func,3d50:003a,bit_index8,far/near (see video_ts.md),video,,= AP 277a:3990 (render3d); identical
+ps,func,3d50:004c,isqrt16,far/near (see video_ts.md),video,,= AP 277a:39a2 (render3d); identical
+ps,func,3d50:0102,isqrt32,far/near (see video_ts.md),video,,= AP 277a:3a58 (render3d); identical
+ps,func,3d50:01e6,ldist2,far/near (see video_ts.md),video,,= AP 277a:3bfc (render3d); identical; the same routine contains ldist2v at 3d50:0220 (= AP 3c36)
+ps,func,3d50:0254,dist2_16,far/near (see video_ts.md),video,,= AP 277a:3c6a (render3d); identical
+ps,func,3d50:027a,mul32,far/near (see video_ts.md),video,,= AP 277a:3cfc (render3d); identical
+ps,func,3d50:0292,lmul,far/near (see video_ts.md),video,,= AP 277a:3d14 (render3d); identical
+ps,func,3d50:02d0,lsar,far/near (see video_ts.md),video,,= AP 277a:3d52 (render3d); identical
+ps,func,3d50:032a,proj32,far/near (see video_ts.md),video,,= AP 277a:3f6e (render3d); identical
+ps,func,3d50:04ca,mat_mul,far/near (see video_ts.md),video,,= AP 277a:41e0 (render3d); identical
+ps,func,3d50:0840,mat_transpose,far/near (see video_ts.md),video,,= AP 277a:4556 (render3d); identical
+ps,func,3d50:0864,mat_from_angles,far/near (see video_ts.md),video,,= AP 277a:457a (render3d); identical
+ps,func,3d50:0c8e,mat_to_angles,far/near (see video_ts.md),video,,= AP 277a:49a4 (render3d); identical
+ps,func,3d50:0cf6,vec_rotate_n,far/near (see video_ts.md),video,,= AP 277a:4a0c (render3d); identical
+ps,func,3d50:0dcf,vec_rotate,far/near (see video_ts.md),video,,= AP 277a:4ae5 (render3d); far wrapper of vec_rotate_n 0cf6
+ps,func,3d50:0de4,dot48,far/near (see video_ts.md),video,,= AP 277a:4afa (render3d); identical
+ps,func,3d50:0f11,lvec_rotate_n,far/near (see video_ts.md),video,,= AP 277a:4c27 (render3d); identical
+ps,func,3d50:0f9d,lvec_rotate,far/near (see video_ts.md),video,,= AP 277a:4cb3 (render3d); far wrapper of lvec_rotate_n 0f11; no caller in PS
+ps,func,3d50:0fb2,vtx_rotate_shift,far/near (see video_ts.md),video,,= AP 277a:4cc8 (render3d); identical
+ps,func,3d50:1562,asin16,far/near (see video_ts.md),video,,"PS only; **PS variant**, §3.2"
+ps,func,3d50:1589,acos16,far/near (see video_ts.md),video,,"PS only; **PS variant**, §3.2"
+ps,func,3d50:15b4,mul_cos,far/near (see video_ts.md),video,,= AP 277a:4e76 (render3d); identical
+ps,func,3d50:15f4,mul_sin,far/near (see video_ts.md),video,,= AP 277a:4eb6 (render3d); identical
+ps,func,3d50:1636,vdot_n,far/near (see video_ts.md),video,,= AP 277a:4ef8 (render3d); identical
+ps,func,3d50:1656,vdot,far/near (see video_ts.md),video,,= AP 277a:4f18 (render3d); identical
+ps,func,3d50:1664,vneg,far/near (see video_ts.md),video,,= AP 277a:4f26 (render3d); identical
+ps,func,3d50:1676,vadd_far,far/near (see video_ts.md),video,,= AP 277a:4f58 (render3d); identical
+ps,func,3d50:169a,vsar,far/near (see video_ts.md),video,,= AP 277a:4fb2 (render3d); identical
+ps,func,3d50:16b0,lmid,far/near (see video_ts.md),video,,= AP 277a:53e2 (render3d); identical
+ps,func,3d50:1702,lbox,far/near (see video_ts.md),video,,= AP 277a:5510 (render3d); identical
+ps,func,3d50:1f7c,sin16,far/near (see video_ts.md),video,,= AP 277a:5e66 (render3d); identical
+ps,func,3d50:1f87,cos16,far/near (see video_ts.md),video,,= AP 277a:5e71 (render3d); identical
+ps,func,3d50:21ba,atan2_16,far/near (see video_ts.md),video,,= AP 277a:6228 (render3d); identical
+ps,func,3d50:225a,atan2_32,far/near (see video_ts.md),video,,= AP 277a:62c8 (render3d); identical
+ps,func,3d50:2342,set_near,far/near (see video_ts.md),video,,= AP 277a:0012 (render3d); identical
+ps,func,3d50:237b,cam_begin_frame,far/near (see video_ts.md),video,,= AP 277a:004b (render3d); identical
+ps,func,3d50:2482,set_light,far/near (see video_ts.md),video,,= AP 277a:0152 (render3d); identical
+ps,func,3d50:24ea,obj_set_position,far/near (see video_ts.md),video,,= AP 277a:22f8 (render3d); identical
+ps,func,3d50:256f,obj_set_orientation,far/near (see video_ts.md),video,,= AP 277a:237d (render3d); identical
+ps,func,3d50:26e1,obj_near_depth,far/near (see video_ts.md),video,,= AP 277a:24ef (render3d); identical
+ps,func,3d50:27de,poly_colours,far/near (see video_ts.md),video,,= AP 277a:01ba (render3d); identical
+ps,func,3d50:28c3,poly_fill,far/near (see video_ts.md),video,,= AP 277a:029f (render3d); identical
+ps,func,3d50:2908,poly_fill_bitmap4,far/near (see video_ts.md),video,,= AP 277a:02e4 (render3d); identical
+ps,func,3d50:296d,part_draw32,far/near (see video_ts.md),video,,= AP 277a:361d (render3d); identical
+ps,func,3d50:2b92,part_draw16s,far/near (see video_ts.md),video,,= AP 277a:07ae (render3d); identical
+ps,func,3d50:2d86,pt_add_centre,far/near (see video_ts.md),video,,"= AP 277a:2fee (render3d); 8086 version, same result"
+ps,func,3d50:2daa,pt_project,far/near (see video_ts.md),video,,"= AP 277a:3010 (render3d); **PS variant** via proj32, §3.3"
+ps,func,3d50:2de4,apparent_size,far/near (see video_ts.md),video,,"= AP 277a:304c (render3d); **PS variant** via proj32, §3.3"
+ps,func,3d50:2e0c,clip2d16,far/near (see video_ts.md),video,,= AP 277a:25ec (render3d); identical (register allocation only)
+ps,func,3d50:32ad,near_isect16,far/near (see video_ts.md),video,,= AP 277a:2a8d (render3d); identical semantics (anchor in BX instead of BP)
+ps,func,3d50:32f6,near_clip16,far/near (see video_ts.md),video,,= AP 277a:2adf (render3d); identical semantics
+ps,func,3d50:3399,poly_add_centre16,far/near (see video_ts.md),video,,= AP 277a:2b5d (render3d); identical
+ps,func,3d50:33c4,clip32a_x_edge,far/near (see video_ts.md),video,,= AP 277a:2b88 (render3d); identical
+ps,func,3d50:3455,clip32a_y_edge,far/near (see video_ts.md),video,,= AP 277a:2c19 (render3d); identical
+ps,func,3d50:34e6,clip2d32a,far/near (see video_ts.md),video,,= AP 277a:2caa (render3d); identical (calls 33c4/3455)
+ps,func,3d50:3713,near_isect32a,far/near (see video_ts.md),video,,= AP 277a:2ed7 (render3d); **PS variant** §3.4
+ps,func,3d50:376e,near_clip32a,far/near (see video_ts.md),video,,"= AP 277a:2f4e (render3d); same S-H walk, calls 3713"
+ps,func,3d50:385a,clip32b_x_edge,far/near (see video_ts.md),video,,= AP 277a:3070 (render3d); **PS variant** via proj32 §3.4
+ps,func,3d50:392f,clip32b_y_edge,far/near (see video_ts.md),video,,= AP 277a:3159 (render3d); **PS variant** via proj32 §3.4
+ps,func,3d50:3a04,clip2d32b,far/near (see video_ts.md),video,,= AP 277a:3242 (render3d); code of clip2d32a calling 385a/392f
+ps,func,3d50:3c31,near_isect32b,far/near (see video_ts.md),video,,= AP 277a:346b (render3d); **PS variant** via proj32 §3.4
+ps,func,3d50:3cb4,near_clip32b,far/near (see video_ts.md),video,,"= AP 277a:3530 (render3d); same S-H walk, calls 3c31"
+ps,func,3d50:3d9f,poly_add_centre32,far/near (see video_ts.md),video,,= AP 277a:35d0 (render3d); identical
+ps,func,3d50:3e0f,m_cam_block,far/near (see video_ts.md),video,,DATA block mis-indexed as a function (= AP 277a:09b6)
+ps,func,3d50:3e4d,eye_in_obj,far/near (see video_ts.md),video,,DATA block mis-indexed as a function (= AP 277a:0a07)
+ps,func,3d50:3e53,cs_state_block,far/near (see video_ts.md),video,,DATA block mis-indexed as a function (= AP 277a:0a13)
+ps,func,3d50:573e,poly_facing,far/near (see video_ts.md),video,,= AP 277a:0346 (render3d); identical
+ps,func,3d50:57b3,part_draw_shadow,far/near (see video_ts.md),video,,= AP 277a:03bb (render3d); identical
+ps,func,3d50:59be,part_draw16,far/near (see video_ts.md),video,,= AP 277a:05c6 (render3d); identical
 ps,func,430a:0004,snd_get_cue,far,sound,,stub -> 09f1: node cue counter (+152)
 ps,func,430a:0017,snd_node_set_priority,far,sound,,stub -> 091e
 ps,func,430a:002b,snd_get_position,far,sound,,stub -> 09fb: tick -> min/sec/halfticks
@@ -5695,6 +5825,61 @@ ps,func,46a9:0003,snd_pitch_bend,"far int(int sel,int value,int chan)",sound,,
 ps,func,46ac:000f,snd_pool_play,"far Node far*(void far *res,int vol,u8 loop)",sound,,"play(node,0), prio 1"
 ps,func,46bb:0001,snd_alloc,"far void far*(u32,int cls)",sound,,
 ps,func,46c3:000f,snd_read_all,far,sound,,
+ps,func,46d0:0000,bitmap_global,far bitmap* (int i),video,,= AP 2edf:0007
+ps,func,46d0:005b,vtx_eye16,"far void(u8 idx, i16 out[3])",video,,= AP 2edf:005e
+ps,func,46d0:0117,sprite_draw,far void(far variant*),video,,= AP 2edf:0119 (far arg)
+ps,func,46d0:02fa,bitmap4_draw,"far void(colours, xs, ys)",video,,draws via gfx_bitmap_quad 16e3:065d; AP 2ec2:000d draws nothing
+ps,func,4708:0003,ts_visible_lod,far u8(void),video,,= AP 2f0e:0008 with PS proj32 projections
+ps,func,4708:034c,part_sort,"far int(self, n, u16 *list)",video,,= AP 2f0e:033d + stack_check
+ps,func,4708:0715,part_list,"far int(self, n, ofs, u16 *out)",video,,= AP 2f0e:06eb
+ps,func,4708:074b,part_walk,"far void(self, n, u16 *list)",video,,= AP 2f0e:071f
+ps,func,4708:0925,ts_draw,far void(instance *o),video,,= AP 2f0e:08e9; unshifted draw-mode thresholds
+ps,func,47c8:0000,shape_ptr,far void far *(int id),video,,= AP 271b:0007 without handles
+ps,func,47c8:008f,shape_set_ptr,"far void(int id, far p)",video,,no caller
+ps,func,47c8:0132,view_new,far view *(int eye),video,,
+ps,func,47c8:0188,view_free,far void(view *v),video,,
+ps,func,47c8:0196,shape_flags,far u8(int id),video,,
+ps,func,47c8:01da,shape_class,far u8(int id),video,,
+ps,func,47c8:021f,shape_set_class,"far void(int id, u8 c)",video,,
+ps,func,47c8:0267,shape_subclass,far u8(int id),video,,
+ps,func,47c8:02ac,shape_shift,far u8(int id),video,,
+ps,func,47c8:02f1,shape_nslots,far int(int id),video,,
+ps,func,47c8:0336,shape_nvariants,"far int(int id, int slot)",video,,
+ps,func,47c8:03b1,shape_radius,far int(int id),video,,
+ps,func,47c8:03f6,shape_set_radius,"far void(int id, int r)",video,,
+ps,func,47c8:043e,shape_radius_world,far long(int id),video,,
+ps,func,47c8:0490,shape_box,"far void(int id, i16 *min, i16 *max)",video,,
+ps,func,4818:0006,bm_set_cap,far void(int n),video,,DS:3B0A; no caller
+ps,func,4818:0011,bm_reset_cap,far void(void),video,,DS:3B0A = 100h; no caller
+ps,func,4818:001c,bm_draw_item_flat,far void(far item*),video,,dead (DS:3B0C always 1)
+ps,func,4818:0152,bm_draw_item,far void(far item*),video,,rotated scaled bitmap item
+ps,func,4818:0468,bm_view_angles,far void(void),video,,= AP 2e33:0333
+ps,func,4818:063d,bm_draw_frame,"far void(far u16 *p, int frame)",video,,elev/azimuth/frame selection
+ps,func,4818:0833,bm_draw,far void(instance *o),video,,= AP 2e33:07f4
+ps,func,4818:08fc,bm_is_bitmap,far int(int id),video,,= AP 2e33:08b8
+ps,func,4818:092f,bm_set_mult,far void(int n),video,,DS:3B0E; no caller
+ps,func,4818:093a,bm_stub,fragment,video,,no caller
+ps,func,48ac:0005,shadow_pos,far,video,,= AP 2ecb:0007
+ps,func,48ac:00ba,shadow_draw,far void(instance *o),video,,= AP 2ecb:00ba
+ps,func,48ac:013a,shadow_set_colour,far void(u8 c),video,,DS:3B52
+ps,func,48c0:0005,ts_read,"far void(far dst, u32 n, FILE *f)",video,,= AP 7039:0000
+ps,func,48c0:0149,ts_close,far void(f),video,,= AP 7039:0144
+ps,func,48c0:018b,ts_open,"far f(char *name, char *tag)",video,,= AP 7039:0187
+ps,func,48c0:020d,ts_load_chunk,"far void far *(char *name, char *tag)",video,,= AP 7039:020a
+ps,func,48ea:0009,ts_init,"far void(int ntables, int nsets)",video,,= AP 7074:0000
+ps,func,48ea:0133,ts_done,far void(void),video,,= AP 7074:012d
+ps,func,48ea:0158,ts_load_table,"far int(int t, char *name)",video,,= AP 7074:0154
+ps,func,48ea:0236,ts_free_table,far void(int t),video,,= AP 7074:022b without handles
+ps,func,4915:0007,disc_draw,far void(far variant*),video,,= AP 70e8:0000
+ps,func,4915:0173,curve4_draw,"far void(int xs[4], int ys[4])",video,,no callers; 4 quadratic Beziers through edge midpoints
+ps,func,4915:02fb,bezier2_draw,"near void(int k, i32 x0,x1,x2, i32 y0,y1,y2)",video,,"forward differencing, gfx_line"
+ps,func,4960:0001,str_rotbuf,far char *(far char *s),video,,two 80-byte buffers DS:76EE
+ps,func,4960:003c,src_name,far char *(far char *path),video,,"base name, no extension, upper case"
+ps,func,4960:0094,ts_fatal,"far void(far char *file, int line, char *msg)",video,,"text mode, message, exit(0)"
+ps,func,4960:00f6,stack_free,far u16(void),video,,no caller
+ps,func,4960:0133,stack_overflow,"far void(far char *file, int line)",video,,"""Bad Human!"""
+ps,func,4960:0184,stack_check,"far void(far char *file, int line)",video,,tracks lowest SP
+ps,func,4960:0213,stack_report,far void(void),video,,
 ps,global,4992:0010,flyhist_items,item[17],shell_ui,,
 ps,global,49ab:0000,vwhich_items,item[4],shell_ui,,
 ps,global,49b1:0000,career_items,item[5],shell_ui,,
@@ -5858,6 +6043,12 @@ ps,global,DS:307C,mouse_stack_top,–,platform,,private stack used inside the ev
 ps,global,DS:308E,mouse_present,u8,platform,,
 ps,global,DS:308F,mouse_buttons,u8,platform,,"BL of last event (bit0 left, bit1 right)"
 ps,global,DS:3090,rot_fn,far fn,video,,-> gfx_sprite_rotated
+ps,global,DS:3094,rot_cx,i16[4],video,,rotated sprite corner x
+ps,global,DS:309C,rot_cy,i16[4],video,,rotated sprite corner y
+ps,global,DS:30A4,rot_iT,u16,video,,byte index of the top corner
+ps,global,DS:30A6,rot_iB,u16,video,,
+ps,global,DS:30A8,rot_iL,u16,video,,
+ps,global,DS:30AA,rot_iR,u16,video,,
 ps,global,DS:30D4,divz_installed,u8,platform,,
 ps,global,DS:30D5,divz_old_seg,u16,platform,,
 ps,global,DS:30D7,divz_old_off,u16,platform,,
@@ -5930,6 +6121,18 @@ ps,global,DS:3975,snd_sng_inf,,sound,,
 ps,global,DS:3977,snd_drv_block,,sound,,
 ps,global,DS:397B,snd_error,,sound,,
 ps,global,DS:397F,snd_disabled,,sound,,
+ps,global,DS:39E6,ts_fast_cache,far ptr,video,,never built in PS
+ps,global,DS:3B0A,bm_cap,u16,video,,"init 109h, reset 100h"
+ps,global,DS:3B0C,bm_rotated,u16,video,,"1, never written"
+ps,global,DS:3B0E,bm_mult,u16,video,,1
+ps,global,DS:3B52,shadow_colour,u8,video,,
+ps,global,DS:3B53,shadow_mode,u16,video,,
+ps,global,DS:3B55,shadow_lod,u16,video,,
+ps,global,DS:3BBC,ts_init_done,u16,video,,
+ps,global,DS:3BF2,ts_rotbuf_sel,u16,video,,
+ps,global,DS:3BF4,ts_stack_low,u32,video,,
+ps,global,DS:3BF8,ts_stack_file,far ptr,video,,
+ps,global,DS:3BFC,ts_stack_line,u16,video,,
 ps,global,DS:3FB4,_stklen,u16,platform,,
 ps,global,DS:40CA,data_prefix,char[],platform,work_dir,-n<path> + backslash
 ps,global,DS:419A,emd_bounce,u8[128],shell_data,,
@@ -6224,3 +6427,17 @@ ps,global,DS:76A8,ttm_cyc_on,u16,video,,
 ps,global,DS:76AA,snd_iter_rec,,sound,,
 ps,global,DS:76B0,snd_wait_count,,sound,,
 ps,global,DS:76B2,snd_pool,,sound,,
+ps,global,DS:76CE,ts_sprite_sets,far ptr,video,,= AP 6498
+ps,global,DS:76D0,ts_nsprite_sets,u16,video,,= AP 649A
+ps,global,DS:76D2,ts_tables,near ptr,video,,12-byte shape table records (= AP 647C)
+ps,global,DS:76D4,ts_fast_count,u16,video,,= AP 647E
+ps,global,DS:76D6,ts_ntables,u16,video,,= AP 6480
+ps,global,DS:76D8,bm_elev,s16,video,,
+ps,global,DS:76DA,bm_rot,s16,video,,
+ps,global,DS:76DC,bm_azim,s16,video,,
+ps,global,DS:76DE,bm_ext1,s16,video,,
+ps,global,DS:76E0,bm_ext0,s16,video,,
+ps,global,DS:76E2,bm_base,u16,video,,bitmap index base
+ps,global,DS:76E4,bm_hot,far ptr,video,,hot-spot table
+ps,global,DS:76E8,shadow_xyz,s16[3],video,,
+ps,global,DS:76EE,ts_rotbuf,char[2][80],video,,

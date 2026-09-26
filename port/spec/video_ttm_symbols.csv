@@ -1,0 +1,252 @@
+exe,kind,address,name,type,owner,other_names,notes
+intro,func,1125:0006,ttm_peek,u16 (far u16 *p),video,,return *p
+ps,func,3b02:0007,ttm_peek,u16 (far u16 *p),video,,return *p
+ap,func,24fc:0009,ttm_peek,u16 (far u16 *p),video,,return *p
+intro,func,1125:0013,ttm_init,void (void),video,,level=2 if drv[1D]==0Ch; upd_alloc_nodes(100) (not AP)
+ps,func,3b02:0014,ttm_init,void (void),video,,level=2 if drv[1D]==0Ch; upd_alloc_nodes(100) (not AP)
+ap,func,24fc:0016,ttm_init,void (void),video,,level=2 if drv[1D]==0Ch; upd_alloc_nodes(100) (not AP)
+intro,func,1125:002f,ttm_load,int (name_or_handle),video,,"PAG:/TT3: load, record alloc; 1 / -1"
+ps,func,3b02:0030,ttm_load,int (name_or_handle),video,,"PAG:/TT3: load, record alloc; 1 / -1"
+ap,func,24fc:0028,ttm_load,int (name_or_handle),video,,"PAG:/TT3: load, record alloc; 1 / -1"
+intro,func,1125:02b7,ttm_find,int (int id),video,,sets ttm_rec
+ps,func,3b02:02b8,ttm_find,int (int id),video,,sets ttm_rec
+ap,func,24fc:02c9,ttm_find,int (int id),video,,sets ttm_rec
+intro,func,1125:02f8,ttm_new_ctx,"void (int frame, int id, int tag)",video,,context per 1111 TAG
+ps,func,3b02:02f9,ttm_new_ctx,"void (int frame, int id, int tag)",video,,context per 1111 TAG
+ap,func,24fc:0311,ttm_new_ctx,"void (int frame, int id, int tag)",video,,context per 1111 TAG
+intro,func,1125:0380,ttm_skip_str,far char *(far char *p),video,,skip string padded to even
+ps,func,3b02:0381,ttm_skip_str,far char *(far char *p),video,,skip string padded to even
+ap,func,24fc:039c,ttm_skip_str,far char *(far char *p),video,,skip string padded to even
+intro,func,1125:03a7,ttm_index,int (int id),video,,build frame table; 1/0/-1
+ps,func,3b02:03a8,ttm_index,int (int id),video,,build frame table; 1/0/-1
+ap,func,24fc:03c5,ttm_index,int (int id),video,,build frame table; 1/0/-1
+intro,func,1125:05ee,ttm_run,int (int frame),video,,run frame + apply pending palette
+ps,func,3b02:05ef,ttm_run,int (int frame),video,,run frame + apply pending palette
+ap,func,24fc:0610,ttm_run,int (int frame),video,,run frame + apply pending palette
+intro,func,1125:060e,ttm_run_frame_checked,int (int frame),video,,range check then run_frame
+ps,func,3b02:060f,ttm_run_frame_checked,int (int frame),video,,range check then run_frame
+ap,func,24fc:062f,ttm_run_frame_checked,int (int frame),video,,range check then run_frame
+intro,func,1125:065c,ttm_apply_pal,void (void),video,,pal_set(pending); pending=0
+ps,func,3b02:065d,ttm_apply_pal,void (void),video,,pal_set(pending); pending=0
+ap,func,24fc:067d,ttm_apply_pal,void (void),video,,pal_set(pending); pending=0
+intro,func,1125:0685,ttm_free_all,void (void),video,,free all records and contexts
+ps,func,3b02:0686,ttm_free_all,void (void),video,,free all records and contexts
+ap,func,24fc:06a6,ttm_free_all,void (void),video,,free all records and contexts
+intro,func,1125:06c5,ttm_free,void (int id),video,,free record resources
+ps,func,3b02:06c6,ttm_free,void (int id),video,,free record resources
+ap,func,24fc:06ec,ttm_free,void (int id),video,,free record resources
+intro,func,1125:095c,ttm_shutdown,void (void),video,,upd_free_all + ttm_free_all (AP: free_all only)
+ps,func,3b02:095d,ttm_shutdown,void (void),video,,upd_free_all + ttm_free_all (AP: free_all only)
+ap,func,24fc:0989,ttm_shutdown,void (void),video,,upd_free_all + ttm_free_all (AP: free_all only)
+intro,func,1125:096a,ttm_update_rect,"void (x, y, w, h)",video,,queue bg->back restore key 1
+ps,func,3b02:096b,ttm_update_rect,"void (x, y, w, h)",video,,queue bg->back restore key 1
+intro,func,1125:0a2c,ttm_save_bg,void (void),video,,"SAVE_BG: back->bg, full dirty"
+ps,func,3b02:0a2d,ttm_save_bg,void (void),video,,"SAVE_BG: back->bg, full dirty"
+intro,func,1125:0a93,ttm_copy_back_to_bg,"void (x, y, w, h)",video,,copy_rect back->bg if level>=3
+ps,func,3b02:0a94,ttm_copy_back_to_bg,"void (x, y, w, h)",video,,copy_rect back->bg if level>=3
+intro,func,11d2:0148,ttm_sprite_col,"void (fr, x, y, flip, u8 col)",video,,A5x5: SCN bitmap with base colour
+ps,func,3baf:0149,ttm_sprite_col,"void (fr, x, y, flip, u8 col)",video,,A5x5: SCN bitmap with base colour
+ap,func,2595:0002,ttm_sprite_col,"void (fr, x, y, flip, u8 col)",video,,A5x5: SCN bitmap with base colour
+intro,func,11d2:01a6,ttm_draw_op,"int (a0..a6, str)",video,,Axxx dispatch
+ps,func,3baf:01a7,ttm_draw_op,"int (a0..a6, str)",video,,Axxx dispatch
+ap,func,2595:0061,ttm_draw_op,"int (a0..a6, str)",video,,Axxx dispatch
+intro,func,11d2:053f,ttm_run_frame,int (int frame),video,,opcode interpreter
+ps,func,3baf:0540,ttm_run_frame,int (int frame),video,,opcode interpreter
+ap,func,2595:038b,ttm_run_frame,int (int frame),video,,opcode interpreter
+intro,func,11d2:1546,ttm_find_tag,int (int tag),video,,frame whose first op is 1101/1111 tag
+ps,func,3baf:1547,ttm_find_tag,int (int tag),video,,frame whose first op is 1101/1111 tag
+ap,func,2595:0ad9,ttm_find_tag,int (int tag),video,,frame whose first op is 1101/1111 tag
+intro,func,11d2:15b3,ttm_copy_arg,"char *(int count, far char *src)",video,,copy into ttm_argbuf
+ps,func,3baf:15b4,ttm_copy_arg,"char *(int count, far char *src)",video,,copy into ttm_argbuf
+ap,func,2595:0b4a,ttm_copy_arg,"char *(int count, far char *src)",video,,copy into ttm_argbuf
+intro,func,11d2:1607,ttm_cur_font_ptr,far u16 *(void),video,,&rec.font[ctx+10]
+ps,func,3baf:1608,ttm_cur_font_ptr,far u16 *(void),video,,&rec.font[ctx+10]
+ap,func,2595:0b9e,ttm_cur_font_ptr,far u16 *(void),video,,&rec.font[ctx+10]
+intro,func,11d2:165f,ttm_page_by_index,u16 (int i),video,,"0 front, 2 bg, else back"
+ps,func,3baf:1660,ttm_page_by_index,u16 (int i),video,,"0 front, 2 bg, else back"
+intro,func,11d2:1688,ttm_wipe,"void (x, y, w, h, a4, op)",video,,A014-A094/A0B5 transitions back->front
+ps,func,3baf:1689,ttm_wipe,"void (x, y, w, h, a4, op)",video,,A014-A094/A0B5 transitions back->front
+intro,func,11d2:19c4,ttm_wipe_delay,void (void),video,,100 empty copy calls
+ps,func,3baf:19c5,ttm_wipe_delay,void (void),video,,100 empty copy calls
+intro,func,11d2:19ea,ttm_wipe_copy,"void (x, y, w, h)",video,,copy_rect if w>=3 && h>=3
+ps,func,3baf:19eb,ttm_wipe_copy,"void (x, y, w, h)",video,,copy_rect if w>=3 && h>=3
+intro,func,0f48:023d,mtx_free_row,void (int r),video,,
+ps,func,39bd:023d,mtx_free_row,void (int r),video,,
+ap,func,26db:023a,mtx_free_row,void (int r),video,,
+intro,func,0f48:026a,mtx_free_rows,void (void),video,,
+ps,func,39bd:026a,mtx_free_rows,void (void),video,,
+ap,func,26db:0267,mtx_free_rows,void (void),video,,
+intro,func,0f48:0282,mtx_close,void (void),video,,
+ps,func,39bd:0282,mtx_close,void (void),video,,
+ap,func,26db:027f,mtx_close,void (void),video,,
+intro,func,0f48:02d3,mtx_draw,"void (x, y, w, h)",video,,A704
+ps,func,39bd:02d3,mtx_draw,"void (x, y, w, h)",video,,A704
+ap,func,26db:02d0,mtx_draw,"void (x, y, w, h)",video,,A704
+intro,func,0f48:03d1,mtx_scroll,"void (int dir, int n)",video,,2032
+ps,func,39bd:03d1,mtx_scroll,"void (int dir, int n)",video,,2032
+ap,func,26db:03ce,mtx_scroll,"void (int dir, int n)",video,,2032
+intro,func,0f88:000a,ttm_dissolve,"int (x, y, w, h)",video,,A014 LFSR pixel dissolve back->front
+ps,func,39fd:000a,ttm_dissolve,"int (x, y, w, h)",video,,A014 LFSR pixel dissolve back->front
+intro,func,0f9e:0000,scroller_init,void (void),video,,B000
+ps,func,3a48:0001,scroller_init,void (void),video,,B000
+intro,func,0f9e:0058,scroller_step,"void (gap, speed, x)",video,,B013
+ps,func,3a48:0059,scroller_step,"void (gap, speed, x)",video,,B013
+intro,func,0fb0:000c,ttm_textbox,"void (x, y, w, h)",video,,A304
+ps,func,3a5a:000d,ttm_textbox,"void (x, y, w, h)",video,,A304
+intro,func,0fc9:000c,ttm_hook_2012,"void (a0, a1)",video,,INTRO: empty. PS equivalent is shell 2221:0111
+intro,func,0fca:0001,upd_alloc_nodes,int (int n),video,,update-list node pool
+ps,func,3a73:000d,upd_alloc_nodes,int (int n),video,,update-list node pool
+intro,func,0fca:0079,upd_add,"void (x, y, w, h, mode, src, dst, key, far p)",video,,"queue deferred page copy, merge"
+ps,func,3a73:0085,upd_add,"void (x, y, w, h, mode, src, dst, key, far p)",video,,"queue deferred page copy, merge"
+intro,func,0fca:03cc,upd_flush,void (int only_front),video,,"flush key-0 lists by pair table, decrement keys"
+ps,func,3a73:03d8,upd_flush,void (int only_front),video,,"flush key-0 lists by pair table, decrement keys"
+intro,func,0fca:0461,upd_free_lists,void (void),video,,
+ps,func,3a73:046d,upd_free_lists,void (void),video,,
+intro,func,0fca:049b,upd_query,"int (x, y, w, h, ?, dst, key)",video,,uncalled
+ps,func,3a73:04a7,upd_query,"int (x, y, w, h, ?, dst, key)",video,,uncalled
+intro,func,0fca:0543,upd_free_all,void (void),video,,
+ps,func,3a73:054f,upd_free_all,void (void),video,,
+intro,func,0fca:057a,upd_count,int (void),video,,
+ps,func,3a73:0586,upd_count,int (void),video,,
+intro,func,0fca:0584,upd_find,"u16 *(src, dst, key)",video,,
+ps,func,3a73:0590,upd_find,"u16 *(src, dst, key)",video,,
+intro,func,0fca:05ce,upd_flush_list,"void (src, dst, key)",video,,
+ps,func,3a73:05da,upd_flush_list,"void (src, dst, key)",video,,
+intro,func,0fca:0679,upd_discard,"void (src, dst, key)",video,,
+ps,func,3a73:0685,upd_discard,"void (src, dst, key)",video,,
+intro,func,0fca:06b9,upd_move_list,"void (src1, dst1, key1, src2, dst2, key2)",video,,"uncalled, infinite loop bug"
+ps,func,3a73:06c5,upd_move_list,"void (src1, dst1, key1, src2, dst2, key2)",video,,"uncalled, infinite loop bug"
+intro,func,10f5:0009,ttm_rand,u16 (void),video,,lagged Fibonacci
+ps,func,3ae6:000c,ttm_rand,u16 (void),video,,lagged Fibonacci
+intro,func,10f5:0056,ttm_rand_skip,void (int n),video,,uncalled
+ps,func,3ae6:0059,ttm_rand_skip,void (int n),video,,uncalled
+intro,func,1111:0001,ttm_dissolve_timed,"void (x, y, w, h, dur)",video,,A0B5
+ps,func,3aee:0002,ttm_dissolve_timed,"void (x, y, w, h, dur)",video,,A0B5
+intro,func,10f5:006b,rnd_randomize,void (void),video,,uncalled: rnd_skip(time(NULL))
+ps,func,3ae6:006e,rnd_randomize,void (void),video,,uncalled: rnd_skip(time(NULL))
+intro,data,DS:1CF0,ttm_rec_list,far ptr,video,,script record list head
+ps,data,DS:36D8,ttm_rec_list,far ptr,video,,script record list head
+ap,data,DS:2092,ttm_rec_list,far ptr,video,,script record list head
+intro,data,DS:1CF4,ttm_rec,far ptr,video,,current record
+ps,data,DS:36DC,ttm_rec,far ptr,video,,current record
+ap,data,DS:2096,ttm_rec,far ptr,video,,current record
+intro,data,DS:1CF8,ttm_ctx_list,near ptr,video,,context list
+ps,data,DS:36E0,ttm_ctx_list,near ptr,video,,context list
+ap,data,DS:209A,ttm_ctx_list,near ptr,video,,context list
+intro,data,DS:1CFA,ttm_ctx,near ptr,video,,current context (last created)
+ps,data,DS:36E2,ttm_ctx,near ptr,video,,current context (last created)
+ap,data,DS:209C,ttm_ctx,near ptr,video,,current context (last created)
+intro,data,DS:1CFC,ttm_mtx_open,u8,video,,
+ps,data,DS:36E4,ttm_mtx_open,u8,video,,
+ap,data,DS:209E,ttm_mtx_open,u8,video,,
+intro,data,DS:1CFD,ttm_level,u16,video,,4; 2 if drv[1D]==0Ch
+ps,data,DS:36E5,ttm_level,u16,video,,4; 2 if drv[1D]==0Ch
+ap,data,DS:209F,ttm_level,u16,video,,4; 2 if drv[1D]==0Ch
+intro,data,DS:1CDE,ttm_str_slot,near ptr[9],video,,41-byte string slots
+ps,data,DS:36C6,ttm_str_slot,near ptr[9],video,,41-byte string slots
+ap,data,DS:2080,ttm_str_slot,near ptr[9],video,,41-byte string slots
+intro,data,DS:1BC0,ttm_space_str,char[2],video,,""" """
+ps,data,DS:35A8,ttm_space_str,char[2],video,,""" """
+intro,data,DS:1BC2,ttm_dblbuf,u16,video,,"=1, bg restore mode"
+ps,data,DS:35AA,ttm_dblbuf,u16,video,,"=1, bg restore mode"
+intro,data,DS:1BC4,upd_src_none,u16,video,,FFFF
+ps,data,DS:35AC,upd_src_none,u16,video,,FFFF
+intro,data,DS:1BC6,upd_flush_pairs,near ptr[9][2],video,,flush pair table
+ps,data,DS:35AE,upd_flush_pairs,near ptr[9][2],video,,flush pair table
+intro,data,DS:1E7C,ttm_no_restore,u16,video,,0500/0510
+ps,data,DS:3864,ttm_no_restore,u16,video,,0500/0510
+intro,data,DS:1E7E,ttm_gosub_depth,u16,video,,
+ps,data,DS:3866,ttm_gosub_depth,u16,video,,
+ap,data,DS:2220,ttm_gosub_depth,u16,video,,
+intro,data,DS:1E80,ttm_fade_speed,u16[7],video,,"0,80,20,10,5,2,1"
+ps,data,DS:3868,ttm_fade_speed,u16[7],video,,"0,80,20,10,5,2,1"
+intro,data,DS:3328,ttm_full_dirty,u16,video,,
+ps,data,DS:7604,ttm_full_dirty,u16,video,,
+intro,data,DS:332A,ttm_purge,u16,video,,never read
+ps,data,DS:7606,ttm_purge,u16,video,,never read
+ap,data,DS:6394,ttm_purge,u16,video,,never read
+intro,data,DS:332C,ttm_goto,u16,video,,never read
+ps,data,DS:7608,ttm_goto,u16,video,,never read
+ap,data,DS:6396,ttm_goto,u16,video,,never read
+intro,data,DS:332E,ttm_pending_pal,far ptr,video,,
+ps,data,DS:760A,ttm_pending_pal,far ptr,video,,
+ap,data,DS:639A,ttm_pending_pal,far ptr,video,,
+intro,data,DS:3332,ttm_argbuf,char[100],video,,
+ps,data,DS:760E,ttm_argbuf,char[100],video,,
+ap,data,DS:639E,ttm_argbuf,char[100],video,,
+intro,data,DS:3396,ttm_1041,u16,video,,
+ps,data,DS:7672,ttm_1041,u16,video,,
+intro,data,DS:3398,ttm_snd_bank,char[13],video,,C02F
+ps,data,DS:7674,ttm_snd_bank,char[13],video,,C02F
+intro,data,DS:33A5,ttm_snd_name,char[13],video,,C01F
+ps,data,DS:7681,ttm_snd_name,char[13],video,,C01F
+intro,data,DS:33B2,ttm_cyc_first,u16[3],video,,
+ps,data,DS:768E,ttm_cyc_first,u16[3],video,,
+intro,data,DS:33B8,ttm_cyc_last,u16[3],video,,
+ps,data,DS:7694,ttm_cyc_last,u16[3],video,,
+intro,data,DS:33BE,ttm_skip,u16,video,,always 0
+ps,data,DS:769A,ttm_skip,u16,video,,always 0
+ap,data,DS:6408,ttm_skip,u16,video,,always 0
+intro,data,DS:33C0,ttm_op,u16,video,,
+ps,data,DS:769C,ttm_op,u16,video,,
+ap,data,DS:6402,ttm_op,u16,video,,
+intro,data,DS:33C2,ttm_flip,u16,video,,
+ps,data,DS:769E,ttm_flip,u16,video,,
+ap,data,DS:6406,ttm_flip,u16,video,,
+intro,data,DS:33C4,ttm_gosub_dy,s16,video,,
+ps,data,DS:76A0,ttm_gosub_dy,s16,video,,
+ap,data,DS:6410,ttm_gosub_dy,s16,video,,
+intro,data,DS:33C6,ttm_gosub_dx,s16,video,,
+ps,data,DS:76A2,ttm_gosub_dx,s16,video,,
+ap,data,DS:640E,ttm_gosub_dx,s16,video,,
+intro,data,DS:33C8,ttm_delay,s16,video,,"frame delay, 59.18 Hz ticks"
+ps,data,DS:76A4,ttm_delay,s16,video,,"frame delay, 59.18 Hz ticks"
+intro,data,DS:33CA,ttm_cyc_step,u16,video,,
+ps,data,DS:76A6,ttm_cyc_step,u16,video,,
+intro,data,DS:33CC,ttm_cyc_on,u16,video,,
+ps,data,DS:76A8,ttm_cyc_on,u16,video,,
+intro,data,DS:1BEE,rnd_j,u16,video,,
+ps,data,DS:35D6,rnd_j,u16,video,,
+intro,data,DS:1BF0,rnd_k,u16,video,,
+ps,data,DS:35D8,rnd_k,u16,video,,
+intro,data,DS:1BF2,rnd_tab,u16[56],video,,
+ps,data,DS:35DA,rnd_tab,u16[56],video,,
+intro,data,DS:1B44,lfsr_taps32,u32[31],video,,A014
+ps,data,DS:3510,lfsr_taps32,u32[31],video,,A014
+intro,data,DS:1C62,lfsr_taps16,u32[31],video,,"A0B5, low words"
+ps,data,DS:364A,lfsr_taps16,u32[31],video,,"A0B5, low words"
+intro,data,DS:24D8,ttm_ticks,u32,video,,59.18 Hz frame counter (caller-owned)
+ps,data,DS:52AA,ttm_ticks,u32,video,,59.18 Hz frame counter (caller-owned)
+intro,data,DS:32F6,upd_heads,near ptr[20],video,,
+ps,data,DS:75DA,upd_heads,near ptr[20],video,,
+intro,data,DS:331E,upd_free,near ptr,video,,
+ps,data,DS:7602,upd_free,near ptr,video,,
+intro,data,DS:32F4,upd_nnodes,u16,video,,
+ps,data,DS:75D8,upd_nnodes,u16,video,,
+intro,data,DS:1B2A,mtx_offsets,near ptr,video,,
+ps,data,DS:34F6,mtx_offsets,near ptr,video,,
+intro,data,DS:1B2C,mtx_frame,u16[5],video,,frame record for cache blits
+ps,data,DS:34F8,mtx_frame,u16[5],video,,frame record for cache blits
+intro,data,DS:1B36,mtx_scroll_x,s16,video,,
+ps,data,DS:3502,mtx_scroll_x,s16,video,,
+intro,data,DS:1B38,mtx_scroll_y,s16,video,,
+ps,data,DS:3504,mtx_scroll_y,s16,video,,
+intro,data,DS:32A8,mtx_lim_x,u16,video,,320-tw
+ps,data,DS:758C,mtx_lim_x,u16,video,,320-tw
+intro,data,DS:32AA,mtx_lim_y,u16,video,,200-th
+ps,data,DS:758E,mtx_lim_y,u16,video,,200-th
+intro,data,DS:32AC,mtx_tw,u16,video,,
+ps,data,DS:7590,mtx_tw,u16,video,,
+intro,data,DS:32AE,mtx_th,u16,video,,
+ps,data,DS:7592,mtx_th,u16,video,,
+intro,data,DS:32B0,mtx_rows,near ptr[30],video,,
+ps,data,DS:7594,mtx_rows,near ptr[30],video,,
+intro,data,DS:32EC,mtx_ncols,u16,video,,
+ps,data,DS:75D0,mtx_ncols,u16,video,,
+intro,data,DS:32EE,mtx_nrows,u16,video,,
+ps,data,DS:75D2,mtx_nrows,u16,video,,
+intro,data,DS:32F0,scroller_pos,s16,video,,
+ps,data,DS:75D4,scroller_pos,s16,video,,
+intro,data,DS:32F2,scroller_maxw,s16,video,,
+ps,data,DS:75D6,scroller_maxw,s16,video,,
+ps,data,DS:1CC8,step_clock_ps_done,u32,video,,PS 236.7 Hz clock read by 22a0:0009 (step_done as called by the PS TTM)

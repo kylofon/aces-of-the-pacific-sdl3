@@ -69,9 +69,10 @@ AP `26C0` (see the lead's `video.md`). Page roles: `drv[10]` **bg** (A800, third
   steps; the palette primitives are the palette module's.
 * **Frame timing**: the caller measures from the frame start; the frame delay (`1021`,
   `2022`) is in ticks of a **59.18 Hz** counter (the 236.7 Hz PIT divided by 4: INTRO
-  `DS:24D8`, PS `DS:52AA`), sticky until changed (initial 0 = no wait). In PS the in-opcode
-  timed effects (`4136` fade steps, `A0B5` dissolve duration) use the **236.7 Hz** counter
-  `DS:1CC8`; in INTRO they use the 59.18 Hz counter `DS:24D8`. AP has no frame delay.
+  `DS:24D8`, PS `DS:52AA`), sticky until changed (initial 0 = no wait). The in-opcode timed
+  effects (`4136` fade steps, `A0B5` dissolve batches) use the stepper of §12.5: in INTRO on the
+  59.18 Hz counter `DS:24D8`; **in PS they are effectively untimed** (the PS player mixes two
+  clocks, so every wait ends at once — §12.5). AP has no frame delay.
 * Level `DS:1CFD` (PS `36E5`, AP `209F`) = 4, or 2 if `drv[1D]` = 0Ch (not VGA). All
   paged effects require level ≥ 3; with VGA they are always on.
 
@@ -118,7 +119,7 @@ Script player (per exe). "—" = not present.
 | `1C62` 31 dwords | `364A` | — | lfsr_taps16 | dissolve `A0B5` taps (low words used) |
 | `116A`,`116C` | `29EA`,`29EC` | `2DAC` (h) | scr_w, scr_h | 320, 200 (library) |
 | `24D8` dword | `52AA` | — | ttm_ticks | 59.18 Hz counter of the caller |
-| `24D8` | `1CC8` dword | — | step_clock | clock of the stepper (§12.5): INTRO 59.18 Hz, PS 236.7 Hz |
+| `24D8` | `52AA` (start, value) / `1CC8` (done test) | — | step_clock | clocks of the stepper (§12.5): INTRO 59.18 Hz; PS mixed 59.18 / 236.7 Hz |
 | `15BE` byte | `2E3E` | — | timer_installed | library flag |
 
 Update list (`0fca`/`3a73`): `DS:32F6` (PS `75DA`) 20 near list heads; `DS:331E` (`7602`)
@@ -133,8 +134,7 @@ Scroller (`0f9e`/`3a48`): `32F0` (`75D4`) scroll offset, `32F2` (`75D6`) max fra
 Driver variables used: `drv[00]` text colour, `drv[02]` text transparent, `drv[03]` clip on,
 `drv[04/06/08/0A]` clip x1,x2,y1,y2, `drv[0C]` **fill flag** (1 = filled, 0 = outline, for
 rect/circle/polygon), `drv[0D]` fill/bg colour, `drv[0E]` current colour, `drv[10..18]` pages,
-`drv[1D]` adapter id, `drv[1F]` palette-effects flag (nonzero enables fades, cycling and the
-`A0B5` dissolve; meaning — see Open questions).
+`drv[1D]` adapter id, `drv[1F]` palette-effects flag: zeroed by `gfx_init` (`05da:5ca3`) and incremented by the VGA driver's init (`OVL:VGA:` `003B`), so it is **1 with VGA** — fades, cycling and the `A0B5` dissolve are always enabled in the port (settled by the finisher).
 
 ## 3. Data structures
 
@@ -392,7 +392,8 @@ STORE_AREA, wipes or MTX.
 **`4136` FADE_PART(first, count, colour, from%, to%, dur)** — if drv[1F] (no skip test):
 `l1 = ((a3 << 6) / 101) & 63`, `l2 = ((a4 << 6) / 101) & 63` (signed 16-bit); stepper init
 (dur = a5); while `!step_done`: `fade_step(a0,a1,a2, step_value(l1, l2))`; finally
-`fade_step(a0,a1,a2,l2)`. Timed by the stepper clock (§12.5; INTRO 59.18 Hz, PS 236.7 Hz).
+`fade_step(a0,a1,a2,l2)`. Timed by the stepper (§12.5): INTRO 59.18 Hz ticks; in PS
+`step_done` is true immediately, so only the final `fade_step(…, l2)` happens (quirk).
 
 ## 7. Draw dispatch — INTRO `11d2:01a6` / PS `3baf:01a7` / AP `2595:0061`
 `int draw_op(x=a0, y=a1, a2, a3, a4, a5, a6, str)`; returns 0, or −1 for an unknown A-op.
@@ -589,7 +590,8 @@ No delay (CPU-bound).
 `c = per`, stepper init(dt). Loop: if `s < n` (unsigned): `put_pixel(x + s%w, y + s/w,
 get_pixel(…))`; `c−−`; if c == 0: c = per; wait until `step_done`; stepper init(dt). Then
 LFSR step as above (16-bit); until s == 1. Finally pixel (x, y). → 32 batches, each lasting
-`dt` stepper ticks (INTRO 59.18 Hz, PS 236.7 Hz), i.e. ≈ `dur` ticks in total.
+`dt` stepper ticks (INTRO 59.18 Hz), i.e. ≈ `dur` ticks in total. In PS the waits end at once
+(§12.5), so the dissolve runs CPU-bound like `A014`.
 
 ## 12. Helper modules
 
@@ -659,13 +661,21 @@ j = (j+1) % 56; return r` with `j = DS:1BEE` (initial 24), `k = DS:1BF0` (initia
 f5c3 819f 2d9c b26d e92b 97d5 3da1 89ed e3f4 74b5 002c d35f 3b08 0df5 f27e c270 2589 2e8b
 6352 da2d`. `10f5:0056(n)` (uncalled) discards n values.
 
-### 12.5 Timer stepper — INTRO `10fc` / PS `22a0` (+ PS clock `229e:001f`)
-Clock: INTRO reads `DS:24D8` (the caller's 59.18 Hz counter, §14); PS reads `DS:1CC8`
-through `229e:001f` (cli; read; sti), incremented by `229e:0013`, a timer callback
-registered by PS main (`048e:0097`: `timer_add(229e:0013, period 1)`) → **236.7 Hz**.
+### 12.5 Timer stepper — INTRO `10fc` / PS `22a0` (functions owned by the palette part §6 and shell_data)
+Clock: INTRO reads `DS:24D8` (the caller's 59.18 Hz counter, §14) in all three functions.
+**PS mixes two clocks (corrected by the finisher, verified at `3baf:0e05/0e17/0e38` and
+`3aee:009b/00f0/0104`)**: `step_init` = `22a0:018e` and `step_value` = `22a0:00d2` use the
+59.18 Hz TTM counter `DS:52AA`, but `step_done` is the shell's `22a0:0009`, which reads the
+**236.7 Hz** shell clock `DS:1CC8` (`229e:001f`: cli; read; sti; incremented by the timer
+callback `229e:0013` registered by PS `sys_init` `048e:0097` with period 1) and tests
+`(clock − start) > dur` (strict). The TTM's own `22a0:0089` (59.18 Hz, `>=`) has no caller.
+Because `DS:52AA` is zeroed when each TTM sequence starts (`21f4:00cd`) while `DS:1CC8` has
+counted 4× faster since PS started, `DS:1CC8 − start` is always large and **PS `step_done`
+returns 1 immediately**: `4136` does only its final step, `A0B5` never waits.
 * `step_init(st, long d)` `10fc:0114` / `22a0:018e`: st.start = clock; st.dur = (u16)d.
-* `step_done(st)` `10fc:000f` / `22a0:0009`: if the timer is not installed (`DS:15BE`/`2E3E`
-  = 0) → 1; else `(clock − start) >= dur` (u32).
+* `step_done(st)` `10fc:000f` / PS as called `22a0:0009`: if the timer is not installed
+  (`DS:15BE`/`2E3E` = 0) → 1; else INTRO `(clock − start) >= dur` (u32); PS
+  `(DS:1CC8 − start) > dur`.
 * `step_value(st, a, b)` `10fc:0058` / `22a0:00d2`: timer not installed → a. `e = clock −
   start`; if `e >= dur` or dur == 0 → b. If a > b: swap a, b and `e = dur − e`.
   `v = a + (u32)((b−a)·e) / dur` (unsigned 32-bit); clamp to [a, b]; return v.
@@ -803,7 +813,7 @@ page = `drv[10]`). No flip, no update list, no delay inside the TTM code.
 * AF1F/AF2F: `u16 n` then 2n words; the drawing uses `k = word0` points with x[] and y[]
   arrays (§7).
 * `4136`: from/to are percentages → level `((p << 6) / 101) & 63`; the 6th argument is a
-  duration in stepper ticks (INTRO 59.18 Hz, PS 236.7 Hz), not a step count.
+  duration in stepper ticks (INTRO 59.18 Hz; untimed in PS, §12.5), not a step count.
 
 ## 17. Port notes
 
@@ -832,8 +842,8 @@ page = `drv[10]`). No flip, no update list, no delay inside the TTM code.
 * **sim cockpit (AP `644a`, `6b3d`)**: selects `drv[18]`/`drv[16]` before `ttm_run(f)`
   (`24fc:0610`); AP ignores `1021`, fades, wipes, sound; `F01F` loads the SCR into the
   caller's write page without SAVE_BG.
-* **pictures part**: `F01F` relies on `scr_load` drawing into the write page (the back page)
-  — please confirm for `0f35:000a`/`39aa:000a`/`6f83:0000`.
+* **pictures part**: confirmed (`video_pictures.md` §1): `scr_load` decodes into the write page
+  `drv[18]` (VQT via driver entry 22, nibble planes via entries 17/18), i.e. the back page here.
 * **video lead**: `drv[0C]` is the fill flag (1 filled / 0 outline) for rect/circle/polygon;
   `drv[1F]` gates fades/cycling/`A0B5`; `drv[1D]` = 4 makes `SEL_PAL` immediate; entries
   30/31/32 are used by MTX (unused by the data). The segment `0fca`/`3a73` is the update
@@ -843,7 +853,6 @@ page = `drv[10]`). No flip, no update list, no delay inside the TTM code.
 
 ## 19. Open questions
 
-* Meaning of `drv[1F]` (set by the driver; "palette effects possible"?) — lead's driver spec.
 * `A5A7`: exact meaning of a4/a5 (target size?) and angle units — depends on
   `gfx_sprite_rotated` (`05da:3cfd`).
 * Polygon data layout (unused by the data).

@@ -13,13 +13,13 @@ instruction; **likely**; **guess**. Unless marked, everything here is verified.
 | File | Contents |
 |---|---|
 | `video.md` (this file) | §1 overview and the port model · §2 driver loading, `gfx_init`, the shared block · §3 the 50 driver entries · §4 pages: who draws where, flipping, vsync · §5 `-ph` "hivga" · §6 port notes · §7 hand-offs · §8 open questions |
-| `video_library.md` | the graphics library on top of the driver: clipping, pixels, lines, rectangles, circles, polygons (clip + edge walk + span fill), flood fill, rectangle copies, sprites (plain / flipped / opaque / cached / scaled / SCN), fonts and text |
+| `video_library.md` | the graphics library on top of the driver: clipping, pixels, lines, rectangles, circles, polygons (clip + edge walk + span fill), flood fill, rectangle copies, sprites (plain / flipped / opaque / cached / scaled / SCN), fonts and text; §9 remaining functions (last bbox, BIOS mode helpers, PS 4-point bitmap mapper, AP clip-list driver hooks, AP rotated rectangle, AP graphics state) |
 | `video_palette.md` | palette load/slots, DAC, fades, colour cycling, the INTRO VGA-register effect `103d`, AP DAC code |
-| `video_pictures.md` | BMP / SCR loaders and decoders (BIN+VGA nibble planes, VQT, SCN, RLE, MTX, IFF ILBM) |
+| `video_pictures.md` | bitmap kinds and how each is drawn, nibble-plane pixel order (settled), the three VQT decoders, `bmp_draw`, the PS `SNAPSHOT.LBM` (IFF ILBM) writer; the loaders themselves are `platform.md` §7 |
 | `video_ttm.md` | the TTM animation player (INTRO `1125`/`11d2`, PS `3b02`/`3baf`, AP `24fc`/`2595`) |
-| `video_ts.md` | the `ts_*` 3Space shape library as used by the shell (PS `4708`–`4960`), AP matches |
+| `video_ts.md` | the PS copy of the 3Space core (`3d50` = AP `277a`) and the `ts2` shape library (PS `46d0`–`4960`): PS↔AP table and the PS-only variants |
 | `video_rotate.md` | the rotated-sprite renderer `gfx_sprite_rotated` (INTRO `05da:3d01`) |
-| `video_symbols.csv` | names (all three programs) |
+| `video_symbols.csv`, `video_palette_symbols.csv`, `video_ttm_symbols.csv`, `video_pictures_symbols.csv`, `video_ts_symbols.csv`, `video_extra_symbols.csv` (library §9) | names (all three programs) |
 
 -----------------------------------------------------------------------------------------------
 
@@ -425,8 +425,9 @@ Used by the BMP loaders (details of the data flow in `video_pictures.md`).
   `dst[2k] |= src[k] & F0h`, `dst[2k+1] |= (src[k] & 0Fh) << 4` (huge pointers).
 
 So after 14 + 15 the first pixel of each pair holds the **high** nibbles of the `BIN:` and `VGA:`
-bytes and the second pixel the low nibbles. `resources.md` §4a states "first pixel in the low
-nibble" (checked visually); `video_pictures.md` reconciles the two (the loader may reorder).
+bytes and the second pixel the low nibbles. **Settled** (`video_pictures.md` §2): the loader does
+not reorder, and all 77 nibble-plane files of the data look right only in this order —
+`resources.md` §4a ("first pixel in the low nibble") is wrong.
 
 ### 3.12 Entries 17, 18 — nibble screen writers (C, `126D`, `131C`)
 

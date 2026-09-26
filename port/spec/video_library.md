@@ -17,6 +17,8 @@ only when `drv[03] ≠ 0`, unless stated. Confidence: verified unless marked.
 6. Flood fill
 7. Sprites: plain/flipped/opaque, cached, scaled, SCN (the rotated sprite: `video_rotate.md`)
 8. Fonts and text
+9. Remaining library functions (finisher): sin/cos copy, last bounding box, BIOS mode helpers,
+   PS 4-point bitmap mapper, AP clip-list driver hooks, AP rotated rectangle, AP graphics state
 
 -----------------------------------------------------------------------------------------------
 
@@ -403,8 +405,9 @@ clear the slot.
 * `gfx_font_select(i)` (2fc1 / 35d5 / 540f): i == 0 → return the index of the slot (1..19) whose glyph
   pointer equals the current font's, or 0; else if valid: copy slot i to slot 0 (all nine fields),
   return i; invalid → 0.
-* `gfx_font_width(i)` (3098 / 36dc / —) → `font_w[i]` if valid or i == 0, else 0; `gfx_font_height(i)`
-  (30c8 / — / —) likewise with `font_h`.
+* `gfx_font_width(i)` (3098 / 36ac / 54e6) → `font_w[i]` if valid or i == 0, else 0; `gfx_font_height(i)`
+  (30c8 / 36dc / 5516) likewise with `font_h` (corrected by the finisher: PS `36dc` is the height —
+  it reads `DS:2348` = `drv[48]`; the width is `36ac` reading `DS:2334` = `drv[34]`).
 * `gfx_char_metrics(c, int *w, int *h)` (3573 / 3b87 / 59c1): current font; returns 0 if c outside
   [first, first+count); else `*w` = width (table or fixed), `*h` = height (each pointer may be null),
   returns 1.
@@ -453,3 +456,167 @@ drv[00] = save; return w
 
 Differences between the paths that the port must keep: the fast path paints an 8-wide background
 cell, the slow path a (w+1)-wide background line and leaves `drv[0E]` = background colour.
+
+-----------------------------------------------------------------------------------------------
+
+## 9. Remaining library functions (added by the phase-3 finisher)
+
+Functions that had no spec entry after the first round (several handed over by `platform.md` §10).
+Verified unless marked.
+
+### 9.1 INTRO `1739:0802` `sin16(a)` / `1739:080d` `cos16(a)`
+
+The INTRO copy of the 3Space `sin16`/`cos16` with the 1025-entry cos table at `1739:0000`
+(`video_rotate.md` "Helpers" gives the exact formula; PS `3d50:1f7c/1f87`, AP `277a:5e66/5e71`
+are the same code, `video_ts.md` §2). Only caller: `gfx_sprite_rotated` `05da:3d01`.
+
+### 9.2 `gfx_last_bbox(int *x1, int *y1, int *x2, int *y2)` — INTRO `05da:45d3` / PS `16e3:48f7` / AP `1d32:6731`
+
+Returns the screen bounding box of the last rotated sprite (`video_rotate.md`): `*x1 = cx[L]`,
+`*y1 = cy[T]`, `*x2 = cx[R]`, `*y2 = cy[B]`, where `cx[4]`/`cy[4]` are the corner arrays (INTRO
+`DS:1830`/`1838`, PS `3094`/`309C`, AP `343A`/`3442`) and `T, B, L, R` the corner **byte**
+indices (INTRO `DS:1840`, `1842`, `1844`, `1846`; PS `30A4..30AA`; AP `344A..3450`) left by
+`gfx_sprite_rotated`. Caller: TTM `A5A7` (`video_ttm.md` §8); AP: none.
+
+### 9.3 BIOS video-mode helpers — INTRO `05da:5f2e..5f83` / PS `16e3:5c88..5cdd` / AP `1d32:02a4..02f9`
+
+| INTRO | PS | AP | name | behaviour |
+|---|---|---|---|---|
+| `5f2e` | `5c88` | `02a4` | `crtc_probe` (near, DX = CRTC index port) | writes index 0Fh, reads the data port, writes 66h, busy loop of 256 `loop`s, reads back, restores the old value; **CF = 1 if the read-back ≠ 66h** (no CRTC at that port) |
+| `5f48` | `5ca2` | `02be` | `bios_set_text_mode(bits)` (near) | BIOS `40:10` (equipment) = `(40:10 & CFh) | bits << 4`; INT 10h AX = 0003h |
+| `5f6b` | `5cc5` | `02e1` | `bios_get_video_bits()` (near) | `(40:10 & 30h) >> 4` (initial video type, saved by `gfx_init`) |
+| `5f83` | `5cdd` | `02f9` | `bios_set_colour_text()` (near, ES = 40h set by the caller) | `40:10 = (40:10 & CFh) | 20h`; INT 10h AX = 0003h |
+
+Callers: `gfx_init` (`5f6b`), `sys_shutdown` → `gfx_restore_text` (`5f48`), adapter detection
+`05da:5de1` (`5f2e`, `5f83`). `/* PORT: */` replaced: detection returns VGA (8), text-mode restore is a
+host no-op (`video.md` §6).
+
+### 9.4 PS `16e3:065d` — `gfx_bitmap_quad(frame *fr, int xs[4], int ys[4])` (4-point bitmap mapper)
+
+Present only in PS (INTRO/AP have no such routine; AP's caller `2ec2:000d` draws nothing).
+Called by the PS `bitmap4_draw` (`46d0:02fa`) for polygon flag 10h, which the shipped shapes do not
+use — **dead with the data**; per-span behaviour verified, the edge bookkeeping **likely**.
+
+Vertex i of the quad is mapped to frame corner `C0 = (0, 0)`, `C1 = (w−1, 0)`, `C2 = (w−1, h−1)`,
+`C3 = (0, h−1)` (texture coordinates u = column, v = row; `w/h` = frame `+6/+8`).
+
+```
+rowtab[i] = i·w for i < 200 (stack)
+top = index of the smallest ys (strict <, first), bottom = index of the largest ys (strict >)
+if drv[21] == 10h: EGA GC set-up (no-op on VGA)
+dir = quad_orient(xs[p], ys[p], xs[top], ys[top], xs[n], ys[n])   // 16e3:0c58, p = (top−1)&3, n = (top+1)&3
+A-chain (right edge): top → top+dir → …;  B-chain (left edge): top → top−dir → …
+for each chain edge (a → b): x DDA from xs[a] to xs[b] over (ys[b] − ys[a]) steps (dda_init 16e3:2b07),
+    and u, v DDAs from quad_corner_uv(a, b) (16e3:0b5e: u_start/u_end/v_start/v_end of the edge
+    between the two corners) over the same count
+y = ys[top]
+rows: for each row, while the B edge's row count >= 0 (count starts at ys[b]−ys[a], decremented per row;
+      when it becomes negative the next B edge starts, until its end vertex is `bottom`);
+      the A edge advances to its next vertex when its own count reaches 0 (checked before the row):
+    xl = B.x, xr = A.x (values before this row's DDA step); step all six DDAs
+    if drv[08] <= y <= drv[0A]:
+        n = xr − xl; uDDA from B.u to A.u over n, vDDA from B.v to A.v over n
+        skip = xl < drv[04] ? drv[04] − xl : 0;  xl += skip
+        if n >= 0:
+            table[k] = u_k + rowtab[v_k] for k = 0 .. n + skip   (u, v = integer parts, DDAs stepped per k)
+            if xl + n >= drv[06]: n = drv[06] − xl
+            if n >= 0: driver entry 36 (span_tex, [DS:3204]) with ES = drv[18], DI = row_ofs[y],
+                       DX = xl, CX = n + 1, frame {src = fr (+0 seg, +2 off), extra 0, T = &table[skip]}
+                       → pixel k = frame byte at T[k], 0 transparent
+    y += 1
+finally gfx_ega_restore() (16e3:0643)
+```
+
+`quad_orient(xp, yp, xt, yt, xn, yn)` `16e3:0c58` (near) → +1 / −1:
+```
+dyP = yp − yt; dyN = yn − yt; dxP = xp − xt; dxN = xn − xt
+if dxP == 0: dxP = 1, dyP = 7FFFh;  if dxN == 0: dxN = 1, dyN = 7FFFh
+if dxP < 0 and dxN < 0: (dxP, dxN) = (−dxN, −dxP); swap(dyP, dyN); goto CMP
+if dxP < 0 (dxN > 0): return 1
+if dxN < 0 (dxP > 0): return −1
+CMP: q1, r1 = (sext32 dyP) div dxP; q2, r2 = (sext32 dyN) div dxN      // DIV (unsigned) of a cdq'd dividend
+     if (i16)q2 < (i16)q1: return 1;  if q2 > q1 (unsigned): return −1
+     f1 = (r1 << 16) div dxP; f2 = (r2 << 16) div dxN; return f2 > f1 (unsigned) ? −1 : 1
+```
+
+`quad_corner_uv(a, b, fr, &us, &ue, &vs, &ve)` `16e3:0b5e` (near): switch on `2a + b` (jump table
+`CS:0C48`) for the 8 adjacent pairs: (0,1): u 0→w−1, v 0→0; (1,0): u w−1→0, v 0; (1,2): u w−1,
+v 0→h−1; (2,1): u w−1, v h−1→0; (2,3): u w−1→0, v h−1; (3,2): u 0→w−1, v h−1; (3,0): u 0, v h−1→0;
+(0,3): u 0, v 0→h−1. Other values: nothing written.
+
+### 9.5 Font metrics (see §8.3)
+
+PS `16e3:36ac` = `gfx_font_width`, PS `16e3:36dc` = `gfx_font_height` (corrected), AP `1d32:54e6`
+= `gfx_font_width` (`font_w` `DS:26F4`), AP `1d32:5516` = `gfx_font_height` (`font_h` `DS:2708`).
+
+### 9.6 AP `1d32:6d55` — circle `span_plot`
+
+The AP copy of INTRO `05da:05a1` (§5, `span_plot(a, b)`; globals AP `70EA..70F8`), installed as the
+circle plotter `DS:70F6` by `gfx_circle` `1d32:6bbc`.
+
+### 9.7 AP clip-list driver hooks — `1d32:1c60..1e9d`
+
+AP-only: temporarily replaces four driver entries with wrappers that clip every span against a
+**clip-span list** — the same format as a polygon span list (`video.md` §3.10): `{u16 y0, u16 n,
+n × (i16 xl, i16 xr)}`, row `y0 + k` allows `xl..xr` (inclusive); rows outside `[y0, y0+n)` draw
+nothing. Globals (DGROUP): `DS:1D12` far pointer(s) to the list(s) (an array of far pointers,
+0:0-terminated, when installed by `1e7a`), `DS:1D42` list iterator, saved entries `DS:1D44`
+(entry 10), `1D48` (entry 37), `1D4C` (entry 36), `1D50` (entry 38).
+
+Common clip of a span (row r, start x, count c) against list entry `e = list[4 + 4·(r − y0)]`:
+```
+if r < y0 or r >= y0 + n: drop
+if e.xl > x: d = e.xl − x; c −= d; if c <= 0: drop; x += d; (source advanced by d)
+t = e.xr + 1 − x − c; if t <= 0: c += t; if c <= 0: drop
+call the saved entry with the adjusted registers
+```
+
+| Hook | Replaces | Registers read (the caller must supply the row) | Source adjustment on a left clip |
+|---|---|---|---|
+| `1d32:1d3b` | entry 10 `hspan` (`DS:3542`) | DX = row, BX = x, CX = count (DX is clobbered: `(r−y0)·4`) | — |
+| `1d32:1c60` | entry 37 `span_cols` (`DS:35AE`) | BX = row, DX = x, CX = count; list read via `SS:` | BP (column table) += 2d |
+| `1d32:1cac` | entry 36 `span_tex` (`DS:35AA`) | SI = 2·row, DX = x, CX = count; C frame args 3 words | table pointer argument += 2d; **loops over every list** in the `DS:1D12` array, drawing the part inside each (union), restoring the registers between lists |
+| `1d32:1d81` | entry 38 `row_draw` (`DS:35B2`) | DX = row, BX = x, CX = count, CF = direction | CF = 0: SI += d. CF = 1 (right-to-left, x = rightmost): `if e.xr < x: d = x − e.xr; c −= d (drop if ≤ 0); x −= d; SI += d`; then `if x < e.xl: drop`, `c = min(c, x − e.xl + 1)` |
+
+Except `1cac`, the hooks use only the first list. Functions:
+* `1d32:1e17` `clip_hooks_install(far list)`: `DS:1D12 = list`; saves entries 37, 36, 38, 10 into
+  `1D48/1D4C/1D50/1D44` and installs `1c60`, `1cac`, `1d81`, `1d3b`.
+* `1d32:1e7a` `clip_hooks_install_multi(far list_array)`: `clip_hooks_install(list_array)`, then
+  copies the far pointers of the 0:0-terminated array to `DS:1D12…` (including the terminator).
+* `1d32:1e9d` `clip_hooks_remove()`: restores the four entries.
+Callers: `0962:0cc6` (install + remove) and `0962:0e47` (install_multi + `1eca` + remove) — sim_flow.
+
+### 9.8 AP `1d32:1eca` — `rot_rect_setup(frame *fr, x, y, angle, W, H, hx, hy, int out[4])`
+
+Corners of a W×H rectangle rotated by `angle` (0..FFFFh) around a hot spot, and its bounding
+box. `c = cos16(angle)`, `s = sin16(angle)` (`277a:5e71/5e66`), `mul14(a, b) = (a·b) >> 14`
+(`imul; shld dx, ax, 2`). W, H: absolute values; if either is 0 → return (nothing written).
+```
+px = x; py = y
+if hy: k = hy·H / fr.h (16-bit idiv); py −= mul14(k, c); px += mul14(k, s)
+if hx: k = hx·W / fr.w;              px −= mul14(k, c); py −= mul14(k, s)
+Wc = mul14(W, c); Ws = mul14(W, s); Hc = mul14(H, c); Hs = mul14(H, s)
+xs = DS:1D54[4] = { px, px + Wc, px + Wc − Hs, px − Hs }
+ys = DS:1D5C[4] = { py, py + Ws, py + Ws + Hc, py + Hc }
+i = index of the smallest ys (strict <, first)           // top corner
+if i == 0 and angle >= 4000h: i = 3
+if angle < 8000h and ys[2] == ys[3]: i += 1
+out[1] = ys[i]; out[2] = xs[(i+1)&3]; out[3] = ys[(i+2)&3]; out[0] = xs[(i+3)&3]
+```
+i.e. `out` = {left x, top y, right x, bottom y} for the quadrant of `angle` (**likely** meaning;
+arithmetic verified). Caller: `0962:0e47` (sim_flow).
+
+### 9.9 AP `244d` — graphics state and driver-entry sets
+
+* `244d:000b` `gfx_state_save(st*)` / `244d:0087` `gfx_state_restore(st*)` — 28-byte record:
+  `+00 drv[04]`, `+02 drv[06]`, `+04 drv[08]`, `+06 drv[0A]` (clip), `+08 drv[03]` (b), `+09
+  drv[20]` (b, meaning unknown), `+0A` font slot (`gfx_font_select(0)` on save; restore calls
+  `gfx_font_select(slot)` last), `+0C drv[12]`, `+0E drv[14]`, `+10 drv[10]`, `+12 drv[16]`, `+14
+  drv[18]` (pages), `+16 drv[00]`, `+17 drv[01]`, `+18 drv[02]` (text), `+19 drv[0E]`, `+1A
+  drv[0D]`, `+1B drv[0C]` (colours, fill flag). Callers `1c0f:0053`, `606e:029d`, `60a9:0a04`.
+* `244d:0101` `drv_set_record()`: copies the current driver entries 27 (`DS:3586`), 2 (`3522`),
+  10 (`3542`), 22 (`3572`) to `DS:5EDA/5ED6/5ED2/5ECE`. Caller `vcr_gfx_init` `5c5f:00bd`.
+* `244d:0126` `drv_set_select()`: `DS:1D74 = 1`; saves the current four entries to
+  `DS:5ECA/5EC6/5EC2/5EBE` and installs the recorded set. Caller `vcr_poll_panel` `1c0f:0053`.
+* `244d:0170` `drv_set_unselect()` (no caller): `DS:1D74 = 0`; restores from `5ECA…`.
+  `DS:1D74` is written only here.

@@ -50,8 +50,8 @@ def pal_image(pal):
 # ---------------------------------------------------------------- nibble planes
 
 def nibble_frames(lo, hi, sizes):
-    """BIN: low nibbles, VGA: high nibbles, 2 pixels per byte (first pixel in the low nibble
-    of each byte), frames one after another; a frame's pixel count is w*h (odd counts share
+    """BIN: low nibbles, VGA: high nibbles, 2 pixels per byte (first pixel in the HIGH nibble
+    of each byte, as driver entry 14 draws them; port/spec/video_pictures.md), frames one after another; a frame's pixel count is w*h (odd counts share
     a byte with the next frame)."""
     frames = []
     pos = 0
@@ -61,7 +61,7 @@ def nibble_frames(lo, hi, sizes):
         for i in range(n):
             j = pos + i
             b = j >> 1
-            sh = 4 * (j & 1)
+            sh = 4 * (1 - (j & 1))
             l = (lo[b] >> sh) & 15 if b < len(lo) else 0
             hh = (hi[b] >> sh) & 15 if hi is not None and b < len(hi) else 0
             px[i] = l | (hh << 4)
