@@ -1,0 +1,7 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,1660:07bb,targets_list,far int(u16 *items int n int air),sim_flow,,radio menu target items 40h-42h + DS:5B6C records; spec sim_flow_radio.md
+ap,func,1660:0bae,targets_exist,far int(int bombers),sim_flow,,targets_list(tmp 0 bombers==0) > 0
+ap,func,1660:0c12,add_attack_item,far int(u16 *items int n int bombers),sim_flow,,31h/32h if targets_exist
+ap,func,1660:0c47,orders_list,far int(u16 *items int max Plane **near int k),sim_flow,,order items 33h-3Dh/50h/2Eh-30h/43h/44h per DS:5BD0
+ap,global,DS:5B6C,order_targets,u8[8][12],sim_flow,,order target records parallel to menu items
+ap,global,DS:18EC,ship_class_order,i16[9],sim_flow,,{1 0 7 2 3 4 8 5 6}; also ship_priority table

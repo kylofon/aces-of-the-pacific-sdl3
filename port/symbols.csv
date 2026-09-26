@@ -508,7 +508,11 @@ ap,func,1660:01bc,ai_order_execute,,sim_world,,spec: sim_world_ai.md
 ap,func,1660:0685,order_text,far char *(int code int index char *dst),sim_flow,,split from 1660
 ap,func,1660:0706,mates_have_bombers,,sim_world,,spec: sim_world_ai.md
 ap,func,1660:0787,ship_priority,,sim_world,,spec: sim_world_ai.md
+ap,func,1660:07bb,targets_list,far int(u16 *items int n int air),sim_flow,,radio menu target items 40h-42h + DS:5B6C records; spec sim_flow_radio.md
+ap,func,1660:0bae,targets_exist,far int(int bombers),sim_flow,,targets_list(tmp 0 bombers==0) > 0
 ap,func,1660:0bd7,alive_count,,sim_world,,spec: sim_world_ai.md
+ap,func,1660:0c12,add_attack_item,far int(u16 *items int n int bombers),sim_flow,,31h/32h if targets_exist
+ap,func,1660:0c47,orders_list,far int(u16 *items int max Plane **near int k),sim_flow,,order items 33h-3Dh/50h/2Eh-30h/43h/44h per DS:5BD0
 ap,func,1660:0f5f,orders_title,far int(void),sim_flow,,split from 1660
 ap,func,1660:0f6e,orders_reset,far void(void),sim_flow,,split from 1660
 ap,func,1660:0f85,order_send,far int(int code int index),sim_flow,,split from 1660
@@ -1090,11 +1094,19 @@ ap,func,2f0e:071f,part_walk,"far void(self,n,list)",render3d,,
 ap,func,2f0e:08e9,ts_draw,far void(instance*),render3d,,
 ap,func,2fca:0004,snd_rec_iter,far,sound,,
 ap,func,2fd8:0003,snd_pool_free,far,sound,,
+ap,func,2fdc:0000,snd_node_new,far Node far*(void far *res),sound,,= INTRO 15ac:000c; dead in AP; sound_extra.md
 ap,func,2fe4:0005,snd_res_read,far,sound,,no DS:1F5D test: classes 4/7 always keep only the device track of DS:269D (switch cs:01ED); unknown driver -> NULL
+ap,func,2fe4:01f5,chlist_free,far void(Ch far*),sound,,= INTRO 15b5:01fa (exact)
+ap,func,2fe4:0238,res_find_track,"far int(FILE *f, u8 dev)",sound,,= INTRO 15b5:023d (exact)
+ap,func,2fe4:0339,chlist_read,far Ch far*(FILE *f),sound,,= INTRO 15b5:033e (exact)
+ap,func,2fe4:041d,chlist_insert,"far Ch far*(Ch far *list, Ch far *item)",sound,,= INTRO 15b5:0422 (exact)
+ap,func,2fe4:04c9,res_build,"far int(FILE*, Ch far*, u8 far*, u16, u16, u8)",sound,,= INTRO 15b5:04ce
 ap,func,303f:0000,snd_node_stop_far,far,sound,,player stop stub wrapper
 ap,func,3040:000c,snd_pool_alloc,far,sound,,7 nodes at DS:65EE
+ap,func,3048:0006,snd_pool_find,far Node far*(void far *res),sound,,= INTRO 1617:000b; pool DS:65EE; dead
 ap,func,304e:0000,ovl_load_chunk,far,sound,,= INTRO 1620:000e
 ap,func,3056:000b,snd_unload,far,sound,,no callers
+ap,func,3056:007a,snd_rec_node,far Node far*(Rec far*),sound,,= INTRO 1629:007d; dead
 ap,func,3060:0007,snd_get_cue,far,sound,,stub -> 09f1: node cue counter (+152)
 ap,func,3060:001a,snd_node_set_priority,far,sound,,stub -> 091e
 ap,func,3060:002e,snd_get_position,far,sound,,stub -> 09fb: tick -> min/sec/halfticks
@@ -1170,6 +1182,10 @@ ap,func,32d5:005a,snd_wait_5,far,sound,,
 ap,func,32de:0008,snd_enable,far,sound,,"called only from 2466:0118 (Windows-only routine, no caller: likely dead)"
 ap,func,32e7:0005,snd_stop,far,sound,,reached only from unused API
 ap,func,3301:0005,res_skip_header,far,sound,,
+ap,func,3303:0000,node_stop_nth,"far void(Node far*, int)",sound,,= INTRO 1702:000a; dead
+ap,func,3305:000c,node_nth,"far Node far*(Node far*, int)",sound,,= INTRO 1705:0008; dead
+ap,func,3308:000c,node_play_nth,"far Node far*(Node far*, int, u8 vol)",sound,,= INTRO 1708:0008; dead
+ap,func,330d:0001,snd_pool_stop_data,far void(void far *res),sound,,= INTRO 170c:000f; dead
 ap,func,3312:000a,sng_free,far,sound,,
 ap,func,3318:0005,snd_pool_play,far,sound,,uses SNG INF; unused
 ap,func,3326:000d,snd_alloc,far,sound,,= INTRO 1724:0000
@@ -1293,6 +1309,30 @@ ap,func,367b:0006,lrot_z,near,render3d,,rotates macro members
 ap,func,3684:000c,vdist,far,render3d,,
 ap,func,3684:0042,vec_outside_mask,far,render3d,,
 ap,func,3684:00a1,lbits,near,render3d,,
+ap,func,368f:000e,memswap,"far void(u8 *a, u8 *b, int n)",platform,,no callers; spec video_misc.md 3
+ap,func,368f:002f,memswap_huge,"far void(u8 huge *a, u8 huge *b, int n)",platform,,no callers
+ap,func,368f:008d,floppy_off,far void(void),video,,if !is_tandy: 0000:18d6 floppy motor-off wait; video_misc.md
+ap,func,368f:009f,dec_floor,far int(int *p),video,,--*p > 0 ? 1 : (*p = 0)
+ap,func,368f:00b7,countdown_get,far int(void),video,,DS:31E4 ? DS:31E5 : 0
+ap,func,368f:00ca,countdown_wait,far int(void),video,,until countdown 0 or key_or_click
+ap,func,368f:00e6,delay18,far void(int n),video,,DS:31E5 = 13n; wait_key_release; countdown_wait
+ap,func,368f:00ff,wipe,"far void(int x, int y, int w, int h, int ticks, int copy)",video,,10-pass line blind (every 10th row per pass)
+ap,func,368f:017f,wipe_in,far void(int ticks),video,,read back / write front; wipe(0 0 320 200 ticks 1)
+ap,func,368f:01a3,wipe_black,far void(void),video,,write front; fill colour 0; wipe(0 0 W H 4 0)
+ap,func,368f:01cf,clip_full,far void(void),video,,clip on to full screen; filled
+ap,func,368f:01f2,copy_screen,far void(void),video,,gfx_copy_rect(0 0 W H)
+ap,func,368f:020a,str_subst,"far char*(char *s, char c, char r)",platform,,first c (NUL included) -> r
+ap,func,368f:0243,strip_ext_all,"far void(char **v, int n)",platform,,no callers
+ap,func,368f:0268,strlist_remove,"far int(char **v, char *s, int n)",platform,,no callers
+ap,func,368f:02e6,make_filename,"far char*(char *name, char *ext)",platform,,DS:712C = name w/o ext + '.' + ext
+ap,func,368f:035c,make_filename_dev,"far char*(char *name, char *ext)",platform,,no DAC: 'E' + 7 chars of name
+ap,func,368f:03a1,itoa_static,far char*(int v),platform,,itoa(v DS:714A 10)
+ap,func,368f:03b6,write_back,far void(void),video,,DS:26D8 = DS:26D2
+ap,func,368f:03c1,read_back,far void(void),video,,DS:26D6 = DS:26D2
+ap,func,368f:03cc,write_bg,far void(void),video,,DS:26D8 = DS:26D0; no callers
+ap,func,368f:03d7,read_bg,far void(void),video,,DS:26D6 = DS:26D0
+ap,func,368f:03e2,write_front,far void(void),video,,DS:26D8 = DS:26D4
+ap,func,368f:03ed,read_front,far void(void),video,,DS:26D6 = DS:26D4
 ap,func,36ce:0008,rd_open,,sim_world,,spec: sim_world_dmg.md
 ap,func,36ce:001b,rd_skip,,sim_world,,spec: sim_world_dmg.md
 ap,func,36ce:002d,rd_read,,sim_world,,spec: sim_world_dmg.md
@@ -1306,6 +1346,7 @@ ap,func,36e3:0032,bytes_and,,sim_world,,spec: sim_world_dmg.md
 ap,func,36e8:000f,all_zero,,sim_world,,spec: sim_world_dmg.md
 ap,func,36ea:000e,gather,,sim_world,,spec: sim_world_dmg.md
 ap,func,36ee:0003,disk_free,far long(int drive),sim_flow,,16-bit product overflow quirk
+ap,func,39e5:0000,kill_msg_seg,data char far[256],sim_world,,NOT CODE: 256-byte far text buffer (zero in file) used by kill_credit 088a:054f for 'You just shot down <ace>.'; row kind func only so spec_coverage counts it; see sim_world_extra.md
 ap,func,45cc:0000,slots_from_counts,,sim_world,,spec: sim_world_dmg.md
 ap,func,45cc:0056,model_slots_assign,,sim_world,,spec: sim_world_dmg.md
 ap,func,45cc:0080,rating_lerp,,sim_world,,spec: sim_world_dmg.md
@@ -1514,6 +1555,7 @@ ap,func,4bf9:0961,plane_cruise_throttle,,sim_world,,spec: sim_world_fm.md
 ap,func,4bf9:098b,steer_speed_match,,sim_world,,spec: sim_world_fm.md
 ap,func,4bf9:09f4,controls_neutral,,sim_world,,spec: sim_world_fm.md
 ap,func,4bf9:0a18,fly_module_end,,sim_world,,spec: sim_world_fm.md
+ap,func,4c9b:0000,fonts_load,far int(void),video,,font1-4 + talk -> DS:3F32/3F30/3F2E/3F2C/3F2A
 ap,func,4ca7:0000,clock_reset,far void(void),sim_flow,,
 ap,func,4ca7:0014,clock_tick,far void(void),sim_flow,,
 ap,func,4ca7:0045,clock_get,far long(void),sim_flow,,game seconds
@@ -1621,7 +1663,7 @@ ap,func,5058:0646,objects_clamp_world,,sim_world,,spec: sim_world_ai.md
 ap,func,50c0:0000,lso_load,far void(void),sim_flow,,sig_a/sig_j
 ap,func,50c0:004a,lso_free,far void(void),sim_flow,,
 ap,func,50c0:0068,lso_reset,far void(void),sim_flow,,
-ap,func,50c8:0000,is_debug,far int(void),platform,sim_nop,
+ap,func,50c8:0000,is_debug,far int(void),platform,,
 ap,func,50c8:0008,main,"far int(int,char**)",platform,,
 ap,func,5119:0000,textbox_init,far void(...),sim_flow,,sim_flow_ui §6
 ap,func,5119:0037,textbox_draw,far void(Item far *it),sim_flow,,sim_flow_ui §6 frame+inset+embossed text
@@ -1865,12 +1907,18 @@ ap,func,5a01:05d5,quit_box_close,far void(int h),sim_flow,,sim_flow_ui §2.3
 ap,func,5a75:0000,tok_hold,near-far,sound,,"sx_sim.c take n tokens, start their cool-down timers"
 ap,func,5a75:0034,sx_release,far,sound,,sx_sim.c release channel/voice tokens of a type
 ap,func,5a75:008a,tok_busy,far,sound,,sx_sim.c count cooling tokens
+ap,func,5a75:00fa,sx_frag_00fa,byte,sound,,inc bp prologue byte of 5a75:00fb (not a function)
 ap,func,5a75:00fb,sx_age_oneshots,near,sound,,sx_sim.c
+ap,func,5a75:01dd,sx_frag_01dd,byte,sound,,inc bp prologue byte of 5a75:01de
 ap,func,5a75:01de,sx_volume,near,sound,,"sx_sim.c 7F - ((s32)(s16)dist<<7)/maxdist, capped 7F; only when src.4 == 0 (one-shot volume frozen)"
+ap,func,5a75:0243,sx_frag_0243,byte,sound,,inc bp prologue byte of 5a75:0244
 ap,func,5a75:0244,sx_collect,near,sound,,sx_sim.c
 ap,func,5a75:02df,sx_collect_all,near,sound,,sx_sim.c
+ap,func,5a75:030a,sx_frag_030a,byte,sound,,inc bp prologue byte of 5a75:030b
 ap,func,5a75:030b,sx_substitute,near,sound,,sx_sim.c type table +3
+ap,func,5a75:034c,sx_frag_034c,byte,sound,,inc bp prologue byte of 5a75:034d
 ap,func,5a75:034d,sx_node_stop,near,sound,,sx_sim.c
+ap,func,5a75:0383,sx_frag_0383,byte,sound,,inc bp prologue byte of 5a75:0384
 ap,func,5a75:0384,sx_match_nodes,near,sound,,sx_sim.c
 ap,func,5a75:042a,sx_cmp,far,sound,,"sx_sim.c qsort compare prio, vol"
 ap,func,5a75:0478,sx_sort,near,sound,,sx_sim.c
@@ -1878,11 +1926,16 @@ ap,func,5a75:0497,sx_reserve,far,sound,,sx_sim.c
 ap,func,5a75:04c5,sx_budget_start,far,sound,,sx_sim.c
 ap,func,5a75:051c,sx_fits,far,sound,,sx_sim.c
 ap,func,5a75:05a3,sx_can_start,far,sound,,sx_sim.c
+ap,func,5a75:05d7,sx_frag_05d7,byte,sound,,inc bp prologue byte of 5a75:05d8
 ap,func,5a75:05d8,sx_trim,near,sound,,sx_sim.c
 ap,func,5a75:066f,sx_free_node,near,sound,,sx_sim.c
+ap,func,5a75:0697,sx_frag_0697,byte,sound,,inc bp prologue byte of 5a75:0698
 ap,func,5a75:0698,node_clear,near,sound,,sx_sim.c
+ap,func,5a75:06b2,sx_frag_06b2,byte,sound,,inc bp prologue byte of 5a75:06b3
 ap,func,5a75:06b3,sx_doppler,near,sound,,"sx_sim.c d = dist3(prev listener 48A5, pos) - dist3(cur listener 48B1, pos+vel); clamp low 16 bits to +-1000; bend clamp 100..16000 on channel DS:087E"
+ap,func,5a75:0777,sx_frag_0777,byte,sound,,inc bp prologue byte of 5a75:0778
 ap,func,5a75:0778,sx_eff_vol,near,sound,,sx_sim.c
+ap,func,5a75:0797,sx_frag_0797,byte,sound,,inc bp prologue byte of 5a75:0798
 ap,func,5a75:0798,sx_apply,near,sound,,"sx_sim.c start/update up to 7 nodes, play(node,0)"
 ap,func,5a75:095e,sx_update,far,sound,,"sx_sim.c per frame (listener pos, substitute flag)"
 ap,func,5a75:09a7,sx_stop_nodes,near,sound,,sx_sim.c
@@ -1898,14 +1951,21 @@ ap,func,5a75:0ac6,sx_setup_adl,near,sound,,sx_sim.c
 ap,func,5a75:0ad3,sx_setup_tan,near,sound,,sx_sim.c
 ap,func,5a75:0ae6,sx_is_mt32,far,sound,,sx_sim.c
 ap,func,5a75:0afa,sx_init,far,sound,,"sx_sim.c (ovl, datname, sngname, drv, off)"
+ap,func,5a75:0d27,sx_countdown_get,near int(void),sound,,returns DS:31E5 (timer_countdown)
+ap,func,5a75:0d2b,sx_wait10,near void(void),sound,,DS:31E5 = 10; spin until 0; from sx_shutdown
 ap,func,5a75:0d39,sx_shutdown,far,sound,,sx_sim.c
 ap,func,5a75:0d66,sx_enable,far,sound,,sx_sim.c (on)
+ap,func,5a75:0db0,sx_nop,far void(void),sound,,empty; no callers
+ap,func,5a75:0db5,sx_frag_0db5,byte,sound,,inc bp prologue byte of 5a75:0db6
 ap,func,5a75:0db6,sx_add,near,sound,,"sx_sim.c (type, pos, flags, player)"
 ap,func,5a75:0e96,sx_stop_all,far,sound,,sx_sim.c
 ap,func,5a75:0ea9,sx_play_vol,far,sound,,"sx_sim.c (type, vol, bend, player)"
 ap,func,5a75:0eea,sx_play,far,sound,,"sx_sim.c (type, pos, vel, player)"
 ap,func,5a75:0f2c,sx_play_rsv,far,sound,,"sx_sim.c (type, pos, vel, player) full budget"
 ap,func,5a75:0f72,sx_play_ex,far,sound,,"sx_sim.c (type, pos, bend, vel, flags, player)"
+ap,func,5b71:0000,namelist_add,"far int(int id, char *name, Node *head)",sim_flow,,dead segment; sim_flow_extra.md
+ap,func,5b71:00cd,namelist_find,"far Node*(int id, char *name, Node *head)",sim_flow,,dead
+ap,func,5b71:0118,namelist_load,"far int(VFILE *f, char *path, Node *head)",sim_flow,,no callers
 ap,func,5b91:0000,per4000,far,render3d,,
 ap,func,5b91:0014,nop_5b91,far,render3d,,
 ap,func,5b93:0000,vcr_world_reset,far void(void),sim_flow,,from mission_start 4e0d:03e9
@@ -2098,7 +2158,7 @@ ap,func,606e:025f,banner_text,far void(char *s),sim_flow,,
 ap,func,606e:029d,vcr_message,void (char *text),video,,dims DAC 0..174 to black in 18 steps; sim_flow (VCR) may claim
 ap,func,606e:0396,banner_w,far void(char *s),sim_flow,,
 ap,func,60a9:0000,buttons_poll,far void(void),sim_flow,,
-ap,func,60a9:017c,input_frag_017c,?,sim_flow,,mis-seeded jump-table fragment? to check
+ap,func,60a9:017c,clear_button_latches,?,sim_flow,,mis-seeded jump-table fragment? to check
 ap,func,60a9:01b2,buttons_to_record,far void(u8*in),sim_flow,,
 ap,func,60a9:02c4,input_poll,far u8*(u8*in),sim_flow,,0x25-byte input record
 ap,func,60a9:07d2,mouse_enable_set,far void(int),sim_flow,,
@@ -2571,6 +2631,7 @@ ap,global,277a:5664,cos_tab,i16[1025],render3d,,
 ap,global,277a:6028,atan_corr,i8[512],render3d,,
 ap,global,277a:63a6,asin_tab,i16[961],render3d,,
 ap,global,3923:0000,key_bindings,rec10[],sim_flow,,"{flags,scan,value,far fn}"
+ap,global,39e5:0000,kill_msg_buf,char far[256],sim_world,,far segment 39e5 offset 0
 ap,global,DS:00E6,weapon_pool,,sim_world,,
 ap,global,DS:00E8,dmg_events,,sim_world,,
 ap,global,DS:00EA,dmg_event_count,,sim_world,,
@@ -2645,6 +2706,7 @@ ap,global,DS:1442,alt_band_breaks,,sim_world,,i32[9] 10000..170000
 ap,global,DS:1634,class_factor,,sim_world,,"{0,200,400,800,1600}"
 ap,global,DS:18B5,aa_sites,,sim_world,,far 26h-byte records
 ap,global,DS:18D2,tick_count,u32,sim_flow,,
+ap,global,DS:18EC,ship_class_order,i16[9],sim_flow,,{1 0 7 2 3 4 8 5 6}; also ship_priority table
 ap,global,DS:1910,pal_fx_cached_level,u16,video,,level of the current delta table
 ap,global,DS:1938,rockets_mec,,sim_world,,
 ap,global,DS:193A,rocket_class,,sim_world,,written by 1a32:000b
@@ -2857,6 +2919,11 @@ ap,global,DS:3F22,vel_scale,,sim_world,,distance per nominal frame scale = 46h
 ap,global,DS:3F24,gravity,,sim_world,,42h
 ap,global,DS:3F26,gear_touch_timer,,sim_world,,
 ap,global,DS:3F28,gear_touch_latch,,sim_world,,
+ap,global,DS:3F2A,font_talk,font*,video,,
+ap,global,DS:3F2C,font4,font*,video,,
+ap,global,DS:3F2E,font3,font*,video,,
+ap,global,DS:3F30,font2,font*,video,,
+ap,global,DS:3F32,font1,font*,video,,
 ap,global,DS:3F34,mission_clock_frac,s16,sim_flow,,
 ap,global,DS:3F36,mission_clock,u32,sim_flow,,
 ap,global,DS:3F4C,gauge_count,u16,sim_flow,,sim_flow_cockpit
@@ -2929,6 +2996,7 @@ ap,global,DS:48C7,sx_stop_list,,sound,,
 ap,global,DS:48E3,sx_audible,,sound,,
 ap,global,DS:4983,sx_continuous,,sound,,50 x 14
 ap,global,DS:4C3F,sx_oneshots,,sound,,30 x 14
+ap,global,DS:4DE4,namelist_free,Node*,sim_flow,,free-node list head
 ap,global,DS:4DE9,vcr_ctrl,CTRL,sim_flow,,sim_flow_vcr §14
 ap,global,DS:4DFF,vcr_redraw,u16,sim_flow,,sim_flow_vcr §14
 ap,global,DS:4E1C,end_prompt_delay,s32,sim_flow,,
@@ -2973,6 +3041,7 @@ ap,global,DS:57E8,lso_call,s16,sim_flow,,sim_flow_cockpit
 ap,global,DS:5814,best_candidate,,sim_world,,12 bytes
 ap,global,DS:5A82,gdamage_classes,,sim_world,,
 ap,global,DS:5B1A,msg_slots,MsgSlot[2],sim_flow,,sim_flow_cockpit
+ap,global,DS:5B6C,order_targets,u8[8][12],sim_flow,,order target records parallel to menu items
 ap,global,DS:5BD4,hold_formation_order,,sim_world,,
 ap,global,DS:5BD8,pal_fx,near ptr,video,palfx_block,palette effect record (cap; n; base; work[768]; T[-63..63]; entries 37 bytes)
 ap,global,DS:5BDA,below_overcast,,render3d,,
@@ -3101,6 +3170,8 @@ ap,global,DS:7118,time_div,s16,sim_flow,,
 ap,global,DS:711A,dt_real,s16,sim_flow,,
 ap,global,DS:711C,dt_log,s16,sim_flow,,
 ap,global,DS:711E,dt_scale,,sim_world,dt,frame time scale 100h = nominal frame (sim_flow 362b)
+ap,global,DS:712C,filename_buf,char[30],platform,,
+ap,global,DS:714A,itoa_buf,char[],platform,,
 intro,func,0000:0000,_c0_startup,void(void),seed,,"Borland C++ 3.0 c0m.asm entry: mov dx,DGROUP; DOS version; env/PSP; SaveVectors; __init table; main(argc,argv,envp); exit"
 intro,func,0000:0163,__cleanup,far void(void),seed,,c0: walks the #pragma exit table (ExitTable 0000:0264)
 intro,func,0000:0176,__checknull,far void(void),seed,,"c0: checksums DS:0000-002E (copyright) == 0D5Ch, else 'Null pointer assignment'"

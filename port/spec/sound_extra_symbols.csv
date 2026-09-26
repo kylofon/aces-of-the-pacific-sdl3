@@ -1,0 +1,28 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,2fdc:0000,snd_node_new,far Node far*(void far *res),sound,,= INTRO 15ac:000c; dead in AP; sound_extra.md
+ap,func,2fe4:01f5,chlist_free,far void(Ch far*),sound,,= INTRO 15b5:01fa (exact)
+ap,func,2fe4:0238,res_find_track,"far int(FILE *f, u8 dev)",sound,,= INTRO 15b5:023d (exact)
+ap,func,2fe4:0339,chlist_read,far Ch far*(FILE *f),sound,,= INTRO 15b5:033e (exact)
+ap,func,2fe4:041d,chlist_insert,"far Ch far*(Ch far *list, Ch far *item)",sound,,= INTRO 15b5:0422 (exact)
+ap,func,2fe4:04c9,res_build,"far int(FILE*, Ch far*, u8 far*, u16, u16, u8)",sound,,= INTRO 15b5:04ce
+ap,func,3048:0006,snd_pool_find,far Node far*(void far *res),sound,,= INTRO 1617:000b; pool DS:65EE; dead
+ap,func,3056:007a,snd_rec_node,far Node far*(Rec far*),sound,,= INTRO 1629:007d; dead
+ap,func,3303:0000,node_stop_nth,"far void(Node far*, int)",sound,,= INTRO 1702:000a; dead
+ap,func,3305:000c,node_nth,"far Node far*(Node far*, int)",sound,,= INTRO 1705:0008; dead
+ap,func,3308:000c,node_play_nth,"far Node far*(Node far*, int, u8 vol)",sound,,= INTRO 1708:0008; dead
+ap,func,330d:0001,snd_pool_stop_data,far void(void far *res),sound,,= INTRO 170c:000f; dead
+ap,func,5a75:00fa,sx_frag_00fa,byte,sound,,inc bp prologue byte of 5a75:00fb (not a function)
+ap,func,5a75:01dd,sx_frag_01dd,byte,sound,,inc bp prologue byte of 5a75:01de
+ap,func,5a75:0243,sx_frag_0243,byte,sound,,inc bp prologue byte of 5a75:0244
+ap,func,5a75:030a,sx_frag_030a,byte,sound,,inc bp prologue byte of 5a75:030b
+ap,func,5a75:034c,sx_frag_034c,byte,sound,,inc bp prologue byte of 5a75:034d
+ap,func,5a75:0383,sx_frag_0383,byte,sound,,inc bp prologue byte of 5a75:0384
+ap,func,5a75:05d7,sx_frag_05d7,byte,sound,,inc bp prologue byte of 5a75:05d8
+ap,func,5a75:0697,sx_frag_0697,byte,sound,,inc bp prologue byte of 5a75:0698
+ap,func,5a75:06b2,sx_frag_06b2,byte,sound,,inc bp prologue byte of 5a75:06b3
+ap,func,5a75:0777,sx_frag_0777,byte,sound,,inc bp prologue byte of 5a75:0778
+ap,func,5a75:0797,sx_frag_0797,byte,sound,,inc bp prologue byte of 5a75:0798
+ap,func,5a75:0db5,sx_frag_0db5,byte,sound,,inc bp prologue byte of 5a75:0db6
+ap,func,5a75:0d27,sx_countdown_get,near int(void),sound,,returns DS:31E5 (timer_countdown)
+ap,func,5a75:0d2b,sx_wait10,near void(void),sound,,DS:31E5 = 10; spin until 0; from sx_shutdown
+ap,func,5a75:0db0,sx_nop,far void(void),sound,,empty; no callers

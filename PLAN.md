@@ -57,7 +57,7 @@ video and sound drivers are loaded from the volumes (`VMCODE.OVL`: unchained 320
 - Ghidra projects in `_ghidra/`, decompiles in `port/decomp/` (ignored).
 - Output: `port/RE_GUIDE.md`, `port/symbols.csv`.
 
-### 2. File formats
+### 2. File formats — done (2026-09-25, see `FORMATS.md` + `port/formats/`)
 Decoders in `tools/` that dump to `work/` with contact sheets:
 1. Dynamix Volume File directory + tagged chunks + their compression (DGDS: RLE / LZW).
 2. Palettes, fonts, bitmaps and screens → PNG.
@@ -65,7 +65,7 @@ Decoders in `tools/` that dump to `work/` with contact sheets:
 4. Sound: SCI-format music and effects, the SCI driver interface; render AdLib to `.dro`.
 5. `.PRF`, `RESOURCE.CFG`, `SIM.IN`/`SIM.OUT`, roster/records, `SCRIPT.DAT`/`.SCD`, `.VCR` films.
 
-### 3. Specs
+### 3. Specs — done (2026-09-26): 8 modules in `port/spec/` (26 k lines), every indexed function covered (`tools/spec_coverage.py`), cross-module hand-offs in `port/spec/HANDOFFS.md`, merged names in `port/symbols.csv`
 Split by subsystem (names to be settled in phase 1): platform (startup, EMS, timer, input, files),
 video (VGA 320 driver, palettes, blitters), resources (volumes, chunks, decompression), shell UI
 (PS: menus, career, briefings, mission builder), intro, sim game flow (AP: mission run, debrief,

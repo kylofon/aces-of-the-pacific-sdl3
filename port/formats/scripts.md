@@ -81,7 +81,7 @@ table) and `F10F–F19F`; `Cxxx` is ignored. That is all the cockpit scripts use
 | `1031` | SET_BRUSH | n | context +1C | 0 | Likely |
 | `1041` | | a | `DS:7672 = a` | 0 | Unknown |
 | `1051` | SEL_BMP | slot | bitmap slot (0–5) | 1539 | Verified |
-| `1061` | SEL_PAL | slot | palette slot; the slot's palette becomes current (VGA) | 144 | Verified |
+| `1061` | SEL_PAL | slot | palette slot; on VGA the DAC is **not** changed — the palette is applied at the next FADE_IN/FADE_OUT/PAL_RESET or by the player's apply step (only adapter id 4 uploads at once; `video_palette.md` §5.3) | 144 | Verified |
 | `1071` | SEL_FONT | slot | font slot (`16E3:35D5` sets it) | 0 | Verified |
 | `1101`, `1111` | TAG | tag | no-op; label for GOTO/GOSUB (names in `TTI:`) | 121 (all `1111`) | Verified |
 | `1121` | SEL_GETPUT | slot | get/put slot | 0 | Verified |
@@ -91,13 +91,13 @@ table) and `F10F–F19F`; `Cxxx` is ignored. That is all the cockpit scripts use
 | `2022` | RAND_DELAY | min max | delay = min + rand % (max − min) | 0 | Verified |
 | `2032` | | a b | `39BD:03D1(a, b)` (animation player) | 0 | Unknown |
 | `2302/2312/2322` | PAL_BLOCK | first last | palette-cycle block 0/1/2 (`DS:768E`, `DS:7694`) | 0 | Verified |
-| `2402` | PAL_CYCLE | mask step | rotate the blocks selected by mask bits 0–2 (`3BAF:1631`) | 0 | Likely |
+| `2402` | PAL_CYCLE | mask period | registers the blocks selected by mask bits 0–2 for cycling (`3BAF:1631`); the cycle step routine has no caller, so **nothing animates** (`video_palette.md` §4.6, §5.8) | 0 | Verified |
 | `3003` | GOSUB | dx dy tag | run frame `tag`, drawing offset (dx, dy) | 0 | Verified |
-| `3103` | | a b c | `30B5:000F(a,b,c)` + full-screen update | 0 | Unknown (ScummVM: SCROLL) |
+| `3103` | SCROLL | dir steps dist | **hardware scroll** effect (CRTC/attribute programming, INTRO `103D`, PS `30B5:000F`) + full-screen update; used by no shipped script (`video_palette.md` §7) | 0 | Verified |
 | `4004` | SET_CLIP | x1 y1 x2 y2 | clip window | 8 | Verified |
 | `4114` | FADE_OUT | first n col speed | fade colours first..first+n−1 to colour col; speed indexes `DS:3868` | 19 | Verified |
 | `4124` | FADE_IN | first n col speed | fade in (same arguments) | 29 | Verified |
-| `4136` | FADE_PART | first n col from% to% steps | partial fade between two levels (% × 64/101) | 8 | Likely |
+| `4136` | FADE_PART | first n col from% to% ticks | partial fade between two levels (% × 64/101); the last argument is a **duration in 59.17 Hz ticks**, not a step count (`video_palette.md` §5.7, §6) | 8 | Verified |
 | `4204` | STORE_AREA | x y w h | copy area into the background buffer (`3B02:0A94`) | 27 | Likely |
 | `4214` | SAVE_GETPUT | x y w h | save a screen area into the current get/put slot | 0 | Verified |
 | `5005` | | 5 args | no-op | 0 | Verified |
@@ -122,7 +122,8 @@ table) and `F10F–F19F`; `Cxxx` is ignored. That is all the cockpit scripts use
 | `C01F`/`C02F` | SND_NAME / SND_BANK | name | copy name to `DS:7681` / `DS:7674` (`C02F "TTD.SX"`) | 25 | Verified |
 | `C031` | SND_LOAD | id | `45F0:000C(bank, id)` | 24 | Likely |
 | `C041`–`C0A1` | | id | sound API calls `4609`, `464D` (**play**, `C051`), `467E` (**stop**, `C061`), `4625`, `462A`, `45E4`, `4675` | 32 (`C051`) | Likely |
-| `C0B2`–`C0F4`, `C102`, `CF01`, `CF11` | | 2–4 | further sound API calls (`C0E3(1001,0,60)` once, `INTACE5`) | 1 | Unknown |
+| `C0E3` | SND_FADE | id target ticks | `snd_fade(id, target, ticks)` (`sound.md` §9; used once: `C0E3 1001 0 60` in `INTACE5`) | 1 | Verified |
+| `C0B2`–`C0F4` (others), `C102`, `CF01`, `CF11` | | 2–4 | further sound API calls (`sound.md` §9) | 0 | Verified (sound) |
 | `F01F` | LOAD_SCR | name | load a `.SCR` as the background (`39AA:000A`), then SAVE_BG | 20 | Verified |
 | `F02F` | LOAD_BMP | name | load a `.BMP` into the current bitmap slot (`3922:0002`) | 743 | Verified |
 | `F04F` | LOAD_FONT | name | load a `.FNT` into the current font slot | 0 | Verified |
@@ -158,8 +159,10 @@ All little-endian; strings NUL-terminated, Latin-1.
 67 tables decode (`dyndata.py`; each boundary checked against the NULs). `.SCD` = the labels
 of one shell screen (`MAINMENU.SCD`: `MAIN MENU`, `FLY SINGLE MISSION`, `CAREER MENU`, `VIEW
 VEHICLES`, `OTHER OPTIONS`, `MISSION RECORDER`, `EXIT TO DOS`, `MISSION RECORDER`); the loose
-`Game/MAINMENU.SCD` differs only by `QUIT` for `EXIT TO DOS`. `my_fopen` searches the volumes
-first (resources.md §1), so the loose copy is presumably unused (Likely).
+`Game/MAINMENU.SCD` differs only by `QUIT` for `EXIT TO DOS`. **Corrected:** `my_fopen` opens a
+loose file on disk before searching the volumes (resources.md §1), so the loose copy **is** the one
+the shell shows (QUIT). The PS reader's view of variant A is `u16 n, u16 off[n], u16 size, text`
+(`shell_data_emd1.md`), byte-for-byte the same as `u32 n, u16 end[n]` above.
 
 27 further shell `.DAT` files mix records and strings (`BRIEF`, `DEBRIEF`, `DISPLAYS`,
 `FLTPLAN`, `STRINGS`, `SFTBTNS`, `SHIPTEXT`, `MISC`, `OPTIONAL`, `RANKS`, `MEDALS`, `STATION`,

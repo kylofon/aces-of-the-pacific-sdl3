@@ -99,7 +99,7 @@ OPS = {
     0xC041: ('SND_C041', 'id', '4609:000C(id)'),
     0xC051: ('SND_PLAY', 'id', 'play sound id (464D:0002); old opcode 1301 is mapped here'),
     0xC061: ('SND_STOP', 'id', 'stop sound id (467E:0000); old opcode 1311 is mapped here'),
-    0xC0E3: ('SND_C0E3', 'id a b', '463B:0003(id, a, b) (Likely: volume/fade)'),
+    0xC0E3: ('SND_FADE', 'id a b', '463B:0003(id, a, b): sound fade (sound.md, video_ttm.md)'),
     0xF01F: ('LOAD_SCR', 'name', 'load .SCR as the background, then SAVE_BG'),
     0xF02F: ('LOAD_BMP', 'name', 'load .BMP into the current bitmap slot'),
     0xF04F: ('LOAD_FONT', 'name', 'load .FNT into the current font slot'),

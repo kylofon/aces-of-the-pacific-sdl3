@@ -1,0 +1,11 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,368f:000e,memswap,"far void(u8 *a, u8 *b, int n)",platform,,no callers; spec video_misc.md 3
+ap,func,368f:002f,memswap_huge,"far void(u8 huge *a, u8 huge *b, int n)",platform,,no callers
+ap,func,368f:020a,str_subst,"far char*(char *s, char c, char r)",platform,,first c (NUL included) -> r
+ap,func,368f:0243,strip_ext_all,"far void(char **v, int n)",platform,,no callers
+ap,func,368f:0268,strlist_remove,"far int(char **v, char *s, int n)",platform,,no callers
+ap,func,368f:02e6,make_filename,"far char*(char *name, char *ext)",platform,,DS:712C = name w/o ext + '.' + ext
+ap,func,368f:035c,make_filename_dev,"far char*(char *name, char *ext)",platform,,no DAC: 'E' + 7 chars of name
+ap,func,368f:03a1,itoa_static,far char*(int v),platform,,itoa(v DS:714A 10)
+ap,global,DS:712C,filename_buf,char[30],platform,,
+ap,global,DS:714A,itoa_buf,char[],platform,,

@@ -140,8 +140,14 @@ DAT:  u16 count
               list 1: u16, u16                    (empty in all files)
               list 2: u16                         kind (0 airfield, 4 troops, 5 harbour, 6 naval base,
                                                   8 aircraft factory, 0Ah refinery, 0Bh city/port …) — Likely
-              list 3: u16                         state changes by date (0, 1, 0Ah, 0Bh) — Unknown
-              list 4: u16                         (3, 4, 16h, 17h …) — Unknown
+              list 3: u16                         owner/state by date (0, 1, 0Ah, 0Bh; 99 = any side): PS
+                                                  `wd_side_matches` compares it with a side (shell_data_emd1
+                                                  §2); AP `target_state` uses it as the ground group's state
+                                                  / type bits, 0Ah = destroyed (group suppressed)
+                                                  (render3d_world §6, §7) — Verified (both readers)
+              list 4: u16                         service code / service set (3, 4, 16h, 17h …), PS
+                                                  `wd_find_for_service` (shell_data_emd1 §2) — Verified
+                                                  (list 2: 99 = none, `wd_kind`)
       }
 TAG:  u16 count, count x (u16 id, char name[])      "Naha Field", "Kadena Airfield", "Yorktown (CV-10)"
 ```

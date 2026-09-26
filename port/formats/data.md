@@ -29,10 +29,10 @@ Built from the mission header (`DS:626B`, = SCRIPT.DAT type-0 record) and the fl
 | 00 | u8 | career: `DS:4774`, else FF | roster index of the career pilot |
 | 01 | u8 | header+00 (kind) mapped 0→0, 1→1, 2→0, 3→2, 4→3 | **sim mode**: 0 single/historical mission, 1 career, 2/3 mission-recorder paths (AP: `-w` forces 2, `-d` forces 3) |
 | 02 | u8 | header+01 | mission type (§2.2) |
-| 03 | u8 | set by `flymiss2.c` (`100E:0648`: 4 or `DS:4B3D`) | Unknown (PS tests `+02 == 5 && +03 != 4`) |
-| 04 | u16 | header+08 | Unknown |
+| 03 | u8 | set by `flymiss2.c` (`100E:0648`: 4 or `DS:4B3D`) | training sub-type (debrief group 10 when type 5 and +03 == 4, else 11) and the **enemy ace index** for `%j` in debrief texts (`shell_ui_debrief.md` §0.1, §8) — Verified (PS readers) |
+| 04 | u16 | header+08 | the mission's merit value (always 50 for generated missions; AP scales it by the goal fraction into SIM.OUT +20) |
 | 06 | u8 | header+02 | world area n (`AW<n>`) |
-| 07 | u8 | header+06, OR the player's service bit (career and historical) | name-list/service mask; AP reads bit 0 (`6C5F:0000`) |
+| 07 | u8 | kind 1/2: old +07 ORed with the bit of the active extension (`2008:000e`); else header+06 | data-set / name-list mask; AP reads bit 0 (`6C5F:0000`) (`shell_data.md` §3.1: the kind-1/2 branch ORs into the previous value) |
 | 08 | u8 | flight[0]+00 | player's side/nation (0 US, 3 Japan?) |
 | 09 | u8 | flight[side-slot 1][0]+00 | first enemy flight's side |
 | 0A | u16 | flight[0]+18 | player's aircraft type (index; same as the type-1 record byte 0) |
@@ -43,27 +43,28 @@ mission type 5 (training), area 9, mask 2Ah, US player against side 3, aircraft 
 matches `SCRIPT.DAT` = `TRN0.DAT`. The AP itself only uses +01 and bit 0 of +07; the rest is the
 shell's memory across the sim run. The VCR films keep a copy (§5).
 
-### 1.2 `SIM.OUT` (36 bytes; AP `4253:21B3`, PS `DS:4227`) — Verified layout, Likely meanings
+### 1.2 `SIM.OUT` (36 bytes; AP image `DS:5CA3`, PS `DS:4227`) — Verified (AP writer `sim_flow_results.md` §7.3–7.4, PS readers `shell_data.md` §3.2, `shell_ui_debrief.md` §0.1)
 
-| Off | Type | AP source | Meaning |
+| Off | Type | AP `DS:` | Meaning |
 |---|---|---|---|
-| 00 | u16 | `5254:08D9` result | fate code: low nibble 1 / 2 / 3 / 4 (4 = back normally; 1..3 = shot down, bailed out/ditched, … — which is which Unknown), high nibble 10h–80h = detail (captured, rescued, …) |
-| 02 | u8 | flags | bits 0–2 fate (01 set with "killed/captured" outcomes, 02 rescue, 04 …), **10 shot down a friendly aircraft, 20 sank a friendly ship, 40 destroyed a friendly ground target** (`2899:0CF0`, `2899:102F`) |
-| 03 | u8 | 0 | |
-| 04 | u16 | `5254:149C()` | Unknown |
-| 06 | u16[4] | FFFF | Unknown (always FFFF when written) |
-| 0E | u16 | player's flight flag | 1 if the player's flight has a flag +03 and its leader has bit 1 at +1B (Unknown meaning) |
-| 10 | s16 | player | ground targets destroyed |
-| 12 | s16 | player | ships hit by bomb/torpedo (first hit, or sunk by one) |
-| 14 | s16 | player | ships sunk |
-| 16 | s16 | player | aircraft shot down |
-| 18–1E | s16 ×4 | player's flight (including the player) | same four counters |
-| 20 | s16 | `(DS:0C93 × t) >> 10` | Unknown (time-based?) |
-| 22 | s16 | score | mission score: flight score (air kills, ships, targets, bonuses) × realism % (`622C:0038`) / 100, clamped to 0..900 |
+| 00 | u16 | 5CA3 | **mission result code**: 1-based `DEBRIEF.DAT` sentence of the mission type's debrief group (`mission_result` `5254:08D9`); −1 = none (PS: fatal 140h). Success = bit (code−1) of PS `DS:0512[group]`. *Not* a fate code — the fate word (low nibble 1 shot down / 2 crashed / 3 bailed out / 4 returned, high nibble detail) goes only to the end-of-mission dialog |
+| 02 | u8 | 5CA5 | fate bits: 1 killed, 2 captured, 4 wounded; 10h shot down a friendly aircraft, 20h sank a friendly ship, 40h destroyed a friendly ground target (`kill_credit` / `target_credit` `1899:0CF0/102F`) |
+| 03 | u8 | 5CA6 | 0 |
+| 04 | u16 | 5CA7 | aircraft lost in the player's flight (the player included when shot down / crashed) |
+| 06 | u16[4] | 5CA9 | **event ids triggered in the sim** for career events of type 3 (PS `0874:0291`, list ends at FFFFh). AP 1.2 always writes FFFFh ×4, so no type-3 event can fire |
+| 0E | u16 | 5CB1 | 1 = the player's home carrier was sunk (`flight.03 && flight.04->1B & 2`); PS then advances the career date to the next campaign date and also compares +0E with type-4 event ids |
+| 10 | s16 | 5CB3 | player: ground targets destroyed |
+| 12 | s16 | 5CB5 | player: ships hit with bombs/torpedoes (first hit per ship, or sunk by one) |
+| 14 | s16 | 5CB7 | player: ships sunk |
+| 16 | s16 | 5CB9 | player: aircraft shot down |
+| 18–1E | s16 ×4 | 5CBB..5CC1 | the same four for the player's flight (player included) |
+| 20 | u16 | 5CC3 | **merit points** = `(header+08 · goal_fraction) >> 10` (fraction 0..400h per mission type) |
+| 22 | s16 | 5CC5 | **mission score**: `flight score − 20 if shot down − 20 per lost wingman + 2·merit + 10 (landed at base) / + 30 (landed on the carrier)`, ≥ 0, × realism % / 100, ≤ 900 |
 
-PS (segment `0542`, `simend.c`) adds +16 to the pilot's air kills, +14 ships, +10 ground,
-+16 + +14 to the total, +1E/+1C/+18 to the squadron totals and +22 to the 32-bit score.
-Example `Game/SIM.OUT`: fate 0004, flags 04, all counters 0.
+PS (`0542:0180`): pilot air kills += +16, ships sunk += +14, ground += +10, victories += +16 + +14,
+flight totals += +1E/+1C/+18 (flight ships hit +1A is not accumulated), score (u32) += +22, merit
++= +20, missions += 1, successful missions += success(type, +00). Debrief screen: MISSION SCORE
++22, AIRCRAFT LOST +04. Example `Game/SIM.OUT`: code 4, fate bits 04 (wounded), counters 0.
 
 ## 2. Missions: `MISS0`–`73.DAT`, `TRN*.DAT`, `SCRIPT.DAT` (Verified structure)
 
@@ -113,7 +114,7 @@ World coordinates are s32 (feet?); e.g. MISS1 waypoints around (−150 000, −1
 
 | File | Size | Reader | Layout |
 |---|---|---|---|
-| `CONTROL.PRF` | 37 | PS `1193:027A` → `DS:43B0` | +00 u16, +02 u16 (8, 3 here: control devices?), +04..+0C bytes (+06..+0C default 1), **joystick calibration** +0D/+0F/+11 s16 X min/centre/max, +13/+15/+17 Y (default −127/0/127), +19.. 12 bytes 0 |
+| `CONTROL.PRF` | 37 | PS `1193:027A` → `DS:43B0`, AP `DS:43B1` | +00 u16 video driver (8 = VGA), +02 u16 sound driver number (3 = MT-32 here), +04 u8 modules (bit n−1 = `CSET<n>.DAT` present), +05 u8 latest, +06 joystick on, +07 mouse on, +08 effects (AP: sound) on, +09 music on, +0A flight-control device, +0B rudder device, +0C throttle device (full table: `sim_flow.md` §3, `platform.md` §3, `sound.md` §15), **joystick calibration** +0D/+0F/+11 s16 X min/centre/max, +13/+15/+17 Y (default −127/0/127), +19.. 12 bytes 0 |
 | `MREAL.PRF` / `CREAL.PRF` | 16 | PS `DS:4357` (`0A8D:07CB`, `1193:0856`) | realism settings for single missions / career: the items of `REALISM.SCD` (sun blind spot, weather, gun jams, engine burnout, blackouts, ammo, fuel, damage, collisions, in-flight info, combat level, flight model); exact byte order Unknown |
 | `SIMPREFS.PRF` | 70 | AP `4E0D:09D0` | +00 u16[5] → `4253:08B7` (`32 FF FF 1 1`: detail levels?), +0A 10 × (u16, u16, u16 = 1C2h) via `2C30:0007` |
 | `RESOURCE.CFG` | text | INTRO/PS/AP | `key = value` lines: `soundDrv`, `joyDrv`, `mouseDrv`, `memoryDrv`, `modules`, `latest`, `toggle3..7`, `minCPU`, `minDOS`, `minEMS`, `cmd` |
@@ -126,17 +127,22 @@ World coordinates are s32 (feet?); e.g. MISS1 waypoints around (−150 000, −1
 | `TOPACE.DAT` | u16 n (≤ 10); n × 122-byte pilot records (best careers) | `1193:050D` / `1193:065C` |
 | `TOPMISS.DAT` | u16 n (≤ 10); n × 55-byte records: char[16] pilot name, then u16 fields (+10 aircraft type?, +12 score, +16 realism %?, +18 score again, …) | `1193:05B8` / `1193:0727` |
 
-The 122-byte pilot record (name, rank, service, kills, medals…) is not decoded yet (the
-shipped roster is empty).
+The 122-byte pilot record is decoded in `shell_data.md` §4 (field list also in `shell_ui_debrief.md`
+§0.1); the 55-byte TOPMISS record in `shell_ui_options.md` §5.
 
 ### 3.3 Name lists `.TXT` (Verified)
 
-NUL-separated words. `PFNAME<n>.TXT` first names and `SFNAME<n>.TXT` surnames per service set
-n (0 in COMMON1, 1–8 in SIM1, `…1_` in M1CMN), loaded by the AP per header+06 mask;
+NUL-separated words. `PFNAME<n>.TXT` / `SFNAME<n>.TXT` are **plane / ship model file-name lists**
+(0x9F / 0x73 entries: the base names of the per-model `.DAT/.FMD/...` files; *not* pilot first names
+and surnames — corrected by `sim_world_dmg.md` §1) per data set n (0 in COMMON1, 1–8 in SIM1, `…1_`
+in M1CMN), loaded by the AP per header+06 mask;
 `PILOT<n>.TXT` = lists of famous-pilot (`.PLT`) names; some are stubs ("This is a stubbed out
 PILOT file").
 
-### 3.4 Career events `EVENTS0.EVT` (SHELL1, 41 events), `EVENTS1.EVT` (M1SHL) — Likely
+### 3.4 Career events `EVENTS0.EVT` (SHELL1, 41 events), `EVENTS1.EVT` (M1SHL, 22) — superseded
+
+Fully decoded in `shell_ui_debrief.md` §7.1 (66-byte records, id byte bits 6–7 = file number, event
+types 1–5, text block after the records). The summary below is the earlier reading.
 
 u16 n, n × 66-byte records, then a text block. Record: +00 u8 type (5), +01 u8 side (2 US, 1
 Japan), +07 u16 date, +09 u16 date (same day count as the mission header), +0B 14 × FF, +19
@@ -161,7 +167,7 @@ WLD WND BXL OVL GL MEC DMG rb BMD TTM EDG GAU FMD MBL SCR VCR`).
 
 | Ext | n | Size | Loader | Layout |
 |---|---|---|---|---|
-| `.DAT` aircraft | 46 | 131 | AP `45CC:034F` | +0A name (`Corsair`, `Zero`); +04, +08, +24 (FMD pointer), +73 (speed factor from the FMD) are overwritten at load; rest Unknown | 
+| `.DAT` aircraft | 46 | 131 | AP `45CC:034F` | +00 empty weight (`sim_world_dmg.md`); +0A name (`Corsair`, `Zero`); +04, +08, +24 (FMD pointer), +73 (speed factor from the FMD) are overwritten at load; rest Unknown | 
 | `.DAT` ship | 36 | 154 | AP `45CC:05CE` | +00 4 × (u16 0, u32) positions?, +4F name (`Akagi Class CV`), rest Unknown |
 | `.FMD` | 46 | 214 | AP `45CC:034F` | flight model, copied whole; `1B01:1A28(fmd, 10000, 0)` derives a performance figure at 10 000 ft. Words: +00 2, +02 3276?, then tables of 150 (0x96)-step values… Unknown |
 | `.PLT` | 62 | 112 | AP `45CC:00A0` | famous pilot / AI profile: u16[17] ratings 0..1000 (each mapped by `45CC:0080(v, lo, hi)` into a skill range), bytes, +58 char[24] name (`Dick Bong`). Up to 194 pilots |
@@ -171,13 +177,16 @@ WLD WND BXL OVL GL MEC DMG rb BMD TTM EDG GAU FMD MBL SCR VCR`).
 | `.BXL` | 84 | 6+12n | AP `48AF:0017` | u8 n, u8, u32; n × box (s16 x1 y1 z1 x2 y2 z2): hit boxes |
 | `.GAU` | 35 | 32+28n | AP `4CAD:00AB` | char[14] panel background (`GBACK1.BMP`), u16 (100), char[14] common gauges (`GACMN.BMP`), u16 n; n × (u16 kind, char[14] bitmap, u16 ?, u16 x, u16 y, u16 w, u16 h, u16 ?) — kind 0 altimeter, 1 airspeed, 2 VSI, 3 heading, 4 compass, 5 RPM, …, 16 stall, 18 flaps, 19 gear (from the bitmap names) |
 | `.EDG` | 149 | | AP `0962:00F1` | `F/B/L/R/D<plane>` (front/back/left/right/down): cockpit window outlines as per-line spans (u16 header + (x, y) pairs), used with `CPVW.BUF` | 
-| `.MEC` | 4 | 2+16n | AP `0688:000C`, `1A32`, `1BAA`, `48FF` | `BOMBS`, `BULLETS`, `ROCKETS`, `TORPS`: u16 n; n × 16-byte ballistics records (Unknown fields) |
-| `.WND` | 4 | 74 | AP `56AC:0000` | s32 800, 8000, 40000, 0, 60, then pairs of s16 … — **all four files are identical** (wind levels have no data effect) |
+| `.MEC` | 4 | 2+16n | AP `0688:000C`, `1A32`, `1BAA`, `48FF` | `BOMBS`, `BULLETS`, `ROCKETS`, `TORPS`: u16 n; n × records of **10 (BOMBS), 16 (BULLETS), 10 (ROCKETS), 18 (TORPS)** bytes (`sim_world_dmg.md`, fields in `sim_world_wpn.md`) |
+| `.WND` | 4 | 74 | AP `56AC:0000` | s32 800, 8000, 40000, 0, 60, then pairs of s16 … — **all four files are identical** (wind levels have no data effect); the AP loads the file twice |
 | `.HUF` | 8 | 2+6n | AP `618D:0768` (`vcr_tape.c`) | u16 n; n × (u16 symbol, u32 frequency): Huffman frequency tables for the film streams (`BTN JOY PAN RUD VIEW TICKS SIM SOUT`) — Verified layout |
 | `.BOX` / `.BL` / `.BND` | 9/4/8 | | AP `vcr_gfx.c`, `control.c`, … | sim dialog boxes (rectangles: u16 x, y, w, h …), box lists (byte links), key bindings / result layouts: hex dumps only |
 | `SHADES.DAT`, `SHADES1.DAT` | | 256 | AP `shade.c`? | 16 × 16 byte table (shading) — Unknown use |
 
 ## 5. Films `TAPES/*.VCR` (AP `vcr_*.c`)
+
+**Superseded** by `sim_flow_vcr.md` §2 (header fields, the 364-byte module block, the event stream
+and its decoding, verified on the four demos). The table below is the earlier reading.
 
 Reader `618D:011F`: 
 
@@ -192,17 +201,16 @@ The four demos (`DEMOAG`, `DEMODS`, `DEMOFLAK`, `DEMOPAP`) are played by the AP 
 (`TAPES\DEMO*.VCR`); the recorder writes `TAPES\_TAPE_.TMP` while recording. Their SIM.IN copies
 have +07 = 0 even where the embedded header has mask 2Ah (older build or demo path).
 
-`CPVW.BUF` (192 008 bytes, zero-filled): opened by AP `644A:0F2B`/`644A:1020` (cockpit view
-buffers, 6 views × 32 000 + 8?) — Likely a disk cache for the cockpit views built by the
-`<plane>.TTM` scripts.
+`CPVW.BUF` (192 008 bytes, zero-filled as shipped): opened by AP `644A:0F2B`/`644A:1020`: an 8-byte
+aircraft code followed by 3 × 64 000-byte pre-rendered cockpit views — a disk cache of the views
+built by the `<plane>.TTM` scripts (`sim_flow_cockpit.md` §3, §9).
 
 ## Open questions
 
-* Fate code values (+00 low/high nibble) — read `5254:08D9` fully; SIM.OUT +04, +06, +0E, +20.
-* The 122-byte pilot record (ROSTER/TOPACE) and the 55-byte TOPMISS record.
+* (Settled: SIM.OUT, §1.2.)
 * Mission records 1/2/4/5 field meanings beyond the ones listed (AP `snario.c`); header +08,
   +0E, +10, +14; waypoint kinds other than 0 and 3; aircraft/ship type index tables.
 * `.FMD`, `.DMG`, `.GL`, `.MEC`, `.EDG`, aircraft/ship `.DAT`: field layouts (flight-model and
   weapons phases); `.BOX/.BL/.BND`; `SHADES.DAT`.
-* VCR header fields and the event stream (Huffman tree construction in `vcr_tape.c`).
+* (Settled: VCR films, `sim_flow_vcr.md` §2.)
 * Realism byte order in `?REAL.PRF`; SIMPREFS fields.

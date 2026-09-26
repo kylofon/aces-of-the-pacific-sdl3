@@ -1,0 +1,23 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,368f:008d,floppy_off,far void(void),video,,if !is_tandy: 0000:18d6 floppy motor-off wait; video_misc.md
+ap,func,368f:009f,dec_floor,far int(int *p),video,,--*p > 0 ? 1 : (*p = 0)
+ap,func,368f:00b7,countdown_get,far int(void),video,,DS:31E4 ? DS:31E5 : 0
+ap,func,368f:00ca,countdown_wait,far int(void),video,,until countdown 0 or key_or_click
+ap,func,368f:00e6,delay18,far void(int n),video,,DS:31E5 = 13n; wait_key_release; countdown_wait
+ap,func,368f:00ff,wipe,"far void(int x, int y, int w, int h, int ticks, int copy)",video,,10-pass line blind (every 10th row per pass)
+ap,func,368f:017f,wipe_in,far void(int ticks),video,,read back / write front; wipe(0 0 320 200 ticks 1)
+ap,func,368f:01a3,wipe_black,far void(void),video,,write front; fill colour 0; wipe(0 0 W H 4 0)
+ap,func,368f:01cf,clip_full,far void(void),video,,clip on to full screen; filled
+ap,func,368f:01f2,copy_screen,far void(void),video,,gfx_copy_rect(0 0 W H)
+ap,func,368f:03b6,write_back,far void(void),video,,DS:26D8 = DS:26D2
+ap,func,368f:03c1,read_back,far void(void),video,,DS:26D6 = DS:26D2
+ap,func,368f:03cc,write_bg,far void(void),video,,DS:26D8 = DS:26D0; no callers
+ap,func,368f:03d7,read_bg,far void(void),video,,DS:26D6 = DS:26D0
+ap,func,368f:03e2,write_front,far void(void),video,,DS:26D8 = DS:26D4
+ap,func,368f:03ed,read_front,far void(void),video,,DS:26D6 = DS:26D4
+ap,func,4c9b:0000,fonts_load,far int(void),video,,font1-4 + talk -> DS:3F32/3F30/3F2E/3F2C/3F2A
+ap,global,DS:3F2A,font_talk,font*,video,,
+ap,global,DS:3F2C,font4,font*,video,,
+ap,global,DS:3F2E,font3,font*,video,,
+ap,global,DS:3F30,font2,font*,video,,
+ap,global,DS:3F32,font1,font*,video,,

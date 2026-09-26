@@ -49,7 +49,7 @@ ap,func,4e0d:09d0,simprefs_load,far void(void),sim_flow,sim_write_results,"was s
 ap,func,4e0d:0b3e,simprefs_save,far void(void),sim_flow,,
 ap,func,4e0d:0bb0,sim_exit,"far void(u16 code,int textmode)",sim_flow,,"marker 3E7h, exit"
 ap,func,4e0d:0c29,ui_load,far int(void),sim_flow,,alerts/sliders bitmaps
-ap,func,50c8:0000,sim_nop,far void(void),sim_flow,,empty callback
+ap,func,50c8:0000,is_debug,far void(void),sim_flow,,empty callback
 ap,func,50c8:0008,main,"void(int argc,char**argv)",sim_flow,,"AP main: options, EMS check, SIM.IN, sim_init, vcr_session, sim_shutdown, sim_exit(2)"
 ap,func,519d:0000,file_load,"far void(void*buf,int size,int count,char*name)",sim_flow,,
 ap,func,519d:008a,ovl_init_nop,far void(void),sim_flow,,
@@ -129,7 +129,7 @@ ap,func,5f2c:0bda,axis_shape16,"near int(int v,int k)",sim_flow,,dead zone 16
 ap,func,5f2c:0bdb,axis_shape16_body,near,sim_flow,,part of 0bda
 ap,func,5f2c:0c11,controls_reset,far void(void),sim_flow,,
 ap,func,60a9:0000,buttons_poll,far void(void),sim_flow,,
-ap,func,60a9:017c,input_frag_017c,?,sim_flow,,mis-seeded jump-table fragment? to check
+ap,func,60a9:017c,clear_button_latches,?,sim_flow,,mis-seeded jump-table fragment? to check
 ap,func,60a9:01b2,buttons_to_record,far void(u8*in),sim_flow,,
 ap,func,60a9:02c4,input_poll,far u8*(u8*in),sim_flow,,0x25-byte input record
 ap,func,60a9:07d2,mouse_enable_set,far void(int),sim_flow,,

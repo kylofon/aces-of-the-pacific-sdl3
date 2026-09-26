@@ -64,13 +64,16 @@ Every one of the 1612 stored hashes matches (`dynvol.py check`); no collisions i
 
 ### Lookup and reads (Verified)
 
-`my_fopen` (`049D:00BB`): if no volume is open, a plain `fopen`. Otherwise tries the current volume,
-then the others, alternately above and below the current index (Likely), each with `049D:0E32`: walk the directory,
+`my_fopen` (`049D:00BB`): **corrected (phase 3, `platform_resources.md` §6, `shell_ui.md` §8): a loose
+file on disk is tried first** (work-dir prefix, then the name as given); only if it is not found are
+the volumes searched — the current volume, then the others, alternately above and below the current index (Likely), each with `049D:0E32`: walk the directory,
 summing deltas, stop at the **first** entry with a matching hash; seek there, read the 13-byte name
 and the u32 size, and `stricmp` the stored name with the base name; a mismatch counts as "not in
 this volume". The per-open record keeps volume index, entry data offset, size and position;
 `my_fread` (`049D:0411`) / the huge read `049D:04F4` clamp reads to the entry size. Not found in any
-volume → falls back to opening the name as a plain file (Likely; not traced).
+volume → finally `<ext>
+ame` on disk (platform_resources.md). Consequence: loose files in the game
+directory (e.g. `Game/MAINMENU.SCD`) override the volume copies.
 
 Volume record (26h bytes, far array at `DS:2520`, count `DS:251E`): +00 file name[14], +0E index,
 +10 FILE*, +12 u32 current file position, +18 keys[4], +20 entry count, +22 far pointer to the
@@ -125,7 +128,8 @@ change. KwKwK (code = free) handled as usual. No end code: stop at the unpacked 
 (`INTACES`, `INTDYNA`, `INTFLY1`, `INTQUOTE`, 1075 bytes) also have `EGA:` (17 bytes: 16 EGA colour
 indices + 1, probably the overscan colour) and `CGA:` (258 bytes, layout Unknown: perhaps a 2-byte CGA palette selection + a 256-byte VGA→CGA colour map).
 55 palettes; the cockpit scripts load `COCPAL.PAL`, `COCKPIT.PAL`, `GUNPAL.PAL`, which are in no
-volume (built by the sim at run time, Likely); `SIM.PAL` (SHELL1) fits the cockpit art.
+volume and are **not generated either** — the load returns NULL and the script continues
+(corrected, `video_palette.md` §12); `SIM.PAL` (SHELL1) fits the cockpit art.
 
 Which palette goes with which picture: the TTM scripts name them (`TT3` opcode F05Fh + palette
 name, F01Fh + bitmap name, F02Fh + screen name — DGDS TTM opcodes). `dynimg.py` takes the palette
@@ -160,7 +164,9 @@ node(x,y,w,h):  if w==0 and h==0: return
         (node if m & bit else leaf)(quadrant)
 leaf(x,y,w,h):  if w==0 or h==0: return;  if w==h==1: pixel = bits(8); return
     size = (w & FF)*(h & FF); b1 = 8 if size >= 256 else max(1, bitlen(size-1))
-    k = bits(b1); b2 = bitlen(k); ncol = (k+1) & FF
+    k = bits(b1); b2 = bitlen(k); ncol = (k+1) & FF    // screen/memory decoders; the sprite decoder
+                                                      // uses k+1 (up to 256) and a 32-bit RAW test
+                                                      // (video_pictures.md §4.4, §5)
     if size*8 <= size*b2 + ncol*8: size raw bytes bits(8), column-major (x outer, y inner)
     elif ncol == 1: fill with bits(8)
     else: table[ncol] = bits(8) each; then per pixel (x outer, y inner) table[bits(b2)]
@@ -201,8 +207,9 @@ base, `70` skip 48, `8A 08` 10 × colour 0Ch, `C7 77 67 67 60` 7 literal pixels,
 
 | Kind | Layout |
 |---|---|
-| `FF` proportional 1 bpp (FONT1–4, TALK, PAPER) | `FF, maxw, h, baseline?, first, count, u16 packed size`, then `u8 method, u32 size` + packed data = `u16 offset[count]`, `u8 width[count]`, glyph bits (per glyph h rows of ⌈w/8⌉ bytes, MSB = leftmost) |
+| `FF` proportional 1 bpp (FONT1–4, TALK, PAPER) | `FF, maxw, h, baseline/underline row, first, count, u16 **unpacked** size` (compared with the size in the packed header — corrected, `platform.md` §7.7), then `u8 method, u32 size` + packed data = `u16 offset[count]`, `u8 width[count]`, glyph bits (per glyph h rows of ⌈w/8⌉ bytes, MSB = leftmost) |
 | `FD` proportional 8 bpp (NP_HDLN, NP_TXT, SIMQ_HDL, SIMQ_SML — newspaper / sim-quit screens) | same header; glyph = h rows of w bytes (colour indices 0 = transparent, anti-aliased shades) |
+| `FE` fixed 8 bpp | `FE, w, h, first, count`, then count × h × w bytes — supported by the loader, not present in the data |
 | other: fixed 1 bpp (AJPAPER) | `w, h, first, count` (count 0 = 256?), then count × h × ⌈w/8⌉ bytes |
 
 FONT1/FONT2 contain only digits and capitals (HUD/cockpit fonts); FONT3 starts at 0 with 218

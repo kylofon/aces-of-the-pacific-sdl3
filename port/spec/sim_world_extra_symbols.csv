@@ -1,0 +1,3 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,39e5:0000,kill_msg_seg,data char far[256],sim_world,,NOT CODE: 256-byte far text buffer (zero in file) used by kill_credit 088a:054f for 'You just shot down <ace>.'; row kind func only so spec_coverage counts it; see sim_world_extra.md
+ap,global,39e5:0000,kill_msg_buf,char far[256],sim_world,,far segment 39e5 offset 0

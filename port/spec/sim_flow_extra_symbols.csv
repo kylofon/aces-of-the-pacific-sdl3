@@ -1,0 +1,5 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,5b71:0000,namelist_add,"far int(int id, char *name, Node *head)",sim_flow,,dead segment; sim_flow_extra.md
+ap,func,5b71:00cd,namelist_find,"far Node*(int id, char *name, Node *head)",sim_flow,,dead
+ap,func,5b71:0118,namelist_load,"far int(VFILE *f, char *path, Node *head)",sim_flow,,no callers
+ap,global,DS:4DE4,namelist_free,Node*,sim_flow,,free-node list head

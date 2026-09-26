@@ -73,7 +73,7 @@ All 229 bitmaps, 35 screens and 11 fonts decode; palettes are assigned from the 
 Good sheets: `work/img/SHELL1/sheet_scr.png`, `work/img/SHELL1/sheet_bmp.png`,
 `work/img/SIM1/sheet_bmp.png`, `work/img/M1SHL/sheet_bmp.png`, `work/img/SHELL1/sheet_fnt.png`.
 Cockpit art (SIM1/M1SIM `PANEL*`, `BACK*`, `SSTR*`, `WING*`, …) is shown with `SIM.PAL`; the game
-loads `COCPAL.PAL`/`COCKPIT.PAL`/`GUNPAL.PAL`, which are in no volume (made at run time, Likely),
+loads `COCPAL.PAL`/`COCKPIT.PAL`/`GUNPAL.PAL`, which are in no volume and are not generated (the load returns NULL; corrected in phase 3),
 and tints `SCN` pictures with a caller-supplied base colour.
 
 ## 3D shapes `.TBL` (Verified, shapes.md; AP.EXE `ts_*.c` + asm core `277a`)
@@ -142,8 +142,8 @@ then blocks `u16 type, u16 count` of records: 0 header 90 bytes, 1 aircraft 22, 
 5 group 58, 7 waypoint 14/6, 8 message offset 2, 9 message text 1; all 94 files parse), then
 **`SIM.IN`** (13 bytes: roster pilot, sim mode, mission type, area, name-list mask, sides, player's
 aircraft type) and exits to AP. AP reads SIM.IN only for the mode (the shell re-reads it on return)
-and writes **`SIM.OUT`** (36 bytes: fate code, flags incl. friendly-fire bits, 2 × 4 counters —
-ground targets, ship hits, ships sunk, aircraft — for the player and the flight, score 0..900).
+and writes **`SIM.OUT`** (36 bytes: mission result code, fate bits incl. friendly-fire bits, aircraft lost, 2 × 4 counters —
+ground targets, ship hits, ships sunk, aircraft — for the player and the flight, merit points, score 0..900; data.md §1.2, settled in phase 3).
 Header: +01 mission type (`MT_DACE … MT_GRND`, 5 = training), +02 area `AW<n>`, +04 wind, +06
 name-list mask, +0C date (day 1 = 1 Jan 1900). Films `TAPES/*.VCR` = 66-byte header (holds a
 SIM.IN copy) + 364 zero bytes + u16 n + mission script + Huffman event stream (`.HUF` frequency
@@ -170,7 +170,7 @@ tables). Preferences `CONTROL.PRF` (37, joystick calibration), `?REAL.PRF` (16),
 | `.BMD` | 31 | SIM1 | `VER: EXT: PRF: BMD:` | bitmap effect animations, registered as bitmap shapes (header only, world.md §7) |
 | `.DAT` | 326 | all but M1CMN/SIM2 | raw (287), text (39) | mixed: string tables `*TEXT*`, `*TXT*`, `HIST*`, `CMPTEXT*` (4 variants, 67 decode, scripts.md §2); missions `MISS0`–`73`, `TRN*` (Verified, data.md §2); aircraft/ship data (`F4U.DAT`, `AKAGI.DAT`); `SHADES.DAT` (256 bytes, colour shading table), `CGACOL/EGACOL.DAT`, `STR_POOL`, `TABLES`, `SND.DAT` … |
 | `.SCD` | 34 | SHELL1, M1SHL | `u32 n, u16 end[n]`, strings | labels of one shell screen (`PREV`, `VIEW`, `EXIT`, …) (Verified, scripts.md §2) |
-| `.TXT` | 30 | COMMON1, SIM1, M1CMN | NUL-separated words | name lists: `PFNAME*` pilot first names, `SFNAME*` surnames, `PILOT*`; some are stubs ("This is a stubbed out PILOT file") |
+| `.TXT` | 30 | COMMON1, SIM1, M1CMN | NUL-separated words | name lists: `PFNAME*` / `SFNAME*` plane / ship model file names (corrected), `PILOT*`; some are stubs ("This is a stubbed out PILOT file") |
 | `.EVT` | 2 | SHELL1, M1SHL | u16 n, n × 66-byte records (date, side, TTM name), text | career events: newspapers, rumours, war end (Likely, data.md §3.4) |
 | `.BXL` | 84 | SIM1, M1SIM | u8 n, u8, u32, n × 6 s16 | per model hit boxes (Likely, data.md §4) |
 | `.DMG` | 82 | SIM1, M1SIM | u16 (n in low nibble), n × 10 + 14 / n × 8 + 2 | per model damage zones (layout Verified, fields Unknown) |
@@ -197,5 +197,5 @@ tables). Preferences `CONTROL.PRF` (37, joystick calibration), `?REAL.PRF` (16),
   `JAPFLAG`, `USAFLAG`, `SIMQ_CH`, `FORMPLNS`).
 * Shapes/worlds: see the open questions in shapes.md and world.md (GID: layout, polygon flag 40h,
   target list meanings, `.BMD` payload, model vs world scale).
-* Scripts / game data: see the open questions in scripts.md and data.md (SIM.OUT fate codes, pilot
-  record, mission record fields, FMD/DMG/GL/MEC fields, VCR event stream).
+* Scripts / game data: see the open questions in scripts.md and data.md (mission record fields,
+  FMD/DMG/GL fields; SIM.OUT, the pilot record and the VCR stream are settled in the phase-3 specs).

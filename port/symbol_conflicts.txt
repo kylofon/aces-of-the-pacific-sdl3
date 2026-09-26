@@ -10,7 +10,6 @@ ap func 1d32:676f: platform=huge_norm; video_palette=far_normalize
 ap func 1d32:679e: platform=huge_add; video_palette=far_add_long
 ap func 4b9e:0000: platform_sys=heap_hook; sim_flow=debug_hook0
 ap func 4e0d:05e0: platform=realism_name; sim_flow=realprf_name
-ap func 50c8:0000: platform=is_debug; sim_flow=sim_nop
 ap func 51a8:0000: video_palette=pal_fx_create; render3d=palfx_alloc
 ap func 51a8:004e: video_palette=pal_fx_add; render3d=palfx_add_channel
 ap func 5440:0269: render3d=draw_object; sim_flow=object_draw_cb
