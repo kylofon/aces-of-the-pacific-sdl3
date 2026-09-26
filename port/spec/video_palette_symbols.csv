@@ -1,0 +1,122 @@
+exe,kind,address,name,type,owner,other_names,notes
+intro,func,05da:070b,pal_load,void far *(const char *name_or_fh),video,,PAL:<adapter> chunk -> dos_alloc'd 768-byte block in slot 1..9; AMG: fallback; quirk writes slot[10] when full
+ps,func,16e3:0d1f,pal_load,void far *(const char *name_or_fh),video,,see intro 05da:070b
+ap,func,1d32:3e0b,pal_load,void far *(const char *name_or_fh),video,,see intro 05da:070b
+intro,func,05da:090e,pal_set,void far *(void far *pal),video,,alloc driver palette buffer slot[0] on first use; NULL = get current; else driver entry 20
+ps,func,16e3:0f22,pal_set,void far *(void far *pal),video,,
+ap,func,1d32:400e,pal_set,void far *(void far *pal),video,,
+intro,func,05da:0980,pal_free,void (void far *pal),video,,frees the slot holding pal
+ps,func,16e3:0f94,pal_free,void (void far *pal),video,,
+ap,func,1d32:4080,pal_free,void (void far *pal),video,,
+intro,func,05da:09da,pal_fade,"void (int first, int count, int c, int l)",video,,stores l/c then driver entry 34 fade_step
+ps,func,16e3:0fee,pal_fade,"void (int first, int count, int c, int l)",video,,
+ap,func,1d32:40da,pal_fade,"void (int first, int count, int c, int l)",video,,no caller in AP
+intro,func,05da:0a00,pal_cycle_block,"int (int first, int count, int step)",video,,first<0 resets; max 9 blocks; needs drv[1F]
+ps,func,16e3:1014,pal_cycle_block,"int (int first, int count, int step)",video,,
+ap,func,1d32:4100,pal_cycle_block,"int (int first, int count, int step)",video,,no caller in AP
+intro,func,05da:0a7b,pal_cycle_step,void (void),video,,rotates target half of the driver buffer then fade_step(0;256;c;l); NO CALLER in any program
+ps,func,16e3:108f,pal_cycle_step,void (void),video,,no caller
+ap,func,1d32:417b,pal_cycle_step,void (void),video,,no caller
+intro,func,05da:0b46,far_copy_n,"void near (far src, far dst, u16 n)",video,,byte copy helper of pal_cycle_step
+ps,func,16e3:115a,far_copy_n,"void near (far src, far dst, u16 n)",video,,
+ap,func,1d32:4246,far_copy_n,"void near (far src, far dst, u16 n)",video,,
+intro,func,05da:469d,far_memmove,"void far *(void far *dst, void far *src, u32 n)",video,,huge-pointer memmove; self-modifying (cs:4699/469B)
+ps,func,16e3:49c1,far_memmove,"void far *(void far *dst, void far *src, u32 n)",video,,
+ap,func,1d32:67fb,far_memmove,"void far *(void far *dst, void far *src, u32 n)",video,,
+intro,func,05da:4611,far_normalize,near reg helper,video,,seg+=off>>4; off&=15
+ps,func,16e3:4935,far_normalize,near reg helper,video,,
+ap,func,1d32:676f,far_normalize,near reg helper,video,,
+intro,func,05da:4640,far_add_long,near reg helper,video,,huge pointer + (n-1) for backward copy
+ps,func,16e3:4964,far_add_long,near reg helper,video,,
+ap,func,1d32:679e,far_add_long,near reg helper,video,,
+intro,func,11d2:1630,ttm_cycle_add,"void (int block, int step)",video,,pal_cycle_block(first[b]; last[b]-first[b]+1; step); TTM part may claim
+ps,func,3baf:1631,ttm_cycle_add,"void (int block, int step)",video,,
+intro,func,10fc:0114,ttm_timer_start,"void (timer *t, long dur)",video,,59.17 Hz ticks DS:24D8
+intro,func,10fc:000f,ttm_timer_done,int (timer *t),video,,elapsed >= duration; 1 if timer not installed
+intro,func,10fc:0058,ttm_timer_value,"int (timer *t, int a, int b)",video,,linear interpolation a->b over duration; clamped
+intro,func,10fc:0130,ttm_timer_expire,void (timer *t),video,,no caller
+ps,func,22a0:018e,ttm_timer_start,"void (timer *t, long dur)",video,,ticks DS:52AA
+ps,func,22a0:0089,ttm_timer_done,int (timer *t),video,,
+ps,func,22a0:00d2,ttm_timer_value,"int (timer *t, int a, int b)",video,,
+ps,func,22a0:01aa,ttm_timer_expire,void (timer *t),video,,no caller
+intro,func,0460:000b,intro_tick_cb,void far (void),video,,timer callback (reload 4): DS:24D8++ ; platform may claim
+ps,func,21f4:0009,shell_tick_cb,void far (void),video,,timer callback (reload 4): DS:52AA++ ; platform may claim
+intro,func,103d:0000,ttm_scroll,"void (int dir, int steps, int dist)",video,,TTM 3103 hardware scroll (CRTC start + pel panning); dist>320 -> 103d:0459; unused by shipped scripts
+intro,func,103d:0459,ttm_scroll3,"void (int dir, int steps, int dist)",video,,three-screen variant
+intro,func,103d:0933,scroll_show,"void (int x, int y, int bytes_per_row, int set_offset)",video,,CRTC 0C/0D start + attribute 13h pel pan; waits retrace
+intro,func,103d:09f8,scroll_finish,"void near (int dir, int x, int y, int bytes_per_row)",video,,latch copy visible window to front; restore CRTC; restore pages
+ps,func,30b5:000f,ttm_scroll,"void (int dir, int steps, int dist)",video,,PS variant (not compared in detail)
+ps,func,30b5:0403,ttm_scroll3,"void (int dir, int steps, int dist)",video,,
+ps,func,30b5:085f,scroll_show,"void (...)",video,,
+ps,func,30b5:0910,scroll_finish,"void near (...)",video,,
+ap,func,0000:189b,dac_write,"void (near src, int first, int count)",video,,copy of driver entry 35
+ap,func,0000:185e,dac_read,"void (near dst, int first, int count)",video,,3C7h/3C9h read
+ap,func,5440:07bd,pal_request_upload,"bool (near src, int first, int count)",video,,pending DAC upload DS:069F/06A1/06A3; 0 if one pending
+ap,func,5440:07e1,frame_present,void (bool doit),video,,page flip (entry 8) then pending DAC upload; sim_flow may claim
+ap,func,51a8:0000,pal_fx_create,"void (int cap, void far *base)",video,,alloc record DS:5BD8
+ap,func,51a8:004e,pal_fx_add,"bool (near entry37 *src, int i)",video,,
+ap,func,1792:0000,pal_fx_level,s16 (int i),video,,entry current level (8.8)
+ap,func,1792:0021,pal_fx_set_base,void (void far *p),video,,no caller found
+ap,func,1792:0032,pal_fx_set,"void (int i, u8 active, s16 target)",video,,target -1 = keep
+ap,func,1792:0066,pal_fx_show_base,void (void),video,,work := base; request upload
+ap,func,1792:009b,pal_fx_reset_levels,void (void),video,,
+ap,func,1792:00c0,pal_fx_update,void (bool force),video,,per-frame level stepping + tint rebuild + request upload
+ap,func,1792:0286,pal_fx_tint,"void (u8 *work, u8 *col, int first, int last, int lvl)",video,,
+ap,func,1792:038a,pal_fx_build_delta,void near (int lvl),video,,T[d]=((d-1)*lvl)>>6; entry at 038a is 'inc bp' prologue
+ap,func,606e:029d,vcr_message,void (char *text),video,,dims DAC 0..174 to black in 18 steps; sim_flow (VCR) may claim
+ap,func,644a:0912,cockpit_pal_aces,void near (void),video,,ACES.PAL -> base DS:408A; pal_fx_update(1); owner sim_flow_cockpit
+ap,func,644a:0961,cockpit_pal_gunner,void near (void),video,,GUNNER.PAL -> base DS:408A; pal_fx_update(1); owner sim_flow_cockpit
+intro,data,DS:0C1E,pal_slot,far ptr[10],video,drv[19E],slot 0 = driver palette buffer (1536 bytes)
+ps,data,DS:249E,pal_slot,far ptr[10],video,drv[19E],
+ap,data,DS:285E,pal_slot,far ptr[10],video,drv[19E],
+intro,data,DS:153C,pal_size,u16,video,,
+ps,data,DS:2DBC,pal_size,u16,video,,
+ap,data,DS:317C,pal_size,u16,video,,
+intro,data,DS:153E,pal_size_tab,u16[14],video,,by adapter id; VGA (8) = 300h
+ps,data,DS:2DBE,pal_size_tab,u16[14],video,,
+ap,data,DS:317E,pal_size_tab,u16[14],video,,
+intro,data,DS:1576,pal_tag_tab,near char*[14],video,,PAL:VGA:/EGA:/CGA:
+ps,data,DS:2DF6,pal_tag_tab,near char*[14],video,,
+ap,data,DS:31B6,pal_tag_tab,near char*[14],video,,
+intro,data,DS:1596,pal_tag_amg,char[9],video,,"""PAL:AMG:"""
+ps,data,DS:2E16,pal_tag_amg,char[9],video,,
+ap,data,DS:31D6,pal_tag_amg,char[9],video,,
+intro,data,DS:1592,pal_current,far ptr,video,,
+ps,data,DS:2E12,pal_current,far ptr,video,,
+ap,data,DS:31D2,pal_current,far ptr,video,,
+intro,data,DS:1536,cyc_count,s16,video,,
+ps,data,DS:2DB6,cyc_count,s16,video,,
+ap,data,DS:3176,cyc_count,s16,video,,
+intro,data,DS:1538,fade_level,s16,video,,
+ps,data,DS:2DB8,fade_level,s16,video,,
+ap,data,DS:3178,fade_level,s16,video,,
+intro,data,DS:153A,fade_colour,s16,video,,
+ps,data,DS:2DBA,fade_colour,s16,video,,
+ap,data,DS:317A,fade_colour,s16,video,,
+intro,data,DS:265C,cyc_step3,s16[10],video,,
+ps,data,DS:6940,cyc_step3,s16[10],video,,
+ap,data,DS:660A,cyc_step3,s16[10],video,,
+intro,data,DS:2670,cyc_start3,s16[10],video,,
+ps,data,DS:6954,cyc_start3,s16[10],video,,
+ap,data,DS:661E,cyc_start3,s16[10],video,,
+intro,data,DS:2684,cyc_end3,s16[10],video,,
+ps,data,DS:6968,cyc_end3,s16[10],video,,
+ap,data,DS:6632,cyc_end3,s16[10],video,,
+intro,data,DS:0A9F,drv_dac_flag,u8,video,drv[1F],non-zero = DAC palette available (VGA driver init increments)
+ps,data,DS:231F,drv_dac_flag,u8,video,drv[1F],
+ap,data,DS:26DF,drv_dac_flag,u8,video,drv[1F],
+intro,data,DS:1E80,ttm_fade_speed_tab,u16[7],video,,"0,80,20,10,5,2,1"
+ps,data,DS:3868,ttm_fade_speed_tab,u16[7],video,,
+intro,data,DS:24D8,intro_ticks,u32,video,,59.17 Hz
+ps,data,DS:52AA,shell_ticks,u32,video,,59.17 Hz
+intro,data,DS:3320,scroll_canvas,far ptr,video,,canvas start (A800:0050 / A000:4480)
+intro,data,DS:3324,scroll_screens,u16,video,,2 or 3
+intro,data,DS:3326,scroll_base,u16,video,,CRTC base 8050h / 4480h
+ap,data,DS:069F,pal_pend_src,near ptr,video,,pending DAC upload source (0 = none)
+ap,data,DS:06A1,pal_pend_first,u16,video,,
+ap,data,DS:06A3,pal_pend_count,u16,video,,
+ap,data,DS:5BD8,pal_fx,near ptr,video,,palette effect record (cap; n; base; work[768]; T[-63..63]; entries 37 bytes)
+ap,data,DS:1910,pal_fx_cached_level,u16,video,,level of the current delta table
+ap,data,DS:408A,sim_palette,far ptr,video,,ACES.PAL (base palette of pal_fx); sim_flow may claim
+ap,data,DS:06B9,clouds_palette,far ptr,video,,clouds.PAL (loading screen)
+ap,data,DS:0B72,vcr_dim_flag,u16,video,,dim palette behind VCR messages

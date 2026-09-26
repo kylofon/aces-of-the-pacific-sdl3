@@ -1,0 +1,131 @@
+exe,kind,address,name,type,owner,other_names,notes
+ps,func,050c:0007,msg_fame_level,far char msg_fame_level(void),shell_ui,,"v = pilot air kills + (ships sunk + ground)/2; <5 -> 0, <30 -> 1, else 2 (selects KIA/POW text variant)"
+ps,func,050c:0035,medal_check,far char medal_check(void),shell_ui,,"one medal per mission: pass 1 career victories/wound medals, pass 2 mission counters; marks DS:4795[m]; DS:0500 = m or -1"
+ps,func,050c:0147,promotion_check,far char promotion_check(void),shell_ui,,"highest rank above the current one of the pilot's service whose merit threshold <= DS:47BD; sets DS:4777; DS:0501"
+ps,func,050c:01ba,msg_next,far msg *msg_next(void),shell_ui,,"builds the post-mission message queue from DISPLAYS.DAT on first call (DS:0502), then returns the next message (kind,far text) or 0"
+ps,func,0542:000a,career_status_update,far void(void),shell_ui,,"DS:4778 = 3 killed / 1 captured (date = enddate) / 2 three friendly-fire incidents"
+ps,func,0542:004b,mission_success,"far char mission_success(char mtype, int result)",shell_ui,,"bit (result-1) of DS:0512[mtype'] (type 8 split over two bytes)"
+ps,func,0542:0086,career_date_update,far char career_date_update(unsigned end),shell_ui,,"wounded +90 days; next squadron mission date; clamps to the campaign end; missions/successes counters; returns 1 when the squadron has no next mission"
+ps,func,0542:011a,career_add_kills,far void(void),shell_ui,,adds SIM.OUT counters to the pilot copy
+ps,func,0542:0154,career_count_incident,far void(void),shell_ui,,DS:4794++ when SIM.OUT flags & 70h
+ps,func,0542:0168,career_add_score,far void(void),shell_ui,,"pilot score (s32) += SIM.OUT+22, merit += SIM.OUT+20"
+ps,func,0542:0180,career_update,far char career_update(unsigned end),shell_ui,,"squad_load, incident, status, date (if active), kills, score, squad_free, pilot_save; returns date_update result (1 default)"
+ps,func,0542:01c4,sim_end,far void sim_end(void),shell_ui,,"return-from-sim chain (marker 3E7h): SIM.IN/OUT, career update, messages, debrief screen, career events, next career mission or career menu"
+ps,func,0583:0009,flyhist_btn_cb,far void(void),shell_ui,,"campaign button (user 1: label = campaign name or DS:053C) and RETURN/REALISM/BEGIN buttons: DS:4268 = item, result 1"
+ps,func,0583:005f,flyhist_service_btn_cb,far void(void),shell_ui,,"label = DS:4250[DS:4267] (service name from SFTBTNS0.DAT); small button; DS:4268 = item, result 1"
+ps,func,0583:0095,flyhist_draw_scroll_frame,far void(void),shell_ui,,draw_bevel_box
+ps,func,0583:009f,flyhist_draw_label,far void(void),shell_ui,,"FONT3, text_engrave(label, C7h, B1h, C0h, x, y)"
+ps,func,0583:00dd,flyhist_draw_insignia,far void(void),shell_ui,,"tile+header panel, INSIGNIA.BMP[DS:4267] centred"
+ps,func,0583:014f,flyhist_draw_picture,far void(void),shell_ui,,"inset box + MT_HIST.BMP[hist_entry_picture(camp, lbox_selected())] at (x+2,y+2); mask 40h"
+ps,func,0583:01a9,flyhist_draw_synopsis,far void(void),shell_ui,,"popup box + flow_text of HISTSN_ synopsis of the selected entry; mask 40h"
+ps,func,0583:0237,flyhist_find_campaign,far void(void),shell_ui,,DS:4266 = first historic campaign with a mission for service DS:4267 (or FFh)
+ps,func,0583:027c,flyhist_draw_row,"far void flyhist_draw_row(int i, int y)",shell_ui,,"list row: name of the i-th mission of the service; forces picture/synopsis items to redraw (mask 3)"
+ps,func,0583:0322,flyhist_draw_bg,far void(void),shell_ui,,"screen_clear_panel; title bar ""HISTORIC MISSIONS"" (service 1)"
+ps,func,0583:0345,flyhist_frame,far void(void),shell_ui,,"dispatch+present+edit_poll; 'no missions for service' notice (REQUEST 23) one frame late; Esc -> DS:4268 = 0Eh"
+ps,func,0583:03c2,flyhist_run,far void flyhist_run(void),shell_ui,,"FLY HISTORIC MISSION screen (FLYHIST, id 23): campaign/service/mission choice, realism, fly MISS<n>.DAT"
+ps,func,0583:075a,flyhist_init,far void(void),shell_ui,,"hs_default_links(4992:0010, 17)"
+ps,func,05fa:0003,vwhich_draw_window,far void(void),shell_ui,,"side riveted panel, title FONT4 engraved centred"
+ps,func,05fa:0033,vwhich_btn_cb,far void(void),shell_ui,,"item 3 CANCEL -> result 2; else DS:5FD2 = item-1, result 1"
+ps,func,05fa:005e,vwhich_frame,far void(void),shell_ui,,dispatch + present
+ps,func,05fa:007f,vwhich_run,far char vwhich_run(void),shell_ui,,"VIEW WHICH? (screen 55): 0 airplanes, 1 ships, FFh cancel"
+ps,func,0607:000d,career_draw_window,far void(void),shell_ui,,"titled panel + 2 columns of 14 rivets"
+ps,func,0607:004f,career_btn_cb,far void(void),shell_ui,,"DS:5FD2 = item index, result 1"
+ps,func,0607:006d,career_frame,far void(void),shell_ui,,"dispatch+present; refuses CONTINUE without active pilots and VIEW BEST without top aces (REQUEST 6/7)"
+ps,func,0607:011d,career_menu_run,far void career_menu_run(void),shell_ui,,"CAREER MENU (screen 45): start / continue / best careers / return"
+ps,func,0607:02f5,career_init,far void(void),shell_ui,,"hs_default_links(49b1:0000, 5)"
+ps,func,0637:000e,debrief_draw_text,far void(void),shell_ui,,"FONT3 flow_text of the debrief sentence DS:0582 with display_subst"
+ps,func,0637:004d,debrief_draw_officer,far void(void),shell_ui,,"inset box + OFFICERS.BMP[SIM.IN+08]"
+ps,func,0637:0089,debrief_draw_victory_labels,far void(void),shell_ui,,"CONFIRMED VICTORIES / PERSONAL / FLIGHT labels"
+ps,func,0637:017c,debrief_draw_open_box,far void debrief_draw_open_box(int open_side),shell_ui,,"B8h box with bevel edges except the open side (0 top,1 right,2 bottom,3 left)"
+ps,func,0637:02cf,debrief_draw_left_box,far void(void),shell_ui,,open_box(1) + erase right edge (joins the victories box)
+ps,func,0637:032c,debrief_draw_victories_box,far void(void),shell_ui,,"open_box(3), left edge joins, labels, underline C1h/B1h"
+ps,func,0637:040d,debrief_draw_score_labels,far void(void),shell_ui,,MISSION SCORE / AIRCRAFT LOST labels centred in item 5
+ps,func,0637:04d8,debrief_draw_score_box,far void(void),shell_ui,,draw_popup_box + score labels
+ps,func,0637:04e6,debrief_draw_value,far void(void),shell_ui,,"right-aligned ltoa of DS:426E[k] in CCh, FONT3"
+ps,func,0637:0567,debrief_draw_value_box,far void(void),shell_ui,,inset box + value
+ps,func,0637:0575,debrief_draw_row_label,far void(void),shell_ui,,"inset box, DEBRIEF.BMP icon, label (x+28, y+3)"
+ps,func,0637:05f6,debrief_continue_cb,far void(void),shell_ui,,"CONTINUE: btn_cb, result 1"
+ps,func,0637:060e,debrief_build_values,far void(void),shell_ui,,12 longs at DS:426E from SIM.OUT
+ps,func,0637:069e,debrief_build_text,far void debrief_build_text(char *buf),shell_ui,,"DEBRIEF.DAT group of the mission type, sentence result-1 (training: OPTIONAL.DAT stays loaded)"
+ps,func,0637:07d2,debrief_draw_bg,far void(void),shell_ui,,"screen_clear_panel + title bar ""MISSION DEBRIEFING"" for the player's service"
+ps,func,0637:0809,debrief_frame,far void(void),shell_ui,,dispatch + present
+ps,func,0637:082a,debrief_run,far void debrief_run(char check_best),shell_ui,,"MISSION DEBRIEFING screen (22); check_best -> 09a9:072e"
+ps,func,0874:0003,career_pick_squadron,far int career_pick_squadron(unsigned end),shell_ui,,"random (rng_below(2)) choice among campaign squadrons with a mission before end; moves the date; -1 none"
+ps,func,0874:00d7,misc_tour_text,far char far *misc_tour_text(char *buf),shell_ui,,MISC.DAT string 0 into buf
+ps,func,0874:011d,event_conditions,far char event_conditions(evt far *e),shell_ui,,"type-5 event filter: unseen, side/service/squadron masks, date window, missions/kills/ground ranges, area; marks it seen"
+ps,func,0874:0291,event_matches,far char event_matches(evt far *e),shell_ui,,"type 1 promotion, 2 medal, 3 SIM.OUT+06 list, 4 SIM.OUT+0E, 5 conditions"
+ps,func,0874:0337,evt_read_u16,far int evt_read_u16(FILE *f),shell_ui,,
+ps,func,0874:035d,evt_read_matching,"far int evt_read_matching(evt far *buf, FILE *f, int at, unsigned n)",shell_ui,,reads n 66-byte records and appends the matching ones at buf[at..]
+ps,func,0874:03cc,evt_load_file,"far evt far *evt_load_file(evt far *buf, FILE *f, int have)",shell_ui,,"grows the buffer (capacity DS:42F6, multiple of 10) and appends one file's matching events"
+ps,func,0874:04b0,events_collect,far evt far *events_collect(void),shell_ui,,"all EVENTS<n>.EVT of the installed modules; exact-size copy; count DS:42F8"
+ps,func,0874:05aa,event_compare,"far int event_compare(evt *a, evt *b)",shell_ui,,"qsort key: type, then (type 5) date min, date max, else word +01"
+ps,func,0874:05fb,events_sort,far void events_sort(evt far *list),shell_ui,,near copy + qsort + copy back
+ps,func,0874:0691,events_collect_sorted,far evt far *(void),shell_ui,,
+ps,func,0874:06bc,event_load_texts,far void event_load_texts(evt far *e),shell_ui,,"loads the text block of EVENTS<id>>6>.EVT once (DS:0676 cache) and sets the two text pointers"
+ps,func,0874:079f,event_font,far int event_font(int id),shell_ui,,"5 SIMQ_SML, 6 SIMQ_HDL, 7 NP_TXT, 8 NP_HDLN (lazy font_load), else DS:42E4[id%9]"
+ps,func,0874:0886,event_select_fonts,far void(evt far *e),shell_ui,,
+ps,func,0874:08c8,event_set_box1,"far void event_set_box1(evt far *e, char frame)",shell_ui,,rect = box 1; optional tiled frame panel
+ps,func,0874:0901,event_draw_box1,"far void event_draw_box1(evt far *e, char present)",shell_ui,,flowed text 1 inside box 1 (margins 7/4)
+ps,func,0874:09b7,event_draw_box2,"far void event_draw_box2(evt far *e, char present)",shell_ui,,flowed text 2 in box 2
+ps,func,0874:0aa5,event_ttm_text_hook,far void(void),shell_ui,,"TTM tag callback (2221:0107): draws the texts during the animation and dissolves box 1 in"
+ps,func,0874:0b57,event_play,far void event_play(evt far *e),shell_ui,,"black wipe, TTM (newspaper/rumour/war end) with abortable playback, texts, wait up to 10000 PIT ticks"
+ps,func,0874:0c8d,misc_relocated_text,far char far *misc_relocated_text(char *buf),shell_ui,,MISC.DAT string 3 into buf
+ps,func,0874:0cd6,career_squadron_day,far void(void),shell_ui,,"squadron station / aircraft change notices at date DS:4304"
+ps,func,0874:0e0f,events_init_fonts,far void(void),shell_ui,,DS:42E4[0..8] = standard fonts
+ps,func,0874:0e40,events_free,far void events_free(evt far *list),shell_ui,,"frees the list, text buffer, NP fonts; squad_free"
+ps,func,0874:0ec5,events_run,"far void events_run(unsigned from, unsigned to, char advance)",shell_ui,,"plays the matching events in order; advance: day-by-day squadron updates"
+ps,func,0874:0f7d,career_exit_hook,far void(void),shell_ui,,"shell_exit hook during career events: keeps the pilot consistent, pilot_save"
+ps,func,0874:1039,career_continue,far void career_continue(int squad),shell_ui,,"events up to now; transfer to a new squadron (squadron info + map) or day advance"
+ps,func,0874:1113,career_tour_end,far void career_tour_end(unsigned end),shell_ui,,"end of the campaign part: date = end, events, END OF CAMPAIGN text box, campaign text"
+ps,func,0874:11a9,career_war_over,far char career_war_over(void),shell_ui,,"1 when no campaign remains for the service (plays the remaining events up to the war end)"
+ps,func,0874:11ff,career_next_campaign,far char career_next_campaign(char war_over),shell_ui,,"decision screen: retire (status 1) or choose the next campaign + squadron"
+ps,func,0874:1270,career_campaign_end,far char career_campaign_end(unsigned end),shell_ui,,
+ps,func,0874:12be,career_after_mission,far char career_after_mission(char squad_done),shell_ui,,"returns 1 -> fly the next career mission (flight deck), 0 -> career menu"
+ps,func,0cfe:000a,subst_ace_name,far char *subst_ace_name(void),shell_ui,,"(unindexed module 0cfe) enemy ace name SIM.IN+03 into DS:43FA (no NUL copied)"
+ps,func,0cfe:0057,display_subst,far char far *display_subst(char c),shell_ui,,"(unindexed module 0cfe) %a..%x substitution for DISPLAYS/DEBRIEF/TEXTBOX texts"
+ps,data,DS:0500,medal_awarded,char,shell_ui,,medal index of this mission or -1
+ps,data,DS:0501,promotion_rank,char,shell_ui,,new rank or -1
+ps,data,DS:0502,msg_queue,queue *,shell_ui,,post-mission message queue (0 = not built)
+ps,data,DS:0512,mission_success_bits,u8[12],shell_ui,,28 2C E0 16 1F 00 0B 0F 8A 4A 3C 0F
+ps,data,DS:051E,career_dirty,u8,shell_ui,,1 while a career result is being processed (shell_cleanup saves)
+ps,data,DS:053A,flyhist_no_missions,u8,shell_ui,,
+ps,data,DS:053B,flyhist_notice_delay,u8,shell_ui,,
+ps,data,DS:0582,debrief_text,char *,shell_ui,,debrief sentence buffer (on debrief_run's stack)
+ps,data,DS:0674,evt_squads_loaded,u8,shell_ui,,
+ps,data,DS:0675,evt_campaign_loaded,u8,shell_ui,,
+ps,data,DS:0676,evt_text_file,s8,shell_ui,,EVENTS<n>.EVT whose text block is cached (FFh none)
+ps,data,DS:0677,evt_text_cap,u16,shell_ui,,
+ps,data,DS:0679,evt_text1,char far *,shell_ui,,
+ps,data,DS:067D,evt_text2,char far *,shell_ui,,
+ps,data,DS:0681,evt_current,evt far *,shell_ui,,
+ps,data,DS:0685,font_np_hdln,u16,shell_ui,,NP_HDLN.FNT
+ps,data,DS:0687,font_np_txt,u16,shell_ui,,NP_TXT.FNT
+ps,data,DS:0689,font_simq_sml,u16,shell_ui,,SIMQ_SML.FNT (never freed)
+ps,data,DS:068B,font_simq_hdl,u16,shell_ui,,SIMQ_HDL.FNT (never freed)
+ps,data,DS:068D,evt_line_h,u8,shell_ui,,
+ps,data,DS:068F,evt_font1,u16,shell_ui,,
+ps,data,DS:0691,evt_font2,u16,shell_ui,,
+ps,data,DS:0693,evt_ttm_drew_text,u8,shell_ui,,
+ps,data,DS:4226,music_changed,u8,shell_ui,,
+ps,data,DS:424C,insignia_bmp,frame table *,shell_ui,,
+ps,data,DS:424E,mt_hist_bmp,frame table *,shell_ui,,
+ps,data,DS:4250,flyhist_service_names,char *[11],shell_ui,,
+ps,data,DS:4266,flyhist_campaign,s8,shell_ui,,
+ps,data,DS:4267,flyhist_service,s8,shell_ui,,
+ps,data,DS:4268,flyhist_action,s8,shell_ui,,focused item / last activated item
+ps,data,DS:426A,officers_bmp,frame table *,shell_ui,,
+ps,data,DS:426C,debrief_bmp,frame table *,shell_ui,,
+ps,data,DS:426E,debrief_values,long *,shell_ui,,12 longs
+ps,data,DS:42E4,evt_fonts,u16[9],shell_ui,,
+ps,data,DS:42F6,evt_capacity,u16,shell_ui,,
+ps,data,DS:42F8,evt_count,u16,shell_ui,,
+ps,data,DS:42FA,evt_station_name,char *,shell_ui,,points into career_continue's stack frame
+ps,data,DS:42FC,evt_text_buf,char far *,shell_ui,,
+ps,data,DS:4300,evt_date_to,u16,shell_ui,,
+ps,data,DS:4302,evt_date_from,u16,shell_ui,,
+ps,data,DS:4304,career_day,u16,shell_ui,,
+ps,data,DS:43FA,subst_buf,char[],shell_ui,,
+ps,data,4992:0010,flyhist_items,item[17],shell_ui,,
+ps,data,49ab:0000,vwhich_items,item[4],shell_ui,,
+ps,data,49b1:0000,career_items,item[5],shell_ui,,
+ps,data,49b8:0011,debrief_items,item[24],shell_ui,,

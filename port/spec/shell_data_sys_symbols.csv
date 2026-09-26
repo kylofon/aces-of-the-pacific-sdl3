@@ -1,0 +1,254 @@
+exe,kind,address,name,type,owner,other_names,notes
+ps,func,1ed0:0000,pool_create,"far void far*(int cell, int n)",shell_data,,"farquick.c: dos_alloc(cell*n), links cells into a free list"
+ps,func,1ed0:00b2,far_alloc,far void far*(unsigned long size),shell_data,,"size<=16 from 10 pools of 256x16 cells, else dos_alloc; fatal on failure"
+ps,func,1ed0:01e8,far_free,far void(void far *p),shell_data,,returns cell to its pool (frees pool when all 256 free) or dos_free
+ps,func,22ce:000d,timer_countdown,far int(void),shell_data,,returns DS:2E3F
+ps,func,22ce:0017,assert_index,"far int(char i, char n)",shell_data,,fatal helper 0x42 if i<0||i>=n; uncalled
+ps,func,22ce:004a,copy_full_screen,far void(void),shell_data,,"copy_rect(0,0,320,200)"
+ps,func,22ce:0063,pages_spare_to_work,far void(void),shell_data,,2316=2310 2318=2312
+ps,func,22ce:0074,pages_front_to_work,far void(void),shell_data,,2316=2314 2318=2312
+ps,func,22ce:0085,pages_work_to_front,far void(void),shell_data,,2316=2312 2318=2314
+ps,func,22ce:0096,pages_work_to_spare,far void(void),shell_data,,2316=2312 2318=2310
+ps,func,22ce:00a7,copy_spare_to_work,far void(void),shell_data,,pages 2310->2312 + copy_full_screen
+ps,func,22ce:00bc,copy_work_to_spare,far void(void),shell_data,,pages 2312->2310 + copy_full_screen
+ps,func,22ce:00d1,copy_spare_to_front,far void(void),shell_data,,pages 2310->2314 + copy_full_screen; uncalled
+ps,func,22ce:00e6,copy_work_to_front,far void(void),shell_data,,pages 2312->2314 + copy_full_screen
+ps,func,22ce:00fb,copy_front_to_work,far void(void),shell_data,,pages 2314->2312 + copy_full_screen
+ps,func,22ce:0110,clip_full,far void(void),shell_data,,"DS:230C=1 2303=1 clip 0,0,319,199"
+ps,func,22ce:0137,wipe_rect,"far void(int x,int y,int w,int h)",shell_data,,"10 venetian passes, 5 PIT ticks each"
+ps,func,22ce:019c,xmalloc,far void*(unsigned n),shell_data,,malloc; fatal helper 0xCE (n==0) / 0xD0 (NULL)
+ps,func,22ce:01ff,memzero,"far void*(void *p, unsigned n)",shell_data,,"memset(p,0,n)"
+ps,func,22ce:021c,xfree,far void(void *p),shell_data,,free
+ps,func,22ce:022a,xfarmalloc,far void far*(unsigned long n),shell_data,,= far_alloc 1ed0:00b2
+ps,func,22ce:023e,fmemset,"far void(void far*, char, unsigned)",shell_data,,byte loop; uncalled
+ps,func,22ce:026e,fmemcpy,"far void(void far *d, void far *s, unsigned n)",shell_data,,byte loop
+ps,func,22ce:02b0,xfarfree,far void(void far *p),shell_data,,= far_free 1ed0:01e8
+ps,func,22ce:02c2,str_ordinal,"far char*(char *s, int n)",shell_data,,strcat st/nd/rd/th; uncalled
+ps,func,22ce:032d,str_int,"far void(char *s, int n)",shell_data,,"itoa(n,s,10)"
+ps,func,22ce:0346,str_cat_int,"far void(char *s, int n)",shell_data,,append itoa; uncalled
+ps,func,22ce:0367,str_upper,far char*(char *s),shell_data,,toupper in place
+ps,func,22ce:038d,str_lower,far char*(char *s),shell_data,,tolower in place; uncalled
+ps,func,22ce:03b3,str_capitalize,far char*(char *s),shell_data,,upper after space/-; uncalled; real end 03fc
+ps,func,1efe:000e,ms_open,"far void(void *p, int len)",shell_data,,DS:4FD4=p DS:4FD2=len
+ps,func,1efe:001f,ms_skip,far int(int n),shell_data,,no bounds check
+ps,func,1efe:0033,ms_read,"far int(void *dst, int size, int n)",shell_data,,returns items read
+ps,func,1efe:007e,ms_tell,far void*(void),shell_data,,returns DS:4FD4
+ps,func,1f06:0008,mr_begin,"far void(void *p, int len)",shell_data,,ms_open + run_left=0
+ps,func,1f06:0020,mr_next,far int(void),shell_data,,"next record; reads u16 type,u16 count per run; fatal snario 0x86"
+ps,func,1f06:0096,mr_skip,far void(void),shell_data,,skip current record via size table DS:1024 (type 7 variable)
+ps,func,1f06:015c,mission_load,"far void(char *name, char parse)",shell_data,,"load MISS/TRN file into DS:5046; prescan, 3164:34ad, parse, 3164:3efe"
+ps,func,1f06:0269,mission_write_script,far void(void),shell_data,,writes the loaded file verbatim to SCRIPT.DAT
+ps,func,1f06:02c4,mission_prescan,far void(void),shell_data,,counts records per type; version must be 4 (fatal 0x103)
+ps,func,1f06:0553,mission_parse,far void(void),shell_data,,header->DS:626B; records -> 3164:3694/36d0/366d/36f6/3788/371d; types 8/9 -> far DS:5272/5276
+ps,func,1f06:0782,mission_free,far void(void),shell_data,,xfree(DS:5046)
+ps,func,1f7f:0001,medabbr_open,far void(void),shell_data,,"26c4:02d9(""medabbr"",""dat"",15) -> DS:1054"
+ps,func,1f7f:0021,medabbr_close,far void(void),shell_data,,26c4:001a
+ps,func,1f7f:0041,medabbr_text,far char far*(int i),shell_data,,26c4:0039
+ps,func,1f85:0007,hist_exists,far int(int id),shell_data,,
+ps,func,1f85:0027,hist_read_rec,far void(void far *rec),shell_data,,"list read callback: key, n, n*8 entries"
+ps,func,1f85:0094,hist_free_rec,far void(void far *rec),shell_data,,list free callback
+ps,func,1f85:00b7,hist_open,far void(void),shell_data,,"table_load hist_.dat 6,20,12h,2; fatal 0x58"
+ps,func,1f85:0139,hist_close,far void(void),shell_data,,
+ps,func,1f85:014d,hist_count,far int(void),shell_data,,DS:5286
+ps,func,1f85:0157,hist_key,far int(int id),shell_data,,rec+0
+ps,func,1f85:01a4,hist_n,far int(int id),shell_data,,rec+2
+ps,func,1f85:01f2,hist_e0,"far int(int id,int i)",shell_data,,entry text id (histnm/histsn)
+ps,func,1f85:024b,hist_e2,"far int(int id,int i)",shell_data,,MISS<n>.DAT number
+ps,func,1f85:02a5,hist_e4,"far int(int id,int i)",shell_data,,picture index DS:424E
+ps,func,1f85:02ff,hist_e6,"far int(int id,int i)",shell_data,,side selector
+ps,func,1f85:0359,hist_has_side,"far int(int id,int v)",shell_data,,
+ps,func,1f85:039f,hist_count_side,"far int(int id,int v)",shell_data,,
+ps,func,1f85:03e9,hist_nth_side,"far int(int id,int v,int k)",shell_data,,returns n if not found
+ps,func,1f85:043b,histnm_open,far int(void),shell_data,,DS:1065
+ps,func,1f85:04bd,histnm_close,far void(void),shell_data,,
+ps,func,1f85:04fb,histbf_open,far int(void),shell_data,,DS:1067 swap mode
+ps,func,1f85:057d,histbf_close,far void(void),shell_data,,
+ps,func,1f85:05bb,histov_open,far int(void),shell_data,,DS:1069 swap mode
+ps,func,1f85:063d,histov_close,far void(void),shell_data,,
+ps,func,1f85:067b,histsn_open,far int(void),shell_data,,DS:106B
+ps,func,1f85:06fd,histsn_close,far void(void),shell_data,,
+ps,func,1f85:073b,histnm_text,far char far*(int id),shell_data,,
+ps,func,1f85:0779,histbf_text,far char far*(int id),shell_data,,
+ps,func,1f85:07b7,histov_text,far char far*(int id),shell_data,,
+ps,func,1f85:07f5,histsn_text,far char far*(int id),shell_data,,
+ps,func,2008:0003,module_set_active,far void(u8 m),shell_data,1f85:0833,DS:5288 = m
+ps,func,2008:000e,module_active,far u8(void),shell_data,,DS:5288
+ps,func,2008:0018,module_latest,far s8(void),shell_data,,DS:43B5
+ps,func,2008:0022,module_iter_reset,far s8(void),shell_data,,"DS:5289=0, returns 0"
+ps,func,2008:002e,module_iter_next,far s8(void),shell_data,,next installed module number (bit+1) or 9
+ps,func,2008:0064,module_highest,far s8(void),shell_data,,cached in DS:1B01
+ps,func,2008:00a8,open_module_files,"far s8(FILE *fp[9], char *base, char *ext)",shell_data,,opens <base>0/<base> + installed modules
+ps,func,2008:0143,files_total,"far int(FILE *fp[9], far fn)",shell_data,,uncalled
+ps,func,2008:019e,files_foreach,"far void(FILE *fp[9], far fn)",shell_data,,
+ps,func,2008:01c0,file_close_nz,far void(FILE *f),shell_data,,
+ps,func,2008:01d3,files_close,far void(FILE *fp[9]),shell_data,,
+ps,func,2008:01ea,load_fail,far char(void),shell_data,,returns 0
+ps,func,2008:01f3,load_one,"far char(int s, FILE **fp, u8 flags, void far *list, far fn cb, char far_)",shell_data,,swap mode: file 0 only
+ps,func,2008:0334,load_one_near,far char(...),shell_data,,
+ps,func,2008:035b,load_one_far,far char(...),shell_data,,
+ps,func,2008:0382,load_records,"far char(int s, FILE **fp, char far_)",shell_data,,aborts on a present file with count 0
+ps,func,2008:04d9,load_list,"far char(int s, FILE **fp, char far_, void far *list, far fn cb)",shell_data,,273b:0249 marker = dated record
+ps,func,2008:064d,load_tails,"far char(int s, FILE **fp, char far_)",shell_data,,falls back to file 0 tail if >32K near
+ps,func,2008:07e6,load_all,"far char(int s, FILE **fp, u8 flags, void far *list, far fn cb, char far_)",shell_data,,
+ps,func,2008:0862,load_all_far,far char(...),shell_data,,
+ps,func,2008:0889,load_all_near,far char(...),shell_data,,
+ps,func,2008:08b0,flags_valid,far char(u8 flags),shell_data,,
+ps,func,2008:08e9,slot_free,far int(void),shell_data,,first free slot 1..20
+ps,func,2008:0914,loader_index,far char(u8 mode),shell_data,,index into DS:1AE9
+ps,func,2008:0952,slot_init,"far void(char *base, char *ext, int s, FILE **fp, int recsize, int fixed, far fn read_cb, far fn free_cb)",shell_data,,"reads u32 tail_size,u16 count per file; cum[]"
+ps,func,2008:0a71,open_all_files,"far void(FILE *fp[9], char *base, char *ext)",shell_data,,files 1..8 regardless of mask
+ps,func,2008:0aec,table_load,"far int(char *base, char *ext, int recsize, int fixed, u8 mode, u8 flags, void far *list, far fn read_cb, far fn free_cb)",shell_data,,returns slot or 0
+ps,func,2008:0bbd,table_free,far void(int s),shell_data,,fatal extens 0x3AA
+ps,func,2008:0ca2,table_count,"far int(int s, u16 *counts)",shell_data,,fatal extens 0x3E9
+ps,func,2008:0d61,table_tail_size,"far int(int s, u32 *sizes)",shell_data,,uncalled
+ps,func,2008:0df6,swap_records,"far void(slot *t, char f)",shell_data,,fatal extens 0x42F
+ps,func,2008:0fc7,id_split,"far void(slot *t, int id, int *local, int *file)",shell_data,,
+ps,func,2008:105c,rec_locate,"far int(slot *t, int id)",shell_data,,
+ps,func,2008:109d,swap_tail,"far void(slot *t, char f)",shell_data,,quirk: does not update tail_file; fatal 0x4A5/0x4A6
+ps,func,2008:1258,tail_base,"far u32(slot *t, int f, u32 ofs)",shell_data,,
+ps,func,2008:128e,tail_locate,"far int(slot *t, int id, u32 *ofs)",shell_data,,
+ps,func,2008:12eb,table_rec,"far void far*(int s, int id)",shell_data,,fatal extens 0x502
+ps,func,2008:138b,table_text,"far char far*(int s, int id, u16 ofs)",shell_data,,fatal extens 0x523
+ps,func,2008:13fa,table_file_data,"far void far*(int s, char f)",shell_data,,fatal extens 0x53A
+ps,func,214d:0005,shiptxt_open,far void(void),shell_data,,"table_load shiptxt.dat 23,15,12h,5"
+ps,func,214d:006f,shiptxt_close,far void(void),shell_data,,
+ps,func,214d:007e,shiptxt_name,far char*(int id),shell_data,,24d5:0005(rec+3)
+ps,func,214d:00d6,shiptxt_is_nation,"far int(int id, char v)",shell_data,,rec+2 == v
+ps,func,214d:0112,shiptxt_count,far int(void),shell_data,,DS:528A
+ps,func,214d:011c,shiptxt_text,far char far*(int id),shell_data,,
+ps,func,2164:000c,pltxt_open,far void(void),shell_data,,"table_load pltxt.dat 2,15,12h,5"
+ps,func,2164:0065,pltxt_close,far void(void),shell_data,,
+ps,func,2164:007a,pltxt_text,far char far*(int id),shell_data,,
+ps,func,2171:000a,wait_ticks_or_key,far void(int ticks),shell_data,,UI glue (shell_ui): waits DS:2E3F ticks or Enter/Esc/Space/button
+ps,func,217d:000a,view3d_load_model,"far void(u8 type, int alt)",shell_data,,loads <model>.tbl into shape slot 0
+ps,func,217d:009f,view3d_unload_model,far void(void),shell_data,,
+ps,func,217d:00b9,view3d_set_window,far void(void),shell_data,,view +0A..+10 = DS:5FDA/5FD8/5FD6/5FD4
+ps,func,217d:00e1,view3d_distance,far int(void),shell_data,,(r<<shift)/w * 13/16
+ps,func,217d:0130,view3d_draw_model,far void(void),shell_data,,
+ps,func,217d:0170,view3d_init,"far void(u8 side, u8 is_aircraft)",shell_data,,loads SHADES.DAT
+ps,func,217d:0227,view3d_done,far void(void),shell_data,,
+ps,func,217d:0257,view3d_load_scene,far void(char scene),shell_data,,land/sea .wld + a_ship/j_ship/land .tbl; fatal threed 0xE7/0xED
+ps,func,217d:045d,view3d_sort_scene,far void(void),shell_data,,
+ps,func,217d:047e,view3d_unload_scene,far void(void),shell_data,,
+ps,func,217d:04b0,view3d_draw_scene,far void(void),shell_data,,"background, shadow pass (DS:3B53), model"
+ps,func,21d4:0008,sort_by_distance,"far void(view *v, u16 *order, int n, s32 far *dist)",shell_data,,"selection sort, farthest first"
+ps,func,21d4:0150,cmp_priority,"far int(u16 *a, u16 *b)",shell_data,,"qsort comparator, 47c8:0267 descending"
+ps,func,21d4:017f,presort,"far int(u16 *order, int n)",shell_data,,"qsort, returns first index with priority 0"
+ps,func,21d4:01cd,view3d_presort,"far void(u16 *order, int n, s32 far *dist)",shell_data,,DS:52A6 = presort
+ps,func,21d4:01e1,view3d_sort,"far void(view *v, u16 *order, int n, s32 far *dist)",shell_data,,sorts order[DS:52A6..]
+ps,func,21f4:0009,ttm_tick,far void(void),shell_data,,timer cb: DS:52AA u32 ++ (59.17 Hz); = INTRO 0460:000b
+ps,func,21f4:0018,ttm_skip_check,far int(void),shell_data,,= INTRO 0460:001a plus menu_hotkey test
+ps,func,21f4:00cd,ttm_open,far char(char *name),shell_data,,= INTRO 0460:00d3
+ps,func,21f4:0134,ttm_close,far void(void),shell_data,,= INTRO 0460:0157
+ps,func,21f4:0151,ttm_play,"far int(int first, int last, far int (*cb)(void))",shell_data,,= INTRO 0460:0174
+ps,func,21f4:0245,ttm_play_file,"far void(char *name, int last, int nrand, int span, int end_frame, far int (*cb)(void))",shell_data,,RNG: rng_below(nrand) picks a variant; ~INTRO 0460:028c
+ps,func,2221:0003,hook_draw_medal,far void(void),shell_data,,TTM hook 0: draws medal DS:0500 using MEDALS.BMP + MEDLOCS.DAT
+ps,func,2221:0107,hook_1,far void(void),shell_data,,"TTM hooks 1,2: 0874:0aa5"
+ps,func,2221:0111,ttm_hook,far void(int n),shell_data,,calls DS:1B80[n]
+ps,func,2242:0005,q_new,far queue*(void),shell_data,,
+ps,func,2242:003f,q_seek_last,far int(queue *q),shell_data,,
+ps,func,2242:0067,q_next,far int(queue *q),shell_data,,uncalled
+ps,func,2242:0081,q_append,"far int(queue *q, int data)",shell_data,,fatal queue 0x66 if data==0
+ps,func,2242:00e6,q_clear,far void(queue *q),shell_data,,
+ps,func,2242:011e,q_delete,far void(queue *q),shell_data,,fatal 0x9C/0x9E
+ps,func,2242:018b,q_rewind,far void(queue *q),shell_data,,
+ps,func,2242:019a,q_at_end,far char(queue *q),shell_data,,
+ps,func,225d:0006,ranks_load,far void(void),shell_data,,RANKS.DAT; fatal ranks 0x2F
+ps,func,225d:00f7,rank_name,far char*(char r),shell_data,,uncalled
+ps,func,225d:010f,rank_service,far u8(char r),shell_data,,
+ps,func,225d:0128,rank_points,far u16(char r),shell_data,,promotion-point threshold
+ps,func,225d:0141,rank_extra,far u8(char r),shell_data,,rec+5 (3164:08b3)
+ps,func,225d:015a,rank_first,far s8(char svc),shell_data,,first rank of service
+ps,func,225d:018d,rank_last,far s8(char svc),shell_data,,last (top) rank of service
+ps,func,225d:01de,ranks_free,far void(void),shell_data,,
+ps,func,229e:0013,shell_tick,far void(void),shell_data,,timer cb reload 1: DS:1CC8 u32 ++ (236.7 Hz)
+ps,func,229e:001f,shell_ticks,far u32(void),shell_data,,DS:1CC8
+ps,func,22a0:0009,tmr_expired,far int(tmr *t),shell_data,,el > len; = INTRO 10fc
+ps,func,22a0:0050,tmr_set,"far void(tmr *t, u16 len)",shell_data,,
+ps,func,22a0:006a,tmr_set_expired,far void(tmr *t),shell_data,,uncalled
+ps,func,22a0:0089,ttm_tmr_expired,far int(tmr *t),shell_data,,DS:52AA; el >= len; uncalled
+ps,func,22a0:00d2,ttm_tmr_lerp,"far int(tmr *t, int a, int b)",shell_data,,linear interpolation a->b over the timer
+ps,func,22a0:018e,ttm_tmr_set,"far void(tmr *t, u16 len)",shell_data,,
+ps,func,22a0:01aa,ttm_tmr_set_expired,far void(tmr *t),shell_data,,uncalled
+ps,func,22a0:01cb,dir_first,"far void(char *pattern, int attr)",shell_data,,
+ps,func,22a0:01e2,dir_next,far char*(void),shell_data,,findfirst/findnext into DS:52B4
+ps,func,22a0:0225,strip_ext,"far void(char **names, int n)",shell_data,,
+ps,func,22a0:025d,dir_list,"far char**(char *pattern, int *n)",shell_data,,"up to 20 names in DS:52DF, table DS:53E3; uncalled"
+ps,func,22a0:02cb,file_exists,far int(char *pattern),shell_data,,uncalled
+ps,func,230d:000d,mouse_enabled,far int(void),shell_data,,DS:43B7
+ps,func,230d:0018,mouse_toggle,far void(void),shell_data,,
+ps,func,230d:0058,joy_enabled,far int(void),shell_data,,DS:43B6
+ps,func,230d:0063,joy_recheck,far void(void),shell_data,,16e3:00ac; DS:43B6 = DS:0FF8!=0
+ps,func,230d:008b,joy_toggle,far void(void),shell_data,,
+ps,func,2316:000f,mouse_glue_init,far int(void),shell_data,,= INTRO 0491:000c
+ps,func,2316:0028,mouse_glue_shutdown,far int(void),shell_data,,= INTRO 0491:0025
+ps,func,2316:0041,mouse_get_pos,"far int(int *x, int *y)",shell_data,,= INTRO 0491:003e
+ps,func,2316:0062,mouse_button,far int(int n),shell_data,,= INTRO 0491:005f
+ps,func,2316:007f,mouse_move_to,"far int(int x, int y)",shell_data,,= INTRO 0491:007c
+ps,data,DS:4F6E,pool_free,u16[10],shell_data,,farquick
+ps,data,DS:4F82,pool_base,far*[10],shell_data,,farquick
+ps,data,DS:4FAA,pool_head,far*[10],shell_data,,farquick
+ps,data,DS:4FD2,ms_left,s16,shell_data,,mission stream bytes left
+ps,data,DS:4FD4,ms_ptr,u16,shell_data,,mission stream cursor
+ps,data,DS:4FD6,run_left,s16,shell_data,,records left in run
+ps,data,DS:4FD8,run_type,s16,shell_data,,record type of run
+ps,data,DS:4FDD,mf_n_groups,u16,shell_data,,prescan type 5
+ps,data,DS:4FDF,mf_n_places,u16,shell_data,,prescan type 4
+ps,data,DS:4FE1,mf_n_type3,u16,shell_data,,prescan type 3
+ps,data,DS:4FE3,mf_n_ships,u16,shell_data,,prescan type 2 + type5 rec[0]==1
+ps,data,DS:4FE5,mf_n_aircraft,u16,shell_data,,prescan type 1
+ps,data,DS:4FE8,mf_scratch_hdr,u8[90],shell_data,,
+ps,data,DS:1024,mf_rec_size,u16[10],shell_data,,"90,22,16,6,10,58,0,2,2,1"
+ps,data,DS:5042,mf_ntypes,u16,shell_data,,2+distinct types; unused
+ps,data,DS:5044,mfile_len,u16,shell_data,,
+ps,data,DS:5046,mfile_buf,near*,shell_data,,
+ps,data,DS:5048,mf_ship_used,u16[115],shell_data,,
+ps,data,DS:512E,mf_ac_used,u16[159],shell_data,,
+ps,data,DS:526C,mf_wp_bytes,u16,shell_data,,unused
+ps,data,DS:526E,mf_n_waypoints,u16,shell_data,,
+ps,data,DS:5272,msg_ofs,far u16*,shell_data,,type-8 run copy
+ps,data,DS:5276,msg_text,far char*,shell_data,,type-9 run copy
+ps,data,DS:10A8,ext_slots,slot[21] (7Dh bytes),shell_data,,"extens.c slot table, slot 1..20"
+ps,data,DS:1AE9,ext_loaders,far fn[6],shell_data,,"0334,035b,01ea,0889,0862,01ea"
+ps,data,DS:1B01,module_highest_cache,s8,shell_data,,init FFh
+ps,data,DS:43B4,modules_mask,s8,shell_data,,"installed modules bit mask (CONTROL.PRF+04, RESOURCE.CFG modules)"
+ps,data,DS:43B5,modules_latest,s8,shell_data,,RESOURCE.CFG latest
+ps,data,DS:43B6,joy_on,s8,shell_data,,CONTROL.PRF+06
+ps,data,DS:43B7,mouse_on,s8,shell_data,,CONTROL.PRF+07
+ps,data,DS:5288,module_active_id,u8,shell_data,,active module of the mission
+ps,data,DS:5289,module_iter,u8,shell_data,,
+ps,data,DS:1064,hist_loaded,u8,shell_data,,
+ps,data,DS:1065,histnm_slot,s16,shell_data,,
+ps,data,DS:1067,histbf_slot,s16,shell_data,,
+ps,data,DS:1069,histov_slot,s16,shell_data,,
+ps,data,DS:106B,histsn_slot,s16,shell_data,,
+ps,data,DS:527A,hist_list,u8[10],shell_data,,list header
+ps,data,DS:5284,hist_slot,s16,shell_data,,
+ps,data,DS:5286,hist_nrec,s16,shell_data,,
+ps,data,DS:528A,shiptxt_n,s16,shell_data,,
+ps,data,DS:528C,shiptxt_slot,s16,shell_data,,
+ps,data,DS:1B2C,pltxt_slot,s16,shell_data,,
+ps,data,DS:1054,medabbr_tab,far*,shell_data,,
+ps,data,DS:52AE,rank_text,near*,shell_data,,
+ps,data,DS:52B0,rank_tab,near* (n x 6),shell_data,,
+ps,data,DS:52B2,rank_n,s16,shell_data,,
+ps,data,DS:1B80,ttm_hooks,far fn[3],shell_data,,"2221:0003, 2221:0107, 2221:0107"
+ps,data,DS:528E,v3d_is_aircraft,u8,shell_data,,
+ps,data,DS:528F,v3d_side,u8,shell_data,,
+ps,data,DS:5290,v3d_dist,far s32*,shell_data,,
+ps,data,DS:5294,v3d_alt,s16,shell_data,,
+ps,data,DS:5296,v3d_nobj,s16,shell_data,,
+ps,data,DS:5298,v3d_objs,near*,shell_data,,
+ps,data,DS:529A,v3d_order,near u16*,shell_data,,
+ps,data,DS:529C,v3d_shapes,far*,shell_data,,
+ps,data,DS:52A0,v3d_view,near*,shell_data,,
+ps,data,DS:52A2,v3d_target,near*,shell_data,,
+ps,data,DS:52A4,v3d_model,near*,shell_data,,
+ps,data,DS:52A6,v3d_nfirst,s16,shell_data,,
+ps,data,DS:1B45,v3d_model_loaded,u8,shell_data,,
+ps,data,DS:52A8,ttm_timer,u16,shell_data,,
+ps,data,DS:52AA,ttm_ticks,u32,shell_data,,59.17 Hz
+ps,data,DS:1CC8,shell_tick_count,u32,shell_data,,236.7 Hz
+ps,data,DS:52B4,dir_ffblk,struct ffblk,shell_data,,name at DS:52D2
+ps,data,DS:53E3,dir_names,char*[20],shell_data,,buffers DS:52DF + 13i
+ps,data,DS:540F,dir_first_pending,u16,shell_data,,

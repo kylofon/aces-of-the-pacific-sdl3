@@ -1,0 +1,184 @@
+exe,kind,address,name,type,owner,other_names,notes
+ps,func,2b4f:0007,ui_set_pending_palette,"far ui_set_pending_palette(off, seg)",shell_ui,,"`200A = off, 200C = seg` (installed by the next full present)"
+ps,func,2b4f:0019,cursor_show,far,shell_ui,,`2002 = 1` / `0` / `!2002`
+ps,func,2b4f:0024,cursor_hide,far,shell_ui,,`2002 = 1` / `0` / `!2002`
+ps,func,2b4f:002f,cursor_toggle,far,shell_ui,,`2002 = 1` / `0` / `!2002`
+ps,func,2b4f:003f,cursor_set,far cursor_set(frame),shell_ui,,"`2000 = 0`; frees the old save buffer (`2006:2008`) if any; if `frame`: allocates `save_size(frame.w, frame.h)` bytes far (returns 0 on failure); `2000 = frame`"
+ps,func,2b4f:009d,hs_load_rect,far hs_load_rect(),shell_ui,,"from `*5FE0`: `5FDA = x, 5FD8 = y`; if `5FDE == 0` → `5F74 = x, 5F72 = y`, else `5FDA += 5F74, 5FD8 += 5F72`; `5FD6 = w, 5FD4 = h`"
+ps,func,2b4f:00e9,hs_load,"far hs_load(tbl_off, tbl_seg, idx)",shell_ui,,"if `idx != 0`: first `5FDE = 0, 5FE0 = tbl, hs_load_rect()` (to get the origin); then `5FDE = idx, 5FE0 = tbl + 22·idx, hs_load_rect()`"
+ps,func,2b4f:012d,hs_focus,far hs_focus(idx),shell_ui,,"if `0 ≤ idx < 1FFE`: `5F7C = idx`, `hs_load(1FFA,1FFC,idx)`; fatal (alert.c line 92h) if item not focusable; `hs_center_mouse()`"
+ps,func,2b4f:0186,hs_hit,"far hs_hit(x, y)",shell_ui,,"current item: rectangle test `x0 ≤ x ≤ x0+w−1`, `y0 ≤ y ≤ y0+h−1`; with flag 08: `r = w>>1` (arithmetic), `dx = x − (x0 + r)`, `dy = y − (y0 + r)`, hit iff `"
+ps,func,2b4f:01ff,hs_center_mouse,far hs_center_mouse(),shell_ui,,"`601A = 5FDA + (5FD6 >> 1)`, `6018 = 5FD8 + (5FD4 >> 1)`, `mouse_move_to(601A, 6018)`"
+ps,func,2b4f:022e,hs_focus_nearest,far hs_focus_nearest(),shell_ui,,"if count: scan all items (loading each); for focusable ones: if `hs_hit(601A,6018)` → `5F7C = i`, `hs_center_mouse()`, return 1; else `d ="
+ps,func,2b4f:0317,hs_navigate,far hs_navigate(dir),shell_ui,,"if `hs_focus_nearest()` returned 1: `n = item[5F7C].links[dir]`; if `n != 0`: `5F7C = n`, `hs_load(n)`, `hs_center_mouse()`"
+ps,func,2b4f:035c,hs_focus_first,far hs_focus_first(),shell_ui,,"first focusable item (index order) → `5F7C`, `hs_load`, `hs_center_mouse`; none → leaves 5FE0 at the table start"
+ps,func,2b4f:03b7,hs_set_table,"far hs_set_table(off, seg, n)",shell_ui,,"fatal (line FDh) if `n > 40`; `1FFA:1FFC = off:seg`, `1FFE = 0`; if `n > 0`: clear `5FA6[0..n)`, `1FFE = n`; `hs_focus_first()`"
+ps,func,2b4f:041b,hs_restart,far hs_restart(),shell_ui,,`5F70 = 1` (a callback that changed the table/screen makes `hs_dispatch` start over)
+ps,func,2b4f:0426,hs_dispatch,"far hs_dispatch(mx, my, button, redraw)",shell_ui,,§1.3
+ps,func,2b4f:05f4,cursor_draw,"far cursor_draw(x, y)",shell_ui,,"`2316 = 2318 = 2312`; `clip_full()`; if `2000 && 2002`: `5F6E = min(320 − x, frame.w)` (min taken as ""if frame.w ≤ 5F6E use frame.w""), `5F6C = min(200 − y, fram"
+ps,func,2b4f:0686,cursor_flush,"far cursor_flush(x, y)",shell_ui,,"`2316 = 2312, 2318 = 2314`; if `2004 != 0`: `copy_rect(5F7A, 5F78, 2004, 5F76)` (erases the old cursor on the front page from the work page); if `2000 && 2002`:"
+ps,func,2b4f:0719,hs_present,far hs_present(),shell_ui,,§1.4
+ps,func,2b4f:0852,hs_default_links,"far hs_default_links(off, seg, n)",shell_ui,,"clears links of all n items; then walks the focusable items in index order: for each consecutive pair (p, c): `p.link[1] = p.link[3] = c`, `c.link[0] = c.link[2"
+ps,func,2b4f:0959,hs_load_layout,"far hs_load_layout(name, off, seg, n)",shell_ui,,"opens `res_name(name,−1,""box"")` ""rb"" (fatal line 1F7h if missing), file length / 8 must equal n (fatal 1F9h); reads n × 8 bytes = x, y, w, h into the n items; c"
+ps,func,2b4f:0b15,hs_push,far hs_push(),shell_ui,,"one-level save/restore of 601A, 6018, 5FE0, 5FDE, 5F7C, table 1FFA/1FFC/1FFE, 5FD2 and the modal result (`menu_get_result`) into `5F56..5F6A`; pop = `hs_set_tab"
+ps,func,2b4f:0b62,hs_pop,far hs_pop(),shell_ui,,"one-level save/restore of 601A, 6018, 5FE0, 5FDE, 5F7C, table 1FFA/1FFC/1FFE, 5FD2 and the modal result (`menu_get_result`) into `5F56..5F6A`; pop = `hs_set_tab"
+ps,func,2b4f:0bbc,ui_busy,far ui_busy(),shell_ui,,"if `2002`: `cursor_set(PARTS[7])` (busy cursor), `cursor_draw(601A, 6018)`; then `22ce:00e6` (copy the whole work page to the front page)"
+ps,func,2b4f:0be7,hs_draw_all,far hs_draw_all(),shell_ui,,"`hs_dispatch(601A, 6018, 0, 1)` (every item gets bit 40h → full draw); `cursor_set(PARTS[6])` (arrow); `mouse_move_to(601A, 6018)`; `hs_present()`"
+ps,func,2c11:0001,plate_buf_alloc,far plate_buf_alloc(),shell_ui,,"`6000:6002 = farmalloc(save_size(10,10))` (called from `sys_init`)"
+ps,func,2c11:002e,plate_buf_free,far plate_buf_free(),shell_ui,,`farfree(6000:6002)`
+ps,func,2c11:0042,rect_grow,far rect_grow(n),shell_ui,,"x −= n, y −= n, w += 2n, h += 2n"
+ps,func,2c11:005c,rect_shrink,far rect_shrink(n),shell_ui,,`rect_grow(−n)`
+ps,func,2c11:006c,rect_save,far rect_save(),shell_ui,,copy current rect to/from `5FFE/5FFC/5FFA/5FF8`
+ps,func,2c11:0089,rect_restore,far rect_restore(),shell_ui,,copy current rect to/from `5FFE/5FFC/5FFA/5FF8`
+ps,func,2c11:00a6,rect_copy,far rect_copy(),shell_ui,,"`copy_rect(x, y, w, h)` (page 2316 → 2318)"
+ps,func,2c11:00c3,text_emboss,"far text_emboss(s, tx, ty, c1, c2, c3)",shell_ui,,"if s: `tx == −1` → `tx = text_center_x(s, x, w)`; `2302 = 1`; `ty == −1` → `ty = y + 5`; draw_text(s,tx,ty) in c1, (tx,ty+2) in c3, (tx,ty+1) in c2"
+ps,func,2c11:014d,glyph_edge,"far glyph_edge(ch, px, py)",shell_ui,,"walks the glyph bitmap of `ch` in the current font (fixed: width `DS:2334`, rows `DS:2348`, row bytes (w+7)/8, first char `DS:235C`, data `DS:71B8:71BA`; propor"
+ps,func,2c11:027c,text_edge,"far text_edge(s, x, y)",shell_ui,,"for each char: `x += glyph_edge(c, x, y)` (+1 when text flag bit1)"
+ps,func,2c11:02b1,bevel_rows,"far bevel_rows(ref_x, x, y, n, dx, c)",shell_ui,,"n rows: if `ref_x < x`: `230E = get_pixel(x+n+2, y)`, `put_pixel(x, y, c)`, line (x+1,y)-(x+n+1,y) in the sampled colour; if `x < ref_x`: same mirrored (sample "
+ps,func,2c11:0362,text_engrave_center,"far text_engrave_center(s, c1, c2, c3)",shell_ui,,"`2302 = 1`; `tx = text_center_x(s, x, w)`; draw_text(s, tx, y+4) in c1; (tx, y+5) in c2; `201C = c3, 201E = c1`; `text_edge(s, tx, y+4)` → every glyph pixel not"
+ps,func,2c11:03d4,text_engrave,"far text_engrave(s, c1, c2, c3, tx, ty)",shell_ui,,"as above at (tx, ty): c1 at ty, c2 at ty+1, then the edge pass with c3 (skipping pixels equal to c1). **The standard shell label style** (e.g. c1 = C4h, c2 = C9"
+ps,func,2c11:042c,draw_bevel_box,far draw_bevel_box(),shell_ui,,"box B8h: x,y,w,h; `rect_save`; R, B; `230C = 0`; lines: C2h (x,y)-(R,y); B4h (x+1,y+1)-(R−1,y+1); C0h (x,y+1)-(x,B−1) and (R,y+1)-(R,B−1); BFh (x+1,y+2)-(x+1,B)"
+ps,func,2c11:0592,draw_rivets,"far draw_rivets(rx, ry, n)",shell_ui,,"n × `draw_bitmap(PARTS[2], rx, ry + 7k, 0)`"
+ps,func,2c11:05cf,draw_groove,far draw_groove(no_bottom),shell_ui,,"`rect_save`; R, B; lines C2h (x,y)-(R−1,y); C0h (x,y+1)-(x,B−2) and (R−1,y+1)-(R−1,B−2); C7h (x,B−1)-(R−1,B−1); if `no_bottom == 0`: C0h (x,B)-(R−1,B); `rect_re"
+ps,func,2c11:069a,draw_inset_box,far draw_inset_box(),shell_ui,,"`rect_save`; R, B; lines C6h top (x,y)-(R,y); C0h left/right full height; B4h bottom (x,B)-(R,B); C7h (x+1,y+1)-(R−1,y+1), (x+1,y+1)-(x+1,B−1), (R−1,y+1)-(R−1,B"
+ps,func,2c11:07de,draw_inset_box2,far draw_inset_box2(),shell_ui,,calls `069a`
+ps,func,2c11:07e7,text_center_x,"far text_center_x(s, x, w)",shell_ui,,`d = w − text_width(s)`; if text flag bit1: `d −= strlen(s)`; if `d > 0`: `x += d/2 + 1` (signed division); return x
+ps,func,2c11:0829,tile_fill,"far tile_fill(tx, ty, tw, th)",shell_ui,,"clip to (tx..tx+tw−1, ty..ty+th−1); `step = PARTS[1].w − 2`; for (row y = ty; y ≤ clip y1; y += 3) { col = tx; if col ≥ clip x0: col −= step, and tx = col; for "
+ps,func,2c11:08b4,tile_fill_rect,far tile_fill_rect(),shell_ui,,"`tile_fill(x, y, w, h)`"
+ps,func,2c11:08d0,screen_clear,far screen_clear(c),shell_ui,,"`230C = 1, 2303 = 0, 230D = 230E = c, 2318 = 2312; draw_rect(0,0,320,200)`"
+ps,func,2c11:0902,screen_clear_black,far screen_clear_black(),shell_ui,,`screen_clear(0)` / `screen_clear(B8h)`
+ps,func,2c11:090f,screen_clear_panel,far screen_clear_panel(),shell_ui,,`screen_clear(0)` / `screen_clear(B8h)`
+ps,func,2c11:091c,rect_fill_c1,far rect_fill_c1(),shell_ui,,"box C1h: x, y, w, h"
+ps,func,2c11:0946,draw_bottom_bar,far draw_bottom_bar(),shell_ui,,"`yb = y − 25`; `draw_bitmap(PARTS[5], 0, yb, 0)`, `draw_bitmap(PARTS[5], 296, yb, 2)`"
+ps,func,2c11:0980,draw_title_bar,"far draw_title_bar(sym, title)",shell_ui,,"`rect_save`; rect = (49, 0, 219, 23); `2318 = 2312, 2303 = 0`; `tile_fill_rect()`; `draw_frame()`; `draw_bitmap(PARTS[3], 0,0,0)`, `(PARTS[3], 295,0,2)`, `(PART"
+ps,func,2c11:0b00,draw_title_bar_for,"far draw_title_bar_for(service, date, title)",shell_ui,,"`today = date_to_days(DS:2020..2025)` (`284f:0007`, shell_data); `2318 = 2312, 2303 = 0`; `sym = (service == 6) ? 7 : 0f67:02ed(service)` (pilot service → symbo"
+ps,func,2c11:0b65,draw_frame_lines,"far draw_frame_lines(x0,y0,x1,y1', bx0,by1, bx1,by)",shell_ui,,"lines C2h (x0,y0)-(x1,y0); B5h (x0,y0+1)-(x1,y0+1); C0h (x0,y1'+1)-(x0,by1) and (x1,y1'+1)-(x1,by1); BFh (x0+1,y1'+2)-(x0+1,by1) and (x1−1,y1'+2)-(x1−1,by1); C1"
+ps,func,2c11:0c46,draw_frame,far draw_frame(),shell_ui,,"clip to (x..R, y..B); `draw_frame_lines(x, y, R, y, x, B, R, B)`; `2303 = 0`"
+ps,func,2c11:0c8e,draw_frame_inset,"far draw_frame_inset(n, top)",shell_ui,,"clip (x..R, y+2..B); `draw_frame_lines(x, y, R, y + top, x + n, B − n, R − n, B)`"
+ps,func,2c11:0cec,draw_plate_corners,far draw_plate_corners(top),shell_ui,,"four 45° bevels with `2c11:02b1`: C2h from (x+6, y+top−6) going left-down 7 rows; C2h from (R−7, y+top−7) right-down 7 rows; C0h at the bottom corners (x, B−6) "
+ps,func,2c11:0d96,draw_plate_bottom,far draw_plate_bottom(),shell_ui,,"tabs under the plate at B+1..B+5: C1h (x+15,B+1)-(x+20,B+5), (R−15,B+1)-(R−20,B+5); C0h (x+16,..)-(x+21,..), (R−16,..)-(R−21,..); C4h (x+17,B+1)-(R−17,B+1); C6h"
+ps,func,2c11:0ed6,draw_title_plate,far draw_title_plate(),shell_ui,,the panel with a title tab used by menu windows (label = current item's `+0E`); see §2.1
+ps,func,2c11:136a,draw_titled_panel,far draw_titled_panel(),shell_ui,,`draw_title_plate(); draw_plate_bottom()` — callback of window items (e.g. main menu item 0 via `04df:0117`)
+ps,func,2c11:1377,draw_list_button_down,far,shell_ui,,"`draw_groove(0)`; `draw_button_face(0 / 1)`; `font_select(FONT4)`; `text_engrave(label, C4h, C9h, C7h / C6h, text_center_x(label,x,w), y+5 / y+4)`"
+ps,func,2c11:13d1,draw_list_button_up,far,shell_ui,,"`draw_groove(0)`; `draw_button_face(0 / 1)`; `font_select(FONT4)`; `text_engrave(label, C4h, C9h, C7h / C6h, text_center_x(label,x,w), y+5 / y+4)`"
+ps,func,2c11:142b,draw_button_face,far draw_button_face(pressed),shell_ui,,"box C3h: x+1, y+1, w−2, h−2; `rect_save`; `r = x + w`; w' = r − 2; B; line (x+3,y+2)-(r−4,y+2) in C9h (up) / C6h (pressed); C8h (x+3,y+3)-(x+3,B−3) and (w'−2,y+"
+ps,func,2c11:1575,draw_button_up,far,shell_ui,,"`font_select(FONT4)`; `tx = text_center_x(label, x, w)`; `draw_groove(0)`; `draw_button_face(1 / 0)`; `text_engrave(label, C4h, C9h, C6h / C7h, tx, y+5 / y+6)`"
+ps,func,2c11:15d4,draw_button_down,far,shell_ui,,"`font_select(FONT4)`; `tx = text_center_x(label, x, w)`; `draw_groove(0)`; `draw_button_face(1 / 0)`; `text_engrave(label, C4h, C9h, C6h / C7h, tx, y+5 / y+6)`"
+ps,func,2c11:1633,draw_popup_box,far draw_popup_box(),shell_ui,,"box B8h x,y,w,h; then outline C4h (`230C = 0`) x,y,w,h; lines C2h (x+1,y)-(x+w−2,y); C0h (x,y+1)-(x,y+h−2), (x+w−1,y+1)-(x+w−1,y+h−2); C7h (x+1,y+h−1)-(x+w−2,y+"
+ps,func,2c11:1746,draw_corner_rivets,far draw_corner_rivets(),shell_ui,,"rivets at (x+2,y+2), (x+2,B−6), (R−5,y+2), (R−5,B−6)"
+ps,func,2c11:17db,draw_riveted_panel,far draw_riveted_panel(),shell_ui,,`tile_fill_rect(); draw_frame(); draw_corner_rivets()`
+ps,func,2c11:17ec,draw_header_panel,far draw_header_panel(),shell_ui,,"`draw_bevel_box(); draw_corner_rivets(); font_select(FONT4); text_engrave_center(label, C1h, B1h, C0h)`"
+ps,func,2c11:181e,draw_side_riveted_panel,far draw_side_riveted_panel(),shell_ui,,"`tile_fill_rect(); draw_frame();` for ry = y+5 .. B−6 step 7: rivet at (x+4, ry) and (R−6, ry)"
+ps,func,2c11:1871,draw_small_button_up,far,shell_ui,,"as `1575`/`15d4` with `FONT3`, `draw_groove(1)`, text y+4 / y+5"
+ps,func,2c11:18d0,draw_small_button_down,far,shell_ui,,"as `1575`/`15d4` with `FONT3`, `draw_groove(1)`, text y+4 / y+5"
+ps,func,2c11:192f,btn_small_cb,far btn_small_cb(border),shell_ui,,"if border: `rect_grow(2)`, rect_save, x −= 1, R' = x+w+1, B; lines C2h top, BFh left/right, C0h bottom; rect_restore; `rect_shrink(2)`; then `(5FDC & 0Ch) ? dra"
+ps,func,2c11:1a0e,btn_cb,far btn_cb(),shell_ui,,`(5FDC & 0Ch) ? draw_button_down() : draw_button_up()`; returns `(5FDC & 10h) != 0` with `snd_play(18h)`. **The standard button callback**: screens call it firs
+ps,func,2c11:1a40,diamond_edge,far diamond_edge(i),shell_ui,,line from vertex i to vertex (i+1)&3 of `5FF0[]`/`5FE8[]`
+ps,func,2c11:1a76,draw_diamond,"far draw_diamond(fill, phase)",shell_ui,,"vertices (top, right, bottom, left): x = {x + w/2, x + w − 1, x + w/2, x}, y = {y, y + w/2, y + h − 1, y + w/2}; `fill_poly(4)` in `fill`; then 4 edges starting"
+ps,func,2c11:1aff,diamond_label,"far diamond_label(q, pressed)",shell_ui,,"`font_select(FONT4)`; `text_engrave(label, C4h, C9h, pressed ? C8h : C7h, x + q + 4, y + pressed + 4)`"
+ps,func,2c11:1b65,draw_diamond_up,far,shell_ui,,"`draw_diamond(C7h, 1)` / `(C8h, 3)`; `diamond_label(item.user & 3, 0 / 1)`"
+ps,func,2c11:1b8d,draw_diamond_down,far,shell_ui,,"`draw_diamond(C7h, 1)` / `(C8h, 3)`; `diamond_label(item.user & 3, 0 / 1)`"
+ps,func,2c11:1bb5,diamond_cb,far diamond_cb(),shell_ui,,`(5FDC & 0Ch) ? down : up`; activation as `btn_cb`
+ps,func,2c11:1be7,panel_fill_frame,far panel_fill_frame(),shell_ui,,`2303 = 0; rect_fill_c1(); draw_frame()`
+ps,func,2dd0:0009,flow_setup,"far flow_setup(style, line_h, draw)",shell_ui,,"`600B = style, 6009 = line_h, 6008 = draw`"
+ps,func,2dd0:0020,flow_line_h,far flow_line_h(),shell_ui,,returns `6009`
+ps,func,2dd0:002a,flow_word,"far flow_word(char *w, int *x, int *y)",shell_ui,,"leading ',' / '.' characters are drawn one by one at (x,y) and x advances (they are never wrapped away from the previous word); then if `*x + text_width(w) > 60"
+ps,func,2dd0:0123,flow_emit,"far flow_emit(char *buf, int *x, int *y)",shell_ui,,"repeat until empty: find the first ' ', else TAB, else LF; if found: cut after it, `flow_word(piece)`; else find '$': if found: cut there, `flow_word(piece)`, n"
+ps,func,2dd0:01eb,flow_text,"far flow_text(char far *txt, char nstr, char far *(far *subst)(char))",shell_ui,,"uses the current rect: `6006 = x, 6004 = x + w − 1`; starting at (x, y) processes `nstr` consecutive NUL-terminated strings (each after the first begins with an"
+ps,func,2dd0:0355,flow_text_buttons,"far flow_text_buttons(tbl_off, tbl_seg, first, subst, strings, x, y, right)",shell_ui,,"font FONT3, `2302 = 1`, margins x..right, `flow_setup(−3, 11, 1)`; `strings` = near array of `char *` ending with 0; same parsing, but `%c` calls `subst(c, &tbl"
+ps,func,2e25:0008,menu_nav_off,far,shell_ui,,`2035 = 0 / 1`
+ps,func,2e25:0012,menu_nav_on,far,shell_ui,,`2035 = 0 / 1`
+ps,func,2e25:001c,menu_key_nav,far menu_key_nav(),shell_ui,,"if `6016` is in NAVKEYS (index i): `hs_navigate(DS:202A[i])` with dirs `{3, 2, 0, 1, 2, 3}` (Tab = right/next, Shift-Tab = left/previous)"
+ps,func,2e25:0246,menu_message,"far menu_message(char *s, yes_no)",shell_ui,,"pop-up box at the bottom: `font_select(FONT3)`, `2302 = 1`; `w = text_width(s) + 10`, `h = 20`, `x = 160 − w/2`, `y = 170`; `rect_grow(3)`; saves the front page"
+ps,func,2e25:0419,menu_hotkey,far menu_hotkey(scan),shell_ui,,**Alt** held (`key_down(38h)`): scan table at `2e25:04C3`: Q (10h) and X (2Dh) → `227c:002a` (sets `DS:00C1 = 1`: quit request); T (14h) → screenshot (`0000:032
+ps,func,2e25:04e7,menu_set_result,far menu_set_result(v),shell_ui,,`600E`
+ps,func,2e25:04f2,menu_get_result,far menu_get_result(),shell_ui,,`600E`
+ps,func,2e25:04fc,menu_run,far menu_run(void far (*frame)(void)),shell_ui,,§4.3
+ps,func,2e25:05d7,menu_busy,far menu_busy(),shell_ui,,`menu_poll(); menu_hotkey(6016)`; returns 1 while the button is down or the key is Esc (scan 1)
+ps,func,2e25:0602,menu_wait_timer,far menu_wait_timer(),shell_ui,,loops while `DS:2E3F != 0` and `menu_busy() == 0` (a timed wait that input interrupts)
+ps,func,2e25:0621,menu_flush,far menu_flush(),shell_ui,,drains the BIOS keyboard buffer; `2033 = 2031 = 6016 = 6017 = 0`
+ps,func,2e25:063f,menu_delay,far menu_delay(n),shell_ui,,"`DS:2E3F = 13 n` (PIT ticks, i.e. n BIOS ticks of 1/18.2 s); `menu_flush(); menu_wait_timer()`"
+ps,func,2e8a:000e,scr_is_parts,far scr_is_parts(id),shell_ui,,"`strcmp(bg[id], ""PARTS"") == 0`"
+ps,func,2e8a:0034,scr_is_mainmenu,far scr_is_mainmenu(id),shell_ui,,"`strcmp(bg[id], ""MAINMENU"") == 0`"
+ps,func,2e8a:005a,scr_pal_load,far scr_pal_load(id),shell_ui,,"`pal_load(res_name(bg[id], −1, ""pal""))`"
+ps,func,2e8a:0087,scr_palette,far scr_palette(id),shell_ui,,"`2084 = id`; PARTS → the resident `PARTS` palette `601E:6020`; MAINMENU → cached `6022:6024` (reloaded, the old one freed, when `id != 2097`); else `scr_pal_loa"
+ps,func,2e8a:00ee,scr_pal_release,far scr_pal_release(pal),shell_ui,,`pal_free(pal)` unless it is one of the two resident palettes
+ps,func,2e8a:0124,scr_init,far scr_init(),shell_ui,,"`6022:6024 = scr_pal_load(11)` (MAINMENU), `601E:6020 = scr_pal_load(10)` (PARTS); `screen_show(10, 0, 0, 0, 0)`; `22ce:00a7` (work page := spare page copy)"
+ps,func,2e8a:0281,scr_file,far scr_file(id),shell_ui,,"`res_name(bg[id], −1, ""scr"")`"
+ps,func,2e8a:02a7,scr_touch,far scr_touch(id),shell_ui,,"`fopen(scr_file(id), ""rb"")` + `fclose` (pre-reads the file: result unused)"
+ps,func,2e8a:02c7,scr_load,far scr_load(id),shell_ui,,"`2302 = 0`; `39aa:000a(scr_file(id))` (SCR decoder into page `DS:2318`, video)"
+ps,func,2e8a:02e0,scr_cached_mainmenu,far scr_cached_mainmenu(id),shell_ui,,"only when `scr_is_mainmenu(id)` and the adapter type `DS:231D` is 2 or 8: `2316 = 2318 = AC00h` (a 4th page segment above the three), load the SCR there if `208"
+ps,func,2e8a:0331,scr_draw_bg,far scr_draw_bg(id),shell_ui,,"PARTS → `screen_clear_black()`; else `2318 = 2312`, cached main-menu copy or `scr_load(id)`"
+ps,func,2e8a:0363,scr_prefetch,far scr_prefetch(id),shell_ui,,not PARTS and (not MAINMENU or not cached) → `scr_touch(id)`
+ps,func,2e8a:038e,screen_open,"far screen_open(id, far draw_fn, scd_arg, defer_pal)",shell_ui,,"if `scd_arg != 0` and `scd[id] != """"`: `strtab_load_scd(res_name(scd[id], −1, ""scd""), scd_arg)` (`24e3:0087`); if `draw_fn == 2e8a:0009`-sentinel (the value `3e"
+ps,func,2e8a:0454,screen_show,"far screen_show(id, scd_arg, defer_pal)",shell_ui,,"`id == −1` → `2086`; if `2084 == id` (same screen as before): `scr_draw_bg(id)`, and `page_flip(0)` unless deferred; else `screen_open(id, sentinel, scd_arg, de"
+ps,func,2e8a:049d,scr_load_scd,"far scr_load_scd(id, arg)",shell_ui,,"`24e3:0177(res_name(scd[id], −1, ""scd""), arg)` (loads a second string table, used by dialogs)"
+ps,func,2ed6:00c4,choose_draw_entry,far choose_draw_entry(pressed),shell_ui,,"FONT3; lines: top (x,y)-(x+w,y) in B3h (up) / C7h (pressed); C0h sides (x,y)-(x,y+h), (x+w,y)-(x+w,y+h); bottom in C7h / B3h; box B8h x+1, y+1, w−1, h−1; `text_"
+ps,func,2ed6:01f2,choose_entry_cb,far,shell_ui,,"pressed look while `5FDC & 0Ch` (with `snd_play(18h)`), returns `5FDC & 10h`"
+ps,func,2ed6:022b,choose_frame,far choose_frame(),shell_ui,,dispatch + present
+ps,func,2ed6:024c,choose_click,far choose_click(),shell_ui,,`602E = 5FDE − 2`; if activated: `menu_set_result(602E < 6030 ? 1 : 2)` (the last entry is CANCEL)
+ps,func,2ed6:027a,choose_layout,"far choose_layout(title, labels[], cb_off, cb_seg)",shell_ui,,"`4cb0` item 1 label = title (`4cb0:001B`); for k < 6030: entry k: callback = cb, label = labels[k]; widest label; entry 6030 = ""CANCEL"" (DS:20BC); window h (`+1"
+ps,func,2ed6:03c9,choose_on_ok,far choose_on_ok(),shell_ui,,if `6026:6028`: calls it with `(6032 != −1) ? 6032 : 602E`
+ps,func,2ed6:03ee,choose_run,"far choose_run(far cb, first_str, scd_row)",shell_ui,,"`6030 = item.user` of the calling item (count, fatal if > 10); for each k: copies `strtab_get(0, scd_row + k)` into xmalloc'ed strings; `6026:6028 = cb`, `602E "
+ps,func,2ed6:050e,choose_init,far choose_init(),shell_ui,,"`hs_default_links(4cb0:000d, 13)`; `602C = y[3] − y[2]` (entry pitch 17); `602A = window.h − 10·602C` (base height)"
+ps,func,2ed6:0552,dlg_run,"far dlg_run(off, seg, n, far frame)",shell_ui,,"`22ce:00bc` (save the work page into the spare page); `hs_push()`; `hs_default_links(tbl, n)`; `hs_set_table(tbl, n)`; `hs_draw_all()`; `r = menu_run(frame)`; `"
+ps,func,2ed6:05bc,dlg_open,"far dlg_open(off, seg, n, focus, links)",shell_ui,,`22ce:00bc`; `hs_push()`; if links: `hs_default_links`; `hs_set_table`; `hs_focus(focus)`; `hs_draw_all()`
+ps,func,2ed6:0602,dlg_close,far dlg_close(),shell_ui,,"`22ce:00a7`; `hs_dispatch(601A, 6018, 2033, 1)` (redraws the restored screen's items); `hs_pop()`; `hs_focus(5FDE)`; `cursor_set(PARTS[6])`; `mouse_move_to`; `h"
+ps,func,2ed6:0654,dlg_modal,"far dlg_modal(off, seg, n, focus, far frame, far on_ok)",shell_ui,,"`dlg_open(..., 1)`; `r = menu_run(frame)`; `hs_pop()`; if `r == 1` and on_ok: `on_ok()`; `dlg_close()`; returns r"
+ps,func,2ed6:06a3,dlg_modal2,"far dlg_modal2(off, seg, n, far frame, far on_ok)",shell_ui,,"as `dlg_run` (restore + redraw inside), then `on_ok()` when r == 1"
+ps,func,2f47:0009,pick_btn_cb,far,shell_ui,,`btn_small_cb(0)`; on activation `menu_set_result(5FDE == 6 ? 1 : 2)`
+ps,func,2f47:0031,pick_draw_window,far,shell_ui,,above
+ps,func,2f47:0083,pick_frame,far,shell_ui,,dispatch + present
+ps,func,2f47:00a4,pick_resize,far pick_resize(h),shell_ui,,"`6038 = h − item1.h`; grows window h (`+13`), item 1 h (`+29`) and moves items 2,3,4,6 (not 5) down by 6038; window x = 160 − h/2 (sic: uses `+13` the height; L"
+ps,func,2f47:0113,pick_unresize,far pick_unresize(),shell_ui,,"`6038 = h − item1.h`; grows window h (`+13`), item 1 h (`+29`) and moves items 2,3,4,6 (not 5) down by 6038; window x = 160 − h/2 (sic: uses `+13` the height; L"
+ps,func,2f47:0178,pick_on_ok,far,shell_ui,,`6034:6036(lbox_selected())`
+ps,func,2f47:0191,pick_list,"far pick_list(title, n, sel, fmt_off, fmt_seg, far on_ok)",shell_ui,,"fatal if n < 1 (line 89h); `4cc3:001D = title`; `lbox_setup(0, 0, n, 5 visible, fmt, 0)`; `lbox_bind(4cc3:000f, 1, 3)`; `lbox_select(sel, 2)`; `6034:6036 = on_o"
+ps,func,2f47:0249,pick_aircraft,"far pick_aircraft(title, on_ok, …, a, b, sel)",shell_ui,,"`2777:06fd(a, b)` (shell_data aircraft filter); list with the aircraft-name formatter `2777:0741`; else as above"
+ps,func,2f47:02e6,pick_list2,"far pick_list2(title, on_ok, n)",shell_ui,,list formatter `3550:0c99` (shell_data `tables.c`); selection 0
+ps,func,2f47:0374,pick_init,far pick_init(),shell_ui,,"`hs_default_links(4cc3:000f, 7)`"
+ps,func,2f7f:000d,entry_btn_cb,far,shell_ui,,`btn_small_cb(0)`; activated → `menu_set_result(5FDE == 3 ? 1 : 2)`
+ps,func,2f7f:0035,entry_draw_window,far,shell_ui,,above
+ps,func,2f7f:00bf,entry_frame,far,shell_ui,,dispatch + present + `edit_poll()`
+ps,func,2f7f:00e5,entry_trim,far entry_trim(anon),shell_ui,,"strips trailing spaces of `*603A`; empty and `anon` → `""(Anonymous)""` (DS:20F2)"
+ps,func,2f7f:012d,entry_store,far entry_store(),shell_ui,,"`strcpy(*603A, edit_text())`"
+ps,func,2f7f:0143,text_entry,"far text_entry(prompt_id, char *buf, max, anon)",shell_ui,,"`603A = buf`; `req_open(57 (FIELD), 43h)` (loads `FIELD.SCD` as the second table); FONT3; prompt = `str_get(prompt_id)` → item 0 label; window w = text_width + "
+ps,func,2fa5:000f,lbox_btn_cb,far,shell_ui,,`btn_cb()`; activated → `menu_set_result(5FDE == 7 ? 2 : 1)` (sic: item 7 = OK returns **2**? no — item 6 CANCEL → 1?) — V: returns 2 for index 7 and 1 otherwis
+ps,func,2fa5:0033,lbox_arrow_draw,far,shell_ui,,`(5FDC & 0Ch) ? draw_list_button_down : draw_list_button_up`; returns 1 (with `snd_play(18h)`) only on the initial press (`5FDC & 4`)
+ps,func,2fa5:006b,lbox_arrow_cb,far,shell_ui,,"on press/auto-repeat (the item mask includes held 08h, and `lbox_arrow_draw` returns 1 only for 04h — V: so one step per press): up arrow (`5FDE == 6064`): `607"
+ps,func,2fa5:00f6,lbox_hit_row,"far lbox_hit_row(row, n, pitch)",shell_ui,,"if `5FDC & 0Ch`: `r = (6018 − (y + 1)) / pitch` clamped 0..n−1; `snd_play(18h)` on press, `snd_play(19h)` when the row changes while held; returns r (else the o"
+ps,func,2fa5:0153,lbox_draw,far,shell_ui,,"`6079 = lbox_hit_row(6079, 6075, 6)`; if changed: `6077 = 20FE + 6079`, `lbox_fill_edit()`; `draw_inset_box2()`; FONT3, `2302 = 1`; for each visible row r (row "
+ps,func,2fa5:0255,edit_set,far edit_set(char *s),shell_ui,,"if `strlen(s) ≤ 6042`: copy to `6043`, cursor = length = strlen, `6041 = 1`, field item mask = 3"
+ps,func,2fa5:02a3,lbox_fill_edit,far lbox_fill_edit(),shell_ui,,if count > 0 and row ≥ 0 and fmt: `edit_set(fmt(6077))`
+ps,func,2fa5:02ce,edit_char_ok,far edit_char_ok(c),shell_ui,,ctype bits 0Eh (alnum) or '_' or (' ' when `6040`)
+ps,func,2fa5:02f9,edit_key,far edit_key(),shell_ui,,"fatal if cursor > length (135h), length > max (136h), max > 20 (137h); if scan `6016` is one of the 7 editing keys at `DS:2104` (`memchr`), jump through the tab"
+ps,func,2fa5:04f5,glyph_width,far glyph_width(c),shell_ui,,width of c (space if 0) in the current font
+ps,func,2fa5:053c,lbox_edit_draw,far,shell_ui,,"terminates at length; width of the text before the cursor; if `6041` or redraw: `draw_inset_box2()`, text CCh at (x+5, y+3), `2302 = 1`; caret: line (cx, y+8)-("
+ps,func,2fa5:0612,edit_poll,far edit_poll(),shell_ui,,"if the scan code is one of 10 keys at `DS:210B` → `6017 = 0` (no char); `edit_key()` → redraw; `tmr_expired(6058)` → `tmr_set(6058, 59)`, `2102 ^= 1` (caret bli"
+ps,func,2fa5:06dd,edit_bind,"far edit_bind(off, seg, idx)",shell_ui,,`603C:603E = &tbl[idx]`
+ps,func,2fa5:06fa,edit_setup,"far edit_setup(char *init, max, allow_space)",shell_ui,,"fatal if max > 20 (23Dh); field item = `4cd4:0094`; `6042 = max, 6040 = allow_space`; `tmr_set(6058, 59)`; `edit_set(init)` when given"
+ps,func,2fa5:0761,lbox_bind,"far lbox_bind(off, seg, idx, up_idx)",shell_ui,,"body item `6065:6067 = &tbl[idx]`, `6064 = up_idx`"
+ps,func,2fa5:0784,lbox_select,"far lbox_select(i, row)",shell_ui,,"fatal unless 0 ≤ i < count (253h) and row ≥ 0 (254h); row clipped to visible−1; `6077 = i`; if i < row: `6079 = i, 20FE = 0`; else `20FE = i − row, 6079 = row`,"
+ps,func,2fa5:082c,lbox_setup,"far lbox_setup(title, …, n, visible, fmt_off, fmt_seg, draw_off, draw_seg)",shell_ui,,"body = `4cd4:003C`, up index 4; title (`4cd4:00CE`), OK label (`4cd4:0034`)… (2 words); `6071 = n`; fmt/draw callbacks; `6079 = 6077 = 20FE = 0`; `6073 = max(0,"
+ps,func,2fa5:08bd,lbox_frame,far,shell_ui,,dispatch + present + `edit_poll()`
+ps,func,2fa5:08e2,edit_text,far edit_text(),shell_ui,,`DS:6043` / `6077`
+ps,func,2fa5:08ec,lbox_selected,far lbox_selected(),shell_ui,,`DS:6043` / `6077`
+ps,func,2fa5:08f6,lbox_run,far lbox_run(),shell_ui,,"`dlg_run(4cd4:0010, 9, lbox_frame)`; `hs_draw_all()`"
+ps,func,2fa5:091c,lbox_init,far lbox_init(),shell_ui,,"`hs_default_links(4cd4:0010, 9)`"
+ps,func,3038:0005,req_draw_text,far,shell_ui,,above (the string is fetched with `str_get` and formatted with the caller's two argument words — L)
+ps,func,3038:004c,req_btn_cb,far,shell_ui,,"`btn_small_cb(0)`; activated → `607F = (5FDE == 3)`, `menu_set_result(1)`"
+ps,func,3038:0079,req_frame,far,shell_ui,,dispatch + present
+ps,func,3038:009a,req_open,"far req_open(screen_id, arg)",shell_ui,,"`24e3:0164()` (push the string table), `scr_load_scd(screen_id, arg)`, `2120 = 1`"
+ps,func,3038:00b6,req_close,far req_close(),shell_ui,,"if `2120`: `24e3:01fd()` (pop the string table), `2120 = 0`"
+ps,func,3038:00cc,req_layout,"far req_layout(a1, a2, str_id, draw, extra_h)",shell_ui,,"saves the table state; `6080/6082 = a1/a2, 607D = str_id, 607C = draw`; `req_open(52 (REQUEST), 396h)`; FONT3; `hs_load(4ce2:0000, 1)`; `flow_setup(3, 8, 0)` (m"
+ps,func,3038:01b9,req_ok,"far req_ok(a1, a2, str_id, btn_id)",shell_ui,,"`req_layout(…, 1, 0)`; one button: item 2 x = 62 (`+2C`), label id = btn_id (default 2); `hs_default_links(3)`; `dlg_run(4ce2:0000, 3, req_frame)`; item 2 x bac"
+ps,func,3038:0237,req_yes_no,"far req_yes_no(a1, a2, str_id, yes_id, no_id)",shell_ui,,"`req_layout`; window and text rect moved up 35 (`4ce2:0024`, `4ce2:003A` −= 23h — L: these are item 1/2 fields); labels yes_id (default 3), no_id (default 5); `"
+ps,func,3038:02fe,req_yes_no_wide,"far req_yes_no_wide(a1, a2, str_id, yes_id, no_id)",shell_ui,,"window +15 px high, buttons 130 px wide at x 25 (`+2C = +42 = 19h`, `+30 = +46 = 82h`), moved down 15; otherwise as `req_yes_no`; restores the geometry"
+ps,func,3038:043f,req_init,far req_init(),shell_ui,,"`hs_default_links(4ce2:0000, 4)`"
+ps,func,307d:0008,flt_subst,"far flt_subst(c, item)",shell_ui,,`%a` → item label = number word `DS:2122[6085]` (flight size); returns 0 → becomes an inline button
+ps,func,307d:002a,flt_draw,far,shell_ui,,"FONT3; `draw_side_riveted_panel`; own flight: ""Yourself"" (DS:215B) engraved at (x+65, y+20); `flow_text_buttons(4ce8:00AB, 1, flt_subst, {fmt, 0}, x+10, y+6, x+"
+ps,func,307d:00cf,flt_frame,far,shell_ui,,dispatch + present
+ps,func,307d:00f0,flt_close_cb,far,shell_ui,,"`choose_entry_cb`; activated → `6032 = FEh`, result 1"
+ps,func,307d:010d,flt_pick_cb,far,shell_ui,,`btn_small_cb(1)`; activated → `6032 = 5FDE − 2`; result 2 if it is the last entry (own flight: index ≥ n−1; enemy: ≥ n) else 1
+ps,func,307d:0159,flt_build,far flt_build(names[]),shell_ui,,"copies the pilot names into items 2…; copies the template items `4ce8:0011+22k` to `4ce8:00AB+22k` for the visible count; last entry label ""ACCEPT"" (DS:2181)"
+ps,func,307d:020f,flt_roster,"far flt_roster(cb_off, cb_seg, char *pilots, enemy)",shell_ui,,"`6084 = enemy`, `6085 = item.user` (flight size ≤ 4, fatal F2h); window h = (enemy ? 50 : 30) + 20·n; names: pilot code < 4 → `strtab_get(0, code)`, else `2550:"
+ps,func,307d:0376,flt_init,far flt_init(),shell_ui,,"`hs_default_links(4ce8:0011, 7)`"

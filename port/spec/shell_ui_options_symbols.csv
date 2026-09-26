@@ -1,0 +1,104 @@
+exe,kind,address,name,type,owner,other_names,notes
+ps,func,04df:0002,mm_credits,far mm_credits(),shell_ui,,"`21f4:0245(res_name(""intace6"", −1, ""ttm""), −1, 0, 0, 1CDh, far 21f4:0018)` — the PS copy of the INTRO `intro_play` (same argument list: whole script, skip callb"
+ps,func,04df:004e,mm_btn_cb,far,shell_ui,,`if btn_cb(): DS:4224 = 5FDE; menu_set_result(1)`
+ps,func,04df:006c,mm_other_pick,far mm_other_pick(k),shell_ui,,`DS:4225 = k; cursor_hide()` (callback of the CHOOSE list)
+ps,func,04df:007c,mm_other_cb,far,shell_ui,,"if `btn_cb()`: `strtab_load(res_name(""sftbtns"", 0, ""dat""))` (`SFTBTNS0.DAT`); current item `+10` (count) = 3; `DS:4225 = FFh`; `choose_run(mm_other_pick, 0, 97)"
+ps,func,04df:00e8,mm_btn7_cb,far,shell_ui,,"item label (`+0E`) = `str_get(7)` (""MISSION RECORDER""); if `btn_cb()`: `DS:4224 = 5`, result 1. Not referenced by the table (L: dead)"
+ps,func,04df:0117,mm_draw_window,far,shell_ui,,"`draw_titled_panel()`; 18 rivets at (x+3, y+18) and at (x+w−6, y+18)"
+ps,func,04df:0159,mm_frame,far,shell_ui,,"`hs_dispatch(601A, 6018, 2033, 0); hs_present()`; if result == 2 (Esc) → `menu_set_result(0)` (Esc does nothing here)"
+ps,func,04df:018d,main_menu,far main_menu(),shell_ui,,below
+ps,func,04df:02be,mm_init,far mm_init(),shell_ui,,"`hs_default_links(4987:0000, 7)`"
+ps,func,09a9:0002,best_draw_window,far,shell_ui,,`draw_side_riveted_panel()`
+ps,func,09a9:000c,best_draw_scroll,far,shell_ui,,"`draw_bevel_box()`; outline C0h rect (x+4, y+25, 18, 16) between the arrows"
+ps,func,09a9:0039,best_btn_cb,far,shell_ui,,"`btn_cb()` → `DS:5FD2 = 5FDE` (10 VIEW / 11 EXIT), result 1"
+ps,func,09a9:0057,best_draw_colhead,far,shell_ui,,"FONT3, transparent; label id = `user == 0 ? 0 : DS:06FC[user + (DS:4307 != 1 ? 2 : 0)]` → careers: PILOT NAME, SERVICE, SCORE; missions: PILOT NAME, PLANE, SCOR"
+ps,func,09a9:00c4,best_draw_header,far,shell_ui,,"record 0 of the current list: `sprintf(DS:419A, ""%Fs %ld"", name, score)` (7 spaces); item label = `str_get(DS:4307 ? 5 : 4)` (""ALL TIME BEST CAREER""/""…MISSION"")"
+ps,func,09a9:0201,best_draw_row,"far best_draw_row(i, y)",shell_ui,,"(`lbox` custom row) careers (122-byte record, `4a08:033B + 122 i`): `sprintf(""%Fs %Fs"", strtab_get(3, rec[+23h]) rank, name)` at x+15; `strtab_get(6, rec[+22h])"
+ps,func,09a9:0381,best_draw_bg,far,shell_ui,,"`screen_clear_panel()`; `draw_title_bar_for(0FFh, 0, str_get(DS:4307 ? 9 : 8))` (""BEST CAREERS""/""BEST MISSIONS"")"
+ps,func,09a9:03b0,best_frame,far,shell_ui,,dispatch + present + `edit_poll()`; Esc → `DS:5FD2 = 11`
+ps,func,09a9:03e6,best_load_mission,far best_load_mission(i),shell_ui,,"copies record i back into the mission globals (`DS:477B, 4B8E, 4B8F, 4B88, 4B87, 4B89, 4247, 4249, 422B, 4237[4], 423F[4], 4227`) for replaying its debrief"
+ps,func,09a9:0481,best_run,far best_run(n),shell_ui,,below
+ps,func,09a9:058f,best_careers,far best_careers(),shell_ui,,`DS:4307 = 1`; `2624:0902`; `best_run(DS:4341)`; `2624:09c4`
+ps,func,09a9:05ac,best_missions,far best_missions(),shell_ui,,`DS:4307 = 0`; `2777:0000`; `best_run(DS:433F)`; `2777:04df`
+ps,func,09a9:05c9,best_rank_subst,far best_rank_subst(c),shell_ui,,"`%r` only (else fatal line 19Eh): `itoa(DS:4306, DS:419A)`"
+ps,func,09a9:060a,best_store,far best_store(i),shell_ui,,"career mission (`DS:4B87 == 1`): name = `DS:4754` etc.; else `text_entry(0, buf = """" (DS:0706, 20 bytes), 15, anon = 1)` asks for the name; fills the staging re"
+ps,func,09a9:072e,best_mission_insert,far best_mission_insert(),shell_ui,,"after a mission: first slot i whose score (+12h, long) is below `DS:4249` (sign-extended); if i < 10: shift slots i..8 down, count+1 (max 10), `DS:4306 = i + 1`"
+ps,func,09a9:07ee,best_career_insert,far best_career_insert(),shell_ui,,current pilot record `DS:4754` (122 bytes) inserted by its score `DS:47B9:47BB` (long) into the top-10 careers (called from `shell_cleanup`)
+ps,func,09a9:088e,best_career_remove,far best_career_remove(),shell_ui,,"removes the entry that matches the current pilot (score, service `DS:4776`, rank `DS:4777`, `DS:4784`, `DS:477B`), count−1 (≥ 0)"
+ps,func,09a9:096a,best_init,far best_init(),shell_ui,,"`hs_default_links(4a08:000d, 12)`"
+ps,func,0a41:0003,cset_draw_prompt,far,shell_ui,,"FONT3; mode 0 (`DS:4344 == 0`): `sprintf(buf, ""%Fs %s %s"", rank_title[DS:4777] (far `DS:57A2`), DS:4754 name, str_get(0) ""is now on"")` then str 1 ""active duty. "
+ps,func,0a41:00e7,cset_btn_cb,far,shell_ui,,`btn_small_cb(0)` → result `5FDE == 7 ? 1 : 2`
+ps,func,0a41:010f,cset_draw_row,"far cset_draw_row(i, y)",shell_ui,,"reads the first 80 bytes of `CSET<DS:0742[i]>.DAT` (fatal campset.c line 89h if missing) and draws them at (x+5, y) (""ACES OF THE PACIFIC"", ""1946!"")"
+ps,func,0a41:01a0,cset_frame,far,shell_ui,,dispatch + present
+ps,func,0a41:01c1,cset_choose,far cset_choose(mode),shell_ui,,"if the list `DS:0742[DS:0754]` is empty → FFh; `DS:4344 = mode`; `lbox_setup(…, DS:0754, 5, draw cset_draw_row)`; `lbox_bind(4a88:0010, 2, 4)`; `screen_show(44,"
+ps,func,0a41:028d,cset_scan,"far cset_scan(a, b, cur)",shell_ui,,"walks the installed data sets (`2008:0022` first, `2008:002e` next, `2008:0064` last; shell_data): for each, `287b:0104(set)` (load campaign info), `287b:04b5(b"
+ps,func,0a71:0001,fonts_load,far fonts_load(),shell_ui,,"`font_load` of `FONT1.FNT` → `DS:4222`, `FONT2` → `4220`, `FONT3` → `421E`, `FONT4` → `421C`, `TALK.FNT` → `421A`; any missing → fatal (once.c line 2Fh); `font_"
+ps,func,0a71:00eb,parts_load,far parts_load(),shell_ui,,"`DS:5FE6 = bmp_load(""parts.bmp"")`, `DS:5FE4 = bmp_load(""symbols.bmp"")` (`168a:011c`); failure → fatal line 40h"
+ps,func,0a71:015c,dialogs_init,far dialogs_init(),shell_ui,,see `shell_ui.md` §3.2
+ps,func,0a8d:0005,real_weight_sum,far real_weight_sum(),shell_ui,,"Σ `(s8)DS:07C2[i]`, i < 16 (= 150)"
+ps,func,0a8d:0023,realism_percent,far realism_percent(u8 *s),shell_ui,,"`lo, hi = s[7] ? (20, 100) : (0, 20)`; `sum = Σ over i<16 with s[i] != 0 of (i == 10 \"
+ps,func,0a8d:00ba,realism_current,far realism_current(),shell_ui,,`realism_percent(DS:4357)`
+ps,func,0a8d:00ca,real_show_model,far real_show_model(),shell_ui,,"item 28 label = `str_get(12 + DS:4362)` (NOVICE/INTERMEDIATE/EXPERT), mask 3"
+ps,func,0a8d:00f1,real_show_combat,far real_show_combat(),shell_ui,,"item 27 label = `str_get(15 + DS:4361)` (EASY/STANDARD/HARD), mask 3"
+ps,func,0a8d:0118,real_sync_check,far real_sync_check(i),shell_ui,,"item `i+12`.user = `(DS:4357[item i.user] != 0)`, mask 3"
+ps,func,0a8d:015e,real_refresh,far real_refresh(),shell_ui,,`real_sync_check(5..14)`; item 29 mask = 3; `real_show_model()`; `real_sync_check(13)`; `real_show_combat()`
+ps,func,0a8d:0192,real_apply_preset,"far real_apply_preset(u8 *dst, p)",shell_ui,,copies preset p; entry 6 forced 0 in career mode
+ps,func,0a8d:01ca,real_preset_cb,far,shell_ui,,"`btn_cb()` → `real_apply_preset(DS:4357, item.user)`; `real_refresh()`"
+ps,func,0a8d:01ee,real_toggle_cb,far,shell_ui,,"`btn_small_cb(0)` →: user 10: `DS:4361 = (DS:4361 + 1) % 3`, `real_show_combat`; user 11: `DS:4362` likewise, `real_show_model`; user 6 in career mode: `DS:435D"
+ps,func,0a8d:0298,real_accept_cb,far,shell_ui,,`btn_cb()` → result 1
+ps,func,0a8d:02b0,real_restore_cb,far,shell_ui,,"`btn_cb()` → `memcpy(DS:4357, DS:4346, 16)`; `real_refresh()`"
+ps,func,0a8d:02d6,real_draw_value,far,shell_ui,,"`draw_inset_box2()`; label (if any) FONT3, colour CCh, transparent, centred at y+3; mask := 40h"
+ps,func,0a8d:0339,real_draw_check,far,shell_ui,,"`draw_inset_box2()`; if `user`: `draw_bitmap(PARTS[8], x+2, y+2, 0)` (the tick); mask := 40h"
+ps,func,0a8d:0377,real_draw_percent,far,shell_ui,,"`draw_popup_box()`; FONT3; `text_engrave(str_get(18), C1h, B1h, C0h, centred, y+3)`; label = `itoa(realism_current(), DS:411A, 10)` (`22ce:032d`); `real_draw_va"
+ps,func,0a8d:040f,real_draw_frame,far,shell_ui,,"two B8h boxes: (x+2, y+2, w−3, h−33) and (x+15, y+h−30, w−28, 31) (coordinates after the +2/+2 offset, see code); then the tab-shaped outline: C2h top (x,y)-(x+"
+ps,func,0a8d:0785,real_frame,far,shell_ui,,dispatch + present
+ps,func,0a8d:07a6,real_draw_bg,far,shell_ui,,"`screen_clear_panel()`; `draw_title_bar_for(DS:62C5, DS:6277, str_get(19) ""REALISM PANEL"")` (pilot service and current date: shell_data)"
+ps,func,0a8d:07cb,realism_run,far realism_run(),shell_ui,,below
+ps,func,0b16:000e,fm_draw_window,far,shell_ui,,above
+ps,func,0b16:0050,fm_btn_cb,far,shell_ui,,above
+ps,func,0b16:006e,fm_set_links,far fm_set_links(custom),shell_ui,,"for the 5 items listed at `DS:082C` = {6, 7, 11, 13, 14}: copies 4 link bytes from `DS:0831 + 4k` (custom present) or `DS:0845 + 4k` into the item"
+ps,func,0b16:00ca,fm_layout,far fm_layout(),shell_ui,,"`DS:081E = custmiss_exist()` (`147e:0935`: `findfirst(DS:0EF8 pattern)`, shell_ui_mission); none → item 12 mask/flags = 0 (hidden, not focusable), item 13 y = 1"
+ps,func,0b16:013a,fm_frame,far,shell_ui,,`24b7:000c()` (steps the shell random generator every frame: shell_data); dispatch + present; on a result: 2 (Esc) → `DS:4368 = 14`; else if `DS:4368 == 13` (BE
+ps,func,0b16:01a7,flymenu_run,far flymenu_run(),shell_ui,,below
+ps,func,0b48:0006,pref_remap,"far pref_remap(setting, v)",shell_ui,,for settings 5/6 when the flight device is 3 (FCS): v = `DS:089F[v]` (rudder) / `DS:08A3[v]` (throttle)
+ps,func,0b48:0043,pref_msg_subst,far pref_msg_subst(c),shell_ui,,text substitution for the conflict messages: 'k' → `DS:436E` (if `DS:0879 == 6`) else `DS:436C`; 'l' → `DS:436A[DS:087D]`; 's' → `((DS:0879 == 6) ? DS:4370 : DS
+ps,func,0b48:00e5,pref_set_device,far pref_set_device(item),shell_ui,,"`k = item.user` (4..6); `DS:43B6[k] = pref_remap(k, DS:0874 choice)`; item.label = `DS:085D[k][choice]`; mask 3"
+ps,func,0b48:0133,pref_flight_chosen,far pref_flight_chosen(),shell_ui,,"choice 3 (FCS): set item 14 (`4ad6:0134`); rudder/throttle label items y/labels switched to the 2-entry FCS arrays (`DS:0867 = 438A`, …, counts 2/2, rows A2h/AA"
+ps,func,0b48:0201,pref_rudder_chosen,far pref_rudder_chosen(),shell_ui,,"if the new rudder = 1 (joystick 2) and throttle = 2 → conflict: `DS:43BB = 1`, queue setting 5 with message variant `DS:087D = 2`; else `pref_set_device(item 15"
+ps,func,0b48:0261,pref_throttle_chosen,far pref_throttle_chosen(),shell_ui,,"if the new throttle = 2 (slider) and rudder = 1 → conflict: `DS:43BC = 2`, queue setting 6, `DS:087D = 1`; else `pref_set_device(item 16)`"
+ps,func,0b48:02c1,pref_draw_window,far,shell_ui,,above
+ps,func,0b48:0307,pref_draw_group,far,shell_ui,,"`draw_bevel_box()`; rivets in the 4 corners (x+2,y+2), (x+2,B−6), (R−5,y+2), (R−5,B−6); FONT3 `text_engrave_center(label, C1h, B1h, C0h)`"
+ps,func,0b48:03c7,pref_toggle,far pref_toggle(k),shell_ui,,"(also the Alt-J/D/S/M hotkeys, k = 0..3) calls `DS:087F[k]()` (which toggles `DS:43B6[k]` and applies it: joystick detect / mouse init / sound mute); when the p"
+ps,func,0b48:044e,pref_toggle_cb,far,shell_ui,,`btn_cb()` → `pref_toggle(5FDE − 3)`
+ps,func,0b48:0467,pref_choice,far pref_choice(v),shell_ui,,`DS:0874 = v` (CHOOSE callback)
+ps,func,0b48:0472,pref_device_cb,far,shell_ui,,"`btn_small_cb(0)` →: `k = item.user`; `strtab_load(SFTBTNS0.DAT)`; item.user = `DS:086B[k]` (count); `DS:0874 = −1`; `choose_run(pref_choice, DS:43BA[k], DS:087"
+ps,func,0b48:0510,pref_draw_label,far,shell_ui,,"`draw_inset_box2()`; FONT3 CCh transparent, centred, y+4; mask := 40h"
+ps,func,0b48:0574,cal_wait_button,far cal_wait_button(),shell_ui,,`menu_flush()`; waits until mouse buttons are up (when mouse on) and joystick buttons are up (when joystick on); then waits for a joystick button (returns 1 aft
+ps,func,0b48:0616,cal_prompt,"far cal_prompt(i, row)",shell_ui,,"on the work page: `draw_popup_box()`, `rect_shrink(6)`, `flow_text(strtab_get(row, i), 1, 0)`, `rect_grow(6)`; copy (80, 50, 160, 30) to the front page; `cal_wa"
+ps,func,0b48:0680,cal_erase,far cal_erase(),shell_ui,,"copy (80,50,160,30) spare → work and work → front"
+ps,func,0b48:06bf,cal_sort,"far cal_sort(int v[3], n, throttle)",shell_ui,,"n == 2: v[2] = v[1], v[1] = (v[0] + v[2]) / 2; sorts v[0..2] ascending (3 compare-swaps); throttle: `d = max(v[2] − v[0], 20)`; `v[1] = old v[2]`, `v[2] = d`"
+ps,func,0b48:0740,cal_params,"far cal_params(dev, &n, &axes, &raw, &xs, &ys)",shell_ui,,"n = `DS:08B5[dev]`, axes = `DS:08C3[dev]` (bit0 X, bit1 Y), raw = `DS:08D1[dev]`; buffers `DS:43C9/43CF` (raw) or `DS:43BD/43C3`; returns row `DS:08A7[dev]` of "
+ps,func,0b48:079c,calibrate,far calibrate(dev),shell_ui,,"save the screen (`22ce:00bc`); joystick detect (`16e3:00ac`); rect (80,50,160,30); FONT3; `flow_setup(3, 8, 1)`; for i < n while not cancelled: `cal_prompt(i, r"
+ps,func,0b48:0902,pref_calibrate_cb,far,shell_ui,,`btn_small_cb(0)` and joystick on → `DS:085C = 1`
+ps,func,0b48:0920,pref_accept_cb,far,shell_ui,,`btn_cb()` → result 1
+ps,func,0b48:0938,pref_dup_strings,"far pref_dup_strings(first, n, char **dst)",shell_ui,,dst[k] = xmalloc'ed copy of `str_get(first + k)`
+ps,func,0b48:099d,pref_labels_load,far pref_labels_load(),shell_ui,,the arrays listed above
+ps,func,0b48:0a99,pref_free_strings,"far pref_free_strings(char **a, n)",shell_ui,,
+ps,func,0b48:0acf,_free,far _free(),shell_ui,,the arrays listed above
+ps,func,0b48:0b6e,pref_apply_all,far pref_apply_all(),shell_ui,,"(from `sys_init`) for k = 0..3: `DS:43B6[k] ^= 1; DS:087F[k]()` (re-applies each setting through its toggle); if flight device = 1 (joystick): detect, and if ab"
+ps,func,0b48:0bb9,pref_labels_init,far pref_labels_init(),shell_ui,,label of items 7–10 (k < 4) and 14–16 (k ≥ 4) = `DS:085D[k][DS:43B6[k]]`; if the flight device is 3: `DS:0874 = 3; pref_flight_chosen()`
+ps,func,0b48:0c22,pref_frame,far,shell_ui,,"dispatch + present; if `DS:085A` pending messages: while `DS:0879 ≥ 0`: `req_ok(far pref_msg_subst, 17, 8)` (CONTROL-conflict text REQUEST 17h?/string 17, butto"
+ps,func,0b48:0cf0,prefs_screen,far prefs_screen(),shell_ui,,"`DS:085A = 1`, pending = 0; `screen_show(46, 396h, 1)`; `pref_labels_load(); pref_labels_init()`; `hs_set_table(4ad6:0000, 19)`; `hs_draw_all()`; `menu_run(pref"
+ps,func,0c1d:0000,brief_subst,far brief_subst(c),shell_ui,,"`%a` → `strtab_get(11, DS:43EB + 2)`, `%e` → `strtab_get(11, DS:43EB)` (allied / enemy names), else 0"
+ps,func,0c1d:0031,brief_draw_text,far,shell_ui,,"`draw_side_riveted_panel()`; FONT3; text = historic ? `1f85:0779(DS:08F8)` : `strtab_get(DS:626C, DS:08F8)` (`BRIEF.DAT`); rect (100, 64, 204, 90); `flow_setup("
+ps,func,0c1d:00c7,brief_draw_overview,far,shell_ui,,"FONT3; `flow_setup(−3, 8, 1)`; `flow_text(1f85:07b7(DS:08F8, 1, 0, 0), 0)` (historic overview)"
+ps,func,0c1d:0106,brief_draw_officer,far,shell_ui,,"`draw_inset_box2()`; `DS:43E9 = bmp_load(""officers.bmp"")`; `draw_bitmap(frame DS:62C5, x+2, y+2, 0)`; `bmp_free` (`168a:04b1`)"
+ps,func,0c1d:016a,brief_draw_title,far,shell_ui,,"`draw_popup_box()`; FONT4; name = historic ? `1f85:073b(DS:08F8)` : `str_get(8 + DS:626C)`; `text_emboss(name, centred, y+3, C1h, C0h, B1h)`; FONT3; ""DATE: "" + "
+ps,func,0c1d:026d,brief_draw_weather,far,shell_ui,,"`draw_popup_box()`; FONT3; ""WEATHER: "" + `DS:43D7[DS:626F]` engraved at (x+5, y+3)"
+ps,func,0c1d:02ef,brief_draw_label,far,shell_ui,,"`draw_popup_box()`; FONT3; `text_engrave_center(label, C1h, B1h, C0h)`"
+ps,func,0c1d:031f,brief_btn_cb,far,shell_ui,,"`DS:43EC = 5FDE`, result 1"
+ps,func,0c1d:033d,brief_draw_bg,far,shell_ui,,"`screen_clear_panel()`; `draw_title_bar_for(DS:62C5, DS:6277, str_get(7) ""MISSION BRIEFING"")`"
+ps,func,0c1d:0362,brief_set_historic,far brief_set_historic(h),shell_ui,,"item 3 mask = h ? 0 : 40h (weather hidden in historic missions); items 9, 10 mask = h ? 40h : 0"
+ps,func,0c1d:0396,brief_frame,far,shell_ui,,dispatch + present; Esc → `DS:43EC = 4` (decline)
+ps,func,0c1d:03c6,briefing,far briefing(variant),shell_ui,,below
+ps,func,0c1d:06c0,brief_init,far brief_init(),shell_ui,,"`hs_default_links(4af1:0000, 11)`"
