@@ -13,11 +13,17 @@ Confidence tags: **V** verified instruction by instruction, **L** likely, **G** 
 | `shell_ui.md` (this file) | §1 overview; §2 INTRO intro sequence; §3 PS start-up (`main` `048e:0259`, `sys_init`), fly path, `shell_exit` (`227c`), fatal errors; §4 Windows focus / sound toggles (`166d`, `315c`); §5 copy protection; §6 screen flow graph; §7 port notes; §8 hand-offs; §9 open questions |
 | `shell_ui_toolkit.md` | the UI toolkit ("alert" library): hot-spot manager `2b4f`, drawing `2c11`, text flow `2dd0`, event loop / input `2e25`, screen table & palettes `2e8a` (**screen id table**), dialogs `2ed6`, `2f47`, `2f7f`, `2fa5`, `3038`, `307d` |
 | `shell_ui_debrief.md` | return from the sim, debrief, flight history, career events: `050c`, `0542`, `0583`, `05fa`, `0607`, `0637`, `0874` |
-| `shell_ui_flight.md` | flight map, flight deck, squadron info, big map, single-mission set-up: `06c7`, `0787`, `07ba`, `0d16`, `100e`, `1155` |
+| `shell_ui_flight.md` | flight map, flight deck, squadron info, big map, single-mission set-up (inline-button paragraph + `fm2_apply`): `06c7`, `0787`, `07ba`, `0d16`, `100e` (`1155` fltplan is shell_data's) |
 | `shell_ui_options.md` | main menu `04df`, hall of fame `09a9`, campaign set-up `0a41`, one-time init `0a71`, realism `0a8d`, `0b16`, options/controls `0b48`, briefing `0c1d` |
-| `shell_ui_career.md` | dog-fight ace `0c8a`, view vehicles `0ddd`, `0eb4`, pilot roster `0ed9`/`0f67`/`13be`, awards `0f35`, campaign select `0fa1`, medals `135d` |
-| `shell_ui_mission.md` | `simshell` `125a`, `12a7`, `12c4`, `1305`, decision `144e`, custom mission `147e`, `1513`, `1612`, `1656` |
-| `shell_ui_symbols.csv` | all names of this module |
+| `shell_ui_career.md` | dog-fight ace chooser `0c8a`, vehicle viewer `0ddd`, calibration device chooser `0eb4`, new pilot `0ed9`, roster records `0f67`, award ceremonies `0f35`, campaign selection `0fa1`, pilot record `135d`, roster screen `13be` |
+| `shell_ui_mission.md` | file-name helpers `125a`, career text substitution `0cfe`, campaign chooser `12a7`, flight-map data `12c4`, text boxes `1305`, career decision `144e`, custom missions `147e`, preflight `1513`, service/nation chooser `1612`, career notifications `1656` |
+| Symbols | `shell_ui_symbols.csv` (this file's functions and globals: `048e:0112`, `315c`, INTRO `038e:0973`, `0460`), `shell_ui_toolkit_symbols.csv`, `shell_ui_options_symbols.csv`, `shell_ui_debrief_symbols.csv`, `shell_ui_flight_symbols.csv`, `shell_ui_career_symbols.csv`, `shell_ui_mission_symbols.csv` |
+
+Not specced here although they are shell UI glue (they sit in the `sys` range and were specced by
+shell_data, `shell_data_sys.md` §11): `2171:000a` wait-ticks-or-key, `21f4` = the PS copy of
+INTRO `0460` (TTM player, §2.4 below), `229e`/`22a0` = tick counter and timers (INTRO `10fc`),
+`230d` mouse/joystick toggles, `2316` = the PS copy of INTRO `0491` (mouse wrappers). The shell
+calls them by those names.
 
 ## 1. Overview
 
@@ -191,7 +197,8 @@ plate_buf_alloc (2c11:0001); dialogs_init (0a71:015c); DS:051E = 0
 calls every screen's table initialiser (`choose_init`, `2f7f:026a`, `lbox_init`, `pick_init`,
 `12a7:01c0`, `0f35:012d`, `04df:02be`, `0607:02f5`, `0ed9:05b3`, `135d:0600`, `09a9:096a`,
 `0874:0e0f`, `100e:1459`, `0c1d:06c0`, `0d16:0c5d`, `1513:0fdc`, `0787:031b`), mostly
-`hs_default_links` on their tables.
+`hs_default_links` on their tables. (Corrected: `0787:031b` `fd_init` is **not** in this list — it has
+no caller; the flight-deck table keeps the links stored in the file.)
 
 ### 3.3 Fly: `shell_fly(mode)` (`048e:01a0`) and the "Please Wait" box (`048e:0112`) — V
 
@@ -247,16 +254,116 @@ from AP** (`DS:00C3` is not reset in between): AP accepts both (sim_flow).
 ## 5. Copy protection
 
 None in this CD version 1.2: no manual/code-wheel/aircraft-identification check exists in INTRO,
-PS or AP (no such strings, no screen or data file for it; the screen table has no quiz screen).
+PS or AP (no such strings — re-checked 2026-09-26 by a string search of all three executables;
+no screen or data file for it; the screen table has no quiz screen; every screen of §6 is accounted for).
 The only gate is the GCD marker (`0000:0510` = 29Ah/3E7h) and the free-memory check, both in §3.1.
 **PORT:** the marker check becomes the in-process chain (`main` passes "fresh"/"back from sim"
 directly); `mem_check` is skipped (free memory is not a DOS quantity any more).
 
 ## 6. Screen flow graph
 
-(Filled from the part files; call sites in brackets.)
+Every screen below runs inside `menu_run` (toolkit §4.3), so on **every** screen Alt-X / Alt-Q /
+Ctrl-Q / Ctrl-Break (`DS:00C1` via `227c:002a/0034`, platform keyboard handler) open the
+"Exit to DOS? (Y/N)" box → Y = `shell_exit(0)` (§3.4) from wherever the player is. Esc = result
+2 = the screen's cancel/back button unless noted. Addresses in brackets; "→ AP" = `shell_fly`
+(`048e:01a0`) → `shell_exit(1)` → marker + `exit(3)` (AP returns to PS with `exit(2)` and the
+marker 3E7h: back to "PS start"). Details of each screen: the part file named.
 
-See §6.1 below (completed after all parts are written).
+### 6.1 Program chain
+
+```
+GCD.COM ──1──> INTRO.EXE: main (038e:0ac1) → [‑pi: skip] sys_init (038e:080d) → intro_sequence (038e:0973)
+               INTACE1 → INTACE2 → INTACE3/4/5 or INTACE31/41/51 (any key/button skips the rest) → exit(2)
+GCD ──2──> PS.EXE main (048e:0259): no marker 29Ah/3E7h (and no "nlkle") → fatal "type AOTPCD" ; memory < 590000 → exit(0)
+           sys_init (048e:0009) ── title music 3EAh unless back from AP
+           back from AP (3E7h) → sim_end (0542:01c4, shell_ui_debrief §1) ──> [see 6.3] ──> main menu
+           main_menu (04df:018d) ── returns only through EXIT TO DOS → shell_exit(0) → text mode, exit(0) → GCD ends
+GCD ──3──> AP.EXE (SIM.IN) ──exit(2) + SIM.OUT──> GCD ──2──> PS.EXE (marker 3E7h) …
+```
+
+### 6.2 Main menu and single missions (shell_ui_options, shell_ui_flight, shell_ui_mission, shell_ui_career)
+
+```
+MAIN MENU (screen 11) [04df:018d]          (Esc does nothing here)
+├─ FLY SINGLE MISSION → FLY SINGLE MISSION menu (49) [0b16:01a7]
+│    ├─ FLY A HISTORIC MISSION → FLY HISTORIC (23) [0583:03c2]
+│    │     ├─ SERVICE → service chooser (48, mode 0) [1612:0388] ; CAMPAIGN → campaign chooser (43) [12a7:010d]
+│    │     ├─ REALISM PANEL → realism (51) [0a8d:07cb]
+│    │     ├─ BEGIN → MISSION BRIEFING (21) [0c1d:03c6] ──BEGIN──> → AP (mode 2)
+│    │     └─ RETURN / Esc → back to the fly menu → main menu
+│    ├─ DOGFIGHT A FAMOUS ACE → "who will you fly against" (48, mode 5) → ACE list (14) [0c8a:05db]
+│    │     └─ SELECT → SET-UP paragraph (screen 0 MT_DACE) [100e:12c9] ──START──> → AP (mode 0) ; CANCEL → main menu
+│    ├─ DOGFIGHT A SQUADRON … GROUND ATTACK (types 1–4, 5 training, 6–9) → "who will you fly for" (48, mode 0) [1612:0388]
+│    │     └─ SET-UP paragraph (screens 1–9 MT_*) [100e:12c9]: inline buttons → flight roster dialog [307d:020f] /
+│    │        aircraft picker [2f47:0249] / CHOOSE lists [2ed6:03ee]
+│    │        ├─ START, training → TRN<n>.DAT mission → AP (mode 0)
+│    │        ├─ START, others → MISSION BRIEFING (21) [0c1d:03c6]
+│    │        │     ├─ REALISM PANEL (51) ; FLIGHT MAP (27) [06c7:0b14] (FLIGHT PLAN animates the route; EXIT)
+│    │        │     ├─ PREFLIGHT OPTIONS → PREFLIGHT (26) [1513:0e05]
+│    │        │     │     ├─ loadout / formation buttons (leader only; "cannot change" boxes otherwise)
+│    │        │     │     ├─ REALISM PANEL ; FLIGHT MAP ; MISSION BRIEFING → briefing again (mutual recursion)
+│    │        │     │     └─ BEGIN MISSION (DS:43D6 = 1) / DECLINE
+│    │        │     └─ BEGIN MISSION → → AP (mode 0) ; DECLINE / Esc → main menu
+│    │        └─ CANCEL / Esc → main menu
+│    ├─ CUSTOM MISSIONS (hidden: no CMS\*.CMD shipped) → custom missions (60) [147e:07e5] — BEGIN does nothing (v1.2)
+│    ├─ BEST MISSIONS → best missions (42) [09a9:05ac] ─VIEW─> mission debrief (22) [0637:082a] ; → back to the fly menu
+│    └─ RETURN TO MAIN / Esc → main menu
+├─ CAREER MENU → [6.3]
+├─ VIEW VEHICLES → VIEW WHICH? (55) [05fa:007f]
+│    ├─ AIRPLANES → "view airplanes for which service" (48, mode 2) → VIEWER (25) browse [0ddd:0cde(−1, s, 0)]
+│    ├─ SHIPS → "view ships for which nation" (48, mode 3) → VIEWER (25) browse [0ddd:0d2f]
+│    └─ CANCEL → main menu                  (viewer: diamonds rotate/zoom, PREVIOUS/NEXT, CONTINUE/Esc → main menu)
+├─ OTHER OPTIONS → CHOOSE [2ed6:03ee]
+│    ├─ PREFERENCES → PREFERENCES / CONTROLS (46) [0b48:0cf0] ─CALIBRATE─> device chooser [0eb4:0205] → calibration [0b48:079c]
+│    ├─ WATCH DEMO → → AP (mode 4)
+│    └─ CREDITS → INTACE6.TTM [21f4:0245] → main menu (title music restarts)
+├─ MISSION RECORDER → → AP (mode 3, the VCR screen is AP's)
+└─ EXIT TO DOS (QUIT) → return → shell_exit(0)     (no confirmation here)
+```
+
+### 6.3 Career (shell_ui_debrief, shell_ui_career, shell_ui_flight, shell_ui_mission)
+
+```
+CAREER MENU (45) [0607:011d]
+├─ START A CAREER → new pilot [0ed9:0347]
+│     (roster of 13 full → ROSTER "THE ROSTER IS FULL" (50) [13be:07c3]: DELETE one / VIEW (pilot record) / CANCEL)
+│     → "who will you fly for" (48, mode 0) → campaign set choice [0a41:01c1]
+│     → SIGN-IN paragraph (28) "In %a, %b with the rank of %c, enlisted in the %d." (name typed first; date / rank CHOOSE; service → 48 mode 1)
+│     → START → CAMPAIGN SELECTION (15/16) [0fa1:02f9(1)] → SELECT → SQUADRON choice (19/20) [07ba:08c2(0)]
+│     → pilot added → WAR MAP (13) [0d16:0b33] → FLIGHT DECK
+├─ CONTINUE A CAREER → ROSTER "CONTINUE A CAREER..." (50) [13be:086e]: ACCEPT (retired pilot: "come out of retirement?"
+│     → campaign set; dead/discharged: refused) / DELETE / VIEW / CANCEL
+│     → [no campaign] CAMPAIGN SELECTION [0fa1:02f9(0)] (CANCEL = "QUIT FOR NOW") → FLIGHT DECK
+├─ VIEW BEST CAREERS → best careers [09a9:058f] ─VIEW─> PILOT RECORD (12) [135d:04ec]
+└─ RETURN TO MAIN / Esc → main menu
+
+FLIGHT DECK (38–41 per service) [0787:0181]
+├─ FLY NEXT MISSION → career mission built → MISSION BRIEFING (21) → (PREFLIGHT …) → BEGIN → → AP (mode 1) ; DECLINE → flight deck
+├─ SQUADRON INFO → (19/20) [07ba:08c2(1)] CONTINUE
+├─ VIEW THE WAR MAP → (13) [0d16:0b33] EXIT
+├─ VIEW PILOT RECORD → (12) [135d:04ec] CONTINUE
+├─ VIEW AIRCRAFT → VIEWER single type [0ddd:0cde]
+├─ BACKUP CAREER → text entry [2f7f:0143] (roster full → ROSTER delete) → copy saved [0f67:00f9]
+└─ RETURN TO MAIN / Esc → main menu (title music)
+
+Back from AP (PS start, marker 3E7h) → sim_end [0542:01c4]:
+   KILLED IN ACTION box [1305:044e] ; MISSION DEBRIEFING (22) [0637] ; award ceremonies (53) [0f35:01d8],
+   BOARD OF INQUIRY box [1305:0487]
+   ├─ single / historic / demo / recorder → main menu
+   ├─ career over (KIA, POW, 3 friendly-fire incidents) → records → CAREER MENU
+   └─ career active → career events [0874:12be] (newspaper / rumour TTMs, text boxes [1305], SQUADRON MOVEMENT box + WAR MAP,
+        NEW AIRPLANE viewer [0ddd:0cde(…, 1)], transfer: SQUADRON INFO + WAR MAP, END OF CAMPAIGN box + CAMPAIGN REVIEW [0fa1:0600],
+        war over: CAREER DECISION (47) [144e:029c] → campaign set [0a41:01c1] → CAMPAIGN SELECTION [0fa1:02f9(0)] or retire)
+        → FLIGHT DECK (→ AP again) or CAREER MENU
+```
+
+### 6.4 Exits
+
+```
+shell_exit(0) [227c:0072]  ← main menu EXIT TO DOS; "Exit to DOS? (Y/N)" = Y on any screen; -h/-? usage; Ctrl-Break "now"
+shell_exit(1)              ← shell_fly [048e:01a0] (every "fly" path above) → marker 29Ah/3E7h, exit(3)
+fatal_msg / fatal_line     ← start-up failures, missing files, asserts → text-mode message, key, exit(0)
+```
 
 ## 7. Port notes
 
@@ -270,6 +377,15 @@ See §6.1 below (completed after all parts are written).
   message box / stderr.
 * Timing: nothing in the shell is frame-locked; waits use `DS:2E3F` (PIT countdown), the 236.7 Hz
   counter `DS:1CC8`, the INTRO 59.17 Hz counter and TTM script delays. Drive these from real time.
+
+* Undefined behaviour to pin down in the port (faithful otherwise): `fm_poll_skip` (`06c7:0000`)
+  returns an uninitialised byte when a hotkey consumed the key (→ return 0); `campsel_show_text`
+  (`0fa1:0600`) frees `DS:0A66` a second time (→ skip the free); `squadinf` (`07ba:03fb`) can
+  overflow `DS:42D4[4]` with > 4 living aces (not with the shipped data); `fm2_apply` reads a 9th
+  byte past `DS:0B26` for data set 8 (never installed). Keep the logic bugs listed in §9.
+* Waits in these screens busy-poll the PIT countdown `DS:2E3F` (236.7 Hz): the flight-map popup
+  stays up to 1420 ticks (6.0 s), the route is drawn one pixel per 15 ticks; the war map scrolls
+  in 10-pixel steps with one `page_flip(1)` each (no timer of its own; if the flip waits for the retrace that is 70 Hz — PORT: pace at the display rate).
 
 ## 8. Hand-offs
 
@@ -290,7 +406,33 @@ See §6.1 below (completed after all parts are written).
   `0a71:015c` loads `MREAL.PRF` into `DS:4357`; `fatal_line` prints `DS:6275/626B/626C/6277/626D/62DB/6355`
   (RSEED, MODE, MTYPE, DATE, WORLD, PLYR SINDEX, ENEMY SERVICE) — names for those globals.
 
+* **shell_data** (from the flight/career parts): `DS:4788` (pilot +34h) is **campaigns completed**
+  (label "CAMPAIGNS COMPLETED:" on the pilot record, `135d:01bb`), not "days/turns passed";
+  `DS:4764` (pilot +10h) is the backup label typed in BACKUP CAREER (`0f67:00f9`), shown in the
+  roster instead of the status; `DS:49CE[11]` = list of available services (read by `0f67:033b/036b`,
+  who fills it?); `pilot_delete` (`0f67:0024`) mis-updates the event-list offsets of the 3rd and
+  later following pilots (shell_ui_career §5 — the roster file format is yours);
+  `3d50:16b0` (midpoint of two 12-byte points), `2b1f:00b4` (heading, >>8 = byte heading),
+  `2b1f:0069` (pitch), `2b1f:0121` (project a point along a heading by a long distance) as used by
+  `fm2_apply` and the viewer; `DS:651E[class]` cruise altitude, `DS:6526 + 8·class` band minimum;
+  `fm2_apply` writes the mission's data-set bits into `DS:6271` / SIM.IN `DS:4B8D` using the table
+  `DS:0B26` = {0, 1, 2, 4, 8, 16, 32, 64} (index 8 reads past it).
+* **shell_data**: `CARRIER.<n>` / `TARGET.<n>` (area number as the extension) are opened with
+  `wd_load_database` by the war map (`0d16:09d8`); `WLDNMS.DAT`, `WLDLOCS.DAT`, `BIGMAP.DAT`,
+  `ACEFACE.DAT`, `PITCH_.DAT`, `TTMS<n>.DAT`, `MEDLOCS.DAT`, `FLTDECK<n>.DAT`, `DATE<n>.DAT`
+  layouts are in the part files (flight §1/§2/§4, career §1/§2/§6/§9/§4) for `port/formats/data.md`.
+* **video**: `draw_bitmap` flag 2 = horizontal mirror (bubble arrows of the war map); the viewer
+  sets the 3Space projection centre `3d50:3E91/3E93` and `3d50:3DF8 = 1` before `view3d_draw_scene`.
+
 ## 9. Open questions
 
 * `16e3:5b0e` and `0000:11d7` in `shell_cleanup` (platform shutdown details).
 * The Windows "doco" call (`1671:0051`) — platform.
+* `fm2_apply` / `fm2_roster_cb` (shell_ui_flight §5 note): the own pilot codes are copied from
+  `DS:4B29[0..2]` into slots 1–3 while slot 0's code sits in `DS:4B29[0]`, and the roster dialog's
+  size button indexes the value array with stale / dialog-local indices. Looks like off-by-one
+  bugs of the original; confirm in the running game (DOSBox) before the port decides.
+* `fm2_slot_label` kind 4 limits the altitude with the aircraft at list index `DS:4A36` (the
+  enemy-skill value): original bug or intended? (faithful: keep).
+* `dg_frame` (`0c8a:0594`): how the ace screen's `menu_run` ends after the service chooser (the
+  frame sets no result) — probably the chooser's own result; check.

@@ -113,11 +113,11 @@ Roster: far `4b4c:000e + 0x7A·i` (count `DS:4A18`); TOPACE count `DS:4341`.
 | `4304` | u16 | `career_day` | day cursor of the event / squadron processing |
 | `43FA` | char[] | `subst_buf` | scratch for `display_subst` (dates, ace and station names) |
 
-### 0.3 Message record (`msg`, 5 bytes, xmalloc; built by `1656:0008`, S5)
+### 0.3 Message record (`msg`, 5 bytes, xmalloc; built by `1656:0008`, shell_ui_mission)
 
 `+00 u8 kind` (1..6), `+01 char far *text` (farmalloc'ed copy of `strtab_get(0, id)` of the table
 loaded at build time). `1656:0008 msg_new(kind, id)`; `1656:0095 msg_show(m)` shows and frees it
-(`1656:006f`). Kinds (from `1656:0095`, S5 owns it): 1 = `snd_play(1004)`, text box "KILLED IN
+(`1656:006f`). Kinds (from `1656:0095`, shell_ui_mission owns it): 1 = `snd_play(1004)`, text box "KILLED IN
 ACTION" (`1305:044e`), `snd_stop(1004)`; 2 = ceremony `0f35:01d8(DS:4775, 0, text)` (prisoner,
 `PRISJAP/PRISUSA`); 3 = ceremony type 1 (`MEDJAP/MEDUSA`: hospital); 4 = `snd_play(1015)`, text box
 "BOARD OF INQUIRY" (`1305:0487`), `snd_stop(1015)`; 5 = medal ceremony type 2 (medal tables
@@ -169,7 +169,7 @@ sim_end():
     if 4B87 != 1: return
     if DS:4778 != 0:                             // career over (KIA / retired-POW / cook)
         if DS:4226: snd_play(1002)
-        09a9:07ee()                              // best.c: top aces / records update (S3)
+        09a9:07ee()                              // best.c: top aces / records update (shell_ui_options)
         career_menu_run()                        // §4
         return                                   // NB: DS:051E is NOT cleared on this path
     if career_after_mission(r):                  // §7.9 → 1: fly the next mission
@@ -177,7 +177,7 @@ sim_end():
         ext_select(DS:4779)
         snd_stop(−1); snd_play(1010)
         2a85:0006; 2ab3:013b; 2624:0902; 2550:0679; 2777:0000   // load stations, ordnance, squadrons, aces, aircraft
-        fltdeck_run()                            // 0787:0181 (S2): sets DS:43D6 when FLY was chosen
+        fltdeck_run()                            // 0787:0181 (shell_ui_flight): sets DS:43D6 when FLY was chosen
         if DS:43D6 == 0:
             2777:04df; 2550:073f; 2624:09c4; 2ab3:057f; 2a85:0216   // free them
         else:
@@ -195,7 +195,7 @@ The `ax = 1/0` computed after the fatal call (0542:0229) is the dead tail of the
 
 | Address | Name | Behaviour |
 |---|---|---|
-| `0542:0180` | `career_update(end)` → r | `r = 1`; `squad_load()` (`2624:0902`); `career_count_incident()`; `career_status_update()`; if `DS:4778 == 0`: `r = career_date_update(end)`; `career_add_kills()`; `career_add_score()`; `squad_free()` (`2624:09c4`); `pilot_save()` (`0f67:0001`, copies `DS:4754` back to the roster and saves, S4); returns r (byte) |
+| `0542:0180` | `career_update(end)` → r | `r = 1`; `squad_load()` (`2624:0902`); `career_count_incident()`; `career_status_update()`; if `DS:4778 == 0`: `r = career_date_update(end)`; `career_add_kills()`; `career_add_score()`; `squad_free()` (`2624:09c4`); `pilot_save()` (`0f67:0001`, copies `DS:4754` back to the roster and saves, shell_ui_career); returns r (byte) |
 | `0542:0154` | `career_count_incident()` | if `DS:4229 & 70h`: `DS:4794 += 1` (byte) |
 | `0542:000a` | `career_status_update()` | if `4229 & 1`: `4778 = 3`; else if `4229 & 2`: `4778 = 1`, `477F = 477B = enddate_get(DS:4779, 1)` (`1193:0006`); else if `DS:4794 == 3`: `4778 = 2` |
 | `0542:004b` | `mission_success(char mtype, int result)` → u8 | `t = mtype`, `r = result`; if `t == 8`: if `r > 8` (signed): `t = 9`, `r −= 8`; else if `t > 8` (signed): `t += 1`; returns `DS:0512[(s8)t] & (u8)(1 << (u8)(r − 1))` (8-bit shift: 0 when r − 1 ≥ 8) |
@@ -374,8 +374,8 @@ career_menu_run():
         menu_run(career_frame); ui_busy()
         switch DS:5FD2:
         case 1:                                        // START A CAREER
-            if !pilot_new():  break                    // 0ed9:0347 (S4: name entry, service, campaign…)
-            2a85:0006; bigmap_show (0d16:0b33, S2); 2ab3:013b; 2550:0679; 2777:0000; 2624:0902
+            if !pilot_new():  break                    // 0ed9:0347 (shell_ui_career: name entry, service, campaign…)
+            2a85:0006; bigmap_show (0d16:0b33, shell_ui_flight); 2ab3:013b; 2550:0679; 2777:0000; 2624:0902
             rng_seed_time(); DS:42C1 = rng_count()
             snd_stop(1002); snd_play(1010)
             fltdeck_run()                              // 0787:0181
@@ -383,8 +383,8 @@ career_menu_run():
             else: 2624:09c4; shell_fly(1)
             again = 0
         case 2:                                        // CONTINUE A CAREER
-            if !roster_pick():  goto check_fly         // 13be:086e (S4)
-            if (s16)DS:4790 <= −1 and !campsel_run(0): goto check_fly     // 0fa1:02f9 (S4)
+            if !roster_pick():  goto check_fly         // 13be:086e (shell_ui_career)
+            if (s16)DS:4790 <= −1 and !campsel_run(0): goto check_fly     // 0fa1:02f9 (shell_ui_career)
             rng_seed_time(); DS:42C1 = rng_count()
             snd_stop(1002); snd_play(1010)
             2a85:0006; 2ab3:013b; 2624:0902; 2550:0679; 2777:0000
@@ -394,7 +394,7 @@ career_menu_run():
             again = 0
           check_fly:
             if DS:43D6: shell_fly(1)                   // also reached when the pick was cancelled (uses the old flag value)
-        case 3: best_careers_view()                    // 09a9:058f (S3)
+        case 3: best_careers_view()                    // 09a9:058f (shell_ui_options)
         case 4: again = 0
         default (Esc: DS:5FD2 stays 4): again = 0 — (switch index = 5FD2−1 > 3 → no case; 4 is the preset)
     while again
@@ -408,7 +408,7 @@ career_menu_run():
 ## 5. MISSION DEBRIEFING (`0637`, missdebr.c) — V
 
 Entry `debrief_run(char check_best)` (`0637:082a`); callers: `sim_end` (1), `09a9:0572` (0: view a
-recorded best mission, S3, which restores SIM.IN/SIM.OUT globals from a TOPMISS record first).
+recorded best mission, shell_ui_options, which restores SIM.IN/SIM.OUT globals from a TOPMISS record first).
 
 ### 5.1 What it shows
 
@@ -480,7 +480,7 @@ Groups: 0 ace duel (`%j`), 1 squadron dogfight, 2 CAP, 3 sweep, 4 scramble, 5 es
 
 | Address | Name | Behaviour |
 |---|---|---|
-| `0637:082a` | `debrief_run(check_best)` | stack: 12 s32 + 300-byte text buffer; `DS:426E = &values`; `DS:426A = bmp_load(res_name("officers",−1,"bmp"))`, `DS:426C = bmp_load("DEBRIEF.BMP")` (`168a:011c`); `debrief_build_values()`; `debrief_build_text(buf)`; `screen_open(22, debrief_draw_bg, B5h, 1)`; `hs_set_table(49b8:0011, 24)`; `hs_draw_all()`; if check_best: `09a9:072e()` (best.c: records the mission in TOPMISS, may show "Congratulations, you ranked number %r…", S3); `menu_run(debrief_frame)`; `ui_busy()`; `bmp_free(426A)`, `bmp_free(426C)` (`168a:04b1`); if `4B88 == 5 && 4B89 != 4`: `strtab_free()` |
+| `0637:082a` | `debrief_run(check_best)` | stack: 12 s32 + 300-byte text buffer; `DS:426E = &values`; `DS:426A = bmp_load(res_name("officers",−1,"bmp"))`, `DS:426C = bmp_load("DEBRIEF.BMP")` (`168a:011c`); `debrief_build_values()`; `debrief_build_text(buf)`; `screen_open(22, debrief_draw_bg, B5h, 1)`; `hs_set_table(49b8:0011, 24)`; `hs_draw_all()`; if check_best: `09a9:072e()` (best.c: records the mission in TOPMISS, may show "Congratulations, you ranked number %r…", shell_ui_options); `menu_run(debrief_frame)`; `ui_busy()`; `bmp_free(426A)`, `bmp_free(426C)` (`168a:04b1`); if `4B88 == 5 && 4B89 != 4`: `strtab_free()` |
 | `0637:07d2` | `debrief_draw_bg` | `screen_clear_panel(); draw_title_bar_for(DS:4B8E, 4B87 == 1 ? DS:477B : 0, str_get(0))` |
 | `0637:0809` | `debrief_frame` | `hs_dispatch(601A, 6018, 2033, 0); hs_present()` |
 | `0637:05f6` | `debrief_continue_cb` | `if btn_cb(): menu_set_result(1)` (Esc also ends `menu_run`) |
@@ -504,7 +504,7 @@ Transitions: CONTINUE / Enter / Esc → returns to the caller.
 
 ## 6. FLY HISTORIC MISSION (`0583`, flyhist.c) — V
 
-Entry `flyhist_run()` (`0583:03c2`), called by the single-mission menu `0b16` (`0b16:025a`, S3).
+Entry `flyhist_run()` (`0583:03c2`), called by the single-mission menu `0b16` (`0b16:025a`, shell_ui_options).
 Historic data (shell_data `sys\historic.c`, `1f85`): `hist_open` `1f85:00b7` (`HIST_<n>.DAT`
 records: word +0 campaign id; list of 8-byte entries {+0 name id, +2 `MISS<n>` number, +4
 `MT_HIST.BMP` frame, +6 service}), `histnm_open` `1f85:043b`, `histsn_open` `1f85:067b`, closes
@@ -571,14 +571,14 @@ loop:
     menu_run(flyhist_frame); ui_busy()
     switch DS:4268:
     6:  (service) svc = DS:4267; camp = DS:4266
-        s = choose_service(0)                                  // 1612:0388 (S5)
+        s = choose_service(0)                                  // 1612:0388 (shell_ui_mission)
         if s > −1 (signed): DS:4267 = s; flyhist_find_campaign()
              DS:053A = (DS:4266 == −1); if DS:053A: DS:4267 = svc; DS:4266 = camp
         else DS:053A = 0
-    4:  (campaign) c = choose_campaign(DS:4267)                 // 12a7:010d (S5)
+    4:  (campaign) c = choose_campaign(DS:4267)                 // 12a7:010d (shell_ui_mission)
         if c > −1: DS:4266 = c
     0Eh: goto quit                                             // RETURN TO MAIN (or Esc)
-    0Fh: DS:626B = 0; DS:62C5 = DS:4267; realism_run()         // 0a8d:07cb (S3), MREAL.PRF
+    0Fh: DS:626B = 0; DS:62C5 = DS:4267; realism_run()         // 0a8d:07cb (shell_ui_options), MREAL.PRF
     10h: if DS:4266 <= −1: break
         m = hist_entry_miss(DS:4266, lbox_selected())
         snario_load(res_name("MISS", m, "DAT"), 1)             // 1f06:015c; then 1f06:0269, 1f06:0782 (file → memory)
@@ -586,7 +586,7 @@ loop:
         ext_select(m > 58 ? 1 : 0)                             // MISS59+ come from the 1946 add-on
         histnm_close; histsn_close; hist_close; campaign_free; bmp_free(424C); bmp_free(424E)
         2624:0902; 2550:0679; 2ab3:013b; 2777:0000
-        hist_brief_run(m)                                      // 0c1d:03c6 (S3: briefing / pre-flight)
+        hist_brief_run(m)                                      // 0c1d:03c6 (shell_ui_options: briefing / pre-flight)
         2777:04df; 2ab3:057f; 2550:073f; 2624:09c4
         if DS:43D6: shell_fly(0)                               // does not return
         farfree(DS:5272:5274) if set, = 0; farfree(DS:5276:5278) if set, = 0
@@ -743,12 +743,12 @@ if st != DS:478C:
         snd_stop(−1); snd_play(1010); DS:4226 = 1
         textbox_movement(misc_relocated_text(buf))   // 1305:0546 "SQUADRON MOVEMENT": MISC.DAT 3 "Your squadron, %p, is being relocated."
         strcpy(DS:[42FA], name)
-        stations_close (2a85:02c1); 2a85:0006; bigmap_show (0d16:0b33, S2); 2a85:0216
+        stations_close (2a85:02c1); 2a85:0006; bigmap_show (0d16:0b33, shell_ui_flight); 2a85:0216
     else stations_close
 ac = squad_aircraft(DS:478E, DS:4304)                 // 2624:0219
 if ac != DS:478A:
     DS:478A = ac; snd_stop(−1); snd_play(1010); DS:4226 = 1
-    strtab_load("MISC.DAT"); 2777:0000; view_new_aircraft(DS:478A, DS:4776, 1) (0ddd:0cde, S4); 2777:04df; strtab_free()
+    strtab_load("MISC.DAT"); 2777:0000; view_new_aircraft(DS:478A, DS:4776, 1) (0ddd:0cde, shell_ui_career); 2777:04df; strtab_free()
 ```
 
 `misc_relocated_text(buf)` (`0874:0c8d`) and `misc_tour_text(buf)` (`0874:00d7`): load `MISC.DAT`,
@@ -786,11 +786,11 @@ career_after_mission(squad_done):
 
 | Address | Name | Behaviour |
 |---|---|---|
-| `0874:1039` | `career_continue(int sq)` | `wounded = 4229 & 4`; `stations_open`; `fstrcpy_n(buf[80] (local), station_name(DS:478C))`; `DS:42FA = buf`; `stations_close`; `campaign_free()`; `DS:0675 = 0`. If `sq > −1` (transfer): `DS:478E = −1`; if !wounded: `events_run(DS:4304, DS:477F, 0)`; `DS:478E = sq`; squadrons loaded (`0674`); `2777:0000; 2550:0679; 2a85:0006`; `squadinf_run(2)` (`07ba:08c2`, S2: new squadron); `bigmap_show()` (`0d16:0b33`); `2a85:0216; 2550:073f; 2777:04df`. Else if !wounded: `events_run(DS:4304, DS:477F, 1)` (with day advance). Finally if `0674`: `squad_free()`, `0674 = 0` |
+| `0874:1039` | `career_continue(int sq)` | `wounded = 4229 & 4`; `stations_open`; `fstrcpy_n(buf[80] (local), station_name(DS:478C))`; `DS:42FA = buf`; `stations_close`; `campaign_free()`; `DS:0675 = 0`. If `sq > −1` (transfer): `DS:478E = −1`; if !wounded: `events_run(DS:4304, DS:477F, 0)`; `DS:478E = sq`; squadrons loaded (`0674`); `2777:0000; 2550:0679; 2a85:0006`; `squadinf_run(2)` (`07ba:08c2`, shell_ui_flight: new squadron); `bigmap_show()` (`0d16:0b33`); `2a85:0216; 2550:073f; 2777:04df`. Else if !wounded: `events_run(DS:4304, DS:477F, 1)` (with day advance). Finally if `0674`: `squad_free()`, `0674 = 0` |
 | `0874:1270` | `career_campaign_end(u16 end)` → u8 | if `0674`: `squad_free()`, `0674 = 0`; `career_tour_end(end)`; `w = career_war_over()`; `cmptext_close()` (`287b:0686`); `campaign_free()`; `r = career_next_campaign(w)`; if `r == 0`: `DS:4790 = −1`; return r |
-| `0874:1113` | `career_tour_end(u16 end)` | `jump = DS:4235 == 1`; `wounded = 4229 & 4`; `saved = DS:478E`; `DS:4788 += 1`; if `DS:477B < end`: `DS:477F = DS:477B = end`; `DS:478E = −1`; if !wounded and !jump: `events_run(DS:4304, DS:477B, 0)`; `DS:478E = saved`; `textbox_campaign_end(misc_tour_text(buf))` (`1305:03f2`: text box titled with the campaign end date: MISC.DAT 0 "You have successfully completed your tour of duty with %p in %q campaign."); `cmptext_open()` (`287b:056a`); `campsel_show_text(cmptext(DS:4790))` (`287b:062a` → `0fa1:0600`, S4) |
+| `0874:1113` | `career_tour_end(u16 end)` | `jump = DS:4235 == 1`; `wounded = 4229 & 4`; `saved = DS:478E`; `DS:4788 += 1`; if `DS:477B < end`: `DS:477F = DS:477B = end`; `DS:478E = −1`; if !wounded and !jump: `events_run(DS:4304, DS:477B, 0)`; `DS:478E = saved`; `textbox_campaign_end(misc_tour_text(buf))` (`1305:03f2`: text box titled with the campaign end date: MISC.DAT 0 "You have successfully completed your tour of duty with %p in %q campaign."); `cmptext_open()` (`287b:056a`); `campsel_show_text(cmptext(DS:4790))` (`287b:062a` → `0fa1:0600`, shell_ui_career) |
 | `0874:11a9` | `career_war_over()` → u8 | `w = !campaign_left(DS:477B, DS:4776)` (`287b:04b5`: some campaign starting at or after the date has the service); if w: `e = enddate_get(DS:4779, 1)`; `events_run(min(DS:477B, e), e, 0)` (remaining events up to the war end, e.g. `WARENDA`); return w |
-| `0874:11ff` | `career_next_campaign(char w)` → u8 | `c = campset_available(DS:4776, DS:477B, DS:4779)` (`0a41:028d`, S3); `d = decision_run(w, c)` (`144e:029c`, S5); if `d == 1`: `DS:4779 = campset_choose(0)` (`0a41:01c1`); `d = DS:4779 != FFh ? 2 : 0`; if `d == 0`: **`DS:4778 = 1` (retired)**, `09a9:07ee()`, return 0; else `r = campsel_run(0)` (`0fa1:02f9`, S4: squadron assignment), `DS:0675 = 0`, return r |
+| `0874:11ff` | `career_next_campaign(char w)` → u8 | `c = campset_available(DS:4776, DS:477B, DS:4779)` (`0a41:028d`, shell_ui_options); `d = decision_run(w, c)` (`144e:029c`, shell_ui_mission); if `d == 1`: `DS:4779 = campset_choose(0)` (`0a41:01c1`); `d = DS:4779 != FFh ? 2 : 0`; if `d == 0`: **`DS:4778 = 1` (retired)**, `09a9:07ee()`, return 0; else `r = campsel_run(0)` (`0fa1:02f9`, shell_ui_career: squadron assignment), `DS:0675 = 0`, return r |
 | `0874:0f7d` | `career_exit_hook()` | run by `shell_exit` if the player quits (Alt-X…) during the events: if `(s16)DS:4790 > −1`: `DS:0675 = campaign_loaded()` (`287b:024c`); if not loaded: `campaign_load(DS:4779)`; if `!0674`: `squad_load()` (flag not set); `end = campaign_end_date(DS:4790)`; if `end <= DS:477B`: `DS:4790 = −1`; else: if `DS:478E == −1` or `squad_inactive(DS:478E, DS:477B)`: `DS:478E = career_pick_squadron(end)`; if −1: `DS:4790 = −1`, skip; else `squad_advance(DS:478E, &DS:477B, DS:477B)`; then `DS:478A = squad_aircraft(478E, 477B)`, `DS:478C = squad_station(478E, 477B)`. Always `pilot_save()` |
 
 `DS:42FA` points into `career_continue`'s stack frame; it is only dereferenced inside that call
@@ -849,7 +849,7 @@ Edges:
 ```
 PS main --(marker 3E7h, 048e)--> sim_end
 sim_end --(mode 2/3)--> [return] --> main menu
-sim_end --(KIA message, 0542:02bd)--> msg_show kind 1 (KILLED IN ACTION text box, S5 1305:044e)
+sim_end --(KIA message, 0542:02bd)--> msg_show kind 1 (KILLED IN ACTION text box, shell_ui_mission 1305:044e)
 sim_end --(0542:02ea)--> MISSION DEBRIEFING (22) --(09a9:072e: best-mission notice)--> …
 MISSION DEBRIEFING --(CONTINUE/Enter/Esc)--> sim_end
 sim_end --(0542:0321)--> msg_show kinds 2..6 (ceremonies 0f35:01d8, BOARD OF INQUIRY 1305:0487)
@@ -869,7 +869,7 @@ CAREER MENU --(START A CAREER, 0607:0181)--> new pilot (0ed9:0347) --> big map -
 CAREER MENU --(CONTINUE, 0607:0220)--> roster (13be:086e) --> [no campaign] campaign selection (0fa1:02f9) --> FLIGHT DECK --> shell_fly(1) | main menu
 CAREER MENU --(VIEW BEST CAREERS, 0607:02d6)--> best careers (09a9:058f) --> CAREER MENU
 CAREER MENU --(RETURN TO MAIN / Esc)--> caller (main menu, or sim_end's caller → main menu)
-VIEW WHICH? --(AIRPLANES 0 / SHIPS 1 / CANCEL FFh)--> main menu (which opens the viewer, S4 view.c)
+VIEW WHICH? --(AIRPLANES 0 / SHIPS 1 / CANCEL FFh)--> main menu (which opens the viewer, shell_ui_career view.c)
 FLY HISTORIC --(SERVICE)--> service chooser (1612:0388) ; --(CAMPAIGN)--> campaign chooser (12a7:010d)
              --(REALISM PANEL)--> realism (0a8d:07cb) ; --(BEGIN)--> briefing (0c1d:03c6) --> shell_fly(0) → AP | [return]
              --(RETURN TO MAIN / Esc)--> single-mission menu (0b16)
@@ -913,16 +913,16 @@ FLY HISTORIC --(SERVICE)--> service chooser (1612:0388) ; --(CAMPAIGN)--> campai
   `0f35`, `1305`); specced in §8. `sim_end` leaves `DS:051E = 1` on the career-over path
   (`0542:0363` jumps past the clear), so a later `shell_cleanup` sets `DS:4778 = 1` and saves again.
   `sim_end` returns to `main` for non-career missions, which then enters the main menu.
-* **S2**: `fltdeck_run` `0787:0181` is called from `sim_end` and the career menu; its result is
+* **shell_ui_flight**: `fltdeck_run` `0787:0181` is called from `sim_end` and the career menu; its result is
   `DS:43D6` (1 = FLY). `squadinf_run(2)` `07ba:08c2` (transfer), `bigmap_show` `0d16:0b33`.
-* **S3**: `09a9:07ee` (career over / retire: top aces + save), `09a9:072e` (best-mission check after the
+* **shell_ui_options**: `09a9:07ee` (career over / retire: top aces + save), `09a9:072e` (best-mission check after the
   debrief), `09a9:058f` (best careers), `0a41:028d` / `0a41:01c1` (campaign availability / choice),
   `0a8d:07cb` (realism), `0c1d:03c6(miss)` (historic briefing, may set `DS:43D6`).
-* **S4**: `0f67:0001` pilot_save, `0f67:021a/0252` event seen / mark (key = event id byte),
+* **shell_ui_career**: `0f67:0001` pilot_save, `0f67:021a/0252` event seen / mark (key = event id byte),
   `0f67:02ed` side group, `0f35:01d8(side, kind 0..3, far text)` ceremonies, `0ed9:0347` new pilot,
   `13be:086e` roster pick, `0fa1:02f9(0)` campaign / squadron selection, `0fa1:0600(far text)`
   campaign summary, `0ddd:0cde(aircraft, service, 1)` new-aircraft presentation.
-* **S5**: `1656:0008/0095` message records (§0.3) and the `1305` text boxes (`03f2` campaign end,
+* **shell_ui_mission**: `1656:0008/0095` message records (§0.3) and the `1305` text boxes (`03f2` campaign end,
   `044e` KIA, `0487` board of inquiry, `0546` squadron movement); `144e:029c(war_over, n)` decision;
   `1612:0388(0)` service chooser; `12a7:010d(service)` campaign chooser.
 * **video**: `3a73:0085(x, y, w, h, 1, src_page, dst_page, 0, 0, 0)` region dissolve used by the TTM

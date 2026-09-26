@@ -86,7 +86,6 @@ ps,func,0cfe:0057,display_subst,far char far *display_subst(char c),shell_ui,,"(
 ps,data,DS:0500,medal_awarded,char,shell_ui,,medal index of this mission or -1
 ps,data,DS:0501,promotion_rank,char,shell_ui,,new rank or -1
 ps,data,DS:0502,msg_queue,queue *,shell_ui,,post-mission message queue (0 = not built)
-ps,data,DS:0512,mission_success_bits,u8[12],shell_ui,,28 2C E0 16 1F 00 0B 0F 8A 4A 3C 0F
 ps,data,DS:051E,career_dirty,u8,shell_ui,,1 while a career result is being processed (shell_cleanup saves)
 ps,data,DS:053A,flyhist_no_missions,u8,shell_ui,,
 ps,data,DS:053B,flyhist_notice_delay,u8,shell_ui,,

@@ -1,0 +1,114 @@
+exe,kind,address,name,type,owner,other_names,notes
+ps,func,0c8a:0009,dg_load_faces,far dg_load_faces(),shell_ui,,"first call: `DS:43F2 = table_load(""aceface"", ""dat"", 8, 0, 11h, 1, …)` (fatal 66h), `DS:43F4 = table_count`, handles array zeroed, `DS:43F6 = 1`; then per record"
+ps,func,0c8a:018d,dg_free_faces,far dg_free_faces(),shell_ui,,"if loaded: `table_free`, free all bitmaps and the array, `DS:43F6 = 0`"
+ps,func,0c8a:01e4,dg_change_service,far dg_change_service(),shell_ui,,"`s = fly_for_choose(5)` (""WHO WILL YOU FLY AGAINST?""); `s != −1` → `DS:43F8 = s`; `dg_load_faces()`"
+ps,func,0c8a:0205,dg_subst,"far dg_subst(c, item far *it)",shell_ui,,"`c == 'a'`: `it.label` = copy of `strtab_get(0, DS:43F8 + 133)` in `DS:411A`; returns 0 (inline button)"
+ps,func,0c8a:0248,dg_btn_cb,far,shell_ui,,`if btn_cb()`: `DS:43F9 = 5FDE`; result 1
+ps,func,0c8a:0266,dg_service_cb,far,shell_ui,,"`dg_subst(5FDE, item)`; mask 74h; `if choose_entry_cb()`: `DS:0928 = 1`"
+ps,func,0c8a:0295,dg_draw_scroll,far,shell_ui,,"`draw_bevel_box()`; colour C0h rect (x+4, y+25, 18, 15)"
+ps,func,0c8a:02c2,dg_draw_prompt,far,shell_ui,,"FONT3; `flow_text_buttons(4b01:000f, 2, dg_subst, {str_get(3), 0}, x, y, x+w)`; mask 40h"
+ps,func,0c8a:0321,dg_draw_face,far,shell_ui,,`acelist_select(0)`; `DS:43F7 = acelist_id(lbox_selected())`; record r with `first ≤ id ≤ last` (fatal 12Ah if none); `draw_inset_box2()`; bitmap not loaded → f
+ps,func,0c8a:042a,dg_draw_bio,far,shell_ui,,"FONT3, `2302 = 1`; `rect_grow(4); draw_popup_box(); rect_shrink(4)`; `flow_setup(−3, 8, 1)`; `flow_text(acetxt_bio(DS:43F7), 1, 0)`; mask 40h"
+ps,func,0c8a:04a0,dg_draw_row,"far dg_draw_row(i, y)",shell_ui,,"`acelist_select(0)`; `a = acelist_id(i)`; insignia `DS:5FE4[side(ace_service(a)) + 16]` at (x+5, y); `ace_name(a)` at (x+15, y); `itoa(ace_kills(a))` at (x+w−15"
+ps,func,0c8a:0571,dg_draw_bg,far,shell_ui,,"`screen_clear_panel()`; `draw_title_bar_for(DS:43F8, 0, str_get(0))`"
+ps,func,0c8a:0594,dg_frame,far,shell_ui,,"dispatch + present; if `DS:0928`: `dg_change_service()`, `DS:43F9 = 2`, `DS:0928 = 0` (the service chooser's own result ends this `menu_run`: L); else result 2 "
+ps,func,0c8a:05db,dogace_choose,far dogace_choose(),shell_ui,,below
+ps,func,0ddd:0006,vw_pitch,far vw_pitch(t),shell_ui,,`PITCH_` record fields +0 / +2 / +4 (the first two return 0 for ships)
+ps,func,0ddd:0039,vw_viewable,far vw_viewable(t),shell_ui,,`PITCH_` record fields +0 / +2 / +4 (the first two return 0 for ships)
+ps,func,0ddd:0060,vw_variant,far vw_variant(t),shell_ui,,`PITCH_` record fields +0 / +2 / +4 (the first two return 0 for ships)
+ps,func,0ddd:0094,vw_model_name,far vw_model_name(t),shell_ui,,`strpool_copy(DS:4458[t])` (base name of the 3D model: used by `view3d_load_model`)
+ps,func,0ddd:00b5,vw_draw_view,far,shell_ui,,"`vw_render(0)`; `draw_title_bar_for(DS:446D, DS:4462, DS:4460)`; mask 40h; `hs_load(table, 1)` (rect of item 1), `draw_bottom_bar()`, `hs_load(table, 0)`"
+ps,func,0ddd:010c,vw_draw_panel,far,shell_ui,,`tile_fill_rect(); draw_frame(); draw_bottom_bar()`
+ps,func,0ddd:0120,vw_diamond_cb,far,shell_ui,,"not pressed: `draw_diamond_up()`. Pressed (`5FDC & 4`): pages work→spare, `vw_save_strips()`; pages front→work; `draw_diamond_down()`; `cursor_draw(601A, 6018)`"
+ps,func,0ddd:0286,vw_draw_text,far,shell_ui,,"`draw_inset_box(); rect_shrink(3)`; FONT3; `2300 = CCh`; `flow_setup(0, 6, 1)`; `flow_text(DS:445C, 1, 0)`"
+ps,func,0ddd:02d4,vw_btn_cb,far,shell_ui,,"`if btn_cb()`: PREVIOUS → `DS:446E−−`, NEXT → `DS:446E++` (item 0 mask := 3), result 1; CONTINUE → result 2"
+ps,func,0ddd:0323,vw_select,far vw_select(force),shell_ui,,"if `DS:446E != DS:446F`: step in the direction of the change until a valid type or back at `DS:446F`: forward `i = i % n`, backward `i = (i + n) % n`, then whil"
+ps,func,0ddd:04de,vw_save_strips,far vw_save_strips(),shell_ui,,"`copy_rect(0, 0, 320, 28)`; `copy_rect(0, y1, 320, 200 − y1)` (y1 = item 1's y)"
+ps,func,0ddd:051e,vw_set_center,far vw_set_center(y0),shell_ui,,"3Space projection centre (`3d50:3E91/3E93`) = (view.+0A + view.+0E/2, view.+0C − y0 + view.+10/2)"
+ps,func,0ddd:0552,vw_draw_sky,far vw_draw_sky(y0),shell_ui,,"quad xs = (0, 319, 319, 0), ys = (85, 85, 83, 83); y0 = max(arg, 14); colour c = 7Fh; for i < 15 while ys[0] > y0: `fill_poly(4, xs, ys)` colour c; ys[0] = ys[1"
+ps,func,0ddd:064b,vw_camera,"far vw_camera(recompute, full)",shell_ui,,"recompute: d = `view3d_distance()`; aircraft: `09AC = max(DS:4464, d)`, `09AE = min(d·3, 850)` (`(d·C00h) >> 10`, long); ships: `09AC = d`, `09AE = d·3`; `09AC "
+ps,func,0ddd:07c1,vw_render,far vw_render(y0),shell_ui,,"`3d50:237b(view)`; view.+0C = y0; `vw_set_center(y0)`; clip (0, y0)–(319, y1−1), off while `vw_draw_sky(y0)`, on for `view3d_draw_scene()` (`3d50:3DF8 = 1`), of"
+ps,func,0ddd:0824,vw_pitch_load,far vw_pitch_load(),shell_ui,,"aircraft only: `DS:4456 = table_load(""pitch_"", ""dat"", 6, 0Fh, 9, 1, …)` (fatal 2D5h) / `table_free`"
+ps,func,0ddd:0884,vw_pitch_free,far vw_pitch_free(),shell_ui,,"aircraft only: `DS:4456 = table_load(""pitch_"", ""dat"", 6, 0Fh, 9, 1, …)` (fatal 2D5h) / `table_free`"
+ps,func,0ddd:089a,vw_names_aircraft,far vw_names_aircraft(t),shell_ui,,"t == −1 → `2777:0000` (aircraft data); `pltxt_open()`; `DS:445A = 2777:0097()`; `DS:4458 = namelist_load(""pfname"", DS:43B4, 159, 15)`; `vw_pitch_load()`"
+ps,func,0ddd:08d7,vw_names_ships,far vw_names_ships(),shell_ui,,"`shiptxt_open()`; `DS:445A = shiptxt_count()`; `DS:4458 = namelist_load(""sfname"", DS:43B4, 115, 10)`"
+ps,func,0ddd:0905,vw_links,far vw_links(browse),shell_ui,,"item 5 link 3 = browse ? 8 : 10; item 10 links 0, 2 = browse ? 9 : 5"
+ps,func,0ddd:094c,vw_nav,far vw_nav(t),shell_ui,,"t ≥ 0 (one type): item 10 x = 123, items 8, 9 hidden (mask/flags 0), `DS:446F = DS:446E = t`, `vw_links(0)`; else item 10 x = 223, items 8, 9 = 74h/82h, `DS:446"
+ps,func,0ddd:09cf,vw_limits,"far vw_limits(navy, side)",shell_ui,,"aircraft: `09AE = 850`; land service: `09AC = DS:4464 = 350`, `09A2 = 0`, `09A4 = 4000h`, `09A8 = 2`, `09AA = 0`; navy (service 0 or 3): `09AC = DS:4464 = 375`,"
+ps,func,0ddd:0a6c,vw_open,"far vw_open(t, aircraft)",shell_ui,,"`DS:4470 = aircraft`; aircraft: `vw_names_aircraft(t)`, `vw_nav(t)`, `09A0 = navy ? 84h : 6Bh`, `DS:4462 = t ≥ 0 ? DS:477F : 0`; ships: `vw_names_ships()`, `DS:"
+ps,func,0ddd:0b99,vw_close,far vw_close(t),shell_ui,,aircraft: t == −1 → `2777:04df`; `pltxt_close()`; ships: `shiptxt_close()`; `namelist_free(DS:4458)`; `view3d_done(); view3d_unload_model(); 48ea:0133()`; aircr
+ps,func,0ddd:0be5,vw_frame,far,shell_ui,,dispatch + present (Esc = result 2 ends the viewer)
+ps,func,0ddd:0c06,vw_run,far vw_run(message),shell_ui,,"`first = 1`; until `menu_run` returns 2: `vw_select(0)`; `vw_camera(first, 1)`; `first = 0`; item 0 mask := 3; `hs_draw_all(); hs_push()`; if `message`: `copy_w"
+ps,func,0ddd:0c95,vw_screen,far vw_screen(browse),shell_ui,,"`screen_open(25, screen_clear_black, 30h, 1)`; `hs_set_table(4b1e:000d, 11)`; focus browse ? 9 : 10"
+ps,func,0ddd:0cde,view_vehicle,"far view_vehicle(t, service, message)",shell_ui,,"`DS:4460` = stack buffer; `DS:446D = service`; `DS:446C = side(service)`; `vw_open(t, 1)`; `vw_screen(t == −1)`; `vw_run(message)`; `vw_close(t)`. Callers: main"
+ps,func,0ddd:0d2f,view_ship,far view_ship(nation),shell_ui,,"`DS:446C = DS:4775 = nation` (**overwrites the career side group**: harmless outside a career, L); `DS:446D = nation == 1 ? 0 : 3`; `vw_open(0, 0)`; `vw_screen("
+ps,func,0eb4:0076,cal_draw_row,"far cal_draw_row(i, y)",shell_ui,,"`draw_text(strtab_get(0, DS:4473[i]), x+5, y)`"
+ps,func,0eb4:00b9,cal_build,far cal_build(),shell_ui,,"`DS:4473..4476 = FFh`, n = `DS:4472` = 0; control device `DS:43BA`: 1 → {0}; 3 → {1, 2}; 2 → {3}; rudder `DS:43BB`: 1 → 6, 2 → 4; throttle `DS:43BC`: 1 → 6 unle"
+ps,func,0eb4:01e4,cal_frame,far,shell_ui,,dispatch + present
+ps,func,0eb4:0205,cal_choose,far cal_choose(),shell_ui,,"`cal_build()` == 0 → 0; n == 1 → `DS:4473[0] + 1`; else `dlg_run(4b2e:0000, 8, cal_frame)`; not ACCEPTed → 0; else `DS:4473[lbox_selected()] + 1`"
+ps,func,0ed9:0017,nw_draw_title,far,shell_ui,,"`draw_title_bar_for(DS:4776, DS:477B, str_get(3) ""START A CAREER"")`; mask 40h"
+ps,func,0ed9:0040,nw_btn_cb,far,shell_ui,,`if btn_cb()`: `DS:45B0 = 5FDE`; result `5FDE == 8 ? 1 : 2`
+ps,func,0ed9:006a,nw_on_ok,far nw_on_ok(sel),shell_ui,,"item 3: `DS:45B6 = sel`, `DS:477B = date_to_days(DS:4478 + 9·DS:4776 + 3·sel)` (`284f:0007`); item 5: `DS:4777 = DS:45AF + sel`, `DS:45B1 = sel`, `DS:47BD = ran"
+ps,func,0ed9:010b,nw_edit,far nw_edit(),shell_ui,,"switch on `5FDE` (table `0ed9:0197`): 3 → item.user = 3, `choose_run(nw_on_ok, DS:45B6, 100 + 3·DS:4776)` (""February of 1942""…); 4 → `text_entry(0, DS:4754, 15,"
+ps,func,0ed9:019f,nw_slot_label,"far nw_slot_label(kind, item far *it)",shell_ui,,3 → row0[100 + 3·service + `DS:45B6`] copied to `DS:411A`; 4 → `DS:4754` (the name itself); 5 → row0[`DS:4777` + 51]; 6 → row0[`DS:4776` + 133]
+ps,func,0ed9:0223,nw_subst,"far nw_subst(c, it)",shell_ui,,"`nw_slot_label(c − 5Eh, it)` (`%a` → item 3 …)"
+ps,func,0ed9:023f,nw_slot_cb,far,shell_ui,,refresh the label; mask 74h; `if choose_entry_cb()`: `nw_edit(); hs_restart()`
+ps,func,0ed9:0272,nw_draw_text,far,shell_ui,,"`tile_fill_rect()`; FONT3, `2302 = 1`; `flow_text_buttons(4b39:0000, 3, nw_subst, DS:45B2, x+20, y+8, x+w−20)`; `draw_bottom_bar()`; mask 40h"
+ps,func,0ed9:02d2,nw_frame,far,shell_ui,,`rng_next()` (`24b7:000c`: the RNG is stirred every frame while the player types); dispatch + present; Esc → `DS:45B0 = 7`
+ps,func,0ed9:0307,pilot_add,far pilot_add(),shell_ui,,`DS:47CB` = Σ of the roster pilots' list lengths (+79h) (the new pilot's event list starts at the end of the blob); `DS:47CD = 0`; `DS:4A18++`; `pilot_store()`
+ps,func,0ed9:0347,pilot_new,far pilot_new(),shell_ui,,below
+ps,func,0ed9:05b3,nw_init,far nw_init(),shell_ui,,"`hs_default_links(4b39:0000, 9)`"
+ps,func,0f67:0001,pilot_store,far pilot_store(),shell_ui,,roster[`DS:4774`] = `DS:4754` (122 bytes)
+ps,func,0f67:0024,pilot_delete,far pilot_delete(i),shell_ui,,"`off = roster[i].+77h`, `len = roster[i].+79h`; for j = i+1 … n−1: `acc += roster[j].+79h`; `roster[j].+77h = roster[j−1].+77h`; `roster[j−1] = roster[j]`; `ros"
+ps,func,0f67:00f9,pilot_backup,far pilot_backup(char *name),shell_ui,,"BACKUP CAREER: if `DS:4A18 < 13`: `s = DS:47CB + Σ_{j = DS:4774}^{n−1} roster[j].+79h`; `s + DS:47CD > 512` → fatal 62h; `memmove(blob+s, blob+DS:47CB, DS:47CD)"
+ps,func,0f67:021a,pilot_event_seen,far pilot_event_seen(c),shell_ui,,c occurs in `DS:47CE[DS:47CB .. DS:47CB + DS:47CD)`
+ps,func,0f67:0252,pilot_event_add,far pilot_event_add(c),shell_ui,,"for j = `DS:4774` … n−1: `acc += roster[j].+79h`, `roster[j].+77h += 1`; `DS:47CB + acc > 1FFh` → fatal 9Ah; `memmove(blob+DS:47CB+1, blob+DS:47CB, acc)`; `blob"
+ps,func,0f67:02ed,service_side,far service_side(s),shell_ui,,table above
+ps,func,0f67:033b,service_available,far service_available(s),shell_ui,,"s is in `DS:49CE[11]` (s16 list of the services of the installed data sets, filled by shell_data)"
+ps,func,0f67:036b,nation_available,far nation_available(n),shell_ui,,"some `DS:49CE[i]` (until −1, i ≤ 10) has `service_side == n`"
+ps,func,0fa1:005b,cs_draw_header,far,shell_ui,,"name `287b:026e(DS:4A24)`; date text `284f:026b(DS:4A22)`; colours C3h; `SIMQ_HDL`: name centred at y+4, underline (x, y+14)–(x+width, y+14); `SIMQ_SML`: date c"
+ps,func,0fa1:0112,cs_draw_text,far,shell_ui,,"`2300 = C3h`; `flow_setup(0, 8, 1)`; `flow_text(DS:4A1E, 1, 0)`"
+ps,func,0fa1:0192,cs_cmp,"far cs_cmp(a, b)",shell_ui,,"`287b:0389(*a) − 287b:0389(*b)` (by start date, for `qsort`)"
+ps,func,0fa1:01c8,cs_build_list,far cs_build_list(),shell_ui,,`DS:0A64 = 287b:0256()`; `DS:0A66 = xmalloc`; for k from `287b:053f()` (first campaign of the set) over `DS:0A64`: `287b:051f(k) && 287b:0389(k) >= DS:477B && 2
+ps,func,0fa1:02c8,cs_frame,far,shell_ui,,dispatch + present; Esc → `DS:5FD2 = 3`
+ps,func,0fa1:02f9,campsel_run,far campsel_run(new_career),shell_ui,,below
+ps,func,0fa1:055a,cs_review_layout,far cs_review_layout(),shell_ui,,"review: items 1, 2, 4 hidden, item 0 label 1, item 3 label 6 at x 125; normal: 74h/82h, labels 0 / 4, x 164"
+ps,func,0fa1:05ad,cs_normal_layout,far cs_normal_layout(),shell_ui,,"review: items 1, 2, 4 hidden, item 0 label 1, item 3 label 6 at x 125; normal: 74h/82h, labels 0 / 4, x 164"
+ps,func,0fa1:0600,campsel_show_text,far campsel_show_text(far text),shell_ui,,"`DS:4A24 = DS:4790`; review layout; side items; fonts; `screen_show(side ? 15 : 16, 88h, 1)`; table; `DS:4A22 = 287b:03e1(DS:4790)` (end date); text; `hs_draw_a"
+ps,func,135d:0009,pr_btn_cb,far,shell_ui,,"item 23 (106,132,107,18) str 12 ""CONTINUE"": `if btn_cb()`: result 1"
+ps,func,135d:0021,pr_draw_insignia,far,shell_ui,,"items 24, 25 (9 / 257, −47, 45,37): `tile_fill_rect(); draw_header_panel()`; `INSIGNIA.BMP[DS:4776]` centred (+3 x)"
+ps,func,135d:0093,pr_draw_nameplate,far,shell_ui,,"item 26 (56,−19,199,18): `sprintf(DS:419A, ""%Fs %s"", rank title far DS:57A2[DS:4777], DS:4754)`, uppercased → label; `draw_header_panel()`; symbols `DS:5FE4[sid"
+ps,func,135d:030f,pr_draw_medals,far,shell_ui,,"item 21 (10,71,292,56): `draw_popup_box()`; rules C7h (35,123)–(117,123), (52,125)–(117,125), (196,123)–(281,123), (196,125)–(264,125) and B1h one row lower; 1-"
+ps,func,135d:04a6,pr_draw_bg,far,shell_ui,,"`screen_clear_panel()`; `draw_title_bar_for(DS:62C5, DS:6277, str_get(13) ""PILOT RECORD"")` (sic: the mission header's service and date, not the pilot's)"
+ps,func,135d:04cb,pr_frame,far,shell_ui,,dispatch + present
+ps,func,135d:04ec,pilot_record,far pilot_record(),shell_ui,,"`DS:4D52 = bmp_load_planes(""medals.bmp"")`; `DS:4D50 = bmp_load_planes(""insignia.bmp"")`; `file_read_n(DS:4E9E, 4, 20, ""medlocs.dat"")` (20 × {s16 y, s16 w}); `str"
+ps,func,135d:0600,pr_init,far pr_init(),shell_ui,,"`hs_default_links(4bf2:0000, 27)`"
+ps,func,13be:0161,ro_draw_row,"far ro_draw_row(i, y)",shell_ui,,"`r = roster[i]`: insignia `DS:5FE4[r.+21h + 16]` at (x+5, y); `strtab_get(3, r.+23h)` (rank abbreviation, `STRINGS_.DAT` row 3) + "" "" + name at x+15; date text "
+ps,func,13be:02c5,ro_subst,far ro_subst(),shell_ui,,"""<rank abbr> <name>"" of the selected pilot in `DS:419A` (request-box substitution)"
+ps,func,13be:0339,ro_frame,far,shell_ui,,below
+ps,func,13be:04e0,ro_draw_bg,far,shell_ui,,"`screen_clear_panel()`; `draw_title_bar_for(sel.+22h service, sel.+2Bh date, str_get(11) ""CAREER ROSTER"")`"
+ps,func,13be:052a,roster_run,far roster_run(delete_once),shell_ui,,below
+ps,func,13be:075a,ro_links_manage,far ro_links_manage(),shell_ui,,"copies the link bytes of items 7, 8, 9, 11, 10 from the tables `DS:0E5D/0E65/0E6D/0E75/0E7D` (low bytes of 4 words each)"
+ps,func,13be:07c3,roster_manage,far roster_manage(keep),shell_ui,,"`strtab_load(""strings_.dat"")`; `DS:4EF1 = keep ? DS:4774 : −1` (the current pilot); title ids `DS:4EEE = &{0, 1}`; x of items 9, 10, 11 = 16, 228, 122; item 12 "
+ps,func,13be:086e,roster_pick,far roster_pick(),shell_ui,,"`squad_open()`; `strtab_load(""strings_.dat"")`; `DS:4EF1 = FFh`; titles `&{2, 3}`; x of items 9, 10, 11 = 7, 85, 162; item 12 = 74h/82h; `DS:4EF0 = 12`; `hs_defa"
+ps,func,0eb4:000c,cal_draw_title,far void(void),shell_ui,,"FONT4 text_engrave(label, C1h, B1h, C0h, x, y)"
+ps,func,0eb4:004a,cal_btn_cb,far void(void),shell_ui,,"btn_small_cb(0) → DS:4477 = (5FDE == 7); result 1"
+ps,func,0ed9:0008,nw_draw_panel,far void(void),shell_ui,,tile_fill_rect; draw_frame
+ps,func,0f35:000c,aw_draw_window,far void(void),shell_ui,,"draw_titled_panel; 17 rivets at x+3 / x+w-6, y+20"
+ps,func,0f35:004e,aw_draw_text,far void(void),shell_ui,,"popup box; FONT3; flow_setup(3,7,1); flow_text(DS:45B8, 1, display_subst)"
+ps,func,0f35:00af,aw_draw,far void(char tm),shell_ui,,"draw callbacks of items 0-3; tm: copy to spare + TTM region 3a73:000d/0085"
+ps,func,0f35:012d,aw_load_ttms,far void(void),shell_ui,,"TTMS<n>.DAT 69-byte records -> DS:45BC[side][kind] (17 bytes: name[9], last, nrand, span, end_frame)"
+ps,func,0f35:01d8,award_ceremony,"far void(char side, char kind, char far *text)",shell_ui,,"screen 53 RESULTS; TTM from DS:45BC; kind 2 also AWRDMED.TTM"
+ps,func,0fa1:0002,cs_draw_prompt,far void(void),shell_ui,,popup box; FONT3; centred engraved label if any
+ps,func,0fa1:0039,cs_btn_cb,far void(void),shell_ui,,"btn_small_cb(0) → DS:5FD2 = 5FDE; result 1"
+ps,func,0fa1:0147,cs_side_items,far void(void),shell_ui,,"side 0: items 5,6 hidden, 7,8 shown (else reverse); hs_default_links(4bb0:0010, 9)"
+ps,func,135d:012c,pr_draw_label,far void(void),shell_ui,,"FONT3 text_engrave(label, C7h, B1h, C0h, x, y+1)"
+ps,func,135d:0170,pr_draw_field,far void(void),shell_ui,,"draw_inset_box2; FONT3 CCh label at (x+5, y+3)"
+ps,func,135d:01bb,pr_draw_value,far void(void),shell_ui,,value of the pilot record field (switch 135d:02e9) into DS:419A
+ps,func,13be:0009,ro_btn_cb,far void(void),shell_ui,,"btn_cb → DS:4EF0 = 5FDE; result 1"
+ps,func,13be:0027,ro_draw_window,far void(void),shell_ui,,tile_fill_rect; draw_bevel_box; rivets
+ps,func,13be:006e,ro_draw_scroll,far void(void),shell_ui,,"bevel box; C0h rect (x+4, y+25, 18, 35)"
+ps,func,13be:009b,ro_draw_title,far void(void),shell_ui,,two centred lines str_get(DS:4EEE[k])
+ps,func,13be:011c,ro_draw_header,far void(void),shell_ui,,FONT3 str_get(DS:0E57[item.user]) column header
+ps,global,DS:4775,career_side,u8,shell_ui,,side group of the current pilot's service (0f67:02ed); overwritten by view_ship
+ps,global,DS:45BC,award_ttms,u8[6][4][17],shell_ui,,from TTMS<n>.DAT

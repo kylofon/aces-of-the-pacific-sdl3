@@ -182,3 +182,10 @@ ps,func,307d:010d,flt_pick_cb,far,shell_ui,,`btn_small_cb(1)`; activated → `60
 ps,func,307d:0159,flt_build,far flt_build(names[]),shell_ui,,"copies the pilot names into items 2…; copies the template items `4ce8:0011+22k` to `4ce8:00AB+22k` for the visible count; last entry label ""ACCEPT"" (DS:2181)"
 ps,func,307d:020f,flt_roster,"far flt_roster(cb_off, cb_seg, char *pilots, enemy)",shell_ui,,"`6084 = enemy`, `6085 = item.user` (flight size ≤ 4, fatal F2h); window h = (enemy ? 50 : 30) + 20·n; names: pilot code < 4 → `strtab_get(0, code)`, else `2550:"
 ps,func,307d:0376,flt_init,far flt_init(),shell_ui,,"`hs_default_links(4ce8:0011, 7)`"
+ps,func,2e25:0049,menu_poll,far void(void),shell_ui,,input polling of menu_run (toolkit §4.1)
+ps,func,2e8a:0009,screen_draw_bg_sentinel,far void(void),shell_ui,,empty function; its far address passed as draw_fn to screen_open means draw the SCR background (toolkit §5.2)
+ps,func,2e8a:0164,screens_load,far void(void),shell_ui,,loads SCREENS<n>.DAT screen table (toolkit §5.1)
+ps,func,2ed6:000d,choose_draw_title,far void(void),shell_ui,,"CHOOSE list title ""CHOOSE"" + rivet groups (toolkit §6.1 item 1)"
+ps,func,2fa5:000a,lbox_stub,far void(void),shell_ui,,empty function at the head of listbox.c; no call site found (index lists 0a71:015c as caller: stale)
+ps,func,2fa5:0687,lbox_draw_window,far void(void),shell_ui,,tile_fill_rect; draw_frame (toolkit §6.3 item 0)
+ps,func,2fa5:0696,lbox_draw_title,far void(void),shell_ui,,"FONT3, 2302 = 3, text_engrave(label, C7h, B1h, C0h, x, y) (toolkit §6.3 item 1)"

@@ -1,0 +1,73 @@
+exe,kind,address,name,type,owner,other_names,notes
+ps,func,06c7:0000,fm_poll_skip,far fm_poll_skip(),shell_ui,,"`k = kbd_getkey()`; `DS:6017 = k & FFh`, `DS:6016 = k >> 8` (scan); `if menu_hotkey(scan)` → returns an **uninitialised** local (PORT: return 0); else `skip = s"
+ps,func,06c7:00c5,fm_draw_area_name,far,shell_ui,,"`draw_inset_box2()`; FONT3 (`DS:421E`); `2302 = 1`; `2300 = CCh`; `draw_text(DS:4275, x+3, y+3)`"
+ps,func,06c7:00fd,fm_btn_cb,far,shell_ui,,`if btn_small_cb(0)`: `menu_set_result(5FDE == 3 ? 1 : 2)`
+ps,func,06c7:0125,fm_bearing,"far fm_bearing(wp *a, wp *b)",shell_ui,,"`ang = 3d50:225a(b.x − a.x, b.z − a.z)` (32-bit differences; `3d50:225a` = atan2 returning a 16-bit binary angle, 4000h = +z axis — shell_data math); `t = 1 − ("
+ps,func,06c7:019e,fm_miles,"far fm_miles(wp *a, wp *b)",shell_ui,,"`3d50:01e6(a, b)` (32-bit distance between the two points, shell_data math) `/ 21128` (LUDIV, unsigned)"
+ps,func,06c7:01d2,fm_feet,far fm_feet(long alt),shell_ui,,`alt / 4` (signed LDIV)
+ps,func,06c7:01eb,fm_to_screen,"far fm_to_screen(int *sx, int *sy, long x, long z)",shell_ui,,`sx = (s16)((x · 147) / 25344000) + 26 + 73`; `sy = −(s16)((z · 147) / 25344000) + 16 + 73` (LXMUL + signed LDIV each; 25344000 = 182B800h; the map picture is d
+ps,func,06c7:0251,fm_heading_frame,far fm_heading_frame(u8 heading),shell_ui,,`(u8)(heading + 16) >> 5`
+ps,func,06c7:026b,fm_frame,far,shell_ui,,"`hs_dispatch(601A, 6018, 2033, 0); hs_present()`"
+ps,func,06c7:028c,fm_draw_flight,far fm_draw_flight(rec *f),shell_ui,,"`fm_to_screen(&x, &y, f.x, f.z)`; class c = `(s8)f[0]`: 0 ≤ c ≤ 2: frame `c·8 + fm_heading_frame(f[1])`, offset (−4, −4); c ≥ 5: frame `c + 21`, offset (−4, −2)"
+ps,func,06c7:033a,fm_draw_flights,"far fm_draw_flights(rec *f, n)",shell_ui,,"`DS:4272 = bmp_load_planes(res_name(""fltmap"", −1, ""bmp""))`; `do { n--; fm_draw_flight(&f[n]); } while (n)` (last to first; n = 0 would loop 65536 times — never "
+ps,func,06c7:037b,fm_popup_measure,"far fm_popup_measure(far text, int *h, has_nav, has_alt)",shell_ui,,"`flow_setup(0, 7, 0)` (measure only); `5FD6 −= 10`; `h = text ? flow_text(text, 1, 0) : 0`; `if (!has_nav && !has_alt) h += 10; else { if (has_nav) h += 23; if "
+ps,func,06c7:03ec,fm_popup,"far fm_popup(far text, bearing, miles, long feet)",shell_ui,,below
+ps,func,06c7:068f,fm_draw_leg,"far fm_draw_leg(x0, y0, x1, y1)",shell_ui,,"if the points differ: wait until `fm_poll_skip()` returns 0 (key release); DDA along the major axis (`dx = x1−x0`, `dy = y1−y0`; \"
+ps,func,06c7:0854,fm_route,"far fm_route(wp *w, n)",shell_ui,,"`hs_push()`; FONT3; `fm_to_screen(&x0, &y0, w[0])`; `DS:05B7 = 0`; `fm_popup(w[0].text, 0, 0, 0)` (start point: text only); for i = 1; i < n && !`DS:05B7`: `fm_"
+ps,func,06c7:099b,fm_clear_route,far fm_clear_route(),shell_ui,,`copy_spare_to_work(); copy_work_to_front()` (the clean map was cached in the spare page)
+ps,func,06c7:09aa,fm_draw_map,"far fm_draw_map(flights, n, area)",shell_ui,,"pages front→work; `bmp = bmp_load_planes(res_name(sprintf(""w%d"", area), −1, ""bmp""))`; `draw_bitmap(frame 0, 26, 16, 0)`; `bmp_free`; `fm_draw_flights(flights, n"
+ps,func,06c7:0a25,fm_area_name,far fm_area_name(char *buf),shell_ui,,"`DS:427B = str_get(3)`, `DS:4279 = str_get(4)`, `DS:4277 = str_get(2)`; `s = table_load(""wldnms"", ""dat"", 2, 3, 12h, 5, …)` (fatal 36Eh if 0); `rec = table_rec(s"
+ps,func,06c7:0b14,fltmap_show,"far fltmap_show(rec *flights, n_flights, wp *wps, n_wps, area)",shell_ui,,below
+ps,func,0787:0006,fd_load_layout,far fd_load_layout(),shell_ui,,above
+ps,func,0787:00e7,fd_draw_window,far,shell_ui,,"`draw_titled_panel()`; `draw_rivets(x+3, y+18, 21)`; `draw_rivets(x+w−6, y+18, 21)`"
+ps,func,0787:0129,fd_btn_cb,far,shell_ui,,`if btn_cb()`: `snd_play(18h)`; `DS:42C0 = 5FDE`; `menu_set_result(1)`
+ps,func,0787:0151,fd_frame,far,shell_ui,,dispatch + present; result 2 (Esc) → `DS:42C0 = 7`
+ps,func,0787:0181,flight_deck,far flight_deck(),shell_ui,,below
+ps,func,0787:031b,fd_init,far fd_init(),shell_ui,,"`hs_default_links(49e3:0010, 8)` — **not called** (no caller; `dialogs_init` does not list it: the table keeps its file links)"
+ps,func,07ba:0004,si_draw_prompt,far,shell_ui,,"`draw_popup_box()`; FONT3; `text_engrave_center(label, C1h, B1h, C0h)`"
+ps,func,07ba:0034,si_btn_cb,far,shell_ui,,`if btn_small_cb(0)`: `DS:5FD2 = 5FDE`; result 1
+ps,func,07ba:0056,si_draw_header,far,shell_ui,,"`2300 = 18h`, `230E = C3h`; font `DS:42C6`: `DS:42DC` centred at y+4, `DS:42DE` centred at y+16; font `DS:42C8`: `DS:42E0` centred at y+32, `DS:42E2` centred at"
+ps,func,07ba:01b4,si_draw_cell,far,shell_ui,,"colour C3h: rectangle outline (x, y, x+w, y+h) and a divider at x+72"
+ps,func,07ba:0230,si_draw_field,far,shell_ui,,"`si_draw_cell()`; font `DS:42C8`; label right-aligned at x+69−width, y+2, colour C3h; value colour 18h at (x+76, y+2): `DS:42CE[5FDE − (DS:4775 ? 7 : 12)]`"
+ps,func,07ba:02ad,si_draw_aces,far,shell_ui,,"as `si_draw_field` for the label; names `DS:42D4[k]` (k < 4, stop at the first empty) at (x+75, y+3 + k·`gfx_font_width(FONT3)`)"
+ps,func,07ba:0351,si_str_row4,far,shell_ui,,"`fstrcpy_n(buf, strtab_get(4 / 5 / 7, idx))` (`STRINGS_.DAT` rows: 4 squadron roles, 5 services, 7 pilot qualities); return buf"
+ps,func,07ba:037a,si_str_row5,far,shell_ui,,"`fstrcpy_n(buf, strtab_get(4 / 5 / 7, idx))` (`STRINGS_.DAT` rows: 4 squadron roles, 5 services, 7 pilot qualities); return buf"
+ps,func,07ba:03a3,si_str_row7,far,shell_ui,,"`fstrcpy_n(buf, strtab_get(4 / 5 / 7, idx))` (`STRINGS_.DAT` rows: 4 squadron roles, 5 services, 7 pilot qualities); return buf"
+ps,func,07ba:03cc,si_format,"far si_format(str_id, arg, dst)",shell_ui,,"`sprintf(dst, str_get(str_id), arg); strupr(dst)`"
+ps,func,07ba:03fb,si_load,far si_load(first),shell_ui,,below
+ps,func,07ba:0618,si_layout,far si_layout(mode),shell_ui,,"mode 0: items 1–4 mask 74h / flags 82h, item 5 mask 0 / flags 80h, item 0 mask 40h; mode ≠ 0: items 1–4 hidden (0 / 80h), item 5 74h / 82h, item 0 mask 0 (no pr"
+ps,func,07ba:06bd,si_side_items,far si_side_items(),shell_ui,,"items 6–10 mask = `DS:4775 ? 40h : 0`, items 11–15 mask = `DS:4775 ? 0 : 40h`"
+ps,func,07ba:0729,si_build_list,far si_build_list(mode),shell_ui,,"`DS:0628 = squad_count()` (`2624`); `DS:0624 = farmalloc(4·count)`; mode 0: for sq < count: `squad_valid(sq) && 287b:0439(DS:4790, sq)` (squadron in the campaig"
+ps,func,07ba:0822,si_set_buffers,"far si_set_buffers(char *a, char *b)",shell_ui,,"`42DC = a, 42DE = a+50, 42E0 = a+100, 42E2 = a+150`; `42CE[i] = b + 40i` (i < 3), `42D4[i] = b + 120 + 40i` (i < 4)"
+ps,func,07ba:0891,si_frame,far,shell_ui,,dispatch + present; result 2 (Esc) → `DS:5FD2 = 3` (CANCEL)
+ps,func,07ba:08c2,squadinf,far squadinf(mode),shell_ui,,below
+ps,func,0d16:000f,bm_to_screen,"far bm_to_screen(cx, cy, w, h, long x, long z, int *sx, int *sy)",shell_ui,,"`sx = cx + (w>>1) + (s16)((long)(w>>1) · x / 12672000) + DS:0958`; `sy = cy + (h>>1) − (s16)((long)(h>>1) · z / 12672000) + 20` (`sar` for >>1; LXMUL, signed LD"
+ps,func,0d16:009c,bm_load_labels,far bm_load_labels(name),shell_ui,,"`res_fopen(name, ""rb"")` (fatal BAh); read n → `DS:442E`; `DS:4418 = xmalloc(18n)`, read; u16 len; `DS:4451 = xmalloc(len)`, read; FONT3; per record: text += `DS"
+ps,func,0d16:01d7,bm_draw_map,far,shell_ui,,below
+ps,func,0d16:0445,bm_btn_cb,far,shell_ui,,`if btn_small_cb(0)`: `DS:5FD2 = 5FDE`; result 1
+ps,func,0d16:0467,bm_draw_title,far,shell_ui,,"font `DS:4220` (FONT4); `2302 = 1`; `text_emboss(str_get(0), x, y, C1h, C0h, B1h)`"
+ps,func,0d16:04ab,bm_draw_station,far,shell_ui,,below
+ps,func,0d16:06c1,bm_hover_labels,far bm_hover_labels(),shell_ui,,below
+ps,func,0d16:0901,bm_frame,far,shell_ui,,"`hs_dispatch(601A, 6018, 2033, 0)`; mouse inside the map window (17 < x < 305, 20 < y < 189): first time (`DS:095C == 0`) → `DS:095C = 1`, masks of items 3 and "
+ps,func,0d16:09d8,bm_station,far bm_station(),shell_ui,,"`2a85:00f1(DS:478C, &area_of_world, &DS:442C)`; `DS:4430 = 2a85:0180(DS:478C)`; file = `res_name(DS:4430 ? ""CARRIER"" : ""TARGET"", −1, itoa(DS:442C))` → **`CARRIE"
+ps,func,0d16:0b03,bm_free_label_buffers,far bm_free_label_buffers(),shell_ui,,farfree each save buffer
+ps,func,0d16:0b33,bigmap_show,far bigmap_show(),shell_ui,,below
+ps,func,0d16:0c5d,bm_init,far bm_init(),shell_ui,,"`hs_default_links(4b12:000f, 8)`"
+ps,func,100e:0007,fm2_training_slot,far fm2_training_slot(k),shell_ui,,table `DS:0AA1` (rows of 22 bytes = s16 per service): i = first row with `[i][DS:4B30] != −1`; then k times: advance to the next such row; i > 6 → fatal (flymis
+ps,func,100e:007e,fm2_btn_cb,far,shell_ui,,`if btn_cb()`: `DS:4B3F = 5FDE`; `menu_set_result(5FDE == 12 ? 1 : 2)`
+ps,func,100e:00a8,fm2_on_ok,far fm2_on_ok(sel),shell_ui,,"chooser callback: roster slot (`DS:4B2D ≥ 0`): side 0 → `acelist_select(0)`, `DS:4B29[DS:4B2D] = acelist_code(sel)`; side 1 → `acelist_select(1)`, `DS:4B25[DS:4"
+ps,func,100e:0120,fm2_roster_cb,far fm2_roster_cb(slot),shell_ui,,"roster-dialog callback: slot < 0 (its ""%a"" size button): `DS:4B2D = FFh`; item.user = 4; `choose_run(fm2_on_ok, DS:4A30[DS:4B3F], 93)` (""one""..""four"") — see the"
+ps,func,100e:017f,fm2_prepare_acelist,far fm2_prepare_acelist(side),shell_ui,,"service = side ? `DS:6355` : `DS:4B30`; codes = side ? `DS:4B25` : `DS:4B29`; `acelist_build(service, side, 1, side == 0)`; n = side ? `DS:636F` : `DS:62DF − 1`"
+ps,func,100e:0225,fm2_edit,far fm2_edit(kind),shell_ui,,"`DS:4B2D = FFh`; kind 1 / 9: `DS:4B2E = 0 / 1`; `acelist_select`; repeat { item.user = `DS:4A30[kind] + 1`; `DS:4B1C = flt_roster(fm2_roster_cb, side ? DS:4B25 "
+ps,func,100e:0415,fm2_slot_label,"far fm2_slot_label(kind, item far *it, reg)",shell_ui,,"sets `it.label` (switch `100e:05b2`): 1, 9 → `str_get(15)`; 2 / 8 / 10 → `2777:06fd(0 / 2 / 1, type != 0)`, `2777:0741(v)`; 3 → copy of row0[v + 173] into `DS:4"
+ps,func,100e:05c6,fm2_subst,"far fm2_subst(c, item far *it)",shell_ui,,"`%r`, `%s`, `%t` above (returns a `strpool_copy`); other letters → `fm2_slot_label(c − 60h, it, 1)`"
+ps,func,100e:0648,fm2_draw_text,far,shell_ui,,"item 0: `tile_fill_rect(); draw_frame()`; FONT3, `2302 = 1`; y_off = 8; type 0: rect += (20, 6, −35 w) (saved/restored), `flow_setup(−3, 7, 1)`, `flow_text(acet"
+ps,func,100e:07c0,fm2_relink,far fm2_relink(),shell_ui,,"re-orders the inline buttons into text order: spare[i] := item `DS:4B31[i]` for i = 1..`DS:4B3E`; items 1–10 := spare[1..10]; links: item i up/left = i − 1, ite"
+ps,func,100e:08d4,fm2_slot_cb,far,shell_ui,,"if `DS:4B31[5FDE] < 80h`: first time after a layout (`DS:4B1D`): `fm2_relink()`, current rect := item rect + (0, item 0's y), `DS:4B1D = 0`; `fm2_slot_label(kin"
+ps,func,100e:0967,fm2_frame,far,shell_ui,,dispatch + present; result 2 → `DS:4B3F = 11`
+ps,func,100e:0997,fm2_codes,"far fm2_codes(flight *f, u8 *dst)",shell_ui,,for i < f.+1Ah: `dst[i] = f[+0Ah + i] == −1 ? f[+0Eh + 2i] + 4 : f[+0Ah + i]`
+ps,func,100e:09d0,fm2_codes_all,far fm2_codes_all(),shell_ui,,"`fm2_codes(DS:62C5, DS:4B29)`; `fm2_codes(DS:6355, DS:4B25)`"
+ps,func,100e:09f1,fm2_init,far fm2_init(arg),shell_ui,,below
+ps,func,100e:0bff,fm2_apply,far fm2_apply(),shell_ui,,below
+ps,func,100e:12c9,flymiss2_setup,"far flymiss2_setup(type, arg)",shell_ui,,below
+ps,func,100e:1459,fm2_links_init,far fm2_links_init(),shell_ui,,"`hs_default_links(4bbe:0011, 13)`"

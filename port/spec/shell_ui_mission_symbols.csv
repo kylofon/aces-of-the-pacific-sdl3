@@ -1,0 +1,96 @@
+exe,kind,address,name,type,owner,other_names,notes
+ps,func,125a:000f,res_add_ext,"far res_add_ext(char *name, char *ext)",shell_ui,,"`strcat(strcat(name, "".""), ext)`; when no volume is open (`DS:0DFF` `volumes_present` == 0, a development set-up): returns `DS:4B94` = ext + ""\"" + name (files s"
+ps,func,125a:0060,dev_chdir,far dev_chdir(dir),shell_ui,,"only without volumes: `chdir(dir)`, fatal (simshell.c line 3Eh) on failure; returns 1 otherwise"
+ps,func,125a:00ab,dev_chdir_up,far dev_chdir_up(),shell_ui,,"`dev_chdir("".."")`"
+ps,func,125a:00bb,namelist_split,"far namelist_split(char far *p, char far **out)",shell_ui,,counts NUL-terminated words (each copied with `24d5:0005`) until one starting with LF; stores far pointers when `out`; a NUL word before the LF is fatal (5Ch)
+ps,func,125a:0139,fread_far,"far fread_far(char far *dst, long n, FILE *f)",shell_ui,,byte loop with `fgetc` (`0000:0cee`) until n bytes or EOF
+ps,func,125a:01a4,res_size,far res_size(name),shell_ui,,"`res_fopen(name, ""rb"")`, `filelength`, close; 0 if missing"
+ps,func,125a:01ea,namelist_suffix,"far namelist_suffix(char *s, n)",shell_ui,,"n == 1 → append ""_"" (the `…1_` name files of the add-on)"
+ps,func,125a:0203,namelist_load,"far namelist_load(char *base, mask, total, per_set)",shell_ui,,"for set n = 0..8 (set 0 always, set n ≥ 1 when `mask & (1 << (n−1))`): file = base + itoa(n) (+ ""_"" for n = 1), ≤ 8 chars (fatal BEh), `.TXT`; sums the sizes (m"
+ps,func,125a:04bb,namelist_free,far namelist_free(table),shell_ui,,frees the text block and the table
+ps,func,12a7:0008,camp_draw_title,far,shell_ui,,above
+ps,func,12a7:004b,camp_btn_cb,far,shell_ui,,above
+ps,func,12a7:0073,camp_draw_row,"far camp_draw_row(i, y)",shell_ui,,"`draw_text(DS:4C7C[i], x+5, y)`"
+ps,func,12a7:0093,camp_list,far camp_list(service),shell_ui,,"for each campaign k < `1f85:014d()`: if `1f85:0359(k, service)`: `DS:4C7C[n] = 287b:026e(1f85:0157(k))` (name), `DS:4BB4[n] = k`, n++; `DS:4BB2 = n`"
+ps,func,12a7:00ec,camp_frame,far,shell_ui,,dispatch + present
+ps,func,12a7:010d,camp_choose,far camp_choose(service),shell_ui,,"`camp_list`; `lbox_setup(…, DS:4BB2, 5, draw camp_draw_row)`; `lbox_bind(4be4:0000, 2, 4)`; `screen_show(43, 2Ah, 1)`; focus 7; `menu_run`; Esc/CANCEL (2) → `DS"
+ps,func,12a7:01c0,camp_init,far camp_init(),shell_ui,,"`hs_default_links(4be4:0000, 8)`"
+ps,func,12c4:0009,fmap_count_flights,far fmap_count_flights(),shell_ui,,`DS:6261` (flights) + `DS:6269` (convoys) + (`DS:6265` ? 1) + places `DS:64B4[18k]` flagged among `DS:6267`
+ps,func,12c4:0044,fmap_rec,"far fmap_rec(dst, cls, flags, far src12, id)",shell_ui,,stores the record
+ps,func,12c4:0072,fmap_fill_flights,far fmap_fill_flights(dst),shell_ui,,"classes by side (player's service `0f67:02ed(DS:62C5)`: own side gets the even set {2,4,6} or odd {1,3,5} depending on the side, other side the other set): own "
+ps,func,12c4:023c,fmap_wp_text,far fmap_wp_text(i),shell_ui,,`wp_message(i)` (shell_data `fltplan`); if the message tables `DS:5272/5276` exist: the text between the first and second '\
+ps,func,12c4:02d4,fmap_fill_waypoints,"far fmap_fill_waypoints(dst, from_file)",shell_ui,,"not from a file: `2a85:0231`, `fltplan_sim_off`, `fltplan_build`, `2a85:02c1`, `msgs = fltplan_messages()`; count = `DS:62E1` (−1 for CAP, type 1); each: 12-byt"
+ps,func,12c4:0377,fmap_prepare,far fmap_prepare(from_file),shell_ui,,allocates and fills both arrays
+ps,func,12c4:03cc,fmap_release,far fmap_release(from_file),shell_ui,,frees; `fltplan_free()` unless from a file
+ps,func,1305:0008,tbox_fit,"far tbox_fit(far text, int *x, int *y, int *w, int *h, pad_w, pad_h, line_h, far subst)",shell_ui,,"usable `w0 = *w − pad_w`, `h0 = *h − pad_h`; `aspect = (w0 << 16) / h0` (long); rect = (x, y, w0, h0); `flow_setup(0, line_h, 0)` (measure); loop: `m = flow_tex"
+ps,func,1305:0154,tbox_draw,far,shell_ui,,"`font_select(DS:4D4C)`; `tbox_fit(DS:0E1C, &5FDA, &5FD8, &5FD6, &5FD4, 22, title_h + 8, 7, subst 0cfe:0057)` where `title_h` = `4bef:001C` (item 1 h = 17); reme"
+ps,func,1305:0222,tbox_draw_title,far,shell_ui,,"rect x, y, w = the box (`DS:4D46/4D44/4D4A`); `draw_bevel_box()`; rivets every 7 px at x+4 and x+w−7 from y+5 to y+`DS:4D48`−6; `font_select(DS:4D4E)`; `text_em"
+ps,func,1305:02bd,tbox_show,far tbox_show(),shell_ui,,"pages (2314 → 2312) (`22ce:0074`, no copy); calls both item callbacks directly (items 0, 1); `hs_restart()`; `cursor_hide(); hs_present(); cursor_show()`; `2171"
+ps,func,1305:0323,tbox_set,"far tbox_set(far title, far text, title_font, text_font)",shell_ui,,copies the non-null strings
+ps,func,1305:0392,tbox_clear,far tbox_clear(),shell_ui,,frees them
+ps,func,1305:03b7,tbox_message,"far tbox_message(far title, far text, title_font, text_font)",shell_ui,,"item 0 x = 58, y = 41; `tbox_set`, `tbox_show`, `tbox_clear`"
+ps,func,1305:03f2,tbox_end_of_campaign,far tbox_end_of_campaign(text),shell_ui,,"`screen_show(56, CAh, 1)`; title = date text of `287b:03e1(DS:4790)` (campaign end date, `284f:021c`); `2624:0902` … `tbox_message(date, text, FONT4, FONT3)` … "
+ps,func,1305:044e,tbox_kia,far tbox_kia(far text),shell_ui,,"`screen_show(56, CAh, 1)`; `tbox_message(str_get(1) ""KILLED IN ACTION"", text, FONT4, FONT3)`"
+ps,func,1305:0487,tbox_inquiry,far tbox_inquiry(far text),shell_ui,,"same with str 2 ""BOARD OF INQUIRY"""
+ps,func,1305:04c0,tbox_titled3,far tbox_titled3(far text),shell_ui,,"title = str_get(3) of the current SCD (VIEW.SCD: NEW AIRPLANE); FONT4 title, FONT3 text"
+ps,func,1305:04e6,tbox_over_screen,far tbox_over_screen(far text),shell_ui,,"keeps the current screen: `clip_full()`; `hs_dispatch(…, 0, 1)` (redraw); `copy_work_to_spare()`; `hs_push()`; message with str 12 of the current table; `copy_s"
+ps,func,1305:0546,tbox_squadron_move,far tbox_squadron_move(far text),shell_ui,,"`screen_show(56, CAh, 1)`; `2a85:0006` (stations load); str 3 ""SQUADRON MOVEMENT""; `2a85:0216`"
+ps,func,144e:0004,dec_draw_text,far,shell_ui,,"FONT3; up to 4 far lines `DS:4EF3[k]`, each `text_engrave(C1h, B1h, C0h)` centred, 9 px apart"
+ps,func,144e:0082,dec_btn_cb,far,shell_ui,,"`btn_small_cb(0)` → `DS:5FD2` = 0 for RETIRE (item 4), 1 for item 3, `DS:0EE0[v]` for item 2; result 1"
+ps,func,144e:00ca,dec_layout,far dec_layout(),shell_ui,,"window h; for i < 3: y = table; 0 → item mask/flags 0 (hidden) else mask 74h, flags 82h, and label for i < 2; lines: v < 2: {""You may:""}; else {""You've reached "
+ps,func,144e:027b,dec_frame,far,shell_ui,,dispatch + present
+ps,func,144e:029c,career_decision,"far career_decision(end_of_set, other_sets)",shell_ui,,"`DS:4EF2 = …`; `screen_show(47, E5h, 1)`; `dec_layout()`; table (5); `hs_draw_all()`; `menu_run`; `ui_busy()`; returns `DS:5FD2` (0 retire, 1 transfer, 2 contin"
+ps,func,147e:000c,cm_load_headers,far cm_load_headers(),shell_ui,,"for i < 16 from `DS:4F13`: `""cms\"" + name + "".cmt""`, opened in the work dir `DS:40CA` or as is; missing → aircraft = FFFFh; else reads 27 bytes: aircraft word, "
+ps,func,147e:011f,cm_load_descs,far cm_load_descs(),shell_ui,,"for i < 5 from `DS:4F11` (inner code at `147e:0143`, not split by the indexer): same file, reads 527 bytes, takes the text after the header (`strchr`), `strncpy"
+ps,func,147e:0225,cm_page_headers,far cm_page_headers(i),shell_ui,,fatal (FFh / 111h) if i is out of range; reload the 16-block (`i/16·16`) / 5-block (`i/5·5`) when i is outside the cached page
+ps,func,147e:027f,cm_page_descs,far cm_page_descs(i),shell_ui,,fatal (FFh / 111h) if i is out of range; reload the 16-block (`i/16·16`) / 5-block (`i/5·5`) when i is outside the cached page
+ps,func,147e:02da,cm_has_header,far cm_has_header(i),shell_ui,,aircraft word < 8000h (fatal 124h if not cached)
+ps,func,147e:0333,cm_aircraft,far cm_aircraft(i),shell_ui,,cached values (fatal 132h/140h/14Eh when not cached)
+ps,func,147e:0382,cm_title,far cm_title(i),shell_ui,,cached values (fatal 132h/140h/14Eh when not cached)
+ps,func,147e:03d3,cm_desc,far cm_desc(i),shell_ui,,cached values (fatal 132h/140h/14Eh when not cached)
+ps,func,147e:0424,cm_draw_window,far,shell_ui,,"`draw_side_riveted_panel()`; `draw_title_bar_for(…, label)` (arguments are two constants: L — the pilot/date words are not meaningful here)"
+ps,func,147e:0450,cm_draw_label,far,shell_ui,,"FONT3 `text_engrave(label, C1h, B1h, C0h, x, y)`"
+ps,func,147e:048e,cm_draw_scroll,far,shell_ui,,"`draw_bevel_box()`; C0h outline rect (x+3, y+23, 19, 11)"
+ps,func,147e:04bb,cm_draw_row,"far cm_draw_row(i, y)",shell_ui,,"`cm_page_headers(i)`; header present: title (uppercase) at x+3, aircraft name (`2777:00a1`, uppercase) at x+150; else the file name at x+3; item 7 mask := 3 (de"
+ps,func,147e:0560,cm_draw_desc,far,shell_ui,,"`cm_page_descs(sel)`; text = header present ? `cm_desc(sel)` : ""No description.""; box B8h over the item; FONT3; `flow_setup(3, 7, 1)`; `flow_text(text, 1, 0)`; "
+ps,func,147e:05f6,cm_btn_cb,far,shell_ui,,`btn_cb()` → `DS:4F17 = 5FDE`; result 2 for RETURN (8) else 1
+ps,func,147e:061e,base_name,"far base_name(dst, src)",shell_ui,,copies up to the first '.'
+ps,func,147e:0648,name_cmp,"far name_cmp(a, b)",shell_ui,,"`strcmp(*a, *b)` for `qsort` (`0000:3c66`); note: the result is not returned (AX happens to hold strcmp's value: works by accident)"
+ps,func,147e:0664,cm_scan,"far cm_scan(desc_buf, title_buf, aircraft_buf)",shell_ui,,"buffers from the caller's stack; `findfirst/findnext(""cms\*.cmd"")` twice (count, then names); `qsort` by name; caches page 0"
+ps,func,147e:07a1,cm_free,far cm_free(),shell_ui,,frees the name arrays
+ps,func,147e:07ba,cm_draw_bg,far,shell_ui,,`screen_clear_panel()`
+ps,func,147e:07c4,cm_frame,far,shell_ui,,dispatch + present
+ps,func,147e:07e5,custom_missions,far custom_missions(),shell_ui,,"`2777:0000` (aircraft load); `DS:4F17 = 10`; `cm_scan` (fatal 27Dh if no file); loop: `lbox_setup(…, count, 8, draw cm_draw_row)`, `lbox_bind(4c32:0011, 3, 5)`,"
+ps,func,147e:0935,custmiss_exist,far custmiss_exist(),shell_ui,,"`findfirst(""cms\*.cmd"") == 0`"
+ps,func,1513:0009,pf_draw_window,far,shell_ui,,"`draw_side_riveted_panel()`; the tab rectangle `DS:0F44..0F4A` (x, y, w, h): the background block at (x, y+2) is saved and restored at (x, `DS:0F46`), then line"
+ps,func,1513:01d0,pf_draw_plane,far,shell_ui,,"`draw_inset_box2()`; FONT3 CCh `DS:0F51` at (x+4, y+3)"
+ps,func,1513:0208,pf_draw_guns,far,shell_ui,,"`draw_inset_box2()`; n = `2ab3:01c7(DS:4F2A, 0)`; `2ab3:021d(DS:4F2A, 0, types[], ids[])`; `2ab3:02d1(DS:4F2A, rounds[])`; FONT3 CCh; for each i with ids[i] ≥ 0"
+ps,func,1513:0348,pf_loadout_cb,far,shell_ui,,"not activated → mask := 74h; fixed mission (`DS:4F23`) → `DS:0F4D = 1` (message); not leader → `DS:0F4B = 1, DS:4F37 = 0` (message); else: k = `DS:62C8`; repeat"
+ps,func,1513:0432,pf_draw_ordnance,far,shell_ui,,`draw_inset_box2()`; loadout `DS:62C8` contents like `pf_draw_guns` (no rounds); an id of 0 = drop tank → `DS:4F39 = 1`; mask := 40h
+ps,func,1513:054c,pf_draw_tank,far,shell_ui,,"`strtab_get(4, DS:4F39 == 0)` (yes/no text) at (x+4, y+3); mask := 40h"
+ps,func,1513:05ba,pf_draw_range,far,shell_ui,,"FONT3 CCh; not a career (`DS:4356 == 0`) → `DS:4F28` text; else `ltoa(DS:4F39 ? range_tank : range)` at x+4 and the unit `strtab_get(4, 13)` right-aligned (widt"
+ps,func,1513:068c,pf_draw_roster,far,shell_ui,,"for each member k of flight 0 (`DS:62C5` record, count at +1Ah): `""%d.""` (k+1) at x; member 0 also `strtab_get(4, 15)` at x+10; name at x+52: rec[+0Ah + k] == −"
+ps,func,1513:07c4,pf_formation_cb,far,shell_ui,,like the loadout button: `DS:4F2C = (DS:4F2C + 1) % DS:0F5D`; `DS:62C6 = DS:4F2D[DS:4F2C]`; label = formation name; redraw item 26
+ps,func,1513:084f,pf_draw_formation,far,shell_ui,,"`draw_inset_box2()`; p = first slot of flight 0 whose code (`DS:62CF[k]`) is 4 (the player), else −1; `2300 = DCh`; lead plane `FORMPLNS[p == 0 ? 0 : 1]` at (x+"
+ps,func,1513:09ee,pf_btn_cb,far,shell_ui,,"`btn_cb()` → `DS:5FD2 = 5FDE`, result 1"
+ps,func,1513:0a0c,pf_draw_label,far,shell_ui,,"FONT3 `text_engrave(label, C7h, B1h, C0h, x, y)`"
+ps,func,1513:0a4a,pf_draw_rule,far,shell_ui,,"lines C7h (x,y)-(x+w,y), B1h (x,y+1)-(x+w,y+1)"
+ps,func,1513:0a99,pf_plane_init,far pf_plane_init(),shell_ui,,first entry: `DS:4F2A = DS:62DD`; `DS:0F51` = uppercase copy of the aircraft name; first entry: ranges `2777:03e2(type)` and + `2777:0434(type)` (long)
+ps,func,1513:0b21,pf_names_init,far pf_names_init(),shell_ui,,"formation names (`2a56:0185` count → `DS:0F5B`, `2a56:019a(k)`) → `DS:0F4D[]`; item 25 label = name of `DS:62C6`; 11 loadout names `strtab_get(4, 21 + k)` → `DS"
+ps,func,1513:0c71,pf_formations_init,far pf_formations_init(),shell_ui,,"first entry and not fixed: `280a:00af`, `DS:0F5D = 280a:032c(DS:62C5, DS:62C7, DS:6277, DS:4F2D)` (formations allowed for the service/date), `DS:4F2C = 0`, `DS:"
+ps,func,1513:0cd3,pf_names_free,far pf_names_free(),shell_ui,,
+ps,func,1513:0d44,pf_draw_bg,far,shell_ui,,"`screen_clear_panel()`; `draw_title_bar_for(DS:62C5, DS:6277, str_get(0) ""PREFLIGHT"")`"
+ps,func,1513:0d68,pf_msg_subst,far pf_msg_subst(),shell_ui,,returns `str_get(DS:4F37 ? 19 : 20)` of the request table (formation / loadout)
+ps,func,1513:0d8e,pf_frame,far,shell_ui,,"dispatch + present; `DS:0F4B` → `req_ok(pf_msg_subst, 18, 8)` (only the flight leader may change it); `DS:0F4D` → `req_ok(0, 22, 8)` (cannot change in this miss"
+ps,func,1513:0e05,preflight,far preflight(variant),shell_ui,,below
+ps,func,1513:0fdc,pf_init,far pf_init(),shell_ui,,"`hs_default_links(4c43:0000, 32)`"
+ps,func,1612:0005,ff_build,far ff_build(char *buf),shell_ui,,"11 row pointers `DS:4F54[k] = buf + 30k`; modes other than 1, 4, 5 load `SFTBTNS0.DAT` themselves; mode 4: data sets from `2008:0022` to `2008:0064` (step `2008"
+ps,func,1612:0170,ff_draw_title,far,shell_ui,,"FONT4, `2302 = 3`, two centred engraved lines (strings above) at y+4 and y+14; rivet groups (3 at ±24, 2 at ±16) unless mode 2/3"
+ps,func,1612:02dd,ff_draw_subtitle,far,shell_ui,,"FONT3 engraved at x, y"
+ps,func,1612:031f,ff_btn_cb,far,shell_ui,,above
+ps,func,1612:0347,ff_draw_row,"far ff_draw_row(i, y)",shell_ui,,"`draw_text(DS:4F54[i], x+5, y)`"
+ps,func,1612:0367,ff_frame,far,shell_ui,,dispatch + present
+ps,func,1612:0388,fly_for_choose,far fly_for_choose(mode),shell_ui,,"`ff_build(stack buffer 330 bytes)`; `lbox_setup(…, DS:4F3C, 5, draw ff_draw_row)`; `lbox_bind(4c6f:0000, 3, 5)`; `screen_show(48, E4h, 1)`; focus 8; cancel → `D"
+ps,func,1656:0008,note_new,"far note_new(kind, str_id)",shell_ui,,"text = farmalloc'ed copy of `strtab_get(0, str_id)`"
+ps,func,1656:006f,note_free,far note_free(rec),shell_ui,,
+ps,func,1656:0095,note_show,far note_show(rec),shell_ui,,"switch on kind (table `1656:016D`): 1 → `snd_play(3ECh)`, `tbox_kia(text)`, `snd_stop(3ECh)`; 2 → `award_ceremony(DS:4775, 0, text)` (`0f35:01d8`, shell_ui_care"

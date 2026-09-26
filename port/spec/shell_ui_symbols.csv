@@ -1,0 +1,17 @@
+exe,kind,address,name,type,owner,other_names,notes
+ps,func,048e:0112,please_wait,far void(void),shell_ui,,"""Please Wait..."" box drawn on the front page (shell_ui.md §3.3)"
+ps,func,315c:0003,snd_music_on,far int(void),shell_ui,,returns DS:43B9
+ps,func,315c:000e,snd_music_toggle,far int(void),shell_ui,,"DS:43B9 ^= 1; on → 4675:0003(-1) else DS:43B9 = !45e4:0007(-1)"
+ps,func,315c:0044,snd_fx_on,far int(void),shell_ui,,returns DS:43B8
+ps,func,315c:004f,snd_fx_toggle,far int(void),shell_ui,,same with DS:43B8 and channel -2
+intro,func,038e:0973,intro_sequence,far void(void),shell_ui,,"INTACE1..5 TTM scripts, variant from DS:00C2 or module_pick (shell_ui.md §2.3)"
+intro,func,0460:001a,intro_skip_check,far int(void),shell_ui,,"Enter/Esc/Space, joystick, mouse; DS:00C4 = skip; returns !skip"
+intro,func,0460:00d3,intro_ttm_open,far int(char *name),shell_ui,,"view rect, timer_add(0460:000b, 4), ttm_init/ttm_load"
+intro,func,0460:0157,intro_ttm_close,far void(void),shell_ui,,
+intro,func,0460:0174,intro_ttm_play,"far int(int first,int last,far int(*cb)(void))",shell_ui,,"-1 skipped, -2 script ended, else frame"
+intro,func,0460:028c,intro_play,"far void(char *name,int last,int extra,int first,int end_frame,far int(*cb)(void))",shell_ui,,
+ps,global,DS:4224,mm_choice,u8,shell_ui,,main menu selection (item index)
+ps,global,DS:4225,mm_other_choice,u8,shell_ui,,OTHER OPTIONS sub-choice
+intro,global,DS:00C4,intro_skipped,u8,shell_ui,,
+intro,global,DS:24B5,cset_mask,u8,shell_ui,,installed CSET<n>.DAT bits
+intro,global,DS:33C8,ttm_frame_delay,int,shell_ui,,set by the TTM script per frame (-1 = unchanged)

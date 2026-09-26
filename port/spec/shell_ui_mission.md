@@ -40,19 +40,21 @@ handle passed to `2171:000a` after drawing (shell_data/sound: Likely the event's
 | `1305:03f2` | `tbox_end_of_campaign(text)` | `screen_show(56, CAh, 1)`; title = date text of `287b:03e1(DS:4790)` (campaign end date, `284f:021c`); `2624:0902` … `tbox_message(date, text, FONT4, FONT3)` … `2624:09c4` |
 | `1305:044e` | `tbox_kia(far text)` | `screen_show(56, CAh, 1)`; `tbox_message(str_get(1) "KILLED IN ACTION", text, FONT4, FONT3)` |
 | `1305:0487` | `tbox_inquiry(far text)` | same with str 2 "BOARD OF INQUIRY" |
-| `1305:04c0` | `tbox_titled3(far text)` | no screen change; str 3 "SQUADRON MOVEMENT" (from `0ddd:0c06`) |
+| `1305:04c0` | `tbox_titled3(far text)` | no screen change; title = `str_get(3)` of the **current** screen's `.SCD` (caller `0ddd:0c06` on the view screen → `VIEW.SCD` 3 "NEW AIRPLANE"; text = `MISC.DAT` row 1 entry 0). (Corrected: was "SQUADRON MOVEMENT") |
 | `1305:04e6` | `tbox_over_screen(far text)` | keeps the current screen: `clip_full()`; `hs_dispatch(…, 0, 1)` (redraw); `copy_work_to_spare()`; `hs_push()`; message with str 12 of the current table; `copy_spare_to_work()`; `hs_pop()`; `hs_focus(5FDE)` (from `07ba:08c2`) |
 | `1305:0546` | `tbox_squadron_move(far text)` | `screen_show(56, CAh, 1)`; `2a85:0006` (stations load); str 3 "SQUADRON MOVEMENT"; `2a85:0216` |
 
 ## 3. Career text substitutions (segment `0cfe`, not indexed) — V
+
+Canonical entry: `shell_ui_debrief.md` §8 (names `subst_ace_name`, `display_subst`, symbols there); summary kept here.
 
 Segment `0cfe` (between `dogace.c` `0c8a` and `bigmap.c` `0d16`; the indexer took it for far data)
 holds two functions:
 
 | Address | Name | Behaviour |
 |---|---|---|
-| `0cfe:000a` | `career_ace_name()` → far char * | `2550:0679` (aces load); name = `2550:0043(DS:4B89)`; copies `_fstrlen` bytes into `DS:43FA` (`22ce:026e`); `2550:073f`; returns `DS:43FA` |
-| `0cfe:0057` | `career_subst(char c)` → far char * | `%a` pilot name `DS:4754`; `%b` date text of `DS:477F` into `DS:43FA`; `%e` `strtab_get(0, DS:4775)`; `%f` `strtab_get(0, (DS:4229 & 10h) ? 6 : (DS:4229 & 20h) ? 7 : 8)`; `%g` `strtab_get(0, DS:4776 + 9)`; `%h` medal name `27f0:00f5(DS:0500)`; `%i` rank name `225d:00f7(DS:0501)`; `%j` `career_ace_name()`; `%p` squadron name `2624:0042(DS:478E)`; `%q` campaign name `287b:026e(DS:4790)`; `%u` aircraft name `2777:00a1(DS:478A)`; `%v` `strtab_get(0, DS:4775 + 20)`; `%w` station name (`2a85:0231`, `2a85:027c(DS:478C)` copied into `DS:43FA`, `2a85:02c1`); `%x` `strtab_get(0, DS:4B89 + 26)`; any other letter a–x and anything else → `DS:0956` (empty string). Switch table `0cfe:015F` (24 words) |
+| `0cfe:000a` | `subst_ace_name()` → far char * | `2550:0679` (aces load); name = `2550:0043(DS:4B89)`; copies `_fstrlen` bytes into `DS:43FA` (`22ce:026e`); `2550:073f`; returns `DS:43FA` |
+| `0cfe:0057` | `display_subst(char c)` → far char * | `%a` pilot name `DS:4754`; `%b` date text of `DS:477F` into `DS:43FA`; `%e` `strtab_get(0, DS:4775)`; `%f` `strtab_get(0, (DS:4229 & 10h) ? 6 : (DS:4229 & 20h) ? 7 : 8)`; `%g` `strtab_get(0, DS:4776 + 9)`; `%h` medal name `27f0:00f5(DS:0500)`; `%i` rank name `225d:00f7(DS:0501)`; `%j` `subst_ace_name()`; `%p` squadron name `2624:0042(DS:478E)`; `%q` campaign name `287b:026e(DS:4790)`; `%u` aircraft name `2777:00a1(DS:478A)`; `%v` `strtab_get(0, DS:4775 + 20)`; `%w` station name (`2a85:0231`, `2a85:027c(DS:478C)` copied into `DS:43FA`, `2a85:02c1`); `%x` `strtab_get(0, DS:4B89 + 26)`; any other letter a–x and anything else → `DS:0956` (empty string). Switch table `0cfe:015F` (24 words) |
 
 (`0cfe:0000`–`0009` is the tail of a function of the preceding module.)
 
