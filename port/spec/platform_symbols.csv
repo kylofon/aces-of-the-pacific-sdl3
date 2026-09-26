@@ -149,7 +149,6 @@ intro,data,DS:2460,prf_loaded,u8,platform,,
 intro,data,DS:00C0,skip_intro,u8,platform,,
 intro,data,DS:00C1,mem_override,u8,platform,,
 intro,data,DS:00C2,intro_module,u16,platform,,
-intro,data,DS:00C5,no_chdir,u8,platform,,
 ps,data,DS:00C2,nlkle,u8,platform,,
 ps,data,DS:00C3,returned_from_sim,u8,platform,,
 ps,data,DS:00AA,mem_override,u8,platform,,
@@ -173,6 +172,11 @@ intro,data,DS:2ED4,font_ptr,void far*[20],platform,,
 intro,data,DS:2F24,font_ofs,void far*[20],platform,,
 intro,data,DS:2F74,font_wid,void far*[20],platform,,
 intro,data,DS:2EC0,font_kind,u8[20],platform,,
-intro,data,DS:1A58,dec_scratch,void far*,platform,,
 intro,data,DS:313A,scn_mask,u8,platform,,
 ap,data,DS:70E8,scn_mask,u8,platform,,
+intro,func,05da:53ef,bmp_count,far int(bmp_t*),platform,,= 0f2c:0010 (duplicate copy in the library)
+ap,func,7229:0598,bmp_count,far int(bmp_t*),platform,,used by bmp_to_ems 1d32:2050
+ps,func,168a:04dc,bmp_count,far int(bmp_t*),platform,,likely (same layout as INTRO 05da:53ef); no callers
+ps,func,168a:048f,bmp_free_table,far void(bmp_t*),platform,,
+ps,func,168a:04b1,bmp_free,far void(bmp_t*),platform,,
+ps,func,168a:04fe,amiga_to_nibbles,"near void(u8 far*,u8 far*,u16)",platform,,dead with shipped data

@@ -1,0 +1,351 @@
+exe,kind,address,name,type,owner,other_names,notes
+intro,func,05da:0014,kbd_install,far int kbd_install(int hook_1c),platform,,"hook INT 9 (and INT 1Ch if arg≠0), Tandy/enhanced detection, BIOS LED flags"
+ps,func,16e3:62c9,kbd_install,far int kbd_install(int hook_1c),platform,,"hook INT 9 (and INT 1Ch if arg≠0), Tandy/enhanced detection, BIOS LED flags"
+ap,func,1d32:0668,kbd_install,far int kbd_install(int hook_1c),platform,,"hook INT 9 (and INT 1Ch if arg≠0), Tandy/enhanced detection, BIOS LED flags"
+intro,func,05da:00d9,kbd_restore,far int kbd_restore(void),platform,,"flush BIOS buffer, restore INT 9 / INT 1Ch"
+ps,func,16e3:638d,kbd_restore,far int kbd_restore(void),platform,,"flush BIOS buffer, restore INT 9 / INT 1Ch"
+ap,func,1d32:072d,kbd_restore,far int kbd_restore(void),platform,,"flush BIOS buffer, restore INT 9 / INT 1Ch"
+intro,func,05da:0117,kbd_isr,interrupt,platform,,"INT 9 handler (AP version differs, 1.4)"
+ps,func,16e3:63cb,kbd_isr,interrupt,platform,,"INT 9 handler (AP version differs, 1.4)"
+ap,func,1d32:075e,kbd_isr,interrupt,platform,,"INT 9 handler (AP version differs, 1.4)"
+intro,func,05da:02fd,tick_isr_1c,interrupt,platform,,INT 1Ch key-ramp integrator; **AP: bare iret**; never installed
+ps,func,16e3:65aa,tick_isr_1c,interrupt,platform,,INT 1Ch key-ramp integrator; **AP: bare iret**; never installed
+ap,func,1d32:0938,tick_isr_1c,interrupt,platform,,INT 1Ch key-ramp integrator; **AP: bare iret**; never installed
+intro,func,05da:03ab,key_read,far u16 key_read(void),platform,,"pop one word from BIOS type-ahead buffer, 0 if empty"
+ps,func,16e3:6658,key_read,far u16 key_read(void),platform,,"pop one word from BIOS type-ahead buffer, 0 if empty"
+ap,func,1d32:0939,key_queue_read,far u16 key_queue_read(void),platform,,"AP: pop one word from the private queue, 0 if empty"
+intro,func,05da:03da,kbd_dir_bits,far int kbd_dir_bits(int set),platform,,"direction bits (up 1, down 2, left 4, right 8) of the key currently held in key set 0/1"
+ps,func,16e3:6687,kbd_dir_bits,far int kbd_dir_bits(int set),platform,,"direction bits (up 1, down 2, left 4, right 8) of the key currently held in key set 0/1"
+ap,func,1d32:095e,kbd_dir_bits,far int kbd_dir_bits(int set),platform,,"direction bits (up 1, down 2, left 4, right 8) of the key currently held in key set 0/1"
+intro,func,05da:03f4,key_held,far int key_held(int scancode),platform,,key_state[sc] & 1
+ps,func,16e3:66a1,key_held,far int key_held(int scancode),platform,,key_state[sc] & 1
+ap,func,1d32:0978,key_held,far int key_held(int scancode),platform,,key_state[sc] & 1
+ap,func,1d32:098c,key_name_char,far u8 key_name_char(int scancode),platform,,"AP: printable char for a scancode (digit row → normal table, others → shifted table)"
+ap,func,1d32:0001,ap_flag_5e3c_get,far u8 f(void),platform,,"returns byte DS:5E3C; tail of AP module 1c30, not system library; no direct callers"
+intro,func,05da:2b08,is_tandy,far int is_tandy(void),platform,,F000:FFFE==FFh && F000:C000==21h → is_tandy=1; returns flag
+ps,func,16e3:311c,is_tandy,far int is_tandy(void),platform,,F000:FFFE==FFh && F000:C000==21h → is_tandy=1; returns flag
+ap,func,1d32:4f56,is_tandy,far int is_tandy(void),platform,,F000:FFFE==FFh && F000:C000==21h → is_tandy=1; returns flag
+intro,func,05da:2307,timer_add,"far int timer_add(void far (*fn)(void), int rate)",platform,,register callback every rate ticks; returns handle 1..16 or 0
+ps,func,16e3:291b,timer_add,"far int timer_add(void far (*fn)(void), int rate)",platform,,register callback every rate ticks; returns handle 1..16 or 0
+ap,func,1d32:4755,timer_add,"far int timer_add(void far (*fn)(void), int rate)",platform,,register callback every rate ticks; returns handle 1..16 or 0
+intro,func,05da:2351,timer_remove,far int timer_remove(int handle),platform,,clear mask bit; returns 1 (0 if handle out of range)
+ps,func,16e3:2965,timer_remove,far int timer_remove(int handle),platform,,clear mask bit; returns 1 (0 if handle out of range)
+ap,func,1d32:479f,timer_remove,far int timer_remove(int handle),platform,,clear mask bit; returns 1 (0 if handle out of range)
+intro,func,05da:2374,timer_install,far int timer_install(int mult),platform,,"PIT ch0 = 65535/mult, hook INT 8"
+ps,func,16e3:2988,timer_install,far int timer_install(int mult),platform,,"PIT ch0 = 65535/mult, hook INT 8"
+ap,func,1d32:47c2,timer_install,far int timer_install(int mult),platform,,"PIT ch0 = 65535/mult, hook INT 8"
+intro,func,05da:23e1,timer_restore,far int timer_restore(void),platform,,"PIT back to 65536, restore INT 8"
+ps,func,16e3:29f5,timer_restore,far int timer_restore(void),platform,,"PIT back to 65536, restore INT 8"
+ap,func,1d32:482f,timer_restore,far int timer_restore(void),platform,,"PIT back to 65536, restore INT 8"
+intro,func,05da:241a,timer_isr,interrupt,platform,,"INT 8: countdown, callbacks, BIOS chaining"
+ps,func,16e3:2a2e,timer_isr,interrupt,platform,,"INT 8: countdown, callbacks, BIOS chaining"
+ap,func,1d32:4868,timer_isr,interrupt,platform,,"INT 8: countdown, callbacks, BIOS chaining"
+intro,func,05da:3667,joy_read_axes,"near, in BL=axis mask, out SI,DI",platform,,raw one-shot counts from port 201h
+ps,func,16e3:000e,joy_read_axes,"near, in BL=axis mask, out SI,DI",platform,,raw one-shot counts from port 201h
+ap,func,1d32:030d,joy_read_axes,"near, in BL=axis mask, out SI,DI",platform,,raw one-shot counts from port 201h
+intro,func,05da:36ce,joy_scale,"near, in AX=raw BX=centre CX=scale, out AX",platform,,"raw → −127..127, dead zone"
+ps,func,16e3:0075,joy_scale,"near, in AX=raw BX=centre CX=scale, out AX",platform,,"raw → −127..127, dead zone"
+ap,func,1d32:0374,joy_scale,"near, in AX=raw BX=centre CX=scale, out AX",platform,,"raw → −127..127, dead zone"
+intro,func,05da:3705,joy_calibrate,far int joy_calibrate(void),platform,,"loop-speed calibration, presence, centre, scale; returns present mask"
+ps,func,16e3:00ac,joy_calibrate,far int joy_calibrate(void),platform,,"loop-speed calibration, presence, centre, scale; returns present mask"
+ap,func,1d32:03ac,joy_calibrate,far int joy_calibrate(void),platform,,"loop-speed calibration, presence, centre, scale; returns present mask"
+intro,func,05da:383c,joy_read,"far void joy_read(int stick, int *x, int *y)",platform,,scaled X/Y of stick 0/1
+ps,func,16e3:01e3,joy_read,"far void joy_read(int stick, int *x, int *y)",platform,,scaled X/Y of stick 0/1
+ap,func,1d32:04e5,joy_read,"far void joy_read(int stick, int *x, int *y)",platform,,scaled X/Y of stick 0/1
+ps,func,16e3:025b,joy_read_raw,"far void joy_read_raw(int stick, int *x, int *y)",platform,,raw counts X/Y
+ap,func,1d32:055e,joy_read_raw,"far void joy_read_raw(int stick, int *x, int *y)",platform,,raw counts X/Y
+intro,func,05da:38b4,joy_dir_bits,far int joy_dir_bits(int stick),platform,,±30 threshold → bits up1 down2 left4 right8
+ps,func,16e3:0296,joy_dir_bits,far int joy_dir_bits(int stick),platform,,±30 threshold → bits up1 down2 left4 right8
+ap,func,1d32:059a,joy_dir_bits,far int joy_dir_bits(int stick),platform,,±30 threshold → bits up1 down2 left4 right8
+intro,func,05da:390d,joy_button,far int joy_button(int n),platform,,"button n (0..3), 1 = pressed (existing name joy_read_buttons is misleading: it reads ONE button)"
+ps,func,16e3:02ef,joy_button,far int joy_button(int n),platform,,"button n (0..3), 1 = pressed (existing name joy_read_buttons is misleading: it reads ONE button)"
+ap,func,1d32:05f5,joy_button,far int joy_button(int n),platform,,"button n (0..3), 1 = pressed (existing name joy_read_buttons is misleading: it reads ONE button)"
+intro,func,05da:3927,joy_axis,far int joy_axis(int axis),platform,,one scaled axis 0..3
+ps,func,16e3:0309,joy_axis,far int joy_axis(int axis),platform,,one scaled axis 0..3
+ap,func,1d32:060f,joy_axis,far int joy_axis(int axis),platform,,one scaled axis 0..3
+ps,func,16e3:0339,joy_axis_raw,far int joy_axis_raw(int axis),platform,,one raw axis 0..3
+ap,func,1d32:063f,joy_axis_raw,far int joy_axis_raw(int axis),platform,,one raw axis 0..3
+intro,func,05da:3a40,mouse_init,far int mouse_init(void),platform,,"INT 33h reset, range, event handler"
+ps,func,16e3:3d64,mouse_init,far int mouse_init(void),platform,,"INT 33h reset, range, event handler"
+ap,func,1d32:5b9e,mouse_init,far int mouse_init(void),platform,,"INT 33h reset, range, event handler"
+intro,func,05da:3ab0,mouse_set_range,"far void mouse_set_range(int x,int y,int w,int h)",platform,,INT 33h fn 7/8 (×4 coordinates)
+ps,func,16e3:3dd4,mouse_set_range,"far void mouse_set_range(int x,int y,int w,int h)",platform,,INT 33h fn 7/8 (×4 coordinates)
+ap,func,1d32:5c0e,mouse_set_range,"far void mouse_set_range(int x,int y,int w,int h)",platform,,INT 33h fn 7/8 (×4 coordinates)
+intro,func,05da:3ae1,mouse_set_callback,far void mouse_set_callback(void far (*fn)(void)),platform,,user callback for the event handler (never called by any exe)
+ps,func,16e3:3e05,mouse_set_callback,far void mouse_set_callback(void far (*fn)(void)),platform,,user callback for the event handler (never called by any exe)
+ap,func,1d32:5c3f,mouse_set_callback,far void mouse_set_callback(void far (*fn)(void)),platform,,user callback for the event handler (never called by any exe)
+intro,func,05da:3af2,mouse_event_handler,"far, INT 33h fn 0Ch handler",platform,,stores buttons/x/y; calls callback
+ps,func,16e3:3e16,mouse_event_handler,"far, INT 33h fn 0Ch handler",platform,,stores buttons/x/y; calls callback
+ap,func,1d32:5c50,mouse_event_handler,"far, INT 33h fn 0Ch handler",platform,,stores buttons/x/y; calls callback
+intro,func,05da:3b32,mouse_vga_save,far,platform,,save VGA GC/SEQ state around the callback (hand-off video)
+ps,func,16e3:3e56,mouse_vga_save,far,platform,,save VGA GC/SEQ state around the callback (hand-off video)
+ap,func,1d32:5c90,mouse_vga_save,far,platform,,save VGA GC/SEQ state around the callback (hand-off video)
+intro,func,05da:3b97,mouse_vga_restore,far,platform,,restore it
+ps,func,16e3:3ebb,mouse_vga_restore,far,platform,,restore it
+ap,func,1d32:5cf5,mouse_vga_restore,far,platform,,restore it
+intro,func,05da:3bf0,mouse_shutdown,far int mouse_shutdown(void),platform,,"INT 33h reset, remove handler"
+ps,func,16e3:3f14,mouse_shutdown,far int mouse_shutdown(void),platform,,"INT 33h reset, remove handler"
+ap,func,1d32:5d4e,mouse_shutdown,far int mouse_shutdown(void),platform,,"INT 33h reset, remove handler"
+intro,func,05da:3c0c,mouse_get_pos,"far void mouse_get_pos(int *x, int *y)",platform,,last event position /4
+ps,func,16e3:3f30,mouse_get_pos,"far void mouse_get_pos(int *x, int *y)",platform,,last event position /4
+ap,func,1d32:5d6a,mouse_get_pos,"far void mouse_get_pos(int *x, int *y)",platform,,last event position /4
+intro,func,05da:3c36,mouse_set_pos,"far int mouse_set_pos(int x, int y)",platform,,INT 33h fn 4
+ps,func,16e3:3f5a,mouse_set_pos,"far int mouse_set_pos(int x, int y)",platform,,INT 33h fn 4
+ap,func,1d32:5d94,mouse_set_pos,"far int mouse_set_pos(int x, int y)",platform,,INT 33h fn 4
+intro,func,05da:3c61,mouse_button,far int mouse_button(int right),platform,,"0 = left, ≠0 = right, from last event"
+ps,func,16e3:3f85,mouse_button,far int mouse_button(int right),platform,,"0 = left, ≠0 = right, from last event"
+ap,func,1d32:5dbf,mouse_button,far int mouse_button(int right),platform,,"0 = left, ≠0 = right, from last event"
+intro,func,0491:000c,mouse_init_dos3,far int (void),platform,,glue: mouse_init only if DOS major ≥ 3 (_osmajor DS:0092) else 0
+ps,func,2316:000f,mouse_init_dos3,far int (void),platform,,glue: mouse_init only if DOS major ≥ 3 (_osmajor DS:0092) else 0
+intro,func,0491:0025,mouse_shutdown_dos3,far int (void),platform,,glue
+ps,func,2316:0028,mouse_shutdown_dos3,far int (void),platform,,glue
+intro,func,0491:003e,mouse_get_pos_dos3,"far void (int*,int*)",platform,,glue
+ps,func,2316:0041,mouse_get_pos_dos3,"far void (int*,int*)",platform,,glue
+intro,func,0491:005f,mouse_button_dos3,far int (int),platform,,glue
+ps,func,2316:0062,mouse_button_dos3,far int (int),platform,,glue
+intro,func,0491:007c,mouse_move_to,"far int (int x,int y)",platform,,"glue: get pos; if ≠ (x,y) → mouse_set_pos, else return 1"
+ps,func,2316:007f,mouse_move_to,"far int (int x,int y)",platform,,"glue: get pos; if ≠ (x,y) → mouse_set_pos, else return 1"
+intro,func,05da:4844,divzero_install,far void (void),platform,,hook INT 0
+ps,func,16e3:4b68,divzero_install,far void (void),platform,,hook INT 0
+ap,func,1d32:69a2,divzero_install,far void (void),platform,,hook INT 0
+intro,func,05da:486e,divzero_isr,interrupt,platform,,halve dividend and retry
+ps,func,16e3:4b92,divzero_isr,interrupt,platform,,halve dividend and retry
+ap,func,1d32:69cc,divzero_isr,interrupt,platform,,halve dividend and retry
+intro,func,05da:48a7,divzero_restore,far void (void),platform,,**bug: reads instead of writes the vector**
+ps,func,16e3:4bcb,divzero_restore,far void (void),platform,,**bug: reads instead of writes the vector**
+ap,func,1d32:6a05,divzero_restore,far void (void),platform,,**bug: reads instead of writes the vector**
+intro,func,0db2:0002,win_detect,far int win_detect(void),platform,,1 if running under Windows
+ps,func,1671:0007,win_detect,far int win_detect(void),platform,,1 if running under Windows
+ap,func,247d:0005,win_detect,far int win_detect(void),platform,,1 if running under Windows
+intro,func,0db2:0035,win_critical_section,far void (int leave),platform,,"0 → INT 2Fh 1681h (begin critical section), ≠0 → 1682h (end). Existing param name enter is inverted."
+ps,func,1671:003a,win_critical_section,far void (int leave),platform,,"0 → INT 2Fh 1681h (begin critical section), ≠0 → 1682h (end). Existing param name enter is inverted."
+ap,func,247d:0034,win_critical_section,far void (int leave),platform,,"0 → INT 2Fh 1681h (begin critical section), ≠0 → 1682h (end). Existing param name enter is inverted."
+intro,func,0db2:004c,win_switch_out,far void (const char *tag) (INTRO: no arg),platform,,"put ""*~""+tag (80 bytes) on Windows clipboard, then INT 2Fh 168Bh BX=1 (focus system VM)"
+ps,func,1671:0051,win_switch_out,far void (const char *tag) (INTRO: no arg),platform,,"put ""*~""+tag (80 bytes) on Windows clipboard, then INT 2Fh 168Bh BX=1 (focus system VM)"
+ap,func,247d:004b,win_switch_out,far void (const char *tag) (INTRO: no arg),platform,,"put ""*~""+tag (80 bytes) on Windows clipboard, then INT 2Fh 168Bh BX=1 (focus system VM)"
+ps,func,1671:00fd,win_clip_put,far void (const char *tag),platform,,same without the 168Bh focus switch; never called
+ap,func,247d:00ee,win_clip_put,far void (const char *tag),platform,,same without the 168Bh focus switch; never called
+intro,func,0dc0:000d,win_task_switch,far void (void),platform,,"caller-side wrapper: suspend sound, win_switch_out, resume (hand-off)"
+ps,func,166d:0009,win_task_switch,far void (void),platform,,"caller-side wrapper: suspend sound, win_switch_out, resume (hand-off)"
+ap,func,2466:0118,win_task_switch,far void (void),platform,,"caller-side wrapper: suspend sound, win_switch_out, resume (hand-off)"
+intro,data,DS:08EA,kbd_installed,u8,platform,,1 after kbd_install
+ps,data,DS:3294,kbd_installed,u8,platform,,1 after kbd_install
+ap,data,DS:1B67,kbd_installed,u8,platform,,1 after kbd_install
+intro,data,DS:08EB,kbd_caps_forced,u8,platform,,"init 0 in all exes, never written: ≠0 would force CapsLock on and ignore the Caps key"
+ps,data,DS:3295,kbd_caps_forced,u8,platform,,"init 0 in all exes, never written: ≠0 would force CapsLock on and ignore the Caps key"
+ap,data,DS:1B68,kbd_caps_forced,u8,platform,,"init 0 in all exes, never written: ≠0 would force CapsLock on and ignore the Caps key"
+intro,data,DS:08EC,kbd_last_key,u16,platform,,scan<<8
+ps,data,DS:3296,kbd_last_key,u16,platform,,scan<<8
+ap,data,DS:1B69,kbd_last_key,u16,platform,,scan<<8
+intro,data,DS:08EE,kbd_dir,u8[2],platform,,"direction code 1..9 (0 = none) of the last pressed direction key, per key set (0 = keypad/arrows, 1 = QWE/ASD/ZXC)"
+ps,data,DS:3298,kbd_dir,u8[2],platform,,"direction code 1..9 (0 = none) of the last pressed direction key, per key set (0 = keypad/arrows, 1 = QWE/ASD/ZXC)"
+ap,data,DS:1B6B,kbd_dir,u8[2],platform,,"direction code 1..9 (0 = none) of the last pressed direction key, per key set (0 = keypad/arrows, 1 = QWE/ASD/ZXC)"
+ap,data,DS:1B66,kbq_ascii_mode,u8,platform,,"AP only, init 0, never written: 0 → queue low byte = BIOS shift flags (40:17) instead of ASCII"
+ap,data,DS:1B6D,kbq_limit,s16,platform,,"AP only, init **1**, never written: max queued keys"
+ap,data,DS:1B6F,kbq_count,s16,platform,,AP queue fill count
+ap,data,DS:1B71,kbq_buf,u16[32],platform,,AP ring buffer (64 bytes)
+ap,data,DS:1BB1,kbq_tail,u16,platform,,"AP write byte index (0..3E, &0x3F)"
+ap,data,DS:1BB3,kbq_head,u16,platform,,AP read byte index
+intro,data,DS:0938,kbd_ascii,u8[],platform,,scancode → ASCII / modifier flag (table 3.1)
+ps,data,DS:32E2,kbd_ascii,u8[],platform,,scancode → ASCII / modifier flag (table 3.1)
+ap,data,DS:1BB5,kbd_ascii,u8[],platform,,scancode → ASCII / modifier flag (table 3.1)
+intro,data,DS:0991,kbd_shifted,u8[],platform,,scancode → shifted ASCII
+ps,data,DS:333B,kbd_shifted,u8[],platform,,scancode → shifted ASCII
+ap,data,DS:1C0E,kbd_shifted,u8[],platform,,scancode → shifted ASCII
+intro,data,DS:09EA,key_state,u8[],platform,,per-scancode attributes + bit0 = held (table 3.1)
+ps,data,DS:3394,key_state,u8[],platform,,per-scancode attributes + bit0 = held (table 3.1)
+ap,data,DS:1C67,key_state,u8[],platform,,per-scancode attributes + bit0 = held (table 3.1)
+intro,data,DS:0A43,ramp_x,s16[2],platform,,INT 1Ch integrator X per key set (dead)
+ps,data,DS:33ED,ramp_x,s16[2],platform,,INT 1Ch integrator X per key set (dead)
+ap,data,DS:1CC0,ramp_x,s16[2],platform,,INT 1Ch integrator X per key set (dead)
+intro,data,DS:0A47,ramp_y,s16[2],platform,,integrator Y (dead)
+ps,data,DS:33F1,ramp_y,s16[2],platform,,integrator Y (dead)
+ap,data,DS:1CC4,ramp_y,s16[2],platform,,integrator Y (dead)
+intro,data,DS:0A4B,ramp_autocentre,s16[2],platform,,"init {1,1}: snap to 0 when no direction key held (dead)"
+ps,data,DS:33F5,ramp_autocentre,s16[2],platform,,"init {1,1}: snap to 0 when no direction key held (dead)"
+ap,data,DS:1CC8,ramp_autocentre,s16[2],platform,,"init {1,1}: snap to 0 when no direction key held (dead)"
+intro,data,DS:0A4F,ramp_step,s16,platform,,init 3: step per INT 1Ch tick (dead)
+ps,data,DS:33F9,ramp_step,s16,platform,,init 3: step per INT 1Ch tick (dead)
+ap,data,DS:1CCC,ramp_step,s16,platform,,init 3: step per INT 1Ch tick (dead)
+intro,data,DS:0A51,dir_axis_tab,u8[8],platform,,dir 1..8 → axis flags for the ramp: 80 A0 40 E0 C0 F0 60 B0
+ps,data,DS:33FB,dir_axis_tab,u8[8],platform,,dir 1..8 → axis flags for the ramp: 80 A0 40 E0 C0 F0 60 B0
+ap,data,DS:1CCE,dir_axis_tab,u8[8],platform,,dir 1..8 → axis flags for the ramp: 80 A0 40 E0 C0 F0 60 B0
+intro,data,DS:0A59,dir_bits_tab,u8[10],platform,,dir 0..9 → bits: 00 08 0A 02 06 04 05 01 09 00 (up1 down2 left4 right8)
+ps,data,DS:3403,dir_bits_tab,u8[10],platform,,dir 0..9 → bits: 00 08 0A 02 06 04 05 01 09 00 (up1 down2 left4 right8)
+ap,data,DS:1CD6,dir_bits_tab,u8[10],platform,,dir 0..9 → bits: 00 08 0A 02 06 04 05 01 09 00 (up1 down2 left4 right8)
+intro,data,DS:0A63,tandy_remap_from,u8[11],platform,,59 5A 55 54 29 58 2B 4A 4E 56 57
+ps,data,DS:340D,tandy_remap_from,u8[11],platform,,59 5A 55 54 29 58 2B 4A 4E 56 57
+ap,data,DS:1CE0,tandy_remap_from,u8[11],platform,,59 5A 55 54 29 58 2B 4A 4E 56 57
+intro,data,DS:0A6E,tandy_remap_to,u8[11],platform,,57 58 52 46 48 47 4B 50 4D 53 1C
+ps,data,DS:3418,tandy_remap_to,u8[11],platform,,57 58 52 46 48 47 4B 50 4D 53 1C
+ap,data,DS:1CEB,tandy_remap_to,u8[11],platform,,57 58 52 46 48 47 4B 50 4D 53 1C
+intro,data,DS:0A79,kbd_enhanced,u8,platform,,1 = Tandy with enhanced (101-key) keyboard
+ps,data,DS:3423,kbd_enhanced,u8,platform,,1 = Tandy with enhanced (101-key) keyboard
+ap,data,DS:1CF6,kbd_enhanced,u8,platform,,1 = Tandy with enhanced (101-key) keyboard
+intro,data,DS:0A9C,is_tandy,u8,platform,,set by is_tandy()
+ps,data,DS:231C,is_tandy,u8,platform,,set by is_tandy()
+ap,data,DS:26DC,is_tandy,u8,platform,,set by is_tandy()
+intro,data,DS:15BE,timer_installed,u8,platform,,
+ps,data,DS:2E3E,timer_installed,u8,platform,,
+ap,data,DS:31E4,timer_installed,u8,platform,,
+intro,data,DS:15BF,timer_countdown,s16,platform,,"saturating down-counter, −1 per IRQ0 tick (236.69 Hz); read and written by game code"
+ps,data,DS:2E3F,timer_countdown,s16,platform,,"saturating down-counter, −1 per IRQ0 tick (236.69 Hz); read and written by game code"
+ap,data,DS:31E5,timer_countdown,s16,platform,,"saturating down-counter, −1 per IRQ0 tick (236.69 Hz); read and written by game code"
+intro,data,DS:15C1,timer_divisor,u16,platform,,PIT reload value (5041); also restored by joy_calibrate
+ps,data,DS:2E41,timer_divisor,u16,platform,,PIT reload value (5041); also restored by joy_calibrate
+ap,data,DS:31E7,timer_divisor,u16,platform,,PIT reload value (5041); also restored by joy_calibrate
+intro,data,DS:15C3,timer_bios_reload,u16,platform,,= mult (13)
+ps,data,DS:2E43,timer_bios_reload,u16,platform,,= mult (13)
+ap,data,DS:31E9,timer_bios_reload,u16,platform,,= mult (13)
+intro,data,DS:15C5,timer_bios_count,u16,platform,,ticks left until the BIOS INT 8 is chained
+ps,data,DS:2E45,timer_bios_count,u16,platform,,ticks left until the BIOS INT 8 is chained
+ap,data,DS:31EB,timer_bios_count,u16,platform,,ticks left until the BIOS INT 8 is chained
+intro,data,DS:15C7,timer_mask,u16,platform,,bit i = slot i in use
+ps,data,DS:2E47,timer_mask,u16,platform,,bit i = slot i in use
+ap,data,DS:31ED,timer_mask,u16,platform,,bit i = slot i in use
+intro,data,DS:15C9,timer_fn,far ptr[16],platform,,"callback per slot (offset, segment)"
+ps,data,DS:2E49,timer_fn,far ptr[16],platform,,"callback per slot (offset, segment)"
+ap,data,DS:31EF,timer_fn,far ptr[16],platform,,"callback per slot (offset, segment)"
+intro,data,DS:1609,timer_cnt,{u16 count; u16 reload}[16],platform,,per-slot divider
+ps,data,DS:2E89,timer_cnt,{u16 count; u16 reload}[16],platform,,per-slot divider
+ap,data,DS:322F,timer_cnt,{u16 count; u16 reload}[16],platform,,per-slot divider
+intro,data,DS:1664,joy_present,u8[2],platform,,stick 0/1 detected
+ps,data,DS:0FF8,joy_present,u8[2],platform,,stick 0/1 detected
+ap,data,DS:1B4A,joy_present,u8[2],platform,,stick 0/1 detected
+intro,data,DS:1666,joy_axis_ok,u8,platform,,"after calibrate: bit0 A.X, bit1 A.Y, bit2 B.X, bit3 B.Y had raw < 400"
+ps,data,DS:0FFA,joy_axis_ok,u8,platform,,"after calibrate: bit0 A.X, bit1 A.Y, bit2 B.X, bit3 B.Y had raw < 400"
+ap,data,DS:1B4C,joy_axis_ok,u8,platform,,"after calibrate: bit0 A.X, bit1 A.Y, bit2 B.X, bit3 B.Y had raw < 400"
+intro,data,DS:1667,joy_centre,u16[4],platform,,"raw count at calibrate (A.X, A.Y, B.X, B.Y)"
+ps,data,DS:0FFB,joy_centre,u16[4],platform,,"raw count at calibrate (A.X, A.Y, B.X, B.Y)"
+ap,data,DS:1B4D,joy_centre,u16[4],platform,,"raw count at calibrate (A.X, A.Y, B.X, B.Y)"
+intro,data,DS:166F,joy_scale,u16[4],platform,,0x7F00 / centre
+ps,data,DS:1003,joy_scale,u16[4],platform,,0x7F00 / centre
+ap,data,DS:1B55,joy_scale,u16[4],platform,,0x7F00 / centre
+intro,data,DS:1677,joy_tmp_x,s16,platform,,scratch
+ps,data,DS:100B,joy_tmp_x,s16,platform,,scratch
+ap,data,DS:1B5D,joy_tmp_x,s16,platform,,scratch
+intro,data,DS:1679,joy_delay,u16,platform,,inner delay loop count per sample
+ps,data,DS:100D,joy_delay,u16,platform,,inner delay loop count per sample
+ap,data,DS:1B5F,joy_delay,u16,platform,,inner delay loop count per sample
+intro,data,DS:167B,joy_dir_xy,s16[2],platform,,"scratch X,Y for joy_dir_bits"
+ps,data,DS:100F,joy_dir_xy,s16[2],platform,,"scratch X,Y for joy_dir_bits"
+ap,data,DS:1B61,joy_dir_xy,s16[2],platform,,"scratch X,Y for joy_dir_bits"
+intro,data,DS:1680,mouse_x4,u16,platform,,last event X (mouse units = 4 × pixel)
+ps,data,DS:2EE4,mouse_x4,u16,platform,,last event X (mouse units = 4 × pixel)
+ap,data,DS:328A,mouse_x4,u16,platform,,last event X (mouse units = 4 × pixel)
+intro,data,DS:1682,mouse_y4,u16,platform,,last event Y
+ps,data,DS:2EE6,mouse_y4,u16,platform,,last event Y
+ap,data,DS:328C,mouse_y4,u16,platform,,last event Y
+intro,data,DS:1684,mouse_callback,far ptr,platform,,user callback (always NULL)
+ps,data,DS:2EE8,mouse_callback,far ptr,platform,,user callback (always NULL)
+ap,data,DS:328E,mouse_callback,far ptr,platform,,user callback (always NULL)
+intro,data,DS:1818,mouse_stack_top,–,platform,,private stack used inside the event handler
+ps,data,DS:307C,mouse_stack_top,–,platform,,private stack used inside the event handler
+ap,data,DS:3422,mouse_stack_top,–,platform,,private stack used inside the event handler
+intro,data,DS:182A,mouse_present,u8,platform,,
+ps,data,DS:308E,mouse_present,u8,platform,,
+ap,data,DS:3434,mouse_present,u8,platform,,
+intro,data,DS:182B,mouse_buttons,u8,platform,,"BL of last event (bit0 left, bit1 right)"
+ps,data,DS:308F,mouse_buttons,u8,platform,,"BL of last event (bit0 left, bit1 right)"
+ap,data,DS:3435,mouse_buttons,u8,platform,,"BL of last event (bit0 left, bit1 right)"
+intro,data,DS:1870,divz_installed,u8,platform,,
+ps,data,DS:30D4,divz_installed,u8,platform,,
+ap,data,DS:347A,divz_installed,u8,platform,,
+intro,data,DS:1871,divz_old_seg,u16,platform,,
+ps,data,DS:30D5,divz_old_seg,u16,platform,,
+ap,data,DS:347B,divz_old_seg,u16,platform,,
+intro,data,DS:1873,divz_old_off,u16,platform,,
+ps,data,DS:30D7,divz_old_off,u16,platform,,
+ap,data,DS:347D,divz_old_off,u16,platform,,
+intro,func,05bb:0001,nop_far,far void(void),platform,,"empty, no callers"
+intro,func,05da:5c92,empty_5c92,far void(void),platform,,empty function
+ps,func,16e3:59ec,empty_5c92,far void(void),platform,,empty function (= INTRO 05da:5c92)
+ap,func,1d32:6aaf,sys_exit_tail,-,platform,,"retf tail of sys_exit 1d32:6a91, not a function"
+ap,func,2494:01df,empty_2494_01df,far void(void),platform,,empty function
+intro,func,038e:0021,module_pick,far u8(u8 mask),platform,,random module index from mask (time-seeded rand)
+intro,func,038e:00cc,make_path,"far char*(char* s, char* ext)",platform,,"s + ""."" + ext; extra <ext>\ path in DS:242C unless vol_active (unused)"
+intro,func,038e:0247,cfg_lookup,"far int(void* tab, char* line)",platform,,"strstr table lookup, used only by dead config_read"
+ps,func,227c:002a,set_quit_flag,far void(void),platform,,DS:00C1 = 1
+ps,func,227c:0034,ctrl_esc_hook,far void(int x),platform,,Ctrl+Esc hook of the PS keyboard ISR: if x shell_exit(0); DS:00C1 = 1
+intro,func,05da:35e0,dos_alloc,"far void far*(u32 size, u16, u16 flags)",platform,,INT 21h/48h; size -1 = free bytes query; flags bit0 zero-fill; returns seg:0
+ps,func,16e3:3bf4,dos_alloc,"far void far*(u32 size, u16, u16 flags)",platform,,INT 21h/48h; size -1 = free bytes query; flags bit0 zero-fill; returns seg:0
+ap,func,1d32:5a2e,dos_alloc,"far void far*(u32 size, u16, u16 flags)",platform,,INT 21h/48h; size -1 = free bytes query; flags bit0 zero-fill; returns seg:0
+intro,func,05da:3657,dos_free,far void(void far* p),platform,,INT 21h/49h ES=seg
+ps,func,16e3:3c6b,dos_free,far void(void far* p),platform,,INT 21h/49h ES=seg
+ap,func,1d32:5aa5,dos_free,far void(void far* p),platform,,INT 21h/49h ES=seg
+intro,func,05da:4623,huge_norm_top,near regs,platform,,normalise to largest offset; for backward copies (PS/AP addresses verified)
+ps,func,16e3:4947,huge_norm_top,near regs,platform,,normalise to largest offset; for backward copies (PS/AP addresses verified)
+ap,func,1d32:6781,huge_norm_top,near regs,platform,,normalise to largest offset; for backward copies (PS/AP addresses verified)
+intro,func,05da:4654,huge_sub,near regs,platform,,"DX:AX -= CX:BX, normalise (PS/AP addresses verified)"
+ps,func,16e3:4978,huge_sub,near regs,platform,,"DX:AX -= CX:BX, normalise (PS/AP addresses verified)"
+ap,func,1d32:67b2,huge_sub,near regs,platform,,"DX:AX -= CX:BX, normalise (PS/AP addresses verified)"
+intro,func,17bd:0000,ems_detect,far int(void),platform,,"""EMMXXXX0"" at INT 67h vector seg:000A; AP also stores page frame"
+ap,func,24e1:0000,ems_detect,far int(void),platform,,"""EMMXXXX0"" at INT 67h vector seg:000A; AP also stores page frame"
+intro,func,17bd:002a,ems_free_pages,far u16(void),platform,,INT 67h/42h BX
+ap,func,24e1:0031,ems_free_pages,far u16(void),platform,,INT 67h/42h BX
+intro,func,17bd:003a,ems_alloc,far u16(u32 bytes),platform,,INT 67h/43h; handle table of 32
+ap,func,24e5:0000,ems_alloc,far u16(u32 bytes),platform,,INT 67h/43h; handle table of 32
+intro,func,17bd:0080,ems_realloc,"far u16(u16 h, u32 bytes)",platform,,INT 67h/51h
+ap,func,24e5:004b,ems_realloc,"far u16(u16 h, u32 bytes)",platform,,INT 67h/51h
+intro,func,17bd:00b2,ems_free,far void(u16 h),platform,,INT 67h/45h
+ap,func,24e5:008d,ems_free,far void(u16 h),platform,,INT 67h/45h
+intro,func,17bd:00d9,ems_free_all,far void(void),platform,,AP: atexit handler
+ap,func,24e5:00b6,ems_free_all,far void(void),platform,,AP: atexit handler
+intro,func,17bd:00fa,ems_map,"far void far*(u16 h, u16 first)",platform,,"save map (47h), map <=4 pages, return frame:0"
+ap,func,24e5:00d7,ems_map,"far void far*(u16 h, u16 first)",platform,,"save map (47h), map <=4 pages, return frame:0"
+intro,func,17bd:013b,ems_restore_map,far void(u16 h),platform,,INT 67h/48h
+ap,func,24e5:0139,ems_restore_map,far void(u16 h),platform,,INT 67h/48h
+intro,func,17bd:014b,ems_map_nosave,far void far*(u16 h),platform,,map <=4 pages from logical 0 without saving
+ap,func,24e5:0149,ems_map_nosave,far void far*(u16 h),platform,,map <=4 pages from logical 0 without saving
+ap,func,1d32:2050,bmp_to_ems,far bmp_t*(bmp_t*),platform,,move a bitmap pixel block into its own EMS handle; frame seg := handle (<50h)
+ap,func,1d32:214e,bmp_load_ems,far bmp_t*(void* x),platform,,bmp_load_planes + bmp_to_ems
+ap,func,1d32:2170,bmp_free_ems,far void(bmp_t*),platform,,"ems_free + dummy 16-byte dos block, bmp_free"
+ap,func,1d32:21b6,bmp_draw_ems_flip,"far void(frame*, int, int, int)",platform,,"map EMS, gfx_sprite_flip 1d32:3de5, unmap"
+ap,func,1d32:2204,bmp_draw_ems_scaled,"far void(frame*, 5 args)",platform,,"map EMS, gfx_sprite_scaled 1d32:49f4, unmap; no callers"
+ap,func,1d32:2258,bmp_draw_ems_rotated,"far void(frame*, 7 args)",platform,,"map EMS, gfx_sprite_rotated_ind 1d32:5e5b, unmap"
+ap,func,1d32:22b2,emm_pools_clear,far void(void),platform,,zero 4 pools; no callers
+ap,func,1d32:22c7,emm_first_free,far int(u32 mask),platform,,"lowest clear bit, 1-based; 0 if full"
+ap,func,1d32:22f4,pool_alloc,"far u16(int pool, u16 size)",platform,,bump allocation in an EMS pool; id = pool<<8|slot
+ap,func,1d32:23f4,pool_trim,far void(POOL*),platform,,"lower used, shrink/free the EMS handle"
+ap,func,1d32:24b6,pool_free,far void(u16 id),platform,,"clear slot, trim"
+ap,func,1d32:2525,pool_map,far void far*(u16 id),platform,,cached map without save
+ap,func,1d32:2571,pool_map_save,far void far*(u16 id),platform,,"ems_map(handle,0) + slot offset"
+ap,func,1d32:25a5,pool_unmap,far void(u16 id),platform,,ems_restore_map
+ap,func,24b2:0004,mem_calloc,far void*(u16 n),platform,,safe_malloc + zero
+ap,func,24b2:004a,mem_free_raw,far void(void*),platform,,free
+ap,func,24b2:0064,mem_log_reset,far void(void),platform,,remove mem.log; no callers
+ap,func,24b2:0074,mem_new,"far void*(u16 n, char* tag, char* what, int line)",platform,,mem_calloc + optional mem.log line
+ap,func,24b2:00ca,mem_delete,"far void(void* p, char* tag, char* what, int line)",platform,,assert p; free; optional log
+ap,func,24b2:013d,mem_far_new,"far void far*(u32 n, s16 flags)",platform,,dos_alloc + zero; n=-1 returns free bytes (mem_far_avail)
+ap,func,24b2:01c0,mem_far_delete,far void(void far*),platform,,dos_free + optional log
+ap,func,24d3:0002,arena_init,far void(u16 n),platform,,near mark/release arena (sim_init: 2F44h)
+ap,func,24d3:002d,arena_done,far void(void),platform,,
+ap,func,24d3:0059,arena_alloc,far void*(u16 n),platform,,"zeroed, no overflow check"
+ap,func,24d3:0092,arena_release,far void(void* mark),platform,,
+ap,func,24d3:00a1,arena_alloc_top,far void*(u16 n),platform,,no callers
+ap,func,24d3:00bb,arena_release_top,far void(void* mark),platform,,no callers
+ap,func,24d3:00ca,arena_reset,far void(void),platform,,no callers
+ap,func,24d3:00d5,arena_reset_top,far void(void),platform,,no callers
+ap,func,0000:035c,safe_malloc,far void*(u16 n),platform,,malloc; reject blocks ending above FFFFh-_stklen
+ap,func,4b9e:0000,heap_hook,far void(void),platform,,empty; called around every mem.c allocation
+intro,data,DS:1F6A,ems_present,u8,platform,,
+intro,data,DS:1F6B,ems_error,u8,platform,,last INT 67h error AH
+intro,data,DS:1F6C,ems_handles,u16[32],platform,,
+intro,data,DS:1F62,ems_signature,char[8],platform,,"""EMMXXXX0"""
+ap,data,DS:1FE2,ems_frame,u16,platform,,page frame segment
+ap,data,DS:1FE4,ems_signature,char[8],platform,,"""EMMXXXX0"""
+ap,data,DS:1FEC,ems_present,u8,platform,,
+ap,data,DS:1FED,ems_error,u8,platform,,
+ap,data,DS:1FEE,ems_pages,u16[32],platform,,pages per handle slot
+ap,data,DS:202E,ems_handles,u16[32],platform,,
+ap,data,DS:206E,ems_map_array,u16[4][2],platform,,"{logical, physical} for INT 67h/5000h"
+ap,data,DS:207E,emm_cur_pool,s16,platform,,"pool mapped by pool_map, -1 none"
+ap,data,DS:6158,emm_cur_frame,void far*,platform,,
+ap,data,DS:615C,emm_pools,POOL[4] (8Eh each),platform,,
+ap,data,DS:1F44,mem_log_on,u16,platform,,mem.log enable (never set)
+ap,data,DS:1FDA,arena_base,u16,platform,,
+ap,data,DS:1FDC,arena_size,u16,platform,,
+ap,data,DS:1FDE,arena_lo,u16,platform,,
+ap,data,DS:1FE0,arena_hi,u16,platform,,
+ap,data,DS:0B80,ap_quit_request,u8,platform,,"set by AP kbd_isr: Ctrl+Esc 1, Ctrl+Alt+Del 2"
+ps,data,DS:00C1,quit_flag,u8,platform,,set by PS Ctrl+Esc hook 227c:0034

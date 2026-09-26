@@ -165,7 +165,7 @@ intro,func,05da:5c93,gfx_init,far int(const char* res int a int b),seed,,"detect
 intro,func,05da:5dc9,gfx_restore_text,far void(void),seed,,
 intro,func,05da:5de1,gfx_detect_adapter,near int(void),seed,,INT 10h/1Ah + 12h + CRTC probe
 intro,func,05da:5f48,bios_set_text_mode,near,seed,,equipment byte + INT 10h mode 3
-intro,func,05da:5f97,dos_setblock,far,seed,,INT 21h/4Ah
+intro,func,05da:5f97,bmp_to_scn,far,seed,,INT 21h/4Ah
 intro,func,0db2:0002,win_detect,far int(void),seed,,"INT 2Fh/1600h (Windows enhanced mode), 4680h"
 intro,func,0db2:0035,win_critical_section,far void(int enter),seed,,INT 2Fh/1681h-1682h
 intro,func,1593:0004,snd_init,far int(int driver const char* res),seed,,"loads the sound module (SXCODE.OVL), timer_install(13) if needed, registers the 1373 sound service"
@@ -318,7 +318,7 @@ ps,func,16e3:59ed,gfx_init,far int(const char* res int a int b),match:intro,,= i
 ps,func,16e3:5b23,gfx_restore_text,far void(void),match:intro,,= intro 05da:5dc9
 ps,func,16e3:5b3b,gfx_detect_adapter,near int(void),match:intro,,= intro 05da:5de1
 ps,func,16e3:5ca2,bios_set_text_mode,near,match:intro,,= intro 05da:5f48
-ps,func,16e3:5cf1,dos_setblock,far,match:intro,,= intro 05da:5f97
+ps,func,16e3:5cf1,bmp_to_scn,far,match:intro,,= intro 05da:5f97
 ps,func,16e3:62c9,kbd_install,far void(int),match:intro,,= intro 05da:0014 (score 0.91)
 ps,func,16e3:638d,kbd_restore,far int(void),match:intro,,= intro 05da:00d9
 ps,func,16e3:65aa,tick_isr_1c,interrupt,match:intro,,= intro 05da:02fd
@@ -451,4 +451,4 @@ ap,func,4e0d:09d0,sim_write_results,far,seed,,simprefs.prf + sim.out
 ap,func,4e0d:0bb0,sim_exit,far void(int code int flag),seed,,"shutdown, 0:0510 = 3E7h, exit(code): 2 = back to PS.EXE, 1 = INTRO.EXE, 0 = DOS"
 ap,func,50c8:0008,main,int(int argc char** argv),seed,,"AP main (sim\s\c\main.c): -n<dir>, CPU check (24e1), EMS >= 112K, 0:0510 must be 29Ah or 3E7h else exit(1), cleared to 0; switches -s -S -x -t -W -o -w -d; sim.in; mission; sim_exit(2)"
 ap,func,5254:0859,sim_out_write,far,seed,,SIM.OUT (results.c)
-ap,func,71db:0000,dos_setblock,far,match:intro,,= intro 05da:5f97 (score 0.92)
+ap,func,71db:0000,bmp_to_scn,far,match:intro,,= intro 05da:5f97 (score 0.92)

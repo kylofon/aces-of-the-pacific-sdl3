@@ -1,0 +1,391 @@
+exe,kind,address,name,type,owner,other_names,notes
+intro,func,049d:0008,vol_ext_subdir_path,far char*(char* name),platform,,"builds ""<ext>\<name>"" in vol_subdir_buf; fallback path"
+ps,func,0000:049e,vol_ext_subdir_path,far char*(char* name),platform,,"builds ""<ext>\<name>"" in vol_subdir_buf; fallback path"
+ap,func,0000:0448,vol_ext_subdir_path,far char*(char* name),platform,,"builds ""<ext>\<name>"" in vol_subdir_buf; fallback path"
+intro,func,049d:0059,vol_set_log,far void(char* logname),platform,,"debug log fopen ""wt"""
+ps,func,0000:04ef,vol_set_log,far void(char* logname),platform,,"debug log fopen ""wt"""
+ap,func,0000:04e1,vol_set_log,far void(char* logname),platform,,"debug log fopen ""wt"""
+intro,func,049d:008d,vol_basename,far char*(char* path),platform,,after last backslash
+ps,func,0000:0523,vol_basename,far char*(char* path),platform,,after last backslash
+ap,func,0000:0517,vol_basename,far char*(char* path),platform,,after last backslash
+intro,func,049d:00bb,my_fopen,"far VFILE*(char* name, char* mode)",platform,vol_fopen,"loose file (prefix+name, name) first, then volumes, then <ext>\name"
+ps,func,0000:0551,my_fopen,"far VFILE*(char* name, char* mode)",platform,vol_fopen,"loose file (prefix+name, name) first, then volumes, then <ext>\name"
+ap,func,0000:0555,my_fopen,"far VFILE*(char* name, char* mode)",platform,vol_fopen,"loose file (prefix+name, name) first, then volumes, then <ext>\name"
+intro,func,049d:03bc,my_fclose,far int(VFILE*),platform,,
+ps,func,0000:084b,my_fclose,far int(VFILE*),platform,,
+ap,func,0000:08cc,my_fclose,far int(VFILE*),platform,,
+intro,func,049d:0411,my_fread,"far int(void* buf, int size, int n, VFILE*)",platform,,clamped to entry
+ps,func,0000:08a0,my_fread,"far int(void* buf, int size, int n, VFILE*)",platform,,clamped to entry
+ap,func,0000:0945,my_fread,"far int(void* buf, int size, int n, VFILE*)",platform,,clamped to entry
+intro,func,049d:04f4,my_hread,"far long(void far* buf, long size, long n, VFILE*)",platform,,huge read clamped to entry; absent in AP
+ps,func,0000:0983,my_hread,"far long(void far* buf, long size, long n, VFILE*)",platform,,huge read clamped to entry; absent in AP
+intro,func,049d:0616,file_hread,"far long(void far* buf, long size, long n, FILE*)",platform,,all-or-nothing huge read via DOS handle
+ps,func,0000:0aa1,file_hread,"far long(void far* buf, long size, long n, FILE*)",platform,,all-or-nothing huge read via DOS handle
+ap,func,0000:0a0d,file_hread,"far long(void far* buf, long size, long n, FILE*)",platform,,all-or-nothing huge read via DOS handle
+intro,func,049d:06d1,my_fseek,"far int(VFILE*, long off, int whence)",platform,,"entry: SEEK_END = size-off, clamped"
+ps,func,0000:0b5a,my_fseek,"far int(VFILE*, long off, int whence)",platform,,"entry: SEEK_END = size-off, clamped"
+ap,func,0000:0ae8,my_fseek,"far int(VFILE*, long off, int whence)",platform,,"entry: SEEK_END = size-off, clamped"
+intro,func,049d:078e,my_ftell,far long(VFILE*),platform,,
+ps,func,0000:0c17,my_ftell,far long(VFILE*),platform,,
+ap,func,0000:0b79,my_ftell,far long(VFILE*),platform,,
+intro,func,049d:07ca,my_filelength,far long(VFILE*),platform,,
+ps,func,0000:0c53,my_filelength,far long(VFILE*),platform,,
+ap,func,0000:0bba,my_filelength,far long(VFILE*),platform,,
+intro,func,049d:084d,my_rewind,far void(VFILE*),platform,,
+ps,func,0000:0cd6,my_rewind,far void(VFILE*),platform,,
+ap,func,0000:0c44,my_rewind,far void(VFILE*),platform,,
+intro,func,049d:0865,my_fgetc,far int(VFILE*),platform,,-1 at entry end
+ps,func,0000:0cee,my_fgetc,far int(VFILE*),platform,,-1 at entry end
+ap,func,0000:0c58,my_fgetc,far int(VFILE*),platform,,-1 at entry end
+intro,func,049d:0913,my_feof,far int(VFILE*),platform,,
+ps,func,0000:0d9c,my_feof,far int(VFILE*),platform,,
+ap,func,0000:0d02,my_feof,far int(VFILE*),platform,,
+intro,func,049d:0961,my_fwrite,"far int(void*, int, int, VFILE*)",platform,,0 for volume entries
+ps,func,0000:0dea,my_fwrite,"far int(void*, int, int, VFILE*)",platform,,0 for volume entries
+ap,func,0000:0d48,my_fwrite,"far int(void*, int, int, VFILE*)",platform,,0 for volume entries
+intro,func,049d:09b0,my_fputc,"far int(int c, VFILE*)",platform,,-1 for volume entries
+ps,func,0000:0e39,my_fputc,"far int(int c, VFILE*)",platform,,-1 for volume entries
+ap,func,0000:0d8d,my_fputc,"far int(int c, VFILE*)",platform,,-1 for volume entries
+intro,func,049d:09f8,my_setbuf,"far void(VFILE*, char*)",platform,,
+ps,func,0000:0e81,my_setbuf,"far void(VFILE*, char*)",platform,,
+ap,func,0000:0dcd,my_setbuf,"far void(VFILE*, char*)",platform,,
+intro,func,049d:0a2c,vol_open_index,"far void(char* volname, u16 mask)",platform,,"header check, mask test, directory load"
+ps,func,0000:0eb5,vol_open_index,"far void(char* volname, u16 mask)",platform,,"header check, mask test, directory load"
+ap,func,0000:0e04,vol_open_index,"far void(char* volname, u16 mask)",platform,,"header check, mask test, directory load"
+intro,func,049d:0c4a,vol_init,"far void(char* log, u16 a, u16 b)",platform,,"mask=a|b or default (INTRO 2001h, PS/AP 8001h); AP sorts M* first and skips names containing vol_exclude"
+ps,func,0000:10d1,vol_init,"far void(char* log, u16 a, u16 b)",platform,,"mask=a|b or default (INTRO 2001h, PS/AP 8001h); AP sorts M* first and skips names containing vol_exclude"
+ap,func,0000:1057,vol_init,"far void(char* log, u16 a, u16 b)",platform,,"mask=a|b or default (INTRO 2001h, PS/AP 8001h); AP sorts M* first and skips names containing vol_exclude"
+intro,func,049d:0d50,vol_shutdown,far void(void),platform,,"free directories, restore INT 24h"
+ps,func,0000:11d7,vol_shutdown,far void(void),platform,,"free directories, restore INT 24h"
+ap,func,0000:122b,vol_shutdown,far void(void),platform,,"free directories, restore INT 24h"
+intro,func,049d:0e28,vol_force_reopen,far void(void),platform,,no callers
+ps,func,0000:12af,vol_force_reopen,far void(void),platform,,no callers
+ap,func,0000:12e0,vol_force_reopen,far void(void),platform,,no callers
+intro,func,049d:0e32,vol_find_entry,"far int(char* name, VREC*, int vol)",platform,,name hash + directory walk
+ps,func,0000:12b9,vol_find_entry,"far int(char* name, VREC*, int vol)",platform,,name hash + directory walk
+ap,func,0000:12ea,vol_find_entry,"far int(char* name, VREC*, int vol)",platform,,name hash + directory walk
+intro,func,049d:0fa3,vol_select,far FILE*(int vol),platform,vol_open,open volume file (-1 = close); fatal if missing
+ps,func,0000:1426,vol_select,far FILE*(int vol),platform,vol_open,open volume file (-1 = close); fatal if missing
+ap,func,0000:1457,vol_select,far FILE*(int vol),platform,vol_open,open volume file (-1 = close); fatal if missing
+intro,func,049d:10c1,vol_seek,far void(u32 pos),platform,,
+ps,func,0000:1544,vol_seek,far void(u32 pos),platform,,
+ap,func,0000:1586,vol_seek,far void(u32 pos),platform,,
+intro,func,049d:1128,vol_rec_of,far VREC*(void* handle),platform,,1-entry cache; NULL resets
+ps,func,0000:15ab,vol_rec_of,far VREC*(void* handle),platform,,1-entry cache; NULL resets
+ap,func,0000:15d9,vol_rec_of,far VREC*(void* handle),platform,,1-entry cache; NULL resets
+intro,func,049d:118b,vol_real_file,far FILE*(VFILE*),platform,,no callers
+ps,func,0000:160e,vol_real_file,far FILE*(VFILE*),platform,,no callers
+ap,func,0000:163f,vol_real_file,far FILE*(VFILE*),platform,,no callers
+intro,func,049d:11ab,vol_int24,interrupt,platform,,critical error: AL=3 fail while vol_in_open else 1 retry
+ps,func,0000:162e,vol_int24,interrupt,platform,,critical error: AL=3 fail while vol_in_open else 1 retry
+ap,func,0000:165e,vol_int24,interrupt,platform,,critical error: AL=3 fail while vol_in_open else 1 retry
+ap,func,0000:0fde,vol_name_cmp,"far int(char*, char*)",platform,,qsort comparator: M* names first in reverse order
+intro,func,05cb:000e,rcfg_clear,far void(void),platform,,
+intro,func,05cb:0027,rcfg_load,far void(FILE*),platform,,max 50 lines; dead (config_read has no callers)
+intro,func,05cb:00a6,rcfg_find,far char*(char* key),platform,,strstr
+intro,func,05cb:00dc,rcfg_free,far void(void),platform,,
+intro,func,05da:5764,chunk_slot,CHF*(VFILE*),platform,,near in INTRO/PS
+ps,func,16e3:54be,chunk_slot,CHF*(VFILE*),platform,,near in INTRO/PS
+ap,func,7187:0000,chunk_slot,CHF*(VFILE*),platform,,near in INTRO/PS
+intro,func,05da:5795,chunk_reset,void(CHF*),platform,,
+ps,func,16e3:54ef,chunk_reset,void(CHF*),platform,,
+ap,func,7187:0031,chunk_reset,void(CHF*),platform,,
+intro,func,05da:57e2,chunk_path_eq,"int(char*, char*, int n)",platform,,
+ps,func,16e3:553c,chunk_path_eq,"int(char*, char*, int n)",platform,,
+ap,func,7187:007e,chunk_path_eq,"int(char*, char*, int n)",platform,,
+intro,func,05da:581a,chunk_save,"far CHF*(CHF* dst, VFILE*)",platform,,
+ps,func,16e3:5574,chunk_save,"far CHF*(CHF* dst, VFILE*)",platform,,
+ap,func,7187:00b6,chunk_save,"far CHF*(CHF* dst, VFILE*)",platform,,
+intro,func,05da:5856,chunk_restore,far int(CHF* src),platform,,
+ps,func,16e3:55b0,chunk_restore,far int(CHF* src),platform,,
+ap,func,7187:00f3,chunk_restore,far int(CHF* src),platform,,
+intro,func,05da:589e,chunk_open,far VFILE*(char* name),platform,,my_fopen rb; max 4
+ps,func,16e3:55f8,chunk_open,far VFILE*(char* name),platform,,my_fopen rb; max 4
+ap,func,7187:013c,chunk_open,far VFILE*(char* name),platform,,my_fopen rb; max 4
+intro,func,05da:5902,chunk_fail,long(CHF*),platform,,"restore backup, return -1"
+ps,func,16e3:565c,chunk_fail,long(CHF*),platform,,"restore backup, return -1"
+ap,func,7187:01a2,chunk_fail,long(CHF*),platform,,"restore backup, return -1"
+intro,func,05da:5934,chunk_find,"far long(VFILE*, char* path, int n)",platform,,"n>=1 n-th, 0 next, -1 again; returns payload offset or -1"
+ps,func,16e3:568e,chunk_find,"far long(VFILE*, char* path, int n)",platform,,"n>=1 n-th, 0 next, -1 again; returns payload offset or -1"
+ap,func,7187:01d4,chunk_find,"far long(VFILE*, char* path, int n)",platform,,"n>=1 n-th, 0 next, -1 again; returns payload offset or -1"
+intro,func,05da:5c21,chunk_size,far long(VFILE*),platform,,
+ps,func,16e3:597b,chunk_size,far long(VFILE*),platform,,
+ap,func,7187:04cc,chunk_size,far long(VFILE*),platform,,
+intro,func,05da:5c4b,chunk_close,far int(VFILE*),platform,,
+ps,func,16e3:59a5,chunk_close,far int(VFILE*),platform,,
+ap,func,7187:04f7,chunk_close,far int(VFILE*),platform,,
+intro,func,05da:5c7a,chunk_is_open,far int(VFILE*),platform,,
+ps,func,16e3:59d4,chunk_is_open,far int(VFILE*),platform,,
+ap,func,7187:0527,chunk_is_open,far int(VFILE*),platform,,
+intro,func,05da:6b6c,pk_open,"far int(int method, VFILE*, char* mode, u32 packed_size)",platform,,reads method byte + u32 size
+ps,func,16e3:6cba,pk_open,"far int(int method, VFILE*, char* mode, u32 packed_size)",platform,,reads method byte + u32 size
+ap,func,1d32:2bcb,pk_open,"far int(int method, VFILE*, char* mode, u32 packed_size)",platform,,reads method byte + u32 size
+intro,func,05da:6cb9,pk_open_mem,"far int(int method, void far* buf, char* mode, u32 size)",platform,,no callers
+ps,func,16e3:6e07,pk_open_mem,"far int(int method, void far* buf, char* mode, u32 size)",platform,,no callers
+ap,func,1d32:2d18,pk_open_mem,"far int(int method, void far* buf, char* mode, u32 size)",platform,,no callers
+intro,func,05da:6f3d,pk_read,"far u16(int id, void far* dst, u16 n)",platform,,
+ps,func,16e3:708b,pk_read,"far u16(int id, void far* dst, u16 n)",platform,,
+ap,func,1d32:2f9c,pk_read,"far u16(int id, void far* dst, u16 n)",platform,,
+intro,func,05da:702d,pk_size,far long(int id),platform,,
+ps,func,16e3:717b,pk_size,far long(int id),platform,,
+ap,func,1d32:308c,pk_size,far long(int id),platform,,
+intro,func,05da:7050,pk_seek,"far u16(int id, long off, int whence)",platform,,decode and discard
+ps,func,16e3:719e,pk_seek,"far u16(int id, long off, int whence)",platform,,decode and discard
+ap,func,1d32:30af,pk_seek,"far u16(int id, long off, int whence)",platform,,decode and discard
+intro,func,05da:71a3,pk_rewind,far int(int id),platform,,
+ps,func,16e3:72f1,pk_rewind,far int(int id),platform,,
+ap,func,1d32:3202,pk_rewind,far int(int id),platform,,
+intro,func,05da:6db5,pk_close,far u16(int id),platform,,
+ps,func,16e3:6f03,pk_close,far u16(int id),platform,,
+ap,func,1d32:2e14,pk_close,far u16(int id),platform,,
+intro,func,05da:6f7a,pk_write,"far u16(int id, void far* src, u16 n)",platform,,no callers
+ps,func,16e3:70c8,pk_write,"far u16(int id, void far* src, u16 n)",platform,,no callers
+ap,func,1d32:2fd9,pk_write,"far u16(int id, void far* src, u16 n)",platform,,no callers
+intro,func,05da:6926,pk_select,int(int id),platform,,
+ps,func,16e3:6a74,pk_select,int(int id),platform,,
+ap,func,1d32:2985,pk_select,int(int id),platform,,
+intro,func,05da:6a4f,pk_alloc_id,int(void),platform,,100 slots
+ps,func,16e3:6b9d,pk_alloc_id,int(void),platform,,100 slots
+ap,func,1d32:2aae,pk_alloc_id,int(void),platform,,100 slots
+intro,func,05da:6a9e,pk_setup,"int(int method, char* mode)",platform,,uses pk_shared_scratch if set
+ps,func,16e3:6bec,pk_setup,"int(int method, char* mode)",platform,,uses pk_shared_scratch if set
+ap,func,1d32:2afd,pk_setup,"int(int method, char* mode)",platform,,uses pk_shared_scratch if set
+intro,func,05da:69e5,pk_free,int(int id),platform,,
+ps,func,16e3:6b33,pk_free,int(int id),platform,,
+ap,func,1d32:2a44,pk_free,int(int id),platform,,
+intro,func,05da:69af,pk_mode_is_read,int(char* mode),platform,,
+ps,func,16e3:6afd,pk_mode_is_read,int(char* mode),platform,,
+ap,func,1d32:2a0e,pk_mode_is_read,int(char* mode),platform,,
+intro,func,05da:69cf,pk_nfree,void(void*),platform,,
+ps,func,16e3:6b1d,pk_nfree,void(void*),platform,,
+ap,func,1d32:2a2e,pk_nfree,void(void*),platform,,
+intro,func,05da:6efa,pk_fill,"u16(int id, u16 n)",platform,,
+ps,func,16e3:7048,pk_fill,"u16(int id, u16 n)",platform,,
+ap,func,1d32:2f59,pk_fill,"u16(int id, u16 n)",platform,,
+intro,func,05da:6e85,pk_from_ring,void(void),platform,,
+ps,func,16e3:6fd3,pk_from_ring,void(void),platform,,
+ap,func,1d32:2ee4,pk_from_ring,void(void),platform,,
+intro,func,05da:668b,pk_getbyte,int(void),platform,,
+ps,func,16e3:67d9,pk_getbyte,int(void),platform,,
+ap,func,1d32:26ea,pk_getbyte,int(void),platform,,
+intro,func,05da:66e3,pk_getbytes,"u16(u8* dst, u16 n)",platform,,
+ps,func,16e3:6831,pk_getbytes,"u16(u8* dst, u16 n)",platform,,
+ap,func,1d32:2742,pk_getbytes,"u16(u8* dst, u16 n)",platform,,
+intro,func,05da:661f,pk_copy_file,"void(void far* dst, u16 n)",platform,,
+ps,func,16e3:676d,pk_copy_file,"void(void far* dst, u16 n)",platform,,
+ap,func,1d32:267e,pk_copy_file,"void(void far* dst, u16 n)",platform,,
+intro,func,05da:6887,pk_put1,int(u8 c),platform,,
+ps,func,16e3:69d5,pk_put1,int(u8 c),platform,,
+ap,func,1d32:28e6,pk_put1,int(u8 c),platform,,
+intro,func,05da:678a,rle_literal,int(u16 n),platform,,
+ps,func,16e3:68d8,rle_literal,int(u16 n),platform,,
+ap,func,1d32:27e9,rle_literal,int(u16 n),platform,,
+intro,func,05da:680d,rle_fill,"int(u8 v, u16 n)",platform,,
+ps,func,16e3:695b,rle_fill,"int(u8 v, u16 n)",platform,,
+ap,func,1d32:286c,rle_fill,"int(u8 v, u16 n)",platform,,
+intro,func,05da:6567,m0_read,void(void),platform,,method 0 read
+ps,func,16e3:66b5,m0_read,void(void),platform,,method 0 read
+ap,func,1d32:25c6,m0_read,void(void),platform,,method 0 read
+intro,func,05da:658b,rle_read,void(void),platform,,method 1 read
+ps,func,16e3:66d9,rle_read,void(void),platform,,method 1 read
+ap,func,1d32:25ea,rle_read,void(void),platform,,method 1 read
+intro,func,05da:760d,rle_read_mem,void(void),platform,,memory-source RLE
+ps,func,16e3:775b,rle_read_mem,void(void),platform,,memory-source RLE
+ap,func,1d32:366c,rle_read_mem,void(void),platform,,memory-source RLE
+intro,func,05da:7253,lzw_read_init,void(void),platform,,
+ps,func,16e3:73a1,lzw_read_init,void(void),platform,,
+ap,func,1d32:32b2,lzw_read_init,void(void),platform,,
+intro,func,05da:7343,lzw_read,void(void),platform,,"method 2 read, asm"
+ps,func,16e3:7491,lzw_read,void(void),platform,,"method 2 read, asm"
+ap,func,1d32:33a2,lzw_read,void(void),platform,,"method 2 read, asm"
+intro,func,05da:7546,lzw_getcode,int(void),platform,,"asm, compress-4.0 getcode"
+ps,func,16e3:7694,lzw_getcode,int(void),platform,,"asm, compress-4.0 getcode"
+ap,func,1d32:35a5,lzw_getcode,int(void),platform,,"asm, compress-4.0 getcode"
+intro,func,05da:731d,pk_nop1,void(void),platform,,empty
+ps,func,16e3:746b,pk_nop1,void(void),platform,,empty
+ap,func,1d32:337c,pk_nop1,void(void),platform,,empty
+intro,func,05da:7322,pk_nop2,void(void),platform,,empty
+ps,func,16e3:7470,pk_nop2,void(void),platform,,empty
+ap,func,1d32:3381,pk_nop2,void(void),platform,,empty
+intro,func,05da:68d5,pk_putbyte,int(u8),platform,,writer
+ps,func,16e3:6a23,pk_putbyte,int(u8),platform,,writer
+ap,func,1d32:2934,pk_putbyte,int(u8),platform,,writer
+intro,func,05da:65d9,m0_write,void(int),platform,,"writer, unused"
+ps,func,16e3:6727,m0_write,void(int),platform,,"writer, unused"
+ap,func,1d32:2638,m0_write,void(int),platform,,"writer, unused"
+intro,func,05da:7c51,rle_write,void(int),platform,,"writer, unused"
+ps,func,16e3:7d9f,rle_write,void(int),platform,,"writer, unused"
+ap,func,1d32:3cb0,rle_write,void(int),platform,,"writer, unused"
+intro,func,05da:7700,lzw_write_init,void(void),platform,,"writer, unused"
+ps,func,16e3:784e,lzw_write_init,void(void),platform,,"writer, unused"
+ap,func,1d32:375f,lzw_write_init,void(void),platform,,"writer, unused"
+intro,func,05da:7775,lzw_write,void(int),platform,,"writer, unused"
+ps,func,16e3:78c3,lzw_write,void(int),platform,,"writer, unused"
+ap,func,1d32:37d4,lzw_write,void(int),platform,,"writer, unused"
+intro,func,05da:7988,lzw_output,void(int code),platform,,"writer, unused"
+ps,func,16e3:7ad6,lzw_output,void(int code),platform,,"writer, unused"
+ap,func,1d32:39e7,lzw_output,void(int code),platform,,"writer, unused"
+intro,func,05da:7b2b,lzw_cl_block,void(void),platform,,"writer, unused"
+ps,func,16e3:7c79,lzw_cl_block,void(void),platform,,"writer, unused"
+ap,func,1d32:3b8a,lzw_cl_block,void(void),platform,,"writer, unused"
+intro,func,05da:7c03,lzw_cl_hash,void(long n),platform,,"writer, unused"
+ps,func,16e3:7d51,lzw_cl_hash,void(long n),platform,,"writer, unused"
+ap,func,1d32:3c62,lzw_cl_hash,void(long n),platform,,"writer, unused"
+intro,func,05da:7b15,pk_ldiv,"far long(long, long)",platform,,
+ps,func,16e3:7c63,pk_ldiv,"far long(long, long)",platform,,
+ap,func,1d32:3b74,pk_ldiv,"far long(long, long)",platform,,
+intro,data,DS:0794,vol_hdr_buf,char[22],platform,,AP uses a local
+ps,data,DS:2196,vol_hdr_buf,char[22],platform,,AP uses a local
+intro,data,DS:07AA,vol_log,FILE*,platform,,debug log
+ps,data,DS:21AC,vol_log,FILE*,platform,,debug log
+ap,data,DS:1EBA,vol_log,FILE*,platform,,debug log
+ap,data,DS:1EBC,vol_exclude,char*,platform,,"AP: skip volumes containing it; = ""SH"""
+intro,data,DS:00C5,vol_active,u16,platform,,set to 1 by vol_init when a volume was opened; INTRO chdir_unless/make_path skip the chdir/subdir path when set
+ps,data,DS:0DFF,vol_active,u16,platform,,set to 1 by vol_init when a volume was opened; INTRO chdir_unless/make_path skip the chdir/subdir path when set
+ap,data,DS:06F8,vol_active,u16,platform,,set to 1 by vol_init when a volume was opened; INTRO chdir_unless/make_path skip the chdir/subdir path when set
+intro,data,DS:2461,data_prefix,char[],platform,,-n<path> + backslash
+ps,data,DS:40CA,data_prefix,char[],platform,,-n<path> + backslash
+ap,data,DS:4032,data_prefix,char[],platform,,-n<path> + backslash
+intro,data,DS:24DC,vol_subdir_buf,char[],platform,,
+ps,data,DS:608E,vol_subdir_buf,char[],platform,,
+ap,data,DS:60E2,vol_subdir_buf,char[],platform,,
+intro,data,DS:2518,vol_cache_handle,VFILE*,platform,,
+ps,data,DS:60CA,vol_cache_handle,VFILE*,platform,,
+ap,data,DS:610A,vol_cache_handle,VFILE*,platform,,
+intro,data,DS:251A,vol_cache_rec,VREC*,platform,,
+ps,data,DS:60CC,vol_cache_rec,VREC*,platform,,
+ap,data,DS:610C,vol_cache_rec,VREC*,platform,,
+intro,data,DS:251C,vol_last_subdir,char*,platform,,
+ps,data,DS:60CE,vol_last_subdir,char*,platform,,
+ap,data,DS:610E,vol_last_subdir,char*,platform,,
+intro,data,DS:251E,vol_count,int,platform,,
+ps,data,DS:60D0,vol_count,int,platform,,
+ap,data,DS:6110,vol_count,int,platform,,
+intro,data,DS:2520,vol_table,VOLUME far*,platform,,10 x 26h
+ps,data,DS:60D2,vol_table,VOLUME far*,platform,,10 x 26h
+ap,data,DS:6112,vol_table,VOLUME far*,platform,,10 x 26h
+intro,data,DS:2524,vol_files,VREC[10] (AP [3]),platform,,12h each
+ps,data,DS:60D6,vol_files,VREC[10] (AP [3]),platform,,12h each
+ap,data,DS:6116,vol_files,VREC[10] (AP [3]),platform,,12h each
+intro,data,DS:25D8,vol_cur,int,platform,,
+ps,data,DS:618A,vol_cur,int,platform,,
+ap,data,DS:614C,vol_cur,int,platform,,
+intro,data,DS:25DA,vol_open_files,u8,platform,,
+ps,data,DS:618C,vol_open_files,u8,platform,,
+ap,data,DS:614E,vol_open_files,u8,platform,,
+intro,data,DS:25DB,vol_reopen_flag,u8,platform,,
+ps,data,DS:618D,vol_reopen_flag,u8,platform,,
+ap,data,DS:614F,vol_reopen_flag,u8,platform,,
+intro,data,DS:25DC,vol_crit_error,u8,platform,,
+ps,data,DS:618E,vol_crit_error,u8,platform,,
+ap,data,DS:6150,vol_crit_error,u8,platform,,
+intro,data,DS:25DD,vol_in_open,u8,platform,,
+ps,data,DS:618F,vol_in_open,u8,platform,,
+ap,data,DS:6151,vol_in_open,u8,platform,,
+intro,data,DS:25DE,vol_inited,u8,platform,,
+ps,data,DS:6190,vol_inited,u8,platform,,
+ap,data,DS:6152,vol_inited,u8,platform,,
+intro,data,DS:25DF,vol_old_int24,void far*,platform,,
+ps,data,DS:6191,vol_old_int24,void far*,platform,,
+ap,data,DS:6153,vol_old_int24,void far*,platform,,
+intro,data,DS:25E4,rcfg_count,int,platform,,
+intro,data,DS:25E6,rcfg_lines,char*[50],platform,,
+intro,data,DS:2FD8,chunk_slots,CHF[4],platform,,43h each
+ps,data,DS:72BC,chunk_slots,CHF[4],platform,,43h each
+ap,data,DS:6F86,chunk_slots,CHF[4],platform,,43h each
+intro,data,DS:30E4,chunk_backup,CHF,platform,,
+ps,data,DS:73C8,chunk_backup,CHF,platform,,
+ap,data,DS:7092,chunk_backup,CHF,platform,,
+intro,data,DS:1A58,pk_shared_scratch,void far*,platform,,LZW scratch set by bitmap loader
+ps,data,DS:3424,pk_shared_scratch,void far*,platform,,LZW scratch set by bitmap loader
+ap,data,DS:2568,pk_shared_scratch,void far*,platform,,LZW scratch set by bitmap loader
+intro,data,DS:1A5C,pk_methods,struct[3] (0Eh),platform,,"ring, scratch_r, scratch_w, read, write, winit, rinit"
+ps,data,DS:3428,pk_methods,struct[3] (0Eh),platform,,"ring, scratch_r, scratch_w, read, write, winit, rinit"
+ap,data,DS:256C,pk_methods,struct[3] (0Eh),platform,,"ring, scratch_r, scratch_w, read, write, winit, rinit"
+intro,data,DS:1A90,lzw_buf,u8[12],platform,,
+ps,data,DS:345C,lzw_buf,u8[12],platform,,
+ap,data,DS:25A0,lzw_buf,u8[12],platform,,
+intro,data,DS:1A9C,lzw_rmask,u8[9],platform,,
+ps,data,DS:3468,lzw_rmask,u8[9],platform,,
+ap,data,DS:25AC,lzw_rmask,u8[9],platform,,
+intro,data,DS:1AA5,lzw_resume,u16,platform,,
+ps,data,DS:3471,lzw_resume,u16,platform,,
+ap,data,DS:25B5,lzw_resume,u16,platform,,
+intro,data,DS:1AA8,rle_ringptr,u16,platform,,
+ps,data,DS:3474,rle_ringptr,u16,platform,,
+ap,data,DS:25B8,rle_ringptr,u16,platform,,
+intro,data,DS:313C,pk_litbuf,u8[50],platform,,
+ps,data,DS:7420,pk_litbuf,u8[50],platform,,
+ap,data,DS:649C,pk_litbuf,u8[50],platform,,
+intro,data,DS:316E,pk_io,u8,platform,,"20h file, 40h store"
+ps,data,DS:7452,pk_io,u8,platform,,"20h file, 40h store"
+ap,data,DS:64CE,pk_io,u8,platform,,"20h file, 40h store"
+intro,data,DS:3170,pk_file,VFILE*,platform,,
+ps,data,DS:7454,pk_file,VFILE*,platform,,
+ap,data,DS:64D0,pk_file,VFILE*,platform,,
+intro,data,DS:3172,pk_method,u8,platform,,
+ps,data,DS:7456,pk_method,u8,platform,,
+ap,data,DS:64D2,pk_method,u8,platform,,
+intro,data,DS:3174,pk_streams,rec*[100],platform,,
+ps,data,DS:7458,pk_streams,rec*[100],platform,,
+ap,data,DS:64D4,pk_streams,rec*[100],platform,,
+intro,data,DS:323C,pk_flags,u8,platform,,
+ps,data,DS:7520,pk_flags,u8,platform,,
+ap,data,DS:659C,pk_flags,u8,platform,,
+intro,data,DS:323E,pk_cur,rec*,platform,,
+ps,data,DS:7522,pk_cur,rec*,platform,,
+ap,data,DS:659E,pk_cur,rec*,platform,,
+intro,data,DS:3240,pk_scratch,void far*,platform,,
+ps,data,DS:7524,pk_scratch,void far*,platform,,
+ap,data,DS:65A0,pk_scratch,void far*,platform,,
+intro,data,DS:3244,pk_want,u16,platform,,
+ps,data,DS:7528,pk_want,u16,platform,,
+ap,data,DS:65A4,pk_want,u16,platform,,
+intro,data,DS:3246,pk_ring,u8*,platform,,
+ps,data,DS:752A,pk_ring,u8*,platform,,
+ap,data,DS:65A6,pk_ring,u8*,platform,,
+intro,data,DS:3248,pk_dest,u8 huge*,platform,,
+ps,data,DS:752C,pk_dest,u8 huge*,platform,,
+ap,data,DS:65A8,pk_dest,u8 huge*,platform,,
+intro,data,DS:324C,pk_src,u8 huge*,platform,,
+ps,data,DS:7530,pk_src,u8 huge*,platform,,
+ap,data,DS:65AC,pk_src,u8 huge*,platform,,
+intro,data,DS:3250,pk_count,u16,platform,,
+ps,data,DS:7534,pk_count,u16,platform,,
+ap,data,DS:65B0,pk_count,u16,platform,,
+intro,data,DS:3252,lzw_pending,u8,platform,,
+ps,data,DS:7536,lzw_pending,u8,platform,,
+ap,data,DS:65B2,lzw_pending,u8,platform,,
+intro,data,DS:3254,lzw_clear,u16,platform,,
+ps,data,DS:7538,lzw_clear,u16,platform,,
+ap,data,DS:65B4,lzw_clear,u16,platform,,
+intro,data,DS:3256,lzw_oldcode,u16,platform,,
+ps,data,DS:753A,lzw_oldcode,u16,platform,,
+ap,data,DS:65B6,lzw_oldcode,u16,platform,,
+intro,data,DS:3258,lzw_stackp,void far*,platform,,
+ps,data,DS:753C,lzw_stackp,void far*,platform,,
+ap,data,DS:65B8,lzw_stackp,void far*,platform,,
+intro,data,DS:325C,lzw_finchar,u16,platform,,
+ps,data,DS:7540,lzw_finchar,u16,platform,,
+ap,data,DS:65BC,lzw_finchar,u16,platform,,
+intro,data,DS:325E,lzw_first,u8,platform,,
+ps,data,DS:7542,lzw_first,u8,platform,,
+ap,data,DS:65BE,lzw_first,u8,platform,,
+intro,data,DS:3260,lzw_incode,u16,platform,,
+ps,data,DS:7544,lzw_incode,u16,platform,,
+ap,data,DS:65C0,lzw_incode,u16,platform,,
+intro,data,DS:3262,lzw_offset,u16,platform,,
+ps,data,DS:7546,lzw_offset,u16,platform,,
+ap,data,DS:65C2,lzw_offset,u16,platform,,
+intro,data,DS:3264,lzw_size,u16,platform,,
+ps,data,DS:7548,lzw_size,u16,platform,,
+ap,data,DS:65C4,lzw_size,u16,platform,,
+intro,data,DS:3266,lzw_maxcode,u16,platform,,
+ps,data,DS:754A,lzw_maxcode,u16,platform,,
+ap,data,DS:65C6,lzw_maxcode,u16,platform,,
+intro,data,DS:3268,lzw_nbits,u16,platform,,
+ps,data,DS:754C,lzw_nbits,u16,platform,,
+ap,data,DS:65C8,lzw_nbits,u16,platform,,
+intro,data,DS:326A,lzw_free,u16,platform,,
+ps,data,DS:754E,lzw_free,u16,platform,,
+ap,data,DS:65CA,lzw_free,u16,platform,,
