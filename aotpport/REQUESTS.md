@@ -18,6 +18,9 @@ report. The lead appends new requests from each report.
 
 ## render3d
 - [ ] `ldist3` takes two near pointers: `(u16 a_ds, u16 b_ds)`, not 6 words (used by `sound/sx_sim.c`).
+      (render3d: semantics done — a0/a1 are the two near pointers, the 4 extra words are ignored. The header keeps
+      the 6-word form until sound drops its 6-word weak stub in `sound/stubs_tmp.c`; then switch header + the one
+      call in `sx_sim.c` together.)
 
 ## sim_flow
 - [ ] `timeout_start` takes a 32-bit tick count (`s32`), not `u16` (used by `sound/sx_sim.c`).
@@ -42,7 +45,7 @@ report. The lead appends new requests from each report.
       `DrvBmMergeFn`/`drv_bm_merge_hi` now take a `u16` count, as `0E04` reads CX = [bp+0Eh].)
 
 ## render3d / video (from platform's link of shell_data)
-- [ ] shell_data needs `mul32`, `lmid`, `atan2_32`, `ldist2` (PS 3d50 math library, owned by render3d).
+- [x] shell_data needs `mul32`, `lmid`, `atan2_32`, `ldist2` (PS 3d50 math library, owned by render3d). (render3d/r3d_math.c, PS and AP.)
 
 ## platform (from video, 2026-09-26)
 - [x] `emm_pool.c:105` passes 9 arguments to `gfx_sprite_rotated_ind`; drop the trailing 0 (breaks the build).
@@ -66,3 +69,11 @@ report. The lead appends new requests from each report.
 
 ## shell_data / shell_ui / render3d (from platform, integration round)
 - [ ] `platform/stubs_tmp.c` carries weak link stubs for your functions the shared build references (math library, `service_side`, `fltplan_*`, `fm_bearing`, and a generated block at the end of the file). Delete a stub's line (or leave it: the weak stub loses to your definition) — tell platform if one collides.
+
+## from render3d (2026-09-26)
+- [ ] platform: call `render3d_dev_test()` from `platform_dev_test` (AOTP_TEST=shapes, run with --start 3).
+- [ ] video: `video.h` uses `CodeFn` without including `codeptr.h`; its static `pal_fx_build_delta`
+      duplicates `palfx_delta_table_body` (1792:038b) — harmless, dedupe later.
+- [ ] shell_data: use `ts_load_table_far` (far table in DX:AX) and the new `mul_cos`/`mul_sin` signatures.
+- [ ] sim_world: register 655d:1bb7 (gun-smoke callback, via stub 3DFF:0061) with codeptr.
+- [ ] sound + render3d: switch `ldist3` to `(u16 a_ds, u16 b_ds)` together (semantics already match).

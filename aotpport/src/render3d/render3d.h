@@ -36,7 +36,7 @@ void class_reset(void);
 /* AP 655d:038a — render3d_sky.md §4.3 */
 void gun_flashes(void);
 /* AP 0802:0026 — render3d_world.md §4.4; [file] */
-void overcast_split(void);
+u8 overcast_split(void);                             /* (changed: returns eye above the deck) */
 /* AP 0802:0173 — render3d_world.md §4.4; [file] */
 void range_cull(void);
 /* AP 1560:055b — render3d_world.md §4.2; [file] */
@@ -52,7 +52,7 @@ void sky_set_detail(u16 a0);
 /* AP 4d6e:0040 — render3d_sky.md §2.3 */
 void sky_invalidate(void);
 /* AP 4d6e:004b — render3d_sky.md §2.3 */
-void sky_alloc(void);
+u16 sky_alloc(void);                                 /* (changed: 1 = allocated) */
 /* AP 4d6e:0076 — render3d_sky.md §2.2; [file] */
 void draw_sky(u16 a0, u16 a1, u16 a2, u16 a3, u32 a4);
 
@@ -132,7 +132,7 @@ void near_clip16(void);
 /* PS 3d50:3399 / AP 277a:2b5d — render3d_poly.md §2.4; [file]; no BP frame: register interface or no arguments, see the spec */
 void poly_add_centre16(void);
 /* PS 3d50:2d86 / AP 277a:2fee — render3d_math.md §4.8; [file] */
-void pt_add_centre(u16 a0);
+u16 pt_add_centre(u16 a0);                          /* (changed: returns p) */
 /* PS 3d50:2daa / AP 277a:3010 — render3d_math.md §4.8; [file] */
 u16 pt_project(u16 a0, u16 a1);
 /* PS 3d50:2de4 / AP 277a:304c — render3d_math.md §4.8; [file] */
@@ -142,17 +142,18 @@ void part_draw32(FarPtr a0);
 
 /* ==== render3d/r3d_math.c ========================================================================= */
 /* AP 277a:3b3c — sim_world_fm.md Math primitives used (render3d `277a`); spec: (lvec*, lvec*) */
-u32 ldist3(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4, u16 a5);
+u32 ldist3(u16 a_ds, u16 b_ds, u16 u2, u16 u3, u16 u4, u16 u5);   /* a0/a1 = the two near pointers (REQUESTS); the 4 extra words are ignored until sound/stubs_tmp.c + sx_sim.c switch to 2 args */
 /* AP 277a:3c36 — sim_world_fm.md Math primitives used (render3d `277a`) */
 u32 ldist2v(u32 a0, u32 a1);
 /* AP 277a:3dc1 — render3d_sky.md §2.4; callers also read DX */
 s16 ldiv_sat(s32 a0, s16 a1);
+s16 ldiv_sat_rem(s32 num, s16 den, s16 *dx);        /* (added: the DX output) */
 /* AP 277a:3e1c — render3d_math.md §2.3 */
 s16 lnorm(s32 a0, u16 p1_ds);
 /* AP 277a:3e84 — render3d_math.md §5.1 */
 s16 lbitlen(u32 a0);
 /* AP 277a:3ec8 — sim_flow_vcr.md §4.1; spec: (u16) */
-s16 bitlen16(u16 a0, u16 a1);
+s16 bitlen16(u16 a0);                               /* (changed: one argument) */
 /* AP 277a:3ed4 — render3d_math.md §5.1 */
 s16 sum_i8(u16 p0_ds, s16 a1);
 /* AP 277a:3f0e — sim_world_fm.md Math primitives used (render3d `277a`) */
@@ -188,7 +189,7 @@ u16 lsub3(u16 a, u16 b, u16 c);
 /* AP 277a:5224 — render3d.md */
 u16 lvshl(u16 a0, u16 a1);
 /* AP 277a:526a — render3d.md */
-void lvsar(u16 a0, u16 a1);
+void lvsar(u16 a, u16 n);
 /* AP 277a:530c — render3d_sky.md §4.3 */
 u16 ladd_v(u16 p0_ds, u16 p1_ds);
 /* AP 277a:533a — render3d_math.md §5.2 */
@@ -214,29 +215,29 @@ u16 dir_from_heading(u16 p0_ds, u16 a1);
 /* PS 3d50:0022 / AP 277a:3978 — video_ts.md §5 */
 u16 mul_shr10(u16 a, u16 b);
 /* PS 3d50:0102 / AP 277a:3a58 — shell_ui_mission.md §2 */
-u16 isqrt32(u16 a0, u16 a1);
+u16 isqrt32(u32 n);                                 /* (changed: u32 = the same two words) */
 /* PS 3d50:01e6 / AP 277a:3bfc — sim_world_fm.md Math primitives used (render3d `277a`) */
 u32 ldist2(u16 a_ds, u16 b_ds);
 /* PS 3d50:027a / AP 277a:3cfc — shell_data.md Hand-offs */
 u32 mul32(u16 a0, u16 a1);
 /* PS 3d50:0292 / AP 277a:3d14 — render3d_math.md §5.1 */
-u32 lmul(u16 a0, u16 a1, u16 a2);
+u32 lmul(s32 a, s16 b);                             /* (changed: i32 × i16) */
 /* PS 3d50:04ca / AP 277a:41e0 — render3d_math.md §4.5 */
 void mat_mul(u16 A, u16 B, u16 out);
 /* PS 3d50:0840 / AP 277a:4556 — render3d_math.md §4.5 */
 void mat_transpose(u16 M);
 /* PS 3d50:0864 / AP 277a:457a — render3d_math.md §1.2 */
-void mat_from_angles(u16 a0, u16 a1);
+u16 mat_from_angles(u16 a0, u16 a1);                /* (changed: returns m) */
 /* PS 3d50:0c8e / AP 277a:49a4 — render3d_math.md §4.4 */
 void mat_to_angles(u16 a0, u16 a1);
 /* PS 3d50:0dcf / AP 277a:4ae5 — render3d_math.md §4.5 */
 u16 vec_rotate(u16 a0, u16 a1, u16 a2);
 /* PS 3d50:0f9d / AP 277a:4cb3 — render3d_math.md §4.5 */
-void lvec_rotate(u16 a0, u16 a1, u16 a2);
+u16 lvec_rotate(u16 a0, u16 a1, u16 a2);            /* (changed: returns out) */
 /* PS 3d50:15b4 / AP 277a:4e76 — sim_world_fm.md Math primitives used (render3d `277a`) */
-u16 mul_cos(u16 a0, u16 a1, u16 a2);
+s32 mul_cos(s16 r, u16 a);                          /* (changed: (r, angle) -> DX:AX) */
 /* PS 3d50:15f4 / AP 277a:4eb6 — render3d_sky.md §3.2 */
-u16 mul_sin(u16 a0, u16 a1, u16 a2);
+s32 mul_sin(s16 r, u16 a);                          /* (changed: (r, angle) -> DX:AX) */
 /* PS 3d50:1656 / AP 277a:4f18 — render3d_shapes.md §2.4 */
 u32 vdot(u16 a, u16 b);
 /* PS 3d50:1664 / AP 277a:4f26 — render3d_math.md §5.2 */
@@ -246,7 +247,7 @@ u16 vsar(u16 v, u16 n);
 /* PS 3d50:16b0 / AP 277a:53e2 — sim_flow_results.md §8.2 */
 u16 lmid(u16 a, u16 b);
 /* PS 3d50:1702 / AP 277a:5510 — shell_data_emd1.md §2.4 */
-u16 lbox(u16 a0, u16 a1, u16 a2, u16 a3);
+u16 lbox(u16 a, u16 b, u32 r);                      /* (changed: u32 r = the same words) */
 /* INTRO 1739:0802 / PS 3d50:1f7c / AP 277a:5e66 — render3d_math.md §3.1 */
 s16 sin16(u16 a);
 /* PS 3d50:1f87 / AP 277a:5e71 — render3d_math.md §3.1 */
@@ -266,25 +267,25 @@ void lmin(u16 a0, u16 a1);
 /* AP 277a:51ce — render3d_math.md §5.2; [file] */
 void lmax(u16 a, u16 b);
 /* AP 277a:52c6 — render3d_world.md §6.3; [file] */
-void ladd_scalar16(u16 a0, u16 a1, u16 a2);
+void ladd_scalar16(u16 a, u16 s, u16 out);
 /* PS 3d50:0012 / AP 277a:3968 — render3d_math.md §1.5; [file] */
 u16 mul_shr8(u16 a, u16 b);
 /* PS 3d50:0254 / AP 277a:3c6a — render3d_math.md §5.1; [file] */
 u16 dist2_16(u16 a0, u16 a1);
 /* PS 3d50:02d0 / AP 277a:3d52 — render3d_shapes.md §3.4; [file] */
-void lsar(u16 a0, u16 a1, u16 a2);
+u32 lsar(s32 v, u16 n);                             /* (changed: (i32, n) -> DX:AX) */
 /* PS 3d50:032a / AP 277a:3f6e — render3d_math.md §4.8; [file] */
-void proj32(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4, u16 a5, u16 a6, u16 a7);
+void proj32(s32 *x, s32 *z, s32 y, s32 f);         /* (changed: stack image -> pointers) */
 /* PS 3d50:0cf6 / AP 277a:4a0c — render3d_math.md §4.5; [file]; register inputs AX/CX/BX */
-void vec_rotate_n(u16 ax, u16 cx, u16 bx);
+void vec_rotate_n(const u8 *v, const u8 *m, u8 *out);   /* (changed: register interface -> mem[] pointers) */
 /* PS 3d50:0f11 / AP 277a:4c27 — render3d_math.md §4.5; [file]; register inputs BX/CX/AX */
-void lvec_rotate_n(u16 bx, u16 cx, u16 ax);
+void lvec_rotate_n(const u8 *v, const u8 *m, u8 *out);  /* (changed: as vec_rotate_n) */
 /* PS 3d50:0fb2 / AP 277a:4cc8 — render3d_math.md §4.5; [file]; register inputs DX/BX/CX/AX */
-void vtx_rotate_shift(u16 dx, u16 bx, u16 cx, u16 ax);
+bool vtx_rotate_shift(const u8 *v, const u8 *m, u8 *out, u16 s);   /* (changed: returns CF) */
 /* PS 3d50:1636 / AP 277a:4ef8 — render3d_math.md §4.8; [file]; register inputs AX/BX */
-void vdot_n(u16 ax, u16 bx);
+s32 vdot_n(const u8 *a, const u8 *b);               /* (changed: register interface) */
 /* PS 3d50:1676 / AP 277a:4f58 — render3d_math.md §5.2; [file] */
-void vadd_far(u16 a, FarPtr a1);
+u16 vadd_far(u16 a, FarPtr b);
 /* PS 3d50:1589 / AP 277a:6b5d — render3d_math.md §4.4; [file] */
 u16 acos16(u16 a0);
 
@@ -300,11 +301,11 @@ void set_light(u16 a0, u16 a1);
 /* AP 277a:0037 — render3d_math.md §4.1; [file] */
 void reset_near(void);
 /* PS 3d50:27de / AP 277a:01ba — render3d_poly.md §2.1; [file]; no BP frame: register interface or no arguments, see the spec */
-void poly_colours(void);
+void poly_colours(u16 es, u16 di, u16 bp);          /* (changed: register inputs ES:DI, BP) */
 /* PS 3d50:28c3 / AP 277a:029f — render3d_poly.md §2.2; [file]; no BP frame: register interface or no arguments, see the spec */
 void poly_fill(void);
 /* PS 3d50:573e / AP 277a:0346 — render3d_math.md §4.8; [file]; register inputs AL/AH/ES */
-void poly_facing(u8 al, u8 ah, u16 es);
+s32 poly_facing(u8 al, u8 ah, u16 es, u16 bp);      /* (changed: + BP, returns DX:AX) */
 /* PS 3d50:57b3 / AP 277a:03bb — render3d_poly.md §3.3; [file] */
 void part_draw_shadow(FarPtr a0);
 /* PS 3d50:59be / AP 277a:05c6 — render3d_poly.md §3.1; [file] */
@@ -316,7 +317,7 @@ void part_draw16s(FarPtr a0);
 /* AP 33d1:0004 — render3d_world.md §3.1 */
 void scene_begin(u16 v_ds);
 /* AP 33d1:0140 — render3d_world.md §3.5 */
-void scene_add_dynamic(FarPtr o);
+u8 scene_add_dynamic(FarPtr o);                      /* (changed: returns listed) */
 /* AP 33d1:04dc — render3d_world.md §3.2 */
 void scene_force_rebuild(void);
 /* AP 33d1:04e7 — render3d_world.md §3.3 */
@@ -351,10 +352,11 @@ u16 darkness_lerp(u16 a0, u16 a1);
 /* ==== render3d/ts_bm.c ============================================================================ */
 /* AP 241c:0005 — render3d_shapes.md §4.2; callers also read DX */
 u16 bmd_load(s16 id, s16 set, u16 name_ds);
+u32 bmd_load_far(s16 id, s16 set, u16 name_ds);     /* (added: the DX:AX result of 241c:0005) */
 /* AP 2e33:0006 — render3d_shapes.md §4.6 */
 void bm_set_size_cap(s16 a0);
 /* PS 4818:0833 / AP 2e33:07f4 — render3d_shapes.md §4.3; [file] */
-void bm_draw(u16 o_ds);
+void bm_draw(u16 o);
 /* PS 4818:08fc / AP 2e33:08b8 — render3d_shapes.md §4.3; [file] */
 s16 bm_is_bitmap(s16 id);
 
@@ -412,7 +414,8 @@ void ts_init(s16 ntables, s16 nsets);
 /* PS 48ea:0133 / AP 7074:012d — render3d_shapes.md §5 */
 void ts_done(void);
 /* PS 48ea:0158 / AP 7074:0154 — render3d_shapes.md §5; callers also read DX */
-s16 ts_load_table(s16 t, u16 name_ds);
+s16 ts_load_table(s16 t, u16 name_ds);              /* AX only (the DAT: chunk offset, 0) */
+u32 ts_load_table_far(s16 t, u16 name_ds);          /* (added: DX:AX, what the callers test) */
 /* PS 48ea:0236 / AP 7074:022b — render3d_shapes.md §5 */
 void ts_free_table(s16 t);
 /* PS 47c8:008f / AP 271b:011d — render3d_shapes.md §5; [file] */
@@ -422,7 +425,7 @@ u8 shape_class(s16 id);
 /* PS 47c8:02ac / AP 271b:03bb — render3d_shapes.md §5; [file] */
 u8 shape_shift(s16 id);
 /* PS 48c0:0005 / AP 7039:0000 — render3d_shapes.md §5; [file]; varargs: stack words as unsigned */
-void ts_read(FarPtr dst, u32 n, u16 f_ds, ...);
+void ts_read(FarPtr dst, u32 n, u16 f_ds);          /* (changed: no varargs) */
 /* PS 48c0:0149 / AP 7039:0144 — video_ts.md §4; [file] */
 void ts_close(u16 f);
 /* PS 48c0:018b / AP 7039:0187 — render3d_shapes.md §5; [file] */
@@ -446,11 +449,11 @@ void lmove_heading(u16 a0, u16 a1, u16 a2);
 /* AP 3629:0004 — render3d_math.md §5.3 */
 u16 bearing_between(u16 a, u16 b);
 /* AP 365a:000c — render3d_math.md §5.3; last 1 word(s) unused by the original; register input BX */
-u16 obj_matrix(u16 BX, u16 bx);
+u16 obj_matrix(u16 bx);                             /* (changed: BX only) */
 /* AP 365a:0032 — render3d_math.md §5.3; last 1 word(s) unused by the original; register input BX */
-u16 obj_matrix_t(u16 BX, u16 bx);
+u16 obj_matrix_t(u16 bx);                           /* (changed: BX only) */
 /* AP 365a:0074 — render3d_math.md §5.3; last 2 word(s) unused by the original; register inputs BX/AX */
-void obj_set_angles(u16 BX, u16 AX, u16 bx, u16 ax);
+void obj_set_angles(u16 bx, u16 ax);                /* (changed: BX, AX only) */
 /* AP 3662:0002 — render3d_math.md §5.3; register input BX */
 void nop_3662(u16 bx);
 /* AP 3662:000d — render3d_math.md §5.3 */
@@ -536,7 +539,7 @@ u16 fread_str(u16 a0);
 /* AP 62d2:044a — render3d_world.md §6.1 */
 void area_free(void);
 /* AP 62d2:049e — render3d_world.md §6.1 */
-void area_load(u16 a0, u16 a1, u16 a2, u16 a3);
+u32 area_load(u16 name, u16 tpos, u16 tcount, u16 n);   /* (changed: returns DS:5146, far) */
 /* AP 62d2:0969 — render3d_world.md §6.1 */
 void area_free2(void);
 /* AP 62d2:0a0d — render3d_world.md §5.1 */
