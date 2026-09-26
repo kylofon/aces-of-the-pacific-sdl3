@@ -22,7 +22,7 @@ void cursor_show(void);
 /* PS 2b4f:0024 — shell_ui_mission.md §2; [file] */
 void cursor_hide(void);
 /* PS 2b4f:003f — shell_ui_toolkit.md §1.2; [file] */
-void cursor_set(u16 a0);
+u16 cursor_set(u16 frame);
 /* PS 2b4f:00e9 — shell_ui_toolkit.md §1.2; [file] */
 void hs_load(FarPtr tbl, u16 idx);
 /* PS 2b4f:012d — shell_ui_toolkit.md §1.2; [file] */
@@ -36,7 +36,7 @@ void hs_set_table(FarPtr p, u16 n);
 /* PS 2b4f:041b — shell_ui_toolkit.md §1.2; [file] */
 void hs_restart(void);
 /* PS 2b4f:0426 — shell_ui_toolkit.md §1.2; [file] */
-void hs_dispatch(u16 mx, u16 my, u16 button, u16 redraw);
+u16 hs_dispatch(u16 mx, u16 my, u16 button, u16 redraw);
 /* PS 2b4f:05f4 — shell_ui_toolkit.md §1.2; [file] */
 void cursor_draw(u16 x, u16 y);
 /* PS 2b4f:0686 — shell_ui_toolkit.md §1.2; [file] */
@@ -120,11 +120,11 @@ void choose_run(FarPtr cb, u16 first_str, u16 scd_row);
 /* PS 2ed6:050e — shell_ui_toolkit.md §6.1; [file] */
 void choose_init(void);
 /* PS 2ed6:0552 — shell_ui_toolkit.md §6; [file] */
-void dlg_run(FarPtr p, u16 n, FarPtr a3);
+u16 dlg_run(FarPtr p, u16 n, FarPtr frame);   /* (changed: part A, returns the result) */
 /* PS 2f47:0249 — shell_ui_toolkit.md §6.2; [file]; spec: (title, on_ok, …, a, b, sel) */
-void pick_aircraft(u16 a0, u16 a1, u16 a2, u16 a3, u16 a4, u16 a5, u16 a6);
+void pick_aircraft(u16 title, FarPtr on_ok, s16 n, s8 a, s8 b, s16 sel);   /* (changed: part A) */
 /* PS 2f47:02e6 — shell_ui_toolkit.md §6.2; [file]; spec: (title, on_ok, n) */
-void pick_list2(u16 a0, u16 a1, u16 a2, u16 a3);
+void pick_list2(u16 title, FarPtr on_ok, s16 n);   /* (changed: part A) */
 /* PS 2f47:0374 — shell_ui_toolkit.md §6.2; [file] */
 void pick_init(void);
 /* PS 2f7f:0143 — shell_ui_toolkit.md §6.4; [file] */
@@ -214,7 +214,7 @@ void flow_setup(u16 style, u16 line_h, u16 draw);
 /* PS 2dd0:01eb — shell_ui_toolkit.md §3; [file] */
 u16 flow_text(FarPtr txt, s8 nstr, FarPtr subst);
 /* PS 2dd0:0355 — shell_ui_toolkit.md §3; [file]; types from the frame; varargs: stack words as unsigned */
-void flow_text_buttons(FarPtr tbl_off, u16 tbl_seg, u16 first, u16 subst, u16 strings, u16 x, u16 y, u16 right, ...);
+u16 flow_text_buttons(FarPtr tbl, s16 first, FarPtr subst, u16 strings_ds, s16 x, s16 y, s16 right);   /* (changed: part A) */
 
 /* ==== shell_ui/events.c =========================================================================== */
 /* PS 0874:0aa5 — shell_ui_debrief.md §7.4 */

@@ -1,10 +1,7 @@
-/* PLACEHOLDER (phase 4): stand-ins for the three programs' main functions. They are NOT ports; they
- * exercise the skeleton end to end: the chain (0000:0510 marker, exit codes), the c0 start-up state
- * (argv, DGROUP), the shared-library layout (timer, keyboard, driver page variables), codeptr (timer
- * callbacks, the PS Ctrl+Esc hook, an AP stub thunk), EMS, and the VGA model (unchained pages, CRTC
- * flip, DAC). Each draws a test pattern and waits for Esc:
- *     INTRO --Esc--> exit(2) PS --Esc--> exit(3) AP --Esc--> exit(2) PS (from the sim) --Esc--> exit(0)
- * Headless: AOTP_KEYS="3:01,6:01,9:01,12:01" (see host.h). */
+/* PLACEHOLDER (phase 4): the stand-in for AP's main until sim_flow exists (the INTRO and PS mains are
+ * the ported ones: platform/intro_main.c, platform/ps_main.c). It is NOT a port; it exercises the
+ * skeleton: the chain (0000:0510 marker, exit codes), codeptr (an AP stub thunk), EMS, and the VGA
+ * model. It draws a test pattern on the lower half and waits for Esc: AP --Esc--> exit(2) -> PS. */
 #include "game/game.h"
 
 #include <stdio.h>
@@ -79,17 +76,6 @@ static void driver_reset_pages(void)
     LW(G_drv_page_write) = LW(G_drv_page_back);
 }
 
-static void driver_flip(bool wait)
-{
-    u16 old_back = LW(G_drv_page_back);
-    LW(G_drv_page_back) = LW(G_drv_page_front);
-    LW(G_drv_page_front) = old_back;
-    u16 start = (u16)(old_back << 4);
-    vga_outw(0x3D4, (u16)((start & 0xFF00) | 0x0C));
-    vga_outw(0x3D4, (u16)((start << 8) | 0x0D));
-    if (wait) vga_wait_vretrace_start();
-}
-
 /* Waits for Esc (scan code 01), drawing the tick counter as a bar on the shown page. */
 static void wait_esc(u16 ticks_ds, int shift, bool ap_queue)
 {
@@ -114,100 +100,12 @@ static const char *arg(u16 argv_ds, int i) { return (const char *)DSP(DSW(argv_d
 
 /* ------------------------------------------------------------------ timer callbacks / hooks */
 
-static void intro_tick_cb(void) { DSL(INTRO_DS_intro_ticks) += 1; }          /* 0460:000b */
-static void shell_tick(void) { DSL(PS_DS_step_clock_ps_done) += 1; }         /* 229e:0013 */
 static void ap_tick(void) { DSL(AP_DS_tick_count) += 1; }                    /* 0000:02db */
-static void ph_kbd_break_hook(int x) { (void)x; }                              /* INTRO 05bb:0006 */
-static void ph_ctrl_esc_hook(int x)                                            /* PS 227c:0034 */
-{
-    if (x) prog_exit(0);                                  /* placeholder for shell_exit(0) */
-    DSB(PS_DS_quit_flag) = 1;
-}
 static void ap_sim_exit_stub(void) { }                                      /* AP 4e0d:0bb0 (via stub) */
 
 static void ems_free_everything(void)                                       /* AP atexit(24e5:00b6) */
 {
     for (u16 h = 1; h < EMS_MAX_HANDLES; h++) ems_dealloc(h);
-}
-
-/* ------------------------------------------------------------------ INTRO */
-
-int intro_main(int argc, u16 argv_ds)
-{
-    codeptr_register(PROG_INTRO, INTRO_FN_intro_tick_cb, intro_tick_cb);
-    codeptr_register(PROG_INTRO, INTRO_FN_kbd_break_hook, (CodeFn)ph_kbd_break_hook);
-
-    /* mem_check (038e:091b): [0000:0512] << 4 >= 609 200 and >= 21 free EMS pages */
-    u16 free_pages = 0;
-    FarPtr v67 = ivt_get(0x67);
-    bool ems = memcmp(mp(v67.seg, 0x0A), "EMMXXXX0", 8) == 0 && ems_get_page_counts(&free_pages, NULL) == 0;
-    if (((u32)rd16(0, 0x512) << 4) < 0x94BB0u || !ems || free_pages < 21)
-        host_fatal("INTRO placeholder: memory check failed");
-    if (argc < 2 || strncmp(arg(argv_ds, argc - 1), "-n", 2) != 0) host_fatal("INTRO placeholder: no -n argument");
-
-    vga_set_mode(0x13);                                   /* gfx_init: driver init sets the mode */
-    vga_set_unchained();
-    driver_reset_pages();
-    timer_install(13);                                    /* snd_init */
-    timer_add(codeptr_far(INTRO_FN_intro_tick_cb), 4);    /* 0460:0104 */
-    kbd_install(0);
-
-    set_palette(PROG_INTRO);
-    pattern(vga_page(LW(G_drv_page_write)), PROG_INTRO, "INTRO", 0);
-    driver_flip(true);                                    /* back page A400 becomes visible */
-    host_snapshot_now("intro");
-    wait_esc(INTRO_DS_intro_ticks, 0, false);
-
-    kbd_restore();                                        /* sys_shutdown */
-    timer_restore();
-    /* end of main: make A000 the displayed page (video.md §4.2) */
-    if (LW(G_drv_page_front) != 0xA000) {
-        memcpy(vga_page(0xA000), vga_page(LW(G_drv_page_front)), 0x10000);
-        LW(G_drv_page_back) = 0xA000;
-        driver_flip(false);
-    }
-    return 2;                                             /* exit(2) -> PS */
-}
-
-/* ------------------------------------------------------------------ PS */
-
-int ps_main(int argc, u16 argv_ds)
-{
-    (void)argc; (void)argv_ds;
-    codeptr_register(PROG_PS, PS_FN_shell_tick, shell_tick);
-    codeptr_register(PROG_PS, PS_FN_ctrl_esc_hook, (CodeFn)ph_ctrl_esc_hook);
-
-    u16 marker = rd16(0, 0x510);                          /* 048e:04a1 */
-    if (marker == 0x29A) DSB(PS_DS_returned_from_sim) = 0;
-    else if (marker == 0x3E7) DSB(PS_DS_returned_from_sim) = 1;
-    else host_fatal("You can run Aces of the Pacific by typing 'AOTPCD' (marker %04X)", marker);
-    wr16(0, 0x510, 0);
-
-    vga_set_mode(0x13);
-    vga_set_unchained();
-    driver_reset_pages();
-    timer_install(13);
-    timer_add(codeptr_far(PS_FN_shell_tick), 1);          /* 048e:0097 */
-    kbd_install(0);
-
-    bool debrief = DSB(PS_DS_returned_from_sim) != 0;
-    set_palette(PROG_PS);
-    pattern(vga_page(LW(G_drv_page_write)), PROG_PS, debrief ? "DEBRIEF" : "PS", 0);
-    driver_flip(true);
-    host_snapshot_now(debrief ? "ps_debrief" : "ps");
-    wait_esc(PS_DS_step_clock_ps_done, 2, false);
-
-    kbd_restore();
-    timer_restore();
-    if (debrief || DSB(PS_DS_quit_flag)) return 0;       /* quit to DOS */
-    /* shell_exit(1) (227c:0072): A000 displayed, marker, exit(3) */
-    if (LW(G_drv_page_front) != 0xA000) {
-        memcpy(vga_page(0xA000), vga_page(LW(G_drv_page_front)), 0x10000);
-        LW(G_drv_page_back) = 0xA000;
-        driver_flip(false);
-    }
-    wr16(0, 0x510, DSB(PS_DS_returned_from_sim) ? 0x3E7 : 0x29A);
-    prog_exit(3);
 }
 
 /* ------------------------------------------------------------------ AP */
