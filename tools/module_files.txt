@@ -1,0 +1,193 @@
+# C file split of the port (read by tools/assign_modules.py -> port/modules.csv, c_file column).
+# "<module>/<file>.c  patterns..."; continuation lines start with blanks. Pattern: exe:seg (a whole
+# segment = one original source module), exe:lo-hi (a range of segments), exe:seg:lo-hi (an offset
+# range; the shared library INTRO 05da is split by platform.md §1.2), exe:seg:off (one function).
+# A unit matches through any of its members (shared library: the INTRO address decides); units left
+# over take the file of the nearest function of the same module in the same segment.
+
+platform/intro_main.c   intro:038e
+platform/ps_main.c      ps:048e ps:227c
+platform/ap_main.c      ap:50c8 ap:4e0d ap:4b9e
+platform/config.c       ps:1193
+platform/volume.c       intro:049d ps:0000 ap:0000
+platform/dos_cb.c       intro:0000 ps:0000:0000-0522 ap:0000:0200-0450 ap:0000:1690-1a4d
+platform/rescfg.c       intro:05cb
+platform/fatal.c        intro:05bb ap:2494
+platform/kbd.c          intro:05da:0000-0407
+platform/timer.c        intro:05da:2307-24ea intro:05da:2b08-2b2e
+platform/joystick.c     intro:05da:3667-3956
+platform/mouse.c        intro:05da:3a40-3c83 intro:0491 ps:2316
+platform/dosmem.c       intro:05da:35e0-3666 intro:05da:4611-4843
+platform/divzero.c      intro:05da:4844-48ca
+platform/sysinit.c      intro:05da:5c92 intro:05da:5db4-5dc8 ap:1d32:0000-0009 ap:1d32:0100-0300 ap:1d32:6a91-6ab0
+platform/loaders.c      intro:05da:070b-0a00 intro:05da:4a8f-4e10 intro:05da:4ee4-5763 intro:0ead intro:0ef8
+                        intro:0f2c:0010 intro:0f35 intro:0f48:000c ps:168a ap:7229 ap:7115
+platform/chunk.c        intro:05da:5764-5c91 ap:7187
+platform/scn_encode.c   intro:05da:5f97-645a ap:71db
+platform/unpack.c       intro:05da:6567-ffff
+platform/windows.c      intro:0db2 intro:0dc0 ps:1671 ps:166d ap:247d
+platform/ems_lib.c      intro:17bd ap:24e1 ap:24e5
+platform/emm_pool.c     ap:1d32:2050-25a5
+platform/ap_mem.c       ap:24b2 ap:24d3 ap:2466 ap:0000:035c
+platform/ap_strings.c   ap:368f
+
+video/drv_thunks.c      intro:05da:06e5 intro:05da:06e9 intro:05da:0b6b intro:05da:0b7e intro:05da:24eb
+                        intro:05da:24ef intro:05da:2fb0 intro:05da:2fb5 intro:05da:2fbd intro:05da:35d8
+                        intro:05da:35dc intro:05da:3cfd intro:05da:492f intro:05da:1e1d intro:05da:1e21
+                        intro:05da:1e25 intro:05da:1e38
+video/gfx_init.c        intro:05da:06f1-070a intro:05da:4933-4a8e intro:05da:5c93-5db3 intro:05da:5dc9-5f96
+                        ap:1d32:000a-00ff ap:244d
+video/palette.c         intro:05da:090e-0b6a
+video/gfx_prim.c        intro:05da:0408-06e4 intro:05da:0b91-1e1c intro:05da:2893-2b07 intro:05da:2b2f
+                        intro:05da:3957-3a3f intro:05da:45d3-4610 intro:05da:48cb-492e intro:05da:645b-6566
+                        ap:1d32:1cac-1ec9
+video/gfx_bitmap.c      intro:05da:1e3c-2306 intro:05da:24f3-2892 intro:05da:3c84-45d2 intro:1739 ps:16e3:065d-0cff
+                        ap:1d32:1eca-204f
+video/text.c            intro:05da:2fc1-35d7
+video/vqt.c             intro:0dc5 intro:0e2c
+video/pictures.c        intro:0f2c ps:3a13
+video/dac.c             ps:0000:1600-17e3 ap:0000:1800-1a4e
+video/palette_fx.c      intro:103d intro:10fc intro:0460 ps:30b5 ps:21f4 ap:1792 ap:51a8 ap:5440 ap:606e ap:644a
+video/ttm.c             intro:1125 intro:11d2 ap:24fc ap:2595
+video/ttm_update.c      intro:0fca intro:0fc9 intro:10f5 intro:1111 intro:0f88 intro:0f9e intro:0fb0 intro:0f48
+                        ps:3a73 ps:3ae6
+video/ps_pages.c        ps:22ce
+video/ps_ts.c           ps:3d50 ps:46d0-4960
+video/ap_screen.c       ap:368f ap:4c9b ap:70ff
+
+sound/player.c          intro:1373
+sound/snd_api.c         intro:11d2 intro:157f-172c ps:45c0-46ff ap:0000 ap:2fd8-335f
+sound/sx_sim.c          ap:5a75
+
+shell_ui/intro_flow.c   intro:038e intro:0460
+shell_ui/ps_start.c     ps:048e ps:0000 ps:315c
+shell_ui/mainmenu.c     ps:04df
+shell_ui/postmsg.c      ps:050c
+shell_ui/simend.c       ps:0542
+shell_ui/flyhist.c      ps:0583
+shell_ui/viewwhich.c    ps:05fa
+shell_ui/careermenu.c   ps:0607
+shell_ui/missdebr.c     ps:0637
+shell_ui/fltmap.c       ps:06c7 ps:12c4
+shell_ui/fltdeck.c      ps:0787
+shell_ui/squadinf.c     ps:07ba
+shell_ui/events.c       ps:0874 ps:1656
+shell_ui/best.c         ps:09a9
+shell_ui/campset.c      ps:0a41 ps:12a7
+shell_ui/once.c         ps:0a71
+shell_ui/realism.c      ps:0a8d
+shell_ui/flymiss.c      ps:0b16
+shell_ui/prefs.c        ps:0b48 ps:0eb4
+shell_ui/brief.c        ps:0c1d
+shell_ui/dogace.c       ps:0c8a
+shell_ui/subst.c        ps:0cfe
+shell_ui/bigmap.c       ps:0d16
+shell_ui/view.c         ps:0ddd
+shell_ui/newpilot.c     ps:0ed9 ps:0f35
+shell_ui/roster.c       ps:0f67 ps:135d ps:13be
+shell_ui/campsel.c      ps:0fa1
+shell_ui/flymiss2.c     ps:100e
+shell_ui/simshell.c     ps:125a
+shell_ui/textbox.c      ps:1305
+shell_ui/decision.c     ps:144e
+shell_ui/custmiss.c     ps:147e
+shell_ui/preflight.c    ps:1513 ps:1612
+shell_ui/alert.c        ps:2b4f
+shell_ui/draw.c         ps:2c11 ap:47a8 ap:53ec ap:6396
+shell_ui/drawtext.c     ps:2dd0
+shell_ui/menu.c         ps:2e25
+shell_ui/screen.c       ps:2e8a
+shell_ui/dialogs.c      ps:2ed6 ps:2f47 ps:2f7f ps:3038 ps:307d
+shell_ui/listbox.c      ps:2fa5
+
+shell_data/fltplan.c    ps:1155
+shell_data/file.c       ps:1193
+shell_data/farquick.c   ps:1ed0
+shell_data/snario.c     ps:1efe ps:1f06
+shell_data/desctext.c   ps:1f7f ps:214d ps:2164
+shell_data/historic.c   ps:1f85
+shell_data/extens.c     ps:2008
+shell_data/glue.c       ps:2171 ps:21f4 ps:229e ps:22a0 ps:230d ps:2221
+shell_data/threed.c     ps:217d ps:21d4
+shell_data/queue.c      ps:2242
+shell_data/ranks.c      ps:225d
+shell_data/helper.c     ps:22ce
+shell_data/wdata.c      ps:2322 ps:2455
+shell_data/lowlevel.c   ps:242f ps:249b ps:24d5 ps:24b7 ps:26c4 ps:26fc ps:273b
+shell_data/strp.c       ps:24e3
+shell_data/ace.c        ps:2550
+shell_data/squad.c      ps:2624
+shell_data/aircraft.c   ps:2777 ps:27f0 ps:280a
+shell_data/campaign.c   ps:284f ps:287b ps:28e4 ps:2968
+shell_data/convoy.c     ps:29ae ps:29c2 ps:2a56
+shell_data/station.c    ps:2a85 ps:2ab3 ps:2b1f ps:2b42
+shell_data/script.c     ps:3164 ps:3555
+shell_data/s_types.c    ps:3570-37ff
+
+sim_flow/flight_loop.c  ap:362b ap:4b31 ap:4ca7 ap:5cde ap:4b9f ap:0000
+sim_flow/init.c         ap:4e0d ap:10e5 ap:4963
+sim_flow/frame.c        ap:5440 ap:5d3c
+sim_flow/views.c        ap:0590 ap:05d6 ap:1c30 ap:637f
+sim_flow/cockpit.c      ap:644a ap:4899 ap:4cad ap:465c ap:50c0 ap:6dfc
+sim_flow/gauges.c       ap:678a
+sim_flow/cockpit_mask.c ap:0962 ap:0a7b
+sim_flow/messages.c     ap:0ab0 ap:1614 ap:1815 ap:1ba4 ap:4bb7 ap:6939
+sim_flow/radio.c        ap:1660 ap:6e5a
+sim_flow/results.c      ap:1899 ap:5254 ap:14b8 ap:1889
+sim_flow/autopilot.c    ap:496a ap:082a
+sim_flow/input.c        ap:5f2c ap:60a9
+sim_flow/dlglib.c       ap:0de8 ap:46de ap:472f ap:47a8 ap:48a2
+sim_flow/dialogs.c      ap:5119 ap:5247 ap:53a6 ap:53ec ap:6396
+sim_flow/sliders.c      ap:5613 ap:565f ap:6b3d ap:6de0 ap:48af
+sim_flow/stdalert.c     ap:5a01 ap:5da1 ap:6210
+sim_flow/prefs.c        ap:6b4d ap:6c5f
+sim_flow/fltmap.c       ap:6cdc
+sim_flow/realism.c      ap:522c ap:6e9b ap:6e9f
+sim_flow/vcr_modes.c    ap:1c0f ap:51e7 ap:5dd0 ap:5d46 ap:6163
+sim_flow/bstream.c      ap:48c7 ap:4d15 ap:63ed ap:6922 ap:6de4
+sim_flow/vcr_runtime.c  ap:5b93 ap:5c5f ap:5c9b ap:5d56
+sim_flow/vcr_files.c    ap:5e06 ap:5fef ap:4bcd ap:5155
+sim_flow/vcr_panel.c    ap:5ea5 ap:606e
+sim_flow/vcr_tape.c     ap:618d
+sim_flow/vcr_codec.c    ap:6a63
+sim_flow/misc.c         ap:55a4 ap:519d ap:36ee ap:4b9e ap:5b71
+
+sim_world/ai_exec.c     ap:69fe ap:14c3 ap:5058
+sim_world/ai_target.c   ap:1142
+sim_world/ai_elements.c ap:583c
+sim_world/ai_combat.c   ap:1284 ap:0ac2
+sim_world/ai_tactics.c  ap:0619 ap:1027 ap:1133
+sim_world/ai_dogfight.c ap:12fd
+sim_world/ai_manoeuvre.c ap:1ad2
+sim_world/g_attack.c    ap:0deb
+sim_world/ai_flight.c   ap:4edf
+sim_world/ai_waypoints.c ap:17fe ap:69d0 ap:51fb ap:6dec ap:6dfc
+sim_world/ai_orders.c   ap:1660 ap:07fe
+sim_world/fm_core.c     ap:0b01
+sim_world/fm_step.c     ap:4bf9
+sim_world/weapons.c     ap:04c4 ap:05d6 ap:488e ap:0688 ap:0769 ap:4cda ap:0ff4 ap:6cc2 ap:1a32 ap:1baa ap:48ff
+sim_world/impacts.c     ap:1560 ap:6ac7 ap:490a
+sim_world/damage.c      ap:655d ap:085b ap:088a ap:0fd4 ap:14e0 ap:4b3a ap:39e5
+sim_world/death.c       ap:0916 ap:10bf
+sim_world/snario.c      ap:56ac ap:1641 ap:36ce-36ff
+sim_world/acedata.c     ap:45cc
+sim_world/objects.c     ap:465c ap:637f
+sim_world/ships.c       ap:5410
+
+render3d/r3d_poly.c     ap:277a:0000-0a12
+render3d/r3d_clip.c     ap:277a:0a13-38ff
+render3d/r3d_math.c     ap:277a:3900-ffff
+render3d/vecmath.c      ap:35ff-3690 ap:4edb ap:5137 ap:5b91
+render3d/ts_draw.c      ap:2f0e ap:2ec2 ap:2ecb ap:2edf ap:70e8
+render3d/ts_bm.c        ap:2e33 ap:241c
+render3d/ts_util.c      ap:271b ap:243d ap:7017 ap:7032 ap:7039 ap:7074
+render3d/scene.c        ap:5440 ap:33b4 ap:33d1 ap:34bf ap:465c
+render3d/effects.c      ap:0802 ap:1560 ap:2466 ap:59f9 ap:1a8b ap:655d ap:675d
+render3d/world_load.c   ap:333b ap:3368 ap:33a1 ap:35a4 ap:35ad ap:35d1 ap:35d6 ap:3591 ap:05a9 ap:62ca ap:62d2
+                        ap:51ca
+render3d/wdata.c        ap:628f
+render3d/macros.c       ap:34f1
+render3d/pool.c         ap:3546
+render3d/horizon.c      ap:4d6e ap:0a88 ap:1abf
+render3d/sky.c          ap:55e8 ap:59eb ap:6964 ap:4b91 ap:1a9a
+render3d/palfx.c        ap:17ce ap:1792 ap:51b4

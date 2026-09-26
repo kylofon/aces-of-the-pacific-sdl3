@@ -13,7 +13,14 @@ find_package(SDL3 REQUIRED CONFIG)
 add_library(nuked_opl3 STATIC third_party/nuked-opl3/opl3.c)
 target_include_directories(nuked_opl3 PUBLIC third_party/nuked-opl3)
 
-file(GLOB_RECURSE AOTP_SOURCES CONFIGURE_DEPENDS src/*.c)
+# Coordinator files in src/, then one glob per module directory (PORTING.md "Module layout"): a module
+# owner adds <module>/<file>.c as listed in port/modules.csv and it is built without touching this file.
+set(AOTP_MODULES platform video sound shell_ui shell_data sim_flow sim_world render3d game)
+file(GLOB AOTP_SOURCES CONFIGURE_DEPENDS src/*.c)
+foreach(m ${AOTP_MODULES})
+    file(GLOB m_sources CONFIGURE_DEPENDS src/${m}/*.c)
+    list(APPEND AOTP_SOURCES ${m_sources})
+endforeach()
 
 add_executable(aotp ${AOTP_SOURCES})
 target_include_directories(aotp PRIVATE src)

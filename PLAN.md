@@ -79,6 +79,10 @@ generated `symbols.h`, `PORTING.md`. INTRO/PS/AP run in one process; the `GCD.CO
 a loop in `main`.
 
 ### 5. Port, subsystem by subsystem
+Step 1 (interfaces) done (2026-09-26): `port/modules.csv` assigns every function to one module and
+C file (`tools/assign_modules.py`, `tools/module_files.txt`), module headers `aotpport/src/<module>/<module>.h`
++ `platform/rtl.h` (`tools/gen_module_headers.py`, then hand-maintained), per-module CMake globs
+(`aotpport/PORTING.md` "Module interfaces").
 Order: platform/video/resources → intro → shell screens (visible milestone) → sim start-up +
 3D renderer (static camera, then a VCR film playing back) → flight model and controls → AI and
 weapons → full mission loop shell ⇄ sim → sound. Verified against DOSBox captures of the original

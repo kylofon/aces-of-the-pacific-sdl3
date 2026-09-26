@@ -39,20 +39,67 @@ Only `host.c`, `mem.c`, `ems.c` and `main.c` include SDL. Everything else talks 
 
 ### Module layout for phase 5
 
-One directory per spec module; each module declares its API in its own header (`<dir>/<dir>.h`):
+One directory per spec module; each module declares its API in its own header (`<dir>/<dir>.h`).
+Every original function is assigned to exactly one module and one C file in `../port/modules.csv`
+(`tools/assign_modules.py`, file patterns in `tools/module_files.txt`); implementers work in
+disjoint files. CMake globs each module directory, so a new `.c` file is built without editing
+`CMakeLists.txt`.
 
-| Directory | Spec | Program(s) |
-|---|---|---|
-| `src/platform/` | `platform.md`, `platform_resources.md` | shared library (all three) + Borland RTL (`rtl_*.c`) + INTRO/PS/AP `main` start-up parts |
-| `src/video/` | `video*.md` | shared library graphics, the VGA driver entries in C, palettes, TTM player, PS `ts_*` |
-| `src/sound/` | `sound.md` | SCI player + AdLib driver model (shared), per-program sound API, AP `sx_sim` |
-| `src/shell_ui/` | `shell_ui*.md` | INTRO flow, PS screens, dialogs/menus |
-| `src/shell_data/` | `shell_data*.md` | PS `emd\*`, `sys\*`, `miss\*`, `file.c` |
-| `src/sim_flow/` | `sim_flow*.md` | AP main/init, flight loop, cockpit/HUD, map, VCR, results |
-| `src/sim_world/` | `sim_world*.md` | AP flight model, AI, weapons, damage |
-| `src/render3d/` | `render3d*.md` | AP 3Space renderer (PS copies of `277a` live in video/`ts`) |
+| Directory | Spec | Program(s) | C files (functions in `modules.csv`) |
+|---|---|---|---|
+| `src/platform/` | `platform.md`, `platform_resources.md` | shared library (all three) + Borland RTL + the three `main`s | `intro_main` `ps_main` `ap_main` `config` `volume` `dos_cb` (DS:1A04 driver callback wrappers) `rescfg` `fatal` `kbd` `timer` `joystick` `mouse` `dosmem` `divzero` `sysinit` `loaders` `chunk` `scn_encode` `unpack` `windows` `ems_lib` `emm_pool` `ap_mem` `ap_strings`; RTL: `rtl_heap` `rtl_stdio` `rtl_printf` `rtl_string` `rtl_stdlib` `rtl_dos` (+ existing `gameport` `int33` `vga` `platform`) |
+| `src/video/` | `video*.md` | library graphics, VGA driver in C, palettes, VQT, TTM, PS page helpers, PS-only `ts` | `drv_vga` (50 driver entries) `drv_thunks` `gfx_init` `gfx_prim` `gfx_bitmap` `text` `palette` `palette_fx` `dac` `vqt` `pictures` `ttm` `ttm_update` `ps_pages` `ps_ts` `ap_screen` |
+| `src/sound/` | `sound.md` | SCI player (shared), sound API, AP `sx_sim`; AdLib driver model | `player` `snd_api` `sx_sim` (+ the AdLib driver model, not in the EXEs) |
+| `src/shell_ui/` | `shell_ui*.md` | INTRO flow, PS screens, alert/menu/listbox toolkit | one file per original module: `intro_flow` `ps_start` `mainmenu` `postmsg` `simend` `flyhist` `viewwhich` `careermenu` `missdebr` `fltmap` `fltdeck` `squadinf` `events` `best` `campset` `once` `realism` `flymiss` `prefs` `brief` `dogace` `subst` `bigmap` `view` `newpilot` `roster` `campsel` `flymiss2` `simshell` `textbox` `decision` `custmiss` `preflight` `alert` `draw` `drawtext` `menu` `screen` `dialogs` `listbox` |
+| `src/shell_data/` | `shell_data*.md` | PS `emd\*`, `sys\*`, `miss\*`, `file.c` | `fltplan` `file` `farquick` `snario` `desctext` `historic` `extens` `glue` `threed` `queue` `ranks` `helper` `wdata` `lowlevel` `strp` `ace` `squad` `aircraft` `campaign` `convoy` `station` `script` `s_types` |
+| `src/sim_flow/` | `sim_flow*.md` | AP flight loop, init, views, cockpit/HUD, dialogs, map, results, VCR | `flight_loop` `init` `frame` `views` `cockpit` `gauges` `cockpit_mask` `messages` `radio` `results` `autopilot` `input` `dlglib` `dialogs` `sliders` `stdalert` `prefs` `fltmap` `realism` `vcr_modes` `bstream` `vcr_runtime` `vcr_files` `vcr_panel` `vcr_tape` `vcr_codec` `misc` |
+| `src/sim_world/` | `sim_world*.md` | AP flight model, AI, weapons, damage, mission set-up | `ai_exec` `ai_target` `ai_elements` `ai_combat` `ai_tactics` `ai_dogfight` `ai_manoeuvre` `g_attack` `ai_flight` `ai_waypoints` `ai_orders` `fm_core` `fm_step` `weapons` `impacts` `damage` `death` `snario` `acedata` `objects` `ships` |
+| `src/render3d/` | `render3d*.md` | AP 3Space renderer; also the PS `3d50`/ts2 copies that are the same routines | `r3d_poly` `r3d_clip` `r3d_math` `vecmath` `ts_draw` `ts_bm` `ts_util` `scene` `effects` `world_load` `wdata` `macros` `pool` `horizon` `sky` `palfx` |
 
 `game/placeholder.c` is deleted when the ported mains exist; `prog.c`'s table then points at them.
+
+### Module interfaces (phase 5 step 1)
+
+* **`port/modules.csv`**: `exe, address, name, module, c_file, kind, iface, spec, orig_name`.
+  `kind`: `prog` (one program), `shared` (the same routine in 2–3 programs, implemented **once**;
+  `exe = shared`, `address` lists each program's address), `rtl` (Borland RTL called by game code),
+  `rtl_int` (RTL internals), `rtl_op` (`LDIV@`, `LXMUL@`, `PADD@` …: C operators / `far_*`), `c0`
+  (prog.c / mem.h), `alias` (the body at +1 of an `inc bp` entry), `thunk` / `dropped` (AP VROOMM
+  stubs, overlay manager), `drv` (VGA driver entries). `iface`: `x` = called from another module
+  (or by prog.c), `f` = called from another file of the same module, empty = file-local.
+* **Headers** `src/<module>/<module>.h` and `src/platform/rtl.h` declare every `x` and `f`
+  function, grouped by C file (`f` ones marked `[file]`), each with its address(es), original name
+  and spec section. They were generated once by `tools/gen_module_headers.py` and are **maintained
+  by hand from now on** (the script refuses to overwrite them without `--force`; `platform.h` keeps
+  its phase-4 part above the `GENERATED` line). `src/interfaces.c` includes them all so a
+  conflicting declaration breaks the build.
+* **Signatures** were derived from the original stack frames (LES/LDS = `FarPtr`, DWORD = 32 bit,
+  one word = `u16` of unknown sign, check the spec) and the spec's parameter lists; the return type
+  from the spec or from what callers read after the call (AX → `u16`, DX:AX → `u32`). Comments flag
+  `register input(s)`, `last n word(s) unused by the original`, `spec says void, callers read AX`.
+  **Fix a signature in your own header when the spec/disassembly says otherwise, and note it.**
+* **Register interfaces**: parameters named after the registers (`u16 bx`, `u8 al`), as in "Porting a
+  function"; outputs other than AX/DX:AX (CF, SI …) are added by the implementer.
+* **Varargs** (`sprintf`, `fprintf`, `open` and game functions that take the address of their own
+  arguments): the words of the original stack image as C `unsigned` arguments (a long or far
+  pointer = two words, low first); `v*` forms take `u16 va_ds`, the DS offset of such a word list.
+* **Names**: C name = original name; `intro_`/`ps_`/`ap_` prefix when two different functions share
+  a name (the mains: `intro_main`/`ps_main`/`ap_main`, declared in `game/game.h`); `_SSSS` segment
+  suffix for same-name twins inside one program (HANDOFFS.md N-b; `088a:054f` is
+  `object_destroyed_notify`); `lib_` prefix for library functions whose name the port's own headers
+  already use (the Dynamix EMS library `lib_ems_*` next to `ems.h`) or that are C library names;
+  `rtl_<borland name>` for the RTL (`rtl_qsort` must be Borland's algorithm, bit-exact).
+* **Shared across programs**: one C function with the library conventions (`G_`/`F_`, branch on
+  `prog_current_id()` where the code differs). PS `3d50`/ts2 routines that match AP `277a`/ts2 are
+  render3d's; their code-segment data differs per program (`PS_CSSEG_*` / `AP_CSSEG_*`).
+* **Interface decisions for open hand-offs** (HANDOFFS.md "open"): X5 — driver entry 13 writes 0 to
+  a near int (`u16 out_ds`), entries 9/12/16/25/26/28/39–48 are one `drv_nop`, 19 and 24 are
+  implemented as specified although no caller is known; C6 — AP's patched driver vectors are far
+  pointers written into the jump table DS:351A by sim_flow, called through `codeptr_lookup` like
+  the driver's own entries (sim_flow registers its hooks); TT7 — `pal_cycle_block(s16 first, s16 count,
+  s16 step)` (INTRO `05da:0a00`), the `(-1, 0, 0)` call is a plain call with those values; N4 —
+  `wait_ticks_or_key(s16 ticks)` (`2171:000a`, one word, the frame confirms it); qsort comparators
+  are `RtlCmpFn` (`s16 (u16 a_ds, u16 b_ds)`) registered with codeptr.
 
 ## The three programs in one process (`prog.c`)
 

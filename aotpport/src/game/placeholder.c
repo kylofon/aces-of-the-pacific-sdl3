@@ -117,8 +117,8 @@ static const char *arg(u16 argv_ds, int i) { return (const char *)DSP(DSW(argv_d
 static void intro_tick_cb(void) { DSL(INTRO_DS_intro_ticks) += 1; }          /* 0460:000b */
 static void shell_tick(void) { DSL(PS_DS_step_clock_ps_done) += 1; }         /* 229e:0013 */
 static void ap_tick(void) { DSL(AP_DS_tick_count) += 1; }                    /* 0000:02db */
-static void kbd_break_hook(int x) { (void)x; }                              /* INTRO 05bb:0006 */
-static void ctrl_esc_hook(int x)                                            /* PS 227c:0034 */
+static void ph_kbd_break_hook(int x) { (void)x; }                              /* INTRO 05bb:0006 */
+static void ph_ctrl_esc_hook(int x)                                            /* PS 227c:0034 */
 {
     if (x) prog_exit(0);                                  /* placeholder for shell_exit(0) */
     DSB(PS_DS_quit_flag) = 1;
@@ -135,7 +135,7 @@ static void ems_free_everything(void)                                       /* A
 int intro_main(int argc, u16 argv_ds)
 {
     codeptr_register(PROG_INTRO, INTRO_FN_intro_tick_cb, intro_tick_cb);
-    codeptr_register(PROG_INTRO, INTRO_FN_kbd_break_hook, (CodeFn)kbd_break_hook);
+    codeptr_register(PROG_INTRO, INTRO_FN_kbd_break_hook, (CodeFn)ph_kbd_break_hook);
 
     /* mem_check (038e:091b): [0000:0512] << 4 >= 609 200 and >= 21 free EMS pages */
     u16 free_pages = 0;
@@ -175,7 +175,7 @@ int ps_main(int argc, u16 argv_ds)
 {
     (void)argc; (void)argv_ds;
     codeptr_register(PROG_PS, PS_FN_shell_tick, shell_tick);
-    codeptr_register(PROG_PS, PS_FN_ctrl_esc_hook, (CodeFn)ctrl_esc_hook);
+    codeptr_register(PROG_PS, PS_FN_ctrl_esc_hook, (CodeFn)ph_ctrl_esc_hook);
 
     u16 marker = rd16(0, 0x510);                          /* 048e:04a1 */
     if (marker == 0x29A) DSB(PS_DS_returned_from_sim) = 0;
