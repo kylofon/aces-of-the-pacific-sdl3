@@ -77,3 +77,9 @@ report. The lead appends new requests from each report.
 - [ ] shell_data: use `ts_load_table_far` (far table in DX:AX) and the new `mul_cos`/`mul_sin` signatures.
 - [ ] sim_world: register 655d:1bb7 (gun-smoke callback, via stub 3DFF:0061) with codeptr.
 - [ ] sound + render3d: switch `ldist3` to `(u16 a_ds, u16 b_ds)` together (semantics already match).
+
+## from sim_world A (2026-09-26)
+- [ ] platform: call `sim_world_a_dev_test()` (AOTP_TEST=fm / ballistics) from `platform_dev_test` so build_sim_world_a's `--wrap` flags can go.
+- [ ] sim_flow: implement `misc.c` (`res_name`, `file_load`, `res_load_set`, `res_free`, `ap_fread_far_55a4`) — only no-op stubs exist; snario.c/acedata.c need them to run.
+- [ ] sim_world B (AI): fix the `ai_*.c` compile errors (conflicting prototypes, missing `PROG_AP`/`stdarg.h`); they break the shared build.
+- [x] 655d:1bb7 gun-smoke callback registered (damage.c).
