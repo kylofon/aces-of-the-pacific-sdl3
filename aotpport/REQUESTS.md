@@ -42,3 +42,15 @@ report. The lead appends new requests from each report.
 
 ## render3d / video (from platform's link of shell_data)
 - [ ] shell_data needs `mul32`, `lmid`, `atan2_32`, `ldist2` (PS 3d50 math library, owned by render3d).
+
+## platform (from video, 2026-09-26)
+- [ ] `emm_pool.c:105` passes 9 arguments to `gfx_sprite_rotated_ind`; drop the trailing 0 (breaks the build).
+- [ ] `scr_load`'s first word is the name, not `page`: rename the parameter.
+- [ ] Implement `ap_fread_far_4bb7` (AP loaders; without it AP pictures read garbage and VQT recursion overflows).
+- [ ] Call `video_dev_test()` from `platform_dev_test` (or main.c's AOTP_TEST dispatch).
+- [ ] `bmp_mtx_load` is platform's (video removed its duplicate; ttm.c calls it).
+- [ ] `intro_main.c` uses `host_fatal` without including its header.
+
+## lead / symbols (from video)
+- [ ] INTRO `pal_slots` → `pal_slot`, `font_ptr` → `font_glyphs` in the layout table; AP driver block 0x3480;
+      AP font slots DS:3F2A..3F32 and name strings DS:02E6..0302.
