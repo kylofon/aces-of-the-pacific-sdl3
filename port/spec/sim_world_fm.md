@@ -48,8 +48,8 @@ landing test, stall/overspeed flags.
 
 The frame loop (sim_flow, `5b93:01ed`, `5cde:0405`) calls `362b:008f(ticks)` once per frame; it sets
 **`DS:711E` = frame time scale, 100h = one nominal frame**: `clamp((ticks << 8) / DS:7118, 40h,
-1C2h)` (`362b:005b`, a saturating division), with `DS:7118` = nominal ticks per frame (set by
-`4b9f:0000` from a slider, 1 after `362b:002d`). `DS:711A` is the same with `DS:3712`,
+1C2h)` (`362b:005b`, a saturating division), with `DS:7118` = the time-scale slider value (20..80,
+default 50, set by `4b9f:0000`; 1 after `362b:002d`); ticks are 236.69 Hz PIT ticks per frame (sim_flow §4). `DS:711A` is the same with `DS:3712`,
 `DS:711C = log2-ish(DS:711E) − 7` (`3684:00a1`), `DS:7116` = last ticks. All per-frame rates in
 sim_world are multiplied by `DS:711E/256` through the `362b` helpers (§5). The flight model runs
 once per frame with `DS:711E` as is when `DS:711E < 100h`, else **twice with `DS:711E >> 1`**
@@ -423,14 +423,14 @@ every frame with a desired attitude, and they set `Controls` (aileron `+AC`, ele
 | 4bf9:0017 | plane_engine_sound | far (Plane*) | see §4.2 | verified |
 | 4bf9:0257 | plane_fly | far (Plane*) | §4.1 | verified |
 | 4bf9:03ce | steer_roll_to | far int (Plane*, int roll, int tol) | if `P.pitch < −14000` return 1 (steep dive: no roll control); `ail = (roll − P.roll) >> 4`; return `|ail| < tol` (`277a:3f0e`: 1 when `−tol < ail < tol`) | verified |
-| 4bf9:0401 | steer_pitch_to | far (Plane*, int pitch, int tol) | `d = pitch − P.pitch`; if `(u16)(P.roll + 8000) < 16000` (|roll| < 8000): `elev = d >> 5`; else `rud = (P.roll >= 0 ? −d : d) >> 5`; (tolerance test result discarded) | verified |
+| 4bf9:0401 | steer_pitch_to | far int (Plane*, int pitch, int tol) | `d = pitch − P.pitch`; if `(u16)(P.roll + 1F40h) < 3E80h` (|roll| < 8000): `elev (+AE) = d sar 5`; else `rud (+B0) = (P.roll >= 0 ? −d : d) sar 5`; returns `within(elev, tol)` (`277a:3f0e`) — **quirk**: when banked the elevator is not written, so the stale elevator is tested (corrected: the result is used, e.g. by `1ad2:0082`) | verified |
 | 4bf9:044b | steer_heading | far (Plane*, Plane *tgt, int dhead, int lead) | bank-to-turn: `b = dhead·45 >> 10`; with a target and `lead` and `Plane+D7 == tgt` and `Plane+CE != 80h`: `b += Plane[CE]·(−2000) >> 10`; with a target: `vz = Plane.fm[+90]` (−) `lencos(tgt.fm.?, head_diff)`…; `b −= dt(vz)·400 >> 10`; small corrections (|b| < 45 and |roll| < 2000): roll level (steer_roll_to 0) when b and roll have the same sign, `rud = −16b`; else bank limit = `min(DS:02C6[aircraft.class], pilot.max_bank (+0C))`, `r = satdiv(b << 9, FMD.74)`, `r = satdiv(r << 10, FMD.74)`, squared-soft below 100h (`r·|r| >> 7`), and steer_roll_to(±limit) at the limit else `ail = −r` | likely |
 | 4bf9:061b | steer_heading_lead | far (Plane*, Plane*, int) | `steer_heading(.., 1)` | verified |
 | 4bf9:0632 | steer_heading_nolead | far (Plane*, Plane*, int) | `steer_heading(.., 0)` | verified |
 | 4bf9:0649 | steer_climb | far (Plane*, Plane *tgt, int dpitch, int limited) | pitch limits: `limited == 0`: ±4000h; else min = aircraft `.DAT`+3A, max = `.DAT`+57 or `+6B` when `Plane+4A→+06 & 10h` (carrying ordnance?); `e = dpitch·100 >> 10 − climb·750 >> 10` (+ target climb·750 >> 10); at the limits `steer_pitch_to(limit)`; else if |roll| < 4000: `elev = e`, else `rud = ±2e` | likely |
 | 4bf9:0762 | steer_altitude | far int (Plane*, i32 dz) | `d = atan2(dz, 5000)` (`35ff:0041`) − P.pitch; `steer_climb(p, 0, d, 1)`; returns d | verified |
 | 4bf9:07a1 | steer_intercept | far (Plane*, Plane *tgt, int pursuit, int, int facing, Aim *out) | relative position of the target in own axes (`277a:5368` + `50c0`), horizontal range `sqrt` (`277a:3c36` of `labs` sums), bearing `atan2 − heading`; facing: when both headings within 90° and the bearing behind, mirror (`−8000h − b`) if `277a:5588`; elevation `atan2(−dz, 5000)`; close (< 8000) and elevation outside ±2000h → `steer_roll_to`, else `steer_heading_nolead`; `steer_climb(p, tgt, elev, 1)`; `out+2` = range (i32), `+6` = elevation, `+10` = bearing | likely |
-| 4bf9:08d5 | steer_to_point | far int (Plane*, Point*) | bearing to the point (`3629:0004`) − heading; `steer_heading_nolead(b/2)`; `steer_altitude(P.z − pt.z)`; throttle = `plane_cruise_throttle` (and `277a:3f3c` min with it when climbing) | likely |
+| 4bf9:08d5 | steer_to_point | far int (Plane*, Point*) | bearing to the point (`3629:0004`) − heading; `steer_heading_nolead(b/2)`; `steer_altitude(P.z − pt.z)`; throttle = `plane_cruise_throttle`, or `min((P.pitch sar 3) + 200, cruise)` when `P.pitch > 0`; returns DX:AX = {heading error `b` (full, before halving), the `steer_altitude` result} (verified in the finish pass) | verified |
 | 4bf9:0961 | plane_cruise_throttle | far int (Plane*) | 100h when `Plane+42 & 10h`, else pilot profile `+10` (`DS:55CE[Plane+BB]`) | verified |
 | 4bf9:098b | steer_speed_match | far (Plane*, Plane *lead, int, int head, int dist) | `t = throttle + ((lencos(dist?, head − lead.head) − dist) >> 3) + (lead.vz − own.vz)·8` clamped to `[8Ch, cruise]` (`35ff:0009`) | likely |
 | 4bf9:09f4 | controls_neutral | far (Controls*) | aileron = elevator = rudder = 0; clears flap bits 0–1, dive brakes, wheel brakes | verified |
@@ -463,16 +463,29 @@ level"/enemy skill index 0..2 (also read by `04c4`, `0769`, `1142`, `1284`).
 
 ### 4.2 `4bf9:0017 plane_engine_sound(Plane *p)` — verified (sound-side hooks; hand-off to sound)
 
-For the player only: engine note = `DS:3FDE` (engine 1 rpm gauge value from `678a`, averaged with
-`DS:3FE0` when FMD `+90` > 1); by aircraft `.DAT`+75 (engine sound type 0..5; 5 → 2 when `DS:269D
-== 0`, `acedata`): pitch `= rpm·{13B0h, DFAh, 578h, DFAh}[type] >> 10 + {28A0h, 28A0h, 3908h,
-28A0h}` (types 1, 2, 3, 4; others: unchanged), `5a75:0f72(DS:02D4[type], &p.pos, pitch,
-&p.v_world, 0, 1)`. Gear-touch: when `DS:3F26 <= 0`, on the ground (`FMD.98 + ctl[6] >= P.z`) and
-the latch `DS:3F28` was clear and the gear is down → `5a75:0eea(16h, &pos, &v_world, 1)` once
-(latch cleared when airborne); `DS:3F26` counts down otherwise. Unless `DS:19F2` (sound off?),
-find the nearest other aircraft of engine class < 3 with throttle ≠ 0 within 100000 of the
-listener (`5440:008d` camera position, `277a:3b3c` distance); within 5000 play the fly-by sound
-1Fh at it. Non-player aircraft: `5a75:0eea(DS:02DA[type], &pos, &v_world, 0)`.
+For the player only (`p == DS:3B09`): `rpm = DS:3FDE` (engine 1 rpm gauge value from `678a`), or
+`(DS:3FDE + DS:3FE0) sar 1` (16-bit add, then arithmetic shift) when FMD `+90` (engines) **> 1**.
+`type = (i8).DAT+75` (engine sound type; 5 → 2 when `DS:269D == 0`, set by `acedata`). The pitch is
+chosen by the jump table at `cs:4bf9:024B` = {006E, 0084, 009A, 00C6, 00C6, 00B0} — **verified**
+(an earlier draft of this section had the type index off by one):
+
+| type | pitch (CX) |
+|---|---|
+| 0 | `((i32)rpm·13B0h >> 10) + 28A0h` (16-bit result) |
+| 1 | `((i32)rpm·0DFAh >> 10) + 28A0h` |
+| 2 | `((i32)rpm·0578h >> 10) + 3908h` |
+| 5 | `((i32)rpm·0DFAh >> 10) + 28A0h` |
+| 3, 4, > 5 (unsigned compare, so negative types too) | **quirk**: CX is not set; the value left in CX by the caller is used. `/* PORT: */` use 2000h |
+
+then `5a75:0f72(DS:02D4[type], &p.x (Plane+04), pitch, &p.v_world_per_frame (Plane+70), 0, 1)`.
+Gear-touch: if `DS:3F26 > 0`: `DS:3F26−−` and skip; else `on = (FMD.98 + ctl[6] >= P.z)` (i32
+compare); if the latch `DS:3F28` is set: clear it when `!on`; else if `on`: set the latch and, when
+the gear is down (`Plane+BA & 10h`), `5a75:0eea(16h, &p.x, &p.v70, 1)`. Unless `DS:19F2 != 0`:
+over all planes `DS:475B[0..DS:4776)` (the player included) with `.DAT+75 < 3` (signed) and
+distance `277a:3b3c(&q.x, cam)` (`cam = 5440:008d()`) below the best so far (start 100000 =
+186A0h) and throttle `q+B2 != 0`: remember it; if the best is `< 5000` (1388h):
+`5a75:0eea(1Fh, &q.x, &q.v70, 1)` (fly-by). Non-player aircraft: `5a75:0eea(DS:02DA[type], &p.x,
+&p.v70, 0)` only (no pitch).
 
 ## 5. `362b` — frame-time scaling helpers (used by all of sim_world)
 
@@ -487,8 +500,8 @@ listener (`5440:008d` camera position, `277a:3b3c` distance); within 5000 play t
 | 362b:00be | dt_scale | far int (int x) | `clamp((i32)x·DS:711E >> 8, −7FFFh, 7FFFh)` | verified |
 | 362b:0106 | dt_scale2 | far int (int x) | same with `DS:711A`, low clamp 8001h | verified |
 | 362b:0146 | dt_nop | far int (int x) | returns x (debug stub) | verified |
-| 362b:0165 | timer_dec | far int (int *t) | `*t −= DS:711E`, 0 on signed overflow… **quirk**: only on overflow, negative results stay | verified |
-| 362b:017c | timer_dec32 | far int (i32 *t) | same, 32-bit | verified |
+| 362b:0165 | timer_dec | far int (int *t) | `*t −= DS:711E`; if the signed result is < 0 (`jge` after `sub`: SF == OF), `*t = 0`; returns `*t` | verified |
+| 362b:017c | timer_dec32 | far i32 (i32 *t) | same, 32-bit (`movsx` of DS:711E), returns `*t` in DX:AX | verified |
 | 362b:01a0 | timer_dec_b | far int (int *t) | = 0165 | verified |
 | 362b:01bb, 01e7 | timer_inc | far int (int *t) | `*t += DS:711E` | verified |
 | 362b:01cc, 023b | timer_inc32 | far int (i32 *t) | `*t += DS:711E` | verified |
@@ -497,9 +510,11 @@ listener (`5440:008d` camera position, `277a:3b3c` distance); within 5000 play t
 | 362b:0256 | dt_scale_frac | far (int *x, int *frac) | `p = x·DS:711E`; `*x = clamp(p >> 8, ±7FFFh)`; `*frac = (|p| & FFh) << 2` (3FFh when clamped), negated if the result < 0 | verified |
 | 362b:02e3 | dt_mul | far int (int x) | `x·DS:711E` (16-bit) | verified |
 
-Note on `timer_dec` (`0165/017c/01a0`): the decompile's `SBORROW` test is the signed-overflow
-check of `sub`; the result is only forced to 0 when the subtraction overflows, so these timers go
-negative. `timer_expired*` are the ones that stop at 0.
+Note on `timer_dec` (`0165/017c/01a0`): the decompile's `SBORROW` expression is Ghidra's
+rendering of `jge` after `sub` (jump when SF == OF, i.e. the true signed result is ≥ 0); these
+timers **floor at 0** and return the new value (**corrected** — an earlier draft said they go
+negative). Callers test "reached 0" by comparing the return value with 0. `timer_expired*` do the
+same and return 1/0.
 
 ## 6. Small math helpers (`35ff`–`3684`) used by the sim
 

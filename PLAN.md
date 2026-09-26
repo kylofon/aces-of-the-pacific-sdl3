@@ -97,8 +97,18 @@ widescreen / 60 fps from the same geometry, with longer view distance and higher
    becomes a loop in `main`; `SIM.IN` / `SIM.OUT` are still written to the game folder as the original does.
 3. **Milestone** (2026-09-25): the full chain (intro + shell + sim) is ported before the v0.1.0 release.
 
-Still open (settled when the phases reach them): EMS model, frame pacing, copy protection, graphics
-(VGA only, expected).
+4. **Frame pacing** (2026-09-26): real-time default. The sim's step `DS:711E = clamp((ticks<<8)/div,
+   40h, 1C2h)` comes from real timer ticks (236.7 Hz) with the TIME SCALE slider as `div`
+   (`sim_flow.md` §4.1). The original on a fast PC caps at 8 ticks per frame, clamps the step and runs
+   the world at 1.445× real time with the slider ineffective. The port paces sim frames at a
+   configurable tick count (`--frame-ticks`, default chosen by play-testing, ~16) where the step is
+   not clamped, so the default slider gives ~real time and the slider works. Smooth 60 fps rendering
+   (interpolation) belongs to the Enhanced repo.
+5. **EMS** (2026-09-26): only AP really uses EMS (sprites, `emm_pool` pools, VCR cache, overlay
+   cache; `platform.md` §5). The port models INT 67h with handles and a 64 KB page frame in `mem[]`.
+   The VROOMM overlay manager is not ported (AP runs flattened).
+6. **Copy protection**: none in this version (`shell_ui.md`).
+7. **Graphics**: VGA only (the only shipped driver used; `video.md`).
 
 ## TODO (parked)
 

@@ -27,10 +27,10 @@ count)` (copies up to `count` records of `size` while enough bytes remain, retur
 read), `36ce:0076 rd_tell()`. `56ac:0184 script_open(far p, len)` = `rd_open` + `DS:450E = 0`.
 `56ac:019e script_next()`: when the current block is exhausted (`DS:450E == 0`) read `u16 type`
 → `DS:4510` and `u16 count` → `DS:450E` (returns 0 at the end), then `DS:450E−−`, return 1.
-`56ac:01dc script_skip_record()`: skips one record of the current type — **quirk**: only type 7
-(waypoint) is skipped by reading its 2-byte head (and nothing more) — every other type is skipped
-by `rd_skip(<size of the type>)` through `36ce:001b` with the size left in a register (read with
-x86dis before porting).
+`56ac:01dc script_skip_record()` — verified: type 7 (waypoint): `rd_read(&h, 2, 1)`, then
+`rd_skip(h.kind == 0 ? 12 : 4)`; any other type: `rd_skip(DS:07FB[type])` with the record sizes
+`DS:07FB` = {90, 22, 16, 6, 10, 58, 0, 2, 2, 1} (types 0–9: per record; type 6 skips nothing, type 8 = one u16 message offset, type 9 = one
+text byte).
 
 ### 1.2 `56ac:0236 scenario_scan(far script, int len)` — verified (disassembly)
 
@@ -81,10 +81,8 @@ DS:4755 = calloc(20h · places)
 pass A: type 1 → 465c:015f plane_create(rec) into the list; type 2 → 465c:0395 ship_create;
         type 4 → place (+4 x, +8 y, +0C z = 0, +1C/+1D kind bytes)
 56ac:0809 places_link: place i with DS:44FA[i] ≠ 0 gets shape/position of world target i
-pass B: type 7 → waypoint pointers, 56ac:0b78 waypoint_read (14-byte kind-0 records: kind,
-        index, i32 x, i32 y, i32 z; other kinds 8 bytes: kind, index, i16, i32?) — Ghidra garbles
-        0b78, read x86dis
-pass C: type 5 → 56ac:0c6a flight_build(&DS:4753[i], rec, stream pos)
+pass B: type 7 → waypoint pointers, 56ac:0b78 waypoint_read (§1.3.2)
+pass C: type 5 → 56ac:0c6a flight_build(&DS:4753[i], rec, stream pos) (§1.3.3)
 56ac:0fc2 flights_place (§1.3.1)
 56ac:009d copy the flight-map name (0x14 or 0x5E + … `DS:4743 = DS:42C9`)
 if the player's flight has a carrier (+3) whose ship group is flagged (+3B & 2) and the player is
@@ -94,7 +92,8 @@ if the player's flight has a carrier (+3) whose ship group is flagged (+3B & 2) 
 #### 1.3.1 Flight placement (`56ac:0fc2`, `10a8`, `1483`, `1783`)
 
 `56ac:0f96` sorts the flight pointers (`qsort` 0000:450c with comparator `56ac:0f26`: by
-`DS:0815[kind]`, escorts after their charges) and sets `DS:474F = &flights[DS:4765]`.
+`DS:0815[kind]` = {1, 0, 2, 3} so ship groups come first, escorts after their charges) and sets
+`DS:474F = &flights[DS:4765]` (the first aircraft flight).
 For each flight: `56ac:1783 flight_link(f)` collects every flight transitively linked to `f`
 (`56ac:16f9`: same-side pairs where one escorts the other (`+3E`), a role-6 flight protects it
 (`+10[0..2]`), or a role-5 flight covers it (`+43` mode 0: its list; mode 2: the other's
@@ -116,6 +115,72 @@ list goes to `f+44` (count) / `f+46`.
   `5410:02c0`.
 Finally `DS:3B07 = player's flight`; planes whose flight is the player's or linked to it get
 `Plane+1C |= 4` (friendly to the player's flight).
+
+#### 1.3.2 `56ac:0b78 waypoint_read(u8 *out, u8 *head)` — verified (disassembly; Ghidra garbles it)
+
+`out[0] = head[0]` (kind), `out[1] = head[1]`. Kind 0 (a point): `rd_read(tmp, 12, 1)`, copy the 12
+bytes (i32 x, y, z) to `out+2`; returns 14. Otherwise `rd_read(&idx, 2, 1)`, `rd_read(&val, 2, 1)`;
+`out+2` (near ptr) = by kind: 1 → flight `DS:4753 + idx·56h`, 2 → plane `DS:475B[idx]`, 3 → ship
+`DS:4759[idx]`, 4 → `DS:4757[idx]`, 5 → place `DS:4755 + idx·20h`; **quirk**: kinds > 5 store
+whatever DI held (garbage; never occurs in the data); `out+4` (u32) = `(u32)val << 2`; returns 8.
+The caller advances `DS:4761` by the returned size.
+
+#### 1.3.3 `56ac:0c6a flight_build(Flight *out, u8 *R, far u8 *src)` — verified (disassembly)
+
+`R` = the 58-byte type-5 record (near copy), `src` = its position in the in-memory script.
+```
+if memcmp(R+28h, *(char**)DS:3716, 6) == 0:          // DS:3716 → DS:7120, a zero vector: escort
+    src+28h = E890h, src+2Ah = 2328h, src+2Ch = 05DCh  // offset unset → default (−6000, 9000, 1500),
+                                                       // written into the script copy (R keeps 0 …)
+                                                       // the escort states read it from src+28 (ai §12)
+F = 56h zero bytes (local), then:
+F+00 = R+00 (kind)   F+01 = R+01   F+02 = R+03 (role)   F+1C = (i8)R+04 << 8 (heading)
+F+3C = R+21          F+52 = src (far)
+if (i16)R+2E >= 0: F+3E = DS:4753 + R+2E·56h                          // escorted flight
+if kind == 0:
+    if (i16)R+08 >= 0: F+03 = R+05 (on a carrier);
+         F+04 = R+05 ? DS:4759[R+08] (carrier ship) : DS:4755 + R+08·20h (airfield place)
+    if (i8)R+02 > 0: F+26 (i32 start altitude) = far table 381C:(002Dh + 8·R+02)
+                     = {8000, 28000, 56000, 88000, 108000} for codes 1..5 (the lower bound of
+                     the altitude band; +4 holds the upper bound 16000 … 116000)
+F+06 = F+40 = R+0A (member count)
+kind 0: F+08 = malloc(2n), copy n pointers from DS:475B[R+0C]
+else:   F+08 = *(DS:080F[kind]) + 2·R+0C                               // a slice of the ship list
+kind 1: F+2E = ship_create(DS:07DF) (group marker object); marker+26 = members[0]+26
+F+42 = members[0]+26 (side)
+if R+1A (waypoint count) != 0:
+    kind != 2: F+1A = malloc(2·(R+1A + (i8)F+3D)), copy R+1A pointers from DS:475F[R+1C]
+    kind == 2: F+1A = &DS:475F[R+1C]
+    F+18 = R+1A
+if (i16)R+0E >= 0: F+0A = DS:475F[R+0E]                               // current waypoint
+F+0E = R+12 (count), F+43 = R+06 (kind of the references)
+for i < F+0E: j = R+14[i]; F+10[i] = R+06: 0 → flight DS:4753+j·56h, 1 → place DS:4755+j·20h,
+              2 → ship DS:4759[j], 3 → plane DS:475B[j], else 0
+4b9e:0000()                                                            // empty debug hook
+if R+1E: F+3B |= 2 (carrier task group)
+*out = F; return out
+```
+
+#### 1.3.4 Other `56ac` functions
+
+| Address | Name | Does | Conf. |
+|---|---|---|---|
+| 56ac:0000 | wind_load(int w) | reads the 4Ah-byte `.WND` of wind **0** (`"still"`, name from `DS:07F3[0]` = DS:0827 through `368f:02e6(name, "wnd")` + `55a4:0000(…, "WND")`, loaded by `519d:0000(buf, 4Ah, 1, name)`) into far `38A8:0014`, then the one of wind `w` (`DS:07F3[w]`: still/light/strong/stormy) into far `38A8:005E` (§1.6) | verified |
+| 56ac:009d | wind_apply | `DS:4743 = (i16)DS:42C9` (realism "weather"); copy 4Ah bytes from far `38A8:(DS:4743 ? 5Eh : 14h)` to `DS:027C`: the active wind block is the mission's wind with realistic weather, else "still" | verified |
+| 56ac:00cf | wind_select(int load) | §1.6 | verified |
+| 56ac:010b | scenario_module_init | `7074:0000(28003Ch)`, `AOP_COMM.TBL` (`55a4:0000(841h)`, `7074:02d8(1)`, fatal if missing), `DS:07DF..07EE = 0`, `DS:07E3 = FFFFh`, `DS:3F22 = 46h`, `DS:3F24 = 42h` | verified |
+| 56ac:0226 | identity | returns its argument | verified |
+| 56ac:022e | player_rec7 | returns `DS:44F8` (the player's aircraft record byte +7) | verified |
+| 56ac:07b4 | scenario_unload | `35d6:0128`, `7017:0000`, `62d2:0969`; shape tables `7074:022b(i)` for i = `DS:4513−1` down to 2, then 0; `1641:0109`, `45cc:076e`, `6b3d:00ac`, `45cc:059e`, `45cc:032a`, `50c0:004a` | verified |
+| 56ac:0809 | places_link | for each place i (`DS:4755`, 20h bytes): `+18 = k` (running index into the target list), `+1A = DS:44FA[i]` (targets of the place); if ≠ 0: the target group record `g = DS:5142[k]` (6-byte far entries): `+02 = g+2` (shape), `+14 = g+10h`, copy `g+4` (12 bytes position) to `+04`; `k += +1A`; else `+18 = 0` | verified |
+| 56ac:0f26 | flight_cmp | qsort comparator of two Flight**: `DS:0815[kind a] − DS:0815[kind b]`; equal and aircraft: `−1`, but `+1` when a is role 6 and protects b (`36d8:000a(a+10, b, 3) ≥ 0`) or a escorts b (`a+3E == b`) | verified |
+| 56ac:0f96 | flights_sort | `qsort(DS:4751, DS:476B, 2, 56ac:0f26)` (sort key `DS:0815[kind]` = {1, 0, 2, 3}: **ship groups first**); `DS:474F = DS:4751 + 2·DS:4765` (`DS:4765` = number of ship groups) = the first aircraft flight | verified |
+| 56ac:0fc2 | flights_place | sort; per flight: link (`1783`) then `10a8` (kind 0) / `1483` (kind 1); `DS:3B07 = player+34`; every object whose flight is `DS:3B07` or has it in its linked list (`+46`, count `+44`) gets `+1C |= 4` | verified |
+| 56ac:107a | movers_add(obj) | `DS:00BC[DS:00BE++] = obj`; copy `obj+4..+0F` (position) to `obj+36` (previous position) | verified |
+| 56ac:1642 | flight_protects(a, b) | `a+02 == 6 && b in a+10[0..3)` | verified |
+| 56ac:1670 | flight_covers(a, b) | `a+02 == 5` and: cover mode `a+43 == 0`: `b in a+10[0..a+0E)`; mode 2: any `a+10[i]` in `b`'s waypoint list (`b+1A`, count `b+18`) | verified |
+| 56ac:16f9 | flights_linked(a, b) | unless the sides differ (`a+42 + b+42 == 1`): `a+3E == b`, `b+3E == a`, `flight_protects` either way or `flight_covers` either way | verified |
+| 56ac:18e5 | scenario_free | `6b3d:0000`, ship pool, plane pool destroyed, `DS:475B = 0` | verified |
 
 ### 1.4 Mission header (`DS:477B`, 90 bytes = SCRIPT.DAT type 0) — fields used by the sim
 
@@ -150,10 +215,12 @@ Finally `DS:3B07 = player's flight`; planes whose flight is the player's or link
 ### 1.6 Wind (`56ac:0000/00cf`)
 
 `56ac:00cf(load)`: `DS:4512 = (header.wind == 3)`; if `load`: `DS:477A = wind`,
-`wind_load(wind)`: loads the named `.WND` (74 bytes) **twice** into `DS:0014..` and `DS:005E..`
-(37 words each — the name is built by `368f:02e6`; both copies come from the same file). All four
-`.WND` files are identical, so wind has no effect beyond `DS:4512`/`DS:477A` (clouds: §7).
-`DS:476D = (kind == 1)`. — verified
+`wind_load(wind)`: loads `STILL.WND` (74 bytes) into far `38A8:0014` and the mission's wind file
+(`still/light/strong/stormy`, `DS:07F3[wind]`) into far `38A8:005E` (**corrected**: the earlier draft
+said the same file twice into DS). `56ac:009d` later copies one of the two to `DS:027C` (the
+mission's wind only with realistic weather `DS:42C9`). All four `.WND` files have identical content,
+so in practice wind has no effect beyond `DS:4512`/`DS:477A` (clouds: §5.4). `DS:476D = (kind ==
+1)`. — verified
 
 ### 1.7 Pilot profiles (`.PLT` → 70h-byte records, `DS:55CE[pilot]`)
 
@@ -162,8 +229,8 @@ place (`rating_lerp`):
 
 | Word | From | Range | Used as |
 |---|---|---|---|
-| 0 | r0 | 200h..44Ch | aggressiveness? (`+48` = r0 → 334h..3B6h) |
-| 1, 2 | r1 | 500..400h, 100..44Ch | |
+| 0 | r0 | 200h..44Ch | **eyesight**: spot-range factor (`583c:0e4d`); (`+48` = r0 → 334h..3B6h: sun-glare threshold) |
+| 1, 2 | r1 | 500..400h, 100..44Ch | +02 alertness (scan interval factor, lower = faster), +04 chance of seeing a threat (`583c:0749`) |
 | 3 | r3 | 150..−30 | |
 | 4 | r4 | 100..1000 | |
 | 5 | r5 | 600..−200 (≥ 0) | |
@@ -179,7 +246,7 @@ place (`rating_lerp`):
 | +46 | word | | used by `69fe:015c` (engage) |
 | +58 | char[24] | | name (kill messages) |
 
-Pilot 44 = the player (`PLAYER.PLT`). Names of the remaining ratings: open.
+Pilot 44 = the player (`PLAYER.PLT`). The AI's use of every word is listed in `sim_world_ai.md` §16.
 
 ### 1.8 Object creation (`465c`)
 
@@ -412,18 +479,28 @@ total = 400h. — verified
 
 ## 5. Collisions
 
-### 5.1 Ground / water / ships (`088a:01d3 impacts_update`, per frame) — likely
+### 5.1 Ground / water / ships (`088a:01d3 impacts_update`, per frame) — verified (disassembly; replaces the earlier summary)
 
-For each alive plane `p` (not landed-damaged, or the player when collisions are off):
-`ground = collision_ground(p.pos)` (`14e0:06c0`: terrain/objects height below, 0 at sea, i32);
-if none: `p+EF = ship under p` (`088a:00b1`: ships within 5000 whose boxes the vertical segment
-down to 708h crosses, returning the deck point) and ground = deck height; `p+B8 = ground`
-(Controls ground height for the FM). **Crash** when `p.z < ground`, or on a ship deck with the
-ship flagged `+1B & 2` (sunk): sound 12h, a proximity event `{0, ship, 8000}` against the ship,
-`crash_effect`, `10bf:0039 plane_die(p, ground ≠ 0)`, `1142:135b`. Landed normally
-(`z == ground + gear height`): `z = ground + 1`, and the landing state `DS:0453` table dispatch
-(two entries) — read x86dis.
-
+```
+hitbox_set_enlarge(0)
+for each plane p (DS:475B[0..DS:4776)) with obj_alive(p):
+    g = (i32)(i16)p+B8                              // ground height found last frame (−1 = sea)
+    crash_now = p+AB (FM landing damage) != 0 or (g < 0 and g + FMD+98 == p.z)   // bad landing, or ditched
+    if crash_now and !(p == player and DS:42CF == 0):          // damage off: the player never crashes here
+        p.z = g + 1; hidden = 1
+        g == −1: sound 17h (splash)       g == 0: sound 12h (crash), hidden = 0      (the 2-entry table
+        else (a deck): if p+EF and (e = dmg_event_alloc()): sound 12h; e = {0, p+EF, 8000}   at cs:0453)
+        crash_effect(p, g); plane_die(p, hidden); ai_forget_plane(p); continue
+    g = −1
+    if collision_ground(&q, &p.pos, 0): g = q+4 (i32)            // terrain/objects under p
+    elif (p+EF = ship_under(&p.pos, &d)): g = d.z                 // a ship deck
+    p+B8 = (i16)g                                                  // ground height for the FM
+    if p == player and DS:42CF == 0: continue
+    if p.z >= g and !(p+EF and g + FMD+98 == p.z and p+EF→+1B & 2): continue   // safe unless on a sunk ship
+    if p+EF and (e = dmg_event_alloc()): sound 12h; e = {0, p+EF, 8000}
+    crash_effect(p, g); plane_die(p, 1); ai_forget_plane(p)
+```
+(Sounds via `5a75:0eea(id, &p.pos, 0, p == player)`.)
 `088a:045f hit_sound(far w, Plane *by)`: remembers 6 positions `DS:5604`; sound by weapon class:
 bombs 4/5/6 by MEC index (< 4, 4, ≥ 5), torpedo 6, rockets 4, bullets: 14h if the player fired,
 18h if the player was hit (only with `DS:19F2`), flak 8.
@@ -461,17 +538,27 @@ collision_ground(Vec *out, Vec *p, bool planes)`: above D700h nothing; below 36C
 `14e0:07aa ground_under` / `14e0:07db ground_height_at`: same queries. `14e0:01d3
 clamp_world(obj)`: keep x/y within ±C16EC0h (12 676 800) unless above 5F5E100h.
 
-### 5.4 Clouds (`490a`) — likely
+### 5.4 Clouds (`490a`) — verified (disassembly for 0000, 030d; decompile for the rest)
 
-Clouds exist with realistic weather (`DS:42C9`) and wind level 1 or 2 (`DS:477A`): grid cell
-size `2^DS:3ECA` (12h = 262144), masks `DS:3EC2/3EBA/3EBE`; the counts per cloud kind from
-`DS:0128`/`DS:0120` are shuffled (`277a:410d`) into the 32-entry kind table `DS:3D74`. Three
-cloud objects (`DS:3E1E`, 1Ah words each, shapes `DS:474D + 1..3`, box lists `CLOUD0..2.BXL`
-loaded by `490a:0137`) are re-positioned per cell by a hash of the cell (`14b8:0057/0072`):
-`490a:030d cloud_at_cell` (altitude 50000). `490a:03fb point_in_cloud(p)`, `490a:043e
-cloud_blocks_segment(a, b)` (line of sight for spotting, ≤ 15 × 15 cells), `490a:017f
-camera_in_cloud`, `490a:0509 clouds_draw` (render), `490a:0590` shadows.
+Clouds are a hashed infinite grid, not stored objects. Active only when `DS:3ECA != 0` **and**
+realistic weather `DS:42C9 != 0`.
 
+| Address | Name | Does |
+|---|---|---|
+| 490a:0000 | clouds_init | `DS:3ECA = 0`; `DS:3D74[32]` (bytes) = 0; wind (`DS:477A`) 1 → counts `DS:0128` = {500, 250, 250, 0}, 2 → `DS:0120` = {0, 0, 100, 900}; with a table: `DS:3ECA = 12h`; `DS:3EC6 = 1 << DS:3ECA` (i32 cell size 262144), `DS:3EC2 = size − 1`, `DS:3EBA = DS:3EC2 >> 1`, `DS:3EBE = DS:3EC2 >> 2` (sar); counts copied, `277a:410d normalize_to_sum(counts, 4, 32)`, then `DS:3D74[]` = kind k repeated counts[k] times (k = 0..3; kind 0 = no cloud). Three cloud objects at `DS:3E1E + 34h·i` (i = 0..2, 1Ah words zeroed): `+0 = 880Dh`, `+2 = DS:474D + i + 1` (shape), `+20 = DS:3D9A + 2Ah·i` (matrix block), `365a:0074/0082/000c/0032` (matrix set-up), `+24 = DS:3D94[i]` (box list); `DS:3E18[i] = &object` |
+| 490a:0132 | clouds_nop | empty |
+| 490a:0137 | clouds_load_boxes | for c = '0'..'2': `DS:0135 = c` (patches the name `"CLOUD?"` at `DS:0130`), `DS:3D94[i] = 48af:00a8(55a4:0000(DS:0130, "BX(L)"))` |
+| 490a:017a | clouds_nop2 | empty |
+| 490a:017f | sun_in_cloud(sun) | active only: `361d:000b(p, 6964:0633(sun))` (a point along the sun direction), `p += camera` (`277a:5004` with `5440:008d()`), return `cloud_blocks_segment(camera, p) != 0` |
+| 490a:01de | cell_floor(out, p) | `out.x = p.x & ~DS:3EC2`, `out.y = p.y & ~DS:3EC2`, `out.z = 0` |
+| 490a:021b | cell_iter_empty | `DS:3D54 = 1`, `DS:3D60 = 0` (makes the iterator finish at once); returns 0 |
+| 490a:0234 | cell_iter_begin(p, nx, ny) | inactive → `cell_iter_empty`; else copy `p` (3 × i32) to `DS:3D68`; `DS:3D50 = x0 = p.x`, `DS:3D5C = x0 + (nx << DS:3ECA)`, `DS:3D54 = y = p.y`, `DS:3D60 = p.y + (ny << DS:3ECA)`; returns 1 |
+| 490a:029b | cell_iter_around(p, r) | inactive → empty; `o = (r ? r − 1 : 0) << DS:3ECA`; `c = cell_floor(p) − (o, o)`; `cell_iter_begin(c, r ? 2r − 1 : 0, same)` — the (2r−1)² cells centred on p |
+| 490a:030d | cloud_at_cell(i32 cell[2]) | `DS:5822 = xor8(cell, 12 bytes) + 13` (`14b8:0057`); `k = DS:3D74[far 3A0D:(2·(DS:5822 & FFh)) & 1Fh]`; 0 → return 0; else object `o = DS:3E16[k]` (= `DS:3E18[k − 1]`), `o.x = cell.x + (rnd() & DS:3EBA) − DS:3EBE`, `o.y = cell.y + (rnd() & DS:3EBA) − DS:3EBE` (`rnd` = `14b8:0072`, the next word of the far random table 3A0D, 32-bit AND), `o.z = 50000` (C350h); returns o. Deterministic per cell |
+| 490a:03ac | cell_iter_next | loop: if `DS:3D60 < DS:3D54` return 0 (i32); if `DS:3D50 > DS:3D5C`: `DS:3D50 = DS:3D68`, `DS:3D54 += DS:3EC6`, continue; `o = cloud_at_cell(&DS:3D50)`; `DS:3D50 += DS:3EC6`; return o if ≠ 0 |
+| 490a:03fb | point_in_cloud(p) | `cell_iter_around(p, 1)`; for each cloud: `6ac7:0000(o+24 boxes, &o.pos, o+20 matrix, p)` → return o; 0 |
+| 490a:043e | cloud_blocks_segment(a, b) | `lo, hi = 277a:3892 lbox_order(a, b)` (per-axis min/max), `lo = cell_floor(lo)`, `hi = cell_floor(hi + DS:3EC2)`; `nx = (hi.x − lo.x) >> DS:3ECA`, `ny` likewise; only when `0 <= nx, ny < 15`: iterate and return the first cloud with `6ac7:0120(a, b, o+20, &o.pos, o+24)` ≠ 0; else 0 (**long segments are never blocked**) |
+| 490a:0509 | clouds_draw(cam) | render3d: 3 × 3 cells around the camera; each cloud's 24 bytes copied to a 30h-byte effect record (`+24 = 500`) and drawn by `05a9:005a`; the cloud at `DS:5600/DS:55FC` is skipped while `DS:5BE5` and `1792:0000(6) > 3000h` |
 ## 6. Aircraft death and parachutes (`10bf`, `0916`)
 
 | Address | Name | Does | Conf. |
@@ -514,6 +601,42 @@ expired. The screen effect uses `DS:5798` (sim_flow/render).
 
 Ship `.DAT` fields used: `+48` turn rate, `+4A` max speed, `+4C` acceleration, `+4F` name, `+6C`
 carrier flag (= 1). **No zig-zag code** was found in `5410`.
+
+## 9. Remaining small functions (finish pass) — verified unless marked
+
+| Address | Name | Does |
+|---|---|---|
+| 085b:0006 | proximity_nop | empty |
+| 085b:02c3 | midair_grace_reset | `DS:1382 = 0` |
+| 085b:02ce | midair_grace_tick | if `DS:1382 != 0`: `timer_dec(&DS:1382)` |
+| 085b:02e5 | midair_grace_set(int v) | `DS:1382 = max(DS:1382, v)` |
+| 088a:0007 | state_wreck_on_deck(state, Plane *p) | brain state (plane wrecked on a carrier deck): `4edf:057f(p, (i8)p+BC)` keeps it at its deck spot; `t = p+54` (scratch: i32 `t[0]`, i32 `t[1]`). If `t[0] != 0`: `if timer_dec32(&t[0]) == 0`: `p+1A |= 1`; player → `5da1:0000(1)` (mission over); else if the view object (`1c30:09a9`) is p → `DS:1AFF = 1`; `t[1] = 8000`; explosion `1560:04d7(&p.x, 0, DS:474D + 1Ch)`; `p+0 |= 2000h` (hidden). Else if `t[1] != 0` and `timer_dec32(&t[1]) == 0`: `p+42 |= 4`, `p+46 |= 4`, `p+1B |= 1` (removed). Returns 0 — likely |
+| 088a:00b1 | ship_under(Vec *p, Vec *out) | `q = *p` (3 × i32); `q.z > 708h` → 0. For each ship `s` of `DS:4759[0..DS:4774)` with `ship_is_real` and `|q.x − s.x| < 5000` and `|q.y − s.y| < 5000` (`0000:1fff` = labs): `a = q` (as a segment end with `a.z = max(q.z, 708h)`… the second end `b` = q with its z word copies), `h = 6ac7:0120(q', a, s+20 …)` against the ship's boxes; hit → `*out = h` (the deck point), return s. 0 when none — likely (Ghidra merges the two vectors; re-read x86dis for the exact segment ends) |
+| 10bf:013a | carrier_rel_save | `c = player+EF` (carrier), `r = player+54` (scratch); `d = player.pos − c.pos` (`277a:50c0`), shortened to i16 (`277a:55f0`), rotated into the carrier frame by the transposed carrier matrix (`365a:0032`, `277a:4ae5`) → `r[0..2]`; `r[3] = player.heading − c.heading` |
+| 10bf:01d6 | carrier_rel_restore | `player.pos = c.pos + M_c·r[0..2]` (`365a:000c`, `277a:4ae5`, `277a:530c`); `player.heading = c.heading + r[3]`; throttle `+B2 = 0`; returns 0 |
+| 14e0:0002 | near_lists_alloc | far `DS:18B5 = 24b2:013d(474h)` (AA sites), `DS:18B0 = 24d3:0059(800)`, far `DS:18B2 = 24b2:013d(15E0h)`; counters `DS:18B9/18BB/18BD/18BF/5838 = 0`; `DS:582C..5837 = 0`; `DS:5828 = 0` |
+| 14e0:006d | near_lists_free | frees `DS:18B2`, `DS:18B5` |
+| 14e0:01d3 | clamp_world(obj) | unless `obj.z > 5F5E100h`: clamp `obj.x`, `obj.y` to ±C16EC0h |
+| 14e0:06c0 | collision_ground(Vec *out, Vec *p, bool ships) | `p.z > D700h` → false; `p.z < 36Ch`: `3368:0069(out, p, far DS:06F3 + 4·DS:5134, DS:5132 − DS:5134)` (terrain tiles) — false when no terrain; then (`ships == 0`) the near objects `DS:18B0` (count `DS:18B9`) or (`ships`) the list `DS:513C` (count `DS:5140`); a hit replaces `out`; returns true. Else (above 36Ch) only `3368:0069(out, p, DS:18B0, count DS:5838)` |
+| 36e3:0005 | bytes_or(dst, a, b, n) | `dst[i] = a[i] | b[i]` |
+| 36e3:0032 | bytes_and(dst, a, b, n) | `dst[i] = a[i] & b[i]` |
+| 45cc:0556 | aircraft_free(dat) | (near; `45cc:0557` is the body after the `inc bp` marker) frees `dat+24` (FMD) and `dat` (`24b2:00ca`, with assert context lines 13Eh/13Fh) |
+| 45cc:059e | aircraft_free_all | for type 9Fh..1: slot `DS:54BC[type−1]`… (loop over `DS:54BB + i`) ≠ FFh → `aircraft_free(DS:55D2[slot])` |
+| 45cc:0748 | ship_free(dat) | (near; body `45cc:0749`) frees the ship `.DAT` |
+| 45cc:076e | ship_free_all | same over `DS:555B`/`DS:55D0` (73h types) |
+| 465c:0322 | plane_free(p) | `3546:03f2(DS:3B05, p)` |
+| 465c:0336 | plane_pool_create(n) | `DS:3B05 = 3546:007e(n, 107h)` |
+| 465c:034c | plane_pool_destroy | free every object (`3546:045f(pool, 0)` iterates) then `3546:01d4`; `DS:3B05 = 0` |
+| 465c:0381/04a3/04b9 | ship_free / ship_pool_create(n) / ship_pool_destroy | same for `DS:3B03`, 88h bytes |
+| 4b3a:0000 | effect_register(int slot, bank, name, int dur) | `241c:0005(slot, bank, 55a4:0000(name, "BMD"))`; fatal (`2494:0127`, damage.c line 1D3h) if it fails; `35d6:0267()` |
+| 4b3a:0061 | effects_register_all | `effect_register(DS:474D + k, DS:3F06, name, dur)` for k = 0Ch..20h: flak1–4 (200 each), torexpl 1800, torspla 500, bulspl 500, dirtpuf 200, medspla 200, frsmkst 3024, firsmk 3024, fire 3024, firball 1800, plfrstr 280, planfir 240, puff 67, planexp 120, grndsmk 1100, grsmstr 1100, grfirsm 1100, grfsmst 1100 (names at `DS:0174..0204`) |
+| 4b3a:02a5 | damage_nop | empty |
+| 5410:0000 | ship_group_marker(s) | returns `(s+34)→+2E` (the group marker object of the ship's flight) |
+| 637f:0000 | alive_nop | empty |
+| 655d:1ada | fx_anim_step(far e) | `e+16 += 1` (byte); returns 0 when `e+16 >= frames(e.shape) − 1` (`271b:043d(shape, 0)`), else 1 (keep) |
+| 655d:1b0a | fx_attached_step(far e) | position = `(e+20)`→pos + `M·(e+22)` (offset kept in the attached object's frame: `365a:000c`, `277a:4ae5`, `277a:530c`); then as `fx_anim_step` |
+| 655d:1bb7 | fx_drift_step(far e) | `timer_dec_b(e+28)` == 0 → return 0 (done); else `e+22` (drift vector) scaled by 4/… (`277a:4fb2(v, 4, …)`, `4f26`, `4f38`), `e.pos += v` (`5137:0128`, `5137:00b3`); frame `e+16` cycles 0..3; return 1 — likely |
+| 0fd4:0007 | g_load_reset | `DS:579B = DS:579A = DS:5798 = 0`, `DS:578C..5791 = 0` (previous velocity), `DS:5792 = 2` (frames to wait) |
 
 ## Data structures
 
@@ -565,13 +688,17 @@ carrier flag (= 1). **No zig-zag code** was found in `5410`.
 | 2E | (ship groups) group marker object |
 | 30 | cruise speed |
 | 31, 33, 34.. | default ordnance for members (rack, torpedo, 3 stations) |
-| 3B | flags (2 = carrier task group, 4 = …) |
+| 16, 18, 1A | waypoint cursor {i16 index, i16 count, ptr list} (`17fe`) |
+| 3A | bits 2 all down (latch), 10h elements paired, 80h all members in one element (ai §5–6) |
+| 3B | bits 1 fighting, 2 **standby** (inactive until launched by `51fb:0199`; set from group record `R+1E`; corrected — not "carrier task group"), 4 sweep (members may leave to fight) |
+| 3C | `R+21` |
+| 40 | member count copy |
 | 3E | escorted flight |
 | 42 | side |
 | 43 | cover mode |
 | 44, 46 | linked flights count and list |
 | 4E | i32 cruise altitude |
-| 52 | far pointer (group's source record) |
+| 52 | far pointer (group's source record in the script; `+1E` standby mode, `+28` escort offset) |
 
 ## Globals
 
@@ -622,5 +749,4 @@ carrier flag (= 1). **No zig-zag code** was found in `5410`.
 * `56ac:0b78` (waypoint reader) and `56ac:0c6a` (flight builder): Ghidra garbles both — the
   exact field mapping of the 58-byte group record to the 56h flight record needs x86dis.
 * `.DMG` aircraft `k2 k3 k6` and zone words 3–4; ship zone word 3; hdr flags 2000h/4000h exact.
-* The landing dispatch table `DS:0453` in `088a:01d3`.
 * PLT ratings r2, r7, r10, r11, r13–r16 and their users.

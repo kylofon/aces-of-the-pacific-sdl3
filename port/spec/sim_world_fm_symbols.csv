@@ -1,0 +1,59 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,0b01:000a,fm_module_init,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:000f,fm_reset_globals,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:0031,fm_set_cruise,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:00d0,fm_init,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:0134,fm_full,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1860,fm_step,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:19ff,copy_vec4,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1a28,fm_cruise_speed,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1a95,fm_cruise_speed_here,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1aaf,fm_drag,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1ab0,fm_drag,,sim_world,,body after the inc-bp marker of 0b01:1aaf; spec: sim_world_fm.md
+ap,func,0b01:1b14,clamp_sym,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1b15,clamp_sym,,sim_world,,body after the inc-bp marker of 0b01:1b14; spec: sim_world_fm.md
+ap,func,0b01:1b3b,step_toward,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1b3c,step_toward,,sim_world,,body after the inc-bp marker of 0b01:1b3b; spec: sim_world_fm.md
+ap,func,0b01:1b78,alt_band,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1b9b,fm_integrate_vel,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1b9c,fm_integrate_vel,,sim_world,,body after the inc-bp marker of 0b01:1b9b; spec: sim_world_fm.md
+ap,func,0b01:1c22,frac_carry,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1c23,frac_carry,,sim_world,,body after the inc-bp marker of 0b01:1c22; spec: sim_world_fm.md
+ap,func,0b01:1c4f,pos_step,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1c50,pos_step,,sim_world,,body after the inc-bp marker of 0b01:1c4f; spec: sim_world_fm.md
+ap,func,0b01:1cb5,fm_per_frame_velocity,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:1cb6,fm_per_frame_velocity,,sim_world,,body after the inc-bp marker of 0b01:1cb5; spec: sim_world_fm.md
+ap,func,0b01:1d33,fm_simple,,sim_world,,spec: sim_world_fm.md
+ap,func,0b01:2d9c,fm_ground_contact,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:0000,fly_module_init,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:0010,fly_player_is_ai,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:0017,plane_engine_sound,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:0257,plane_fly,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:03ce,steer_roll_to,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:0401,steer_pitch_to,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:044b,steer_heading,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:061b,steer_heading_lead,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:0632,steer_heading_nolead,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:0649,steer_climb,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:0762,steer_altitude,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:07a1,steer_intercept,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:08d5,steer_to_point,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:0961,plane_cruise_throttle,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:098b,steer_speed_match,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:09f4,controls_neutral,,sim_world,,spec: sim_world_fm.md
+ap,func,4bf9:0a18,fly_module_end,,sim_world,,spec: sim_world_fm.md
+ap,global,DS:711E,dt_scale,,sim_world,,frame time scale 100h = nominal frame (sim_flow 362b)
+ap,global,DS:3F22,vel_scale,,sim_world,,distance per nominal frame scale = 46h
+ap,global,DS:3F24,gravity,,sim_world,,42h
+ap,global,DS:568E,fmd_copy,,sim_world,,214-byte FMD work copy
+ap,global,DS:571C,fmd_copy_stall_possible,,sim_world,,copy+8E
+ap,global,DS:5764,belly_landing_latch,,sim_world,,
+ap,global,DS:576B,overspeed_warn_enabled,,sim_world,,
+ap,global,DS:02CE,fm_mode_by_realism,,sim_world,,"u8[3] = 1,2,3"
+ap,global,DS:02E0,coord_by_level,,sim_world,,"i16[3] 750,875,1024"
+ap,global,DS:02C6,max_bank_by_class,,sim_world,,
+ap,global,DS:1442,alt_band_breaks,,sim_world,,i32[9] 10000..170000
+ap,global,DS:3F26,gear_touch_timer,,sim_world,,
+ap,global,DS:3F28,gear_touch_latch,,sim_world,,
+ap,global,DS:02D4,engine_sound_id,,sim_world,,u8[6]
+ap,global,DS:02DA,engine_sound_id_ai,,sim_world,,u8[6]

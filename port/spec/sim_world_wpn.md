@@ -18,7 +18,7 @@ function pointers per class: `update` at `DS:3C28[id]`, `draw` at `DS:3BE8[id]`)
 |---|---|---|---|---|
 | `DS:1344` | `0688:0004 bombs_load` | `0688:04e3 bomb_update` | — | bombs (`BOMBS.MEC`) |
 | `DS:1348` | `48ff:0000 bullets_load` | `0769:0637 bullet_update` | `0769:08a3 bullet_draw` | bullets / shells (`BULLETS.MEC`) |
-| `DS:1939` | `1a32:000b rockets_load` | `1a32:02f4 rocket_update` | `1a32:0531 rocket_draw` | rockets (`ROCKETS.MEC`) |
+| `DS:193A` | `1a32:000b rockets_load` | `1a32:02f4 rocket_update` | `1a32:0531 rocket_draw` | rockets (`ROCKETS.MEC`) |
 | `DS:19EC` | `1baa:001e torps_load` | `1baa:026e torp_update` | `1baa:05f0 torp_draw` | torpedoes (`TORPS.MEC`) |
 | `DS:54B5` | `04c4:0057 flak_register` | `04c4:0910 flak_burst_update` | `04c4:0bf0 flak_burst_draw` | flak bursts |
 
@@ -193,6 +193,10 @@ if ground_height_at(new) (14e0:07db) and ground.z < new.z: b.timer = 0
 | 0769:03c6 | gun_ready(int *type, GunState*) | rounds > 0 and refire elapsed | verified |
 | 0769:08a3 | bullet_draw(far b) | tracer: draw from pos to pos+velocity (render) | likely |
 | 48ff:009a | bullets_reset | `DS:1360 = 0` | verified |
+| 4cda:0000 | gunlist_loadout_free | `24b2:01c0(DS:1546)` (free the `.GLT` names); `DS:1546 = DS:154A = DS:154E = 0` | verified |
+| 4cda:0021 | gunlists_alloc(int n) | `DS:030C = calloc-like 24d3:0059(2n)` (pointer per model slot) | verified |
+| 4cda:02f3 | gun_state_init(GunRef *g, u8 shift) | `g[0]` = `.GL` image, `g[1]` = state array (12-byte entries). `flags = .GL+2 &= 3FFFh`. Group A present (`flags & 2800h`): entry `+0A |= (flags & 0800h) ? C000h : 8000h`, rounds `+0 = rec.+4 << shift`, `.GL+2 |= 4000h`; next record/entry. Group B (`flags & 0500h`): the same with 0100h, and when there is no group A `.GL+2 |= 8000h`. Turrets (`flags & FFh` of them): rounds `= rec.+4 << shift`. Records are 20 bytes; `shift` = 1 for AI planes (double ammunition), 0 for the player | verified |
+| 1baa:0005 | torp_speed_limit(int side) | `TORPS[1 − side].+04` (`DS:19EA + (1 − side)·12h + 4`) | verified |
 
 ## 4. Bombs (`0688` bombs.c)
 
@@ -251,13 +255,13 @@ No object hit → sound/explosion only (`088a:045f`).
 
 ## 5. Rockets (`1a32` rockets.c)
 
-`ROCKETS.MEC` (`DS:1937`, 1 × 10 bytes: shape 0, flags 4096, speed? 10000, 498, damage 4200).
+`ROCKETS.MEC` (pointer `DS:1938`, class id `DS:193A` — corrected from 1937/1939; 1 × 10 bytes: shape 0, flags 4096, speed? 10000, 498, damage 4200).
 
 `1a32:00a7 rocket_fire(u8 *rack, Vec *pos, Matrix *m, FireSrc *src)`: `rack[0]` rockets left,
 `rack[1]` rack size n, `rack[2..]` bitmask of loaded stations; pick a random loaded station
 (`rng_range(DS:4454, n)` until the bit is set — **RNG**); unless player with unlimited ammo,
 clear it and decrement (player: `DS:3FE6` = rockets left). Position = interpolated between the
-two wing ends by the station index; kind `DS:1939`, shape `DS:474D + mec[0] + 0Bh`, speed `+22` =
+two wing ends by the station index; kind `DS:193A`, shape `DS:474D + mec[0] + 0Bh`, speed `+22` =
 src `+04`, burn/lifetime `+24 = mec.+08`; followed by the weapon camera for the player.
 
 `1a32:02f4 rocket_update`: lifetime 0 → delete (camera flag 4); accelerate `+22 += dt(100)` up
@@ -408,7 +412,7 @@ cache, reset by `DS:549D`), within 800h: `r << 3` when < 400h, else `r·(400h �
 | 030C | gunlists | near ptr[slot] → `.GL` images |
 | 1342, 1344 | bombs_mec, bomb_class | |
 | 1346, 1348 | bullets_mec, bullet_class | |
-| 1937, 1939 | rockets_mec, rocket_class | |
+| 1938, 193A | rockets_mec, rocket_class (written by `1a32:000b`) | |
 | 19EA, 19EC | torps_mec, torp_class | |
 | 54B5 | flak_class | |
 | 134A, 134C | gun_cur_rec, gun_cur_state | current gun group pointers during firing |

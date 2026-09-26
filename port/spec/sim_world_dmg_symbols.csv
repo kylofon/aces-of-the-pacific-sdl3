@@ -1,0 +1,191 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,085b:0006,proximity_nop,,sim_world,,spec: sim_world_dmg.md
+ap,func,085b:000b,proximity_flags,,sim_world,,spec: sim_world_dmg.md
+ap,func,085b:0085,proximity_update,,sim_world,,spec: sim_world_dmg.md
+ap,func,085b:02c3,midair_grace_reset,,sim_world,,spec: sim_world_dmg.md
+ap,func,085b:02ce,midair_grace_tick,,sim_world,,spec: sim_world_dmg.md
+ap,func,085b:02e5,midair_grace_set,,sim_world,,spec: sim_world_dmg.md
+ap,func,088a:0007,state_wreck_on_deck,,sim_world,,spec: sim_world_dmg.md
+ap,func,088a:00b1,ship_under,,sim_world,,spec: sim_world_dmg.md
+ap,func,088a:01d3,impacts_update,,sim_world,,spec: sim_world_dmg.md
+ap,func,088a:045f,hit_sound,,sim_world,,spec: sim_world_dmg.md
+ap,func,088a:054f,kill_credit,,sim_world,,spec: sim_world_dmg.md
+ap,func,088a:07ab,ground_credit,,sim_world,,spec: sim_world_dmg.md
+ap,func,0916:000d,effect_set_anim,,sim_world,,spec: sim_world_dmg.md
+ap,func,0916:002e,para_load,,sim_world,,spec: sim_world_dmg.md
+ap,func,0916:00b3,parachute_spawn,,sim_world,,spec: sim_world_dmg.md
+ap,func,0916:0173,parachute_update,,sim_world,,spec: sim_world_dmg.md
+ap,func,0916:0273,parachute_draw,,sim_world,,spec: sim_world_dmg.md
+ap,func,0916:02cc,debris_spawn,,sim_world,,spec: sim_world_dmg.md
+ap,func,0916:03f7,debris_update,,sim_world,,spec: sim_world_dmg.md
+ap,func,0fd4:0007,g_load_reset,,sim_world,,spec: sim_world_dmg.md
+ap,func,0fd4:0033,g_load_update,,sim_world,,spec: sim_world_dmg.md
+ap,func,10bf:0005,death_classes_register,,sim_world,,spec: sim_world_dmg.md
+ap,func,10bf:001a,wreck_shape,,sim_world,,spec: sim_world_dmg.md
+ap,func,10bf:0039,plane_die,,sim_world,,spec: sim_world_dmg.md
+ap,func,10bf:00d2,wreck_update,,sim_world,,spec: sim_world_dmg.md
+ap,func,10bf:013a,carrier_rel_save,,sim_world,,spec: sim_world_dmg.md
+ap,func,10bf:01d6,carrier_rel_restore,,sim_world,,spec: sim_world_dmg.md
+ap,func,14e0:0002,near_lists_alloc,,sim_world,,spec: sim_world_dmg.md
+ap,func,14e0:006d,near_lists_free,,sim_world,,spec: sim_world_dmg.md
+ap,func,14e0:008c,near_grid_update,,sim_world,,spec: sim_world_dmg.md
+ap,func,14e0:01d3,clamp_world,,sim_world,,spec: sim_world_dmg.md
+ap,func,14e0:0233,near_grid_test,,sim_world,,spec: sim_world_dmg.md
+ap,func,14e0:0286,near_objects_build,,sim_world,,spec: sim_world_dmg.md
+ap,func,14e0:06c0,collision_ground,,sim_world,,spec: sim_world_dmg.md
+ap,func,14e0:07aa,ground_under,,sim_world,,spec: sim_world_dmg.md
+ap,func,14e0:07db,ground_height_at,,sim_world,,spec: sim_world_dmg.md
+ap,func,1641:000c,misctbl_load,,sim_world,,spec: sim_world_dmg.md
+ap,func,1641:0109,misctbl_free,,sim_world,,spec: sim_world_dmg.md
+ap,func,1641:0142,objtype_shape,,sim_world,,spec: sim_world_dmg.md
+ap,func,1641:0157,objtype_class,,sim_world,,spec: sim_world_dmg.md
+ap,func,1641:0172,objtype_aa,,sim_world,,spec: sim_world_dmg.md
+ap,func,1641:01a5,objtype_names,,sim_world,,spec: sim_world_dmg.md
+ap,func,36ce:0008,rd_open,,sim_world,,spec: sim_world_dmg.md
+ap,func,36ce:001b,rd_skip,,sim_world,,spec: sim_world_dmg.md
+ap,func,36ce:002d,rd_read,,sim_world,,spec: sim_world_dmg.md
+ap,func,36ce:0076,rd_tell,,sim_world,,spec: sim_world_dmg.md
+ap,func,36d6:0002,fill_seq,,sim_world,,spec: sim_world_dmg.md
+ap,func,36d8:000a,find_int,,sim_world,,spec: sim_world_dmg.md
+ap,func,36db:0009,fill_int,,sim_world,,spec: sim_world_dmg.md
+ap,func,36dd:0009,bits_to_list,,sim_world,,spec: sim_world_dmg.md
+ap,func,36e3:0005,bytes_or,,sim_world,,spec: sim_world_dmg.md
+ap,func,36e3:0032,bytes_and,,sim_world,,spec: sim_world_dmg.md
+ap,func,36e8:000f,all_zero,,sim_world,,spec: sim_world_dmg.md
+ap,func,36ea:000e,gather,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:0000,slots_from_counts,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:0056,model_slots_assign,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:0080,rating_lerp,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:00a0,pilots_load,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:032a,pilots_free,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:034f,aircraft_load,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:0510,aircraft_load_all,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:0556,aircraft_free,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:0557,aircraft_free,,sim_world,,body after the inc-bp marker of 45cc:0556; spec: sim_world_dmg.md
+ap,func,45cc:059e,aircraft_free_all,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:05ce,ship_load,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:0632,ship_load_all,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:0748,ship_free_dat,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:0749,ship_free_dat,,sim_world,,body after the inc-bp marker of 45cc:0748; spec: sim_world_dmg.md
+ap,func,45cc:076e,ship_free_all,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:079e,file_load_far,,sim_world,,spec: sim_world_dmg.md
+ap,func,45cc:0822,forms_load,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:0000,objects_module_init,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:000b,movers_reset,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:001c,movers_alloc,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:0032,angles_from_bytes,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:005a,object_init_common,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:00ee,plane_c0,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:00fd,plane_setup,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:015f,plane_create,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:0322,plane_free,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:0336,plane_pool_create,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:034c,plane_pool_destroy,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:0381,ship_free,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:0395,ship_create,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:04a3,ship_pool_create,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:04b9,ship_pool_destroy,,sim_world,,spec: sim_world_dmg.md
+ap,func,465c:0818,objects_module_end,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:0000,clouds_init,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:0132,clouds_nop,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:0137,clouds_load_boxes,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:017a,clouds_nop2,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:017f,sun_in_cloud,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:01de,cell_floor,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:021b,cell_iter_empty,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:0234,cell_iter_begin,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:029b,cell_iter_around,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:030d,cloud_at_cell,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:03ac,cell_iter_next,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:03fb,point_in_cloud,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:043e,cloud_blocks_segment,,sim_world,,spec: sim_world_dmg.md
+ap,func,490a:0509,clouds_draw,,sim_world,,spec: sim_world_dmg.md
+ap,func,4b3a:0000,effect_register,,sim_world,,spec: sim_world_dmg.md
+ap,func,4b3a:0061,effects_register_all,,sim_world,,spec: sim_world_dmg.md
+ap,func,4b3a:025c,damage_init,,sim_world,,spec: sim_world_dmg.md
+ap,func,4b3a:028f,damage_tables_alloc,,sim_world,,spec: sim_world_dmg.md
+ap,func,4b3a:02a5,damage_nop,,sim_world,,spec: sim_world_dmg.md
+ap,func,4b3a:02aa,damage_reset,,sim_world,,spec: sim_world_dmg.md
+ap,func,4b3a:0341,dmg_load,,sim_world,,spec: sim_world_dmg.md
+ap,func,4b3a:03ff,dmg_state_create,,sim_world,,spec: sim_world_dmg.md
+ap,func,5410:0000,ship_group_marker,,sim_world,,spec: sim_world_dmg.md
+ap,func,5410:0010,approach_hi,,sim_world,,spec: sim_world_dmg.md
+ap,func,5410:0078,ship_speed_update,,sim_world,,spec: sim_world_dmg.md
+ap,func,5410:00a3,ship_steer,,sim_world,,spec: sim_world_dmg.md
+ap,func,5410:016e,ship_stop,,sim_world,,spec: sim_world_dmg.md
+ap,func,5410:018c,ship_follow_waypoints,,sim_world,,spec: sim_world_dmg.md
+ap,func,5410:01e7,ship_keep_station,,sim_world,,spec: sim_world_dmg.md
+ap,func,5410:02c0,ship_brain_init,,sim_world,,spec: sim_world_dmg.md
+ap,func,5410:02ed,ship_classes_register,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:0000,wind_load,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:009d,wind_apply,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:00cf,wind_select,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:010b,scenario_module_init,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:0184,script_open,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:019e,script_next,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:01dc,script_skip_record,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:0226,identity,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:022e,player_rec7,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:0236,scenario_scan,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:07b4,scenario_unload,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:0809,places_link,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:089e,scenario_build,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:0b78,waypoint_read,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:0c6a,flight_build,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:0f26,flight_cmp,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:0f96,flights_sort,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:0fc2,flights_place,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:107a,movers_add,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:10a8,flight_place_planes,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:1483,flight_place_ships,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:1642,flight_protects,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:1670,flight_covers,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:16f9,flights_linked,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:1783,flight_link,,sim_world,,spec: sim_world_dmg.md
+ap,func,56ac:18e5,scenario_free,,sim_world,,spec: sim_world_dmg.md
+ap,func,637f:0000,alive_nop,,sim_world,,spec: sim_world_dmg.md
+ap,func,637f:0015,obj_set_class,,sim_world,,spec: sim_world_dmg.md
+ap,func,637f:002b,obj_alive,,sim_world,,spec: sim_world_dmg.md
+ap,func,637f:0073,ship_is_real,,sim_world,,spec: sim_world_dmg.md
+ap,func,637f:008a,list_next,,sim_world,,spec: sim_world_dmg.md
+ap,func,637f:009a,flight_is_carrier_group,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:0000,crash_effect,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:009b,state_going_down,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:01e7,plane_mark_down,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:022e,plane_shoot_down,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:0322,damage_tables_load,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:0842,player_engine_hit,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:0887,plane_fire,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:08fd,player_critical,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:0b08,ai_critical,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:0bd9,damage_apply,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:159d,player_engine_update,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:1ada,fx_anim_step,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:1b0a,fx_attached_step,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:1bb7,fx_drift_step,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:1c75,plane_hit_zone,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:1e2f,ship_hit_zone,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:1f03,plane_damage_all,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:1f69,obj_damage_all,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:1f98,zone_add,,sim_world,,spec: sim_world_dmg.md
+ap,func,655d:1fd0,clamp_word,,sim_world,,spec: sim_world_dmg.md
+ap,global,DS:0172,dmg_tables,,sim_world,,
+ap,global,DS:1382,midair_grace,,sim_world,,
+ap,global,DS:4454,rng_state,,sim_world,,sim_flow RNG
+ap,global,DS:4601,type_count_shape,,sim_world,,i16[9Fh]
+ap,global,DS:451B,ship_type_count_shape,,sim_world,,i16[73h]
+ap,global,DS:474D,effect_shape_base,,sim_world,,
+ap,global,DS:4751,flight_ptrs,,sim_world,,
+ap,global,DS:4753,flights,,sim_world,,56h each
+ap,global,DS:4755,places,,sim_world,,20h each
+ap,global,DS:4759,ship_list,,sim_world,,
+ap,global,DS:475B,object_list,,sim_world,,
+ap,global,DS:477B,mission_header,,sim_world,,5Ah
+ap,global,DS:3D74,cloud_kind_table,,sim_world,,u8[32]
+ap,global,DS:3ECA,cloud_cell_shift,,sim_world,,
+ap,global,DS:3E1E,cloud_objects,,sim_world,,3 x 34h
+ap,global,DS:5798,blackout_level,,sim_world,,
+ap,global,DS:579A,blacked_out,,sim_world,,
+ap,global,DS:579B,g_load,,sim_world,,
+ap,global,DS:5A82,gdamage_classes,,sim_world,,
+ap,global,DS:027C,wind_active,,sim_world,,4Ah bytes

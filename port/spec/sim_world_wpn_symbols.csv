@@ -1,0 +1,90 @@
+exe,kind,address,name,type,owner,other_names,notes
+ap,func,04c4:000b,flak_set_range,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:0057,flak_register,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:0073,flak_reset,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:0098,flak_fire_all,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:02be,flak_fire,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:062e,flak_pick_target,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:07a2,flak_in_range,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:0860,flak_burst_spawn,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:0910,flak_burst_update,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:0a9f,flak_player_scale,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:0b53,flak_visible_test,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:0bf0,flak_burst_draw,,sim_world,,spec: sim_world_wpn.md
+ap,func,04c4:0c53,plane_avoid_collision,,sim_world,,spec: sim_world_wpn.md
+ap,func,05d6:0002,ordnance_update,,sim_world,,spec: sim_world_wpn.md
+ap,func,05d6:01d3,ordnance_draw,,sim_world,,spec: sim_world_wpn.md
+ap,func,05d6:023e,ordnance_make_room,,sim_world,,spec: sim_world_wpn.md
+ap,func,05d6:0419,dmg_event_alloc,,sim_world,,spec: sim_world_wpn.md
+ap,func,0688:0004,bombs_load,,sim_world,,spec: sim_world_wpn.md
+ap,func,0688:009d,bomb_release,,sim_world,,spec: sim_world_wpn.md
+ap,func,0688:04e3,bomb_update,,sim_world,,spec: sim_world_wpn.md
+ap,func,0688:08b7,bomb_explode,,sim_world,,spec: sim_world_wpn.md
+ap,func,0688:0ce2,clamp_toward,,sim_world,,spec: sim_world_wpn.md
+ap,func,0688:0d40,bomb_blast,,sim_world,,spec: sim_world_wpn.md
+ap,func,0769:0002,gun_type_speed,,sim_world,,spec: sim_world_wpn.md
+ap,func,0769:001a,gun_type_refire,,sim_world,,spec: sim_world_wpn.md
+ap,func,0769:0032,gun_type_range,,sim_world,,spec: sim_world_wpn.md
+ap,func,0769:004c,gun_sound,,sim_world,,spec: sim_world_wpn.md
+ap,func,0769:009a,gun_fire,,sim_world,,spec: sim_world_wpn.md
+ap,func,0769:03c6,gun_ready,,sim_world,,spec: sim_world_wpn.md
+ap,func,0769:0400,bullet_spawn,,sim_world,,spec: sim_world_wpn.md
+ap,func,0769:0637,bullet_update,,sim_world,,spec: sim_world_wpn.md
+ap,func,0769:08a3,bullet_draw,,sim_world,,spec: sim_world_wpn.md
+ap,func,0ff4:0001,station_cycle,,sim_world,,spec: sim_world_wpn.md
+ap,func,0ff4:0186,station_drop,,sim_world,,spec: sim_world_wpn.md
+ap,func,0ff4:0277,station_count,,sim_world,,spec: sim_world_wpn.md
+ap,func,0ff4:0289,station_loaded_count,,sim_world,,spec: sim_world_wpn.md
+ap,func,0ff4:02ea,station_first,,sim_world,,spec: sim_world_wpn.md
+ap,func,1560:000a,segment_hits_object,,sim_world,,spec: sim_world_wpn.md
+ap,func,1560:0179,splash_or_dust,,sim_world,,spec: sim_world_wpn.md
+ap,func,1560:024a,hit_spark,,sim_world,,spec: sim_world_wpn.md
+ap,func,1560:0352,splash_point,,sim_world,,spec: sim_world_wpn.md
+ap,func,1560:03dd,ground_object_damage,,sim_world,,spec: sim_world_wpn.md
+ap,func,1560:04d7,explosion_spawn,,sim_world,,spec: sim_world_wpn.md
+ap,func,1560:0755,collect_objects_near,,sim_world,,spec: sim_world_wpn.md
+ap,func,1560:07eb,collect_planes_near,,sim_world,,spec: sim_world_wpn.md
+ap,func,1560:086f,shape_box,,sim_world,,spec: sim_world_wpn.md
+ap,func,1560:08fe,segment_hits_ground_object,,sim_world,,spec: sim_world_wpn.md
+ap,func,1a32:000b,rockets_load,,sim_world,,spec: sim_world_wpn.md
+ap,func,1a32:00a7,rocket_fire,,sim_world,,spec: sim_world_wpn.md
+ap,func,1a32:02f4,rocket_update,,sim_world,,spec: sim_world_wpn.md
+ap,func,1a32:0531,rocket_draw,,sim_world,,spec: sim_world_wpn.md
+ap,func,1baa:0005,torp_speed_limit,,sim_world,,spec: sim_world_wpn.md
+ap,func,1baa:001e,torps_load,,sim_world,,spec: sim_world_wpn.md
+ap,func,1baa:00ba,torp_drop,,sim_world,,spec: sim_world_wpn.md
+ap,func,1baa:026e,torp_update,,sim_world,,spec: sim_world_wpn.md
+ap,func,1baa:05f0,torp_draw,,sim_world,,spec: sim_world_wpn.md
+ap,func,488e:0000,weapons_init,,sim_world,,spec: sim_world_wpn.md
+ap,func,488e:004b,weapons_free,,sim_world,,spec: sim_world_wpn.md
+ap,func,488e:007a,weapon_class_register,,sim_world,,spec: sim_world_wpn.md
+ap,func,48ff:0000,bullets_load,,sim_world,,spec: sim_world_wpn.md
+ap,func,48ff:009a,bullets_reset,,sim_world,,spec: sim_world_wpn.md
+ap,func,4cda:0000,gunlist_loadout_free,,sim_world,,spec: sim_world_wpn.md
+ap,func,4cda:0021,gunlists_alloc,,sim_world,,spec: sim_world_wpn.md
+ap,func,4cda:0037,gunlist_load,,sim_world,,spec: sim_world_wpn.md
+ap,func,4cda:00f8,gunlist_attach,,sim_world,,spec: sim_world_wpn.md
+ap,func,4cda:02f3,gun_state_init,,sim_world,,spec: sim_world_wpn.md
+ap,func,6ac7:0000,point_in_boxes,,sim_world,,spec: sim_world_wpn.md
+ap,func,6ac7:0115,hitbox_set_enlarge,,sim_world,,spec: sim_world_wpn.md
+ap,func,6ac7:0120,segment_hits_boxes,,sim_world,,spec: sim_world_wpn.md
+ap,func,6ac7:03e7,segment_box_clip,,sim_world,,spec: sim_world_wpn.md
+ap,func,6ac7:0704,box_near,,sim_world,,spec: sim_world_wpn.md
+ap,func,6cc2:0000,drop_tank_release,,sim_world,,spec: sim_world_wpn.md
+ap,func,6cc2:00cb,drop_tank_update,,sim_world,,spec: sim_world_wpn.md
+ap,global,DS:00E6,weapon_pool,,sim_world,,
+ap,global,DS:00E8,dmg_events,,sim_world,,
+ap,global,DS:00EA,dmg_event_count,,sim_world,,
+ap,global,DS:1342,bombs_mec,,sim_world,,
+ap,global,DS:1344,bomb_class,,sim_world,,
+ap,global,DS:1346,bullets_mec,,sim_world,,
+ap,global,DS:1348,bullet_class,,sim_world,,
+ap,global,DS:1938,rockets_mec,,sim_world,,
+ap,global,DS:193A,rocket_class,,sim_world,,written by 1a32:000b
+ap,global,DS:19EA,torps_mec,,sim_world,,
+ap,global,DS:19EC,torp_class,,sim_world,,
+ap,global,DS:54B5,flak_class,,sim_world,,
+ap,global,DS:030C,gunlists,,sim_world,,
+ap,global,DS:3C28,class_update,,sim_world,,
+ap,global,DS:3BE8,class_draw,,sim_world,,
+ap,global,DS:18B5,aa_sites,,sim_world,,far 26h-byte records
