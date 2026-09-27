@@ -36,7 +36,7 @@ the resource code paths (`PAL:EGA:`) but no EGA driver is shipped.
 ## Phases
 
 ### 0. Repository — done (2026-09-25)
-- `C:\Coding\AcesOverPacific`, git `master`, no remote (GitHub later, on request).
+- `C:\Coding\AcesOfThePacific`, git `master`, no remote (GitHub later, on request).
 - `Game/` → junction to the installed game (git-ignored, with `AcesotP/`).
 - `_tools` → junction to `TestDrive1987/_tools` (Ghidra 12.1.3, JDK 21).
 - Tools carried over from TD3: `x86dis.py`, `merge_symbols.py`, `gen_symbols.py`, `assign_modules.py`,
@@ -89,7 +89,7 @@ weapons → full mission loop shell ⇄ sim → sound. Verified against DOSBox c
 and headless snapshots (`SDL_VIDEO_DRIVER=dummy`, `SDL_AUDIO_DRIVER=dummy`).
 
 ### 6. Release, then Aces Enhanced
-Release the faithful port (v0.1.0 zip, launcher like TD3). Then a new `AcesOverPacificEnhanced`
+Release the faithful port (v0.1.0 zip, launcher like TD3). Then a new `AcesOfThePacificEnhanced`
 repo: the world and aircraft are polygons, so the 3D view can be re-rendered at native resolution /
 widescreen / 60 fps from the same geometry, with longer view distance and higher detail later.
 

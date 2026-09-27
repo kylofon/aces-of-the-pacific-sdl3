@@ -1,7 +1,7 @@
 # Brief for phase 3 spec writers
 
 You write one subsystem spec for the faithful C/SDL3 port of DOS **Aces of the Pacific** (Dynamix
-1992, CD v1.2). Repo `C:\Coding\AcesOverPacific`. Read, in order: `PLAN.md`, `port/RE_GUIDE.md`,
+1992, CD v1.2). Repo `C:\Coding\AcesOfThePacific`. Read, in order: `PLAN.md`, `port/RE_GUIDE.md`,
 `port/spec/README.md` (who owns what), `FORMATS.md` and the `port/formats/*.md` relevant to you.
 
 Reference for style and depth: the finished sibling project `C:\Coding\TestDrive3` — read

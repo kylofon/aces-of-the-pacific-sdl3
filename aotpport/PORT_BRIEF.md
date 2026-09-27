@@ -1,7 +1,7 @@
 # Brief for phase 5 module implementers
 
 You implement one module (or one part of a module) of the faithful C/SDL3 port of DOS **Aces of the
-Pacific**. Repo `C:\Coding\AcesOverPacific`, port in `aotpport/`.
+Pacific**. Repo `C:\Coding\AcesOfThePacific`, port in `aotpport/`.
 
 Read first: `aotpport/PORTING.md` (rules, memory model, module interfaces, file split),
 `PLAN.md` (decisions), `port/spec/README.md`, your module's specs in `port/spec/`, `port/spec/HANDOFFS.md`
