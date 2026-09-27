@@ -818,7 +818,7 @@ code (sim_world's rows exist); sim_flow only builds the menu.
 ## 8. LSO signal overlay (`6dfc:0497/04ce`, `50c0`)
 
 `50c0:0000 lso_load()`: sprite set `sig_j.BMP` (Japanese player, `side(P) == 1`) or `sig_a.BMP`
-(`1d32:214e`) → `DS:11F0`; `4b9e:0000()`. `50c0:004a lso_free()`. `50c0:0068 lso_reset()`:
+(`1d32:214e`) → `DS:11F0`; `4b9e:0000()`. `50c0:004a lso_free()`: `bmp_free_ems(DS:11F0)` (`1d32:2170`) if non-zero, then `DS:11F0 = 0`. `50c0:0068 lso_reset()`:
 `DS:5238 = 0`, `DS:523B = −1` (no signal), `DS:5236 = DS:5239 = 0`. `50c0:0080` = `debug_mode()`
 (lead).
 
