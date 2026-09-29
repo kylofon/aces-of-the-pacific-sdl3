@@ -258,6 +258,9 @@ other signatures are cast to `CodeFn` and back.
 * Sound devices other than AdLib (MT-32, PC speaker, PS/1): the AdLib driver model runs whatever the
   configuration says (sound.md §13, PLAN.md TODO).
 * Text mode is not displayed: messages the originals print on exit/fatal paths go to stderr.
+* Added: key bindings (`src/keymap.c`, `--keys` from the launcher; host.c translates the keys while AP
+  runs) and flaps down / flaps up keys (F / Shift+F, sent to AP as scancodes 56h / 55h and turned into
+  commands 61h / 60h by `controls_map`) instead of F cycling the flaps.
 
 ## Porting a function
 

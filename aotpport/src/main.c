@@ -11,6 +11,9 @@
  *   --start        first program as a GCD exit code (default 1 = INTRO, as GCD.COM)
  *   --*-args       words put in front of the " -n<dir>\" tail of that program (e.g. --ap-args nlkle,
  *                  --intro-args -pi, --ps-args override)
+ *   --keys         PORT: key bindings, "name=code,..." for the actions not on their default keys (the
+ *                  launcher's Settings > Key Bindings; keymap.c). F lowers the flaps a step and Shift+F
+ *                  raises them (the original's F cycles them)
  *   --check        load and verify the three executables (AP flattened), print a summary and exit;
  *                  with a path, also compare the flattened AP with that file (work/AP_flat.exe)
  * AOTP_TEST (developer aids): "dro" (sound, no program is loaded) runs here; the tests that need a
@@ -26,6 +29,7 @@
 
 #include "ems.h"
 #include "host.h"
+#include "keymap.h"
 #include "mem.h"
 #include "platform/platform.h"
 #include "platform/vga.h"
@@ -41,7 +45,8 @@ static int usage(const char *prog)
 {
     fprintf(stderr,
             "usage: %s [--game-dir DIR] [--scale N] [--fullscreen] [--aspect 4:3|1:1] [--frame-ticks N]\n"
-            "          [--start 1|2|3] [--intro-args S] [--ps-args S] [--ap-args S] [--check [AP_FLAT]]\n", prog);
+            "          [--start 1|2|3] [--intro-args S] [--ps-args S] [--ap-args S] [--check [AP_FLAT]]\n"
+            "          [--keys NAME=CODE,...]\n", prog);
     return 2;
 }
 
@@ -68,6 +73,10 @@ int main(int argc, char **argv)
         else if (!strcmp(a, "--intro-args") && v) { prog_args[PROG_INTRO] = v; i++; }
         else if (!strcmp(a, "--ps-args") && v) { prog_args[PROG_PS] = v; i++; }
         else if (!strcmp(a, "--ap-args") && v) { prog_args[PROG_AP] = v; i++; }
+        else if (!strcmp(a, "--keys") && v) {                                             /* PORT */
+            if (!keymap_parse(v)) { fprintf(stderr, "bad --keys list: %s\n", v); return usage(argv[0]); }
+            i++;
+        }
         else if (!strcmp(a, "--check")) {
             check = true;
             if (v && v[0] != '-') { flat_ref = v; i++; }

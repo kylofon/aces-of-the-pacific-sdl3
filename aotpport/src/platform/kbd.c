@@ -7,6 +7,7 @@
 #include "platform/plat_priv.h"
 
 #include "host.h"
+#include "keymap.h"   /* PORT: key bindings */
 #include "prog.h"
 #include "symbols_ap.h"
 #include "symbols_intro.h"
@@ -234,6 +235,7 @@ void kbd_host_byte(u8 raw)
 void kbd_host_focus_lost(void)
 {
     /* Keys released outside the window never send their break: release every held key. */
+    keymap_focus_lost();                                  /* PORT: key bindings */
     if (!int9_hooked || !prog_layout) return;
     for (int sc = 1; sc < 0x59; sc++)
         if (LP(G_key_state)[sc] & 1) kbd_isr((u8)(sc | 0x80));

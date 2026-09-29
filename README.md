@@ -51,6 +51,8 @@ copy if you want to keep your original folder untouched. If Windows says "Window
   greyed out until the folder holds `INTRO.EXE`, `PS.EXE`, `AP.EXE` and the `.DYN` volumes.
 * **Game speed**: timer ticks per simulator frame (default 16, see below).
 * **Aspect** 4:3 or 1:1, **window size**, **full screen**, **sound** on or off.
+* Menus: **File** (Preferences with **Always on top**, Exit), **Settings > Key Bindings** (click a key, press
+  the new one; **Default**, **Apply**, **Cancel**) and **About**.
 
 Settings are remembered in `%APPDATA%\Aces of the Pacific\settings.ini`.
 
@@ -98,6 +100,7 @@ Leave out `-DAOTP_LAUNCHER=ON` to build only the game.
 | `--aspect 4:3\|1:1` | 4:3 (default) stretches the 200 lines to a 4:3 area as on a VGA monitor; 1:1 square pixels |
 | `--fullscreen` | Start in full screen |
 | `--frame-ticks N` | Game speed: timer ticks per simulator frame (default 16 ≈ real time; 8 = the original on a fast PC) |
+| `--keys NAME=CODE,...` | Changed keys (written by the launcher's Key Bindings) |
 | `--check` | Verify that the three executables load, then exit without opening a window |
 
 To run without sound, set the environment variable `SDL_AUDIO_DRIVER=dummy` (the launcher's Sound box does
@@ -108,7 +111,11 @@ this). Alt+Enter toggles full screen.
 The keyboard, joystick and mouse work as in the original game; the keys are listed in the game's manual and
 its key reference card. A connected gamepad acts as the PC joystick (left stick = joystick A, right stick =
 joystick B, the four face buttons = the joystick buttons). The mouse is emulated for the shell and the
-simulator. Alt+Enter (full screen) is the only key the port adds.
+simulator. The port adds:
+
+* F lowers the flaps a step and Shift+F raises them (the original's F cycles them).
+* The flight keys can be changed in the launcher (Settings > Key Bindings).
+* Alt+Enter: full screen.
 
 ## Changes from the original
 
@@ -122,6 +129,7 @@ simulator. Alt+Enter (full screen) is the only key the port adds.
 * **Removed:** there is no copy protection in this version; the hardware checks and timer calibration of the
   original are replaced by the host.
 * **Graphics:** VGA only (the only graphics the game ships).
+* **Keys:** separate flaps down / up keys, and key bindings from the launcher (see Controls).
 * **Robustness:** a few places where the original could read or write past its data, divide by zero, hang on
   unknown data or call a null pointer are guarded (marked `PORT:` in the source). Text the original prints
   on DOS exit or fatal paths goes to stderr.
@@ -138,6 +146,7 @@ simulator. Alt+Enter (full screen) is the only key the port adds.
 
 * `Game/` — your game files (not in the repository).
 * `tools/`, `port/` — reverse-engineering tools, function index, specs and format documents (`FORMATS.md`).
+* `CHANGELOG.md` — changes by version.
 * `aotpport/` — the SDL3 port (`aotpport/PORTING.md`: architecture and rules) and its launcher
   (`aotpport/launcher/`).
 * `PLAN.md` — the plan, decisions and what is parked.
