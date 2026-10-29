@@ -601,11 +601,20 @@ char *host_game_path(const char *name, bool create)
 
 const char *host_game_dir(void) { return game_dir; }
 
+long host_game_file_size(const char *name)
+{
+    char *path = host_game_path(name, false);
+    SDL_PathInfo info;
+    long size = path && SDL_GetPathInfo(path, &info) ? (long)info.size : -1;
+    SDL_free(path);
+    return size;
+}
+
 void host_free(void *p) { SDL_free(p); }
 
 _Noreturn void host_fatal(const char *fmt, ...)
 {
-    char msg[512];
+    char msg[1024];
     va_list ap;
     va_start(ap, fmt);
     vsnprintf(msg, sizeof msg, fmt, ap);

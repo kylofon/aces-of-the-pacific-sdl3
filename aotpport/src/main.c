@@ -91,7 +91,7 @@ int main(int argc, char **argv)
     if (check) {
         /* no window: only the file lookup of the host is needed */
         if (!host_init_files(dir)) return 1;
-        char err[256];
+        char err[1024];
         bool ok = prog_check_all(flat_ref, err, sizeof err);
         if (!ok) fprintf(stderr, "%s\n", err);
         else printf("load segment %04X, frame pacing %d ticks\n", LOAD_SEG, host_frame_ticks());
@@ -100,6 +100,7 @@ int main(int argc, char **argv)
     }
 
     if (!host_init(dir, scale, fullscreen, aspect43)) return 1;
+    prog_check_release();     /* another release of the game: say so before anything runs */
     mem_init_machine();       /* IVT, BIOS data area */
     ems_init();               /* EMM device header, INT 67h */
     vga_init();               /* frame source, text mode */

@@ -7,27 +7,44 @@ set-up — and `AP.EXE`, the flight simulator) were reverse-engineered, document
 in one process. The port reads the original game's files at run time. No game data is included: you need
 your own copy of *Aces of the Pacific*.
 
+> **Requires the CD-ROM version 1.2 of *Aces of the Pacific*** (it includes WWII: 1946). The floppy releases
+> (1.0, 1.01, 1.2 / Patch B and the 1946 expansion disk) don't run: they are separate builds of the game. The
+> launcher and the game say which version a folder holds.
+> A copy is at the [Internet Archive](https://archive.org/details/acesot-p): download `AcesotP.zip` and use the files of its
+> `AcesotP\DYNAMIX\AOTP` folder.
+
 ## How to play (Windows)
 
 You need the files of the installed DOS *Aces of the Pacific* (`INTRO.EXE`, `PS.EXE`, `AP.EXE`, the `.DYN`
-volumes and the rest of the installed folder). They are not included.
+volumes and the rest of the installed folder). They are not included. It must be the **CD-ROM version 1.2**
+(it includes WWII: 1946; the CD installs to `C:\DYNAMIX\AOTP`): the floppy releases (1.0, 1.01, 1.2 / Patch B,
+the 1946 expansion disk) are separate builds of the game and don't run. The launcher and the game say which
+one a folder holds.
 
-1. Download `aotp-…-win64.zip` from the releases.
-2. Put your installed game files in a folder named `Game`.
-3. Open the zip. Copy all of its files into the folder that holds `Game`, so that `Aces of the Pacific.exe`
-   sits next to `Game`:
+1. Download `aotp-…-win64.zip` from the [releases](https://github.com/kylofon/aces-of-the-pacific-sdl3/releases)
+   and unzip it into a folder of its own, for example `C:\Games\Aces of the Pacific`. Not under Program Files:
+   the game saves its pilot roster, preferences and films there.
+2. Get the game's files. If you have the CD, install the game from it: it installs to `C:\DYNAMIX\AOTP`, and
+   that folder holds the files. Otherwise, from the Internet Archive:
+   1. Download `AcesotP.zip` (35 MB) from the [Internet Archive's page](https://archive.org/details/acesot-p)
+      (under DOWNLOAD OPTIONS), or [directly](https://archive.org/download/acesot-p/AcesotP.zip).
+   2. Open `AcesotP.zip` and go into the folder `AcesotP\DYNAMIX\AOTP`. It holds `INTRO.EXE`, `PS.EXE`,
+      `AP.EXE`, the `.DYN` files and the folders `TAPES`, `mt32` and `sb16`. The zip's other folders (`CD`,
+      with the disc image, and `SIERRA`) are not needed.
+3. In the folder from step 1, make a folder named `Game` and copy everything that is inside `AOTP` into it:
+   all its files and folders, not the `AOTP` folder itself. It should look like this:
 
    ```text
    Aces of the Pacific\
-   ├── Game\                      <- your game files (INTRO.EXE, PS.EXE, AP.EXE, *.DYN, ...)
+   ├── Game\                      <- the files from AOTP (INTRO.EXE, PS.EXE, AP.EXE, *.DYN, ...)
    ├── Aces of the Pacific.exe    <- the launcher
    ├── aotp.exe                   <- the game
-   ├── SDL3.dll
-   └── (the other files from the zip)
+   └── SDL3.dll and the other DLLs
    ```
 
-4. Double-click `Aces of the Pacific.exe`, choose your options and press **Play**. (`aotp.exe` also starts
-   on its own with the defaults.)
+4. Run `Aces of the Pacific.exe`, choose your options and press **Play** (`aotp.exe` also starts on its own
+   with the defaults). If the launcher shows a warning, it says what is wrong with the `Game` folder; clicking
+   the warning sign opens the Internet Archive's page.
 
 Keep the folder somewhere you can save files, such as Documents or the Desktop, not Program Files: **the game
 writes into the game folder** — the pilot roster (`ROSTER.DAT`), preferences (`*.PRF`), the hall of fame,
@@ -48,7 +65,8 @@ copy if you want to keep your original folder untouched. If Windows says "Window
 `Aces of the Pacific.exe` starts the game with the options chosen in its window (`aotpport/launcher/README.md`):
 
 * **Game files**: the game folder and `aotp.exe` (by default both beside the launcher). **Play** stays
-  greyed out until the folder holds `INTRO.EXE`, `PS.EXE`, `AP.EXE` and the `.DYN` volumes.
+  greyed out until the folder holds `INTRO.EXE`, `PS.EXE`, `AP.EXE` of the CD-ROM version 1.2 and the `.DYN`
+  volumes.
 * **Game speed**: timer ticks per simulator frame (default 16, see below).
 * **Aspect** 4:3 or 1:1, **window size**, **full screen**, **sound** on or off.
 * Menus: **File** (Preferences with **Always on top**, Exit), **Settings > Key Bindings** (click a key, press
