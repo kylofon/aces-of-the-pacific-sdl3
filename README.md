@@ -85,6 +85,20 @@ runs in real time at the default TIME SCALE and the slider works. Lower values m
 higher values slower; 8 is what the original gives on a fast PC. Choose it in the launcher or with
 `--frame-ticks`.
 
+## Supported game version
+
+Only the **CD-ROM version 1.2** of *Aces of the Pacific* (1994 readme; it includes WWII: 1946) is supported.
+The loader identifies it by the exact sizes of its three programs:
+
+| File | Size (bytes) |
+|---|---|
+| `INTRO.EXE` | 117 008 |
+| `PS.EXE` | 377 136 |
+| `AP.EXE` | 494 032 |
+
+Other releases are not supported yet: the floppy versions (1.0, 1.01, 1.2 / Patch B), the WWII: 1946
+expansion disk, the Collector's Edition (1.02) and the 1994 Sierra CD are separate builds of the game.
+
 ## Requirements
 
 * Your installed game files in a folder (by default `Game` beside the program), writable.
